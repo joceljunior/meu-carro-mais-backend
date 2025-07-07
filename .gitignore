@@ -1,0 +1,32 @@
+# Binários do Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Diretórios de build/output
+/bin/
+/build/
+
+# Diretórios de dependências
+/vendor/
+
+# Arquivos de cache do Go
+*.out
+*.log
+
+# Arquivos de configuração e ambiente
+.env
+.env.*
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db 
