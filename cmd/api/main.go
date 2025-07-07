@@ -1,36 +1,39 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
+	"meu-carro-mais/internal/database"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Define o modo do Gin (release, debug, test)
+	// Inicializa o banco de dados e faz auto-migrate
+	database.InitDB()
+
 	ginMode := os.Getenv("GIN_MODE")
 	if ginMode == "" {
 		ginMode = gin.DebugMode
 	}
 	gin.SetMode(ginMode)
-
-	// Cria uma instância do router Gin
 	router := gin.Default()
 
 	// Rota de exemplo
 	router.GET("/ping", func(c *gin.Context) {
+
+		request := c.Request
+		log.Printf("Recebida requisição: %s %s", request.Method, request.URL.Path)
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
 
-	// Porta padrão
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	// Inicia o servidor
 	log.Printf("Servidor rodando na porta %s", port)
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Erro ao iniciar o servidor: %v", err)
