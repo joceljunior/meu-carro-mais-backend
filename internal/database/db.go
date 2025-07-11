@@ -13,6 +13,7 @@ import (
 
 func InitDB() *gorm.DB {
 	dsn := os.Getenv("DATABASE_URL")
+	fmt.Println("DSN:", dsn)
 	if dsn == "" {
 		dsn = "Host=localhost;Database=meucarromais;Username=postgres;Password=password"
 	}
