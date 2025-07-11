@@ -2,32 +2,25 @@ package main
 
 import (
 	"log"
-	"meu-carro-mais/internal/database"
+	// "meu-carro-mais/internal/database"
 	"os"
+
+	"meu-carro-mais/cmd/api/router"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// Inicializa o banco de dados e faz auto-migrate
-	database.InitDB()
+	// database.InitDB()
 
 	ginMode := os.Getenv("GIN_MODE")
 	if ginMode == "" {
 		ginMode = gin.DebugMode
 	}
 	gin.SetMode(ginMode)
-	router := gin.Default()
 
-	// Rota de exemplo
-	router.GET("/ping", func(c *gin.Context) {
-
-		request := c.Request
-		log.Printf("Recebida requisição: %s %s", request.Method, request.URL.Path)
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	r := router.NewRouter()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -35,7 +28,7 @@ func main() {
 	}
 
 	log.Printf("Servidor rodando na porta %s", port)
-	if err := router.Run(":" + port); err != nil {
+	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("Erro ao iniciar o servidor: %v", err)
 	}
 }

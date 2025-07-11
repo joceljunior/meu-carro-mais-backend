@@ -1,0 +1,51 @@
+definitions:
+  json.LoginRequest:
+    properties:
+      email:
+        type: string
+      senha:
+        type: string
+    type: object
+  json.LoginResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Autentica um usuário e retorna seus dados
+      parameters:
+      - description: Dados de login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.LoginResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            type: string
+        "401":
+          description: Não autorizado
+          schema:
+            type: string
+      summary: Login do usuário
+      tags:
+      - auth
+swagger: "2.0"
