@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	// Inicializa o banco de dados e faz auto-migrate
 	database.InitDB()
 
 	ginMode := os.Getenv("GIN_MODE")
