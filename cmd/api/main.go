@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	// "meu-carro-mais/internal/database"
+	"meu-carro-mais/internal/database"
 	"os"
 
 	"meu-carro-mais/cmd/api/router"
@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Inicializa o banco de dados e faz auto-migrate
-	// database.InitDB()
+	database.InitDB()
 
 	ginMode := os.Getenv("GIN_MODE")
 	if ginMode == "" {
