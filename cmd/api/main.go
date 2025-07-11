@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+
 	database.InitDB()
 
 	ginMode := os.Getenv("GIN_MODE")

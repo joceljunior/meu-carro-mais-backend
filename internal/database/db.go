@@ -3,7 +3,6 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"meu-carro-mais/internal/database/models"
 
@@ -14,15 +13,7 @@ import (
 var DB *gorm.DB
 
 func InitDB() *gorm.DB {
-	dsn := os.Getenv("DATABASE_URL")
-
-	fmt.Println("DSN (do ambiente ou fallback):", dsn)
-
-	if dsn == "" {
-		dsn = "postgresql://postgres:password@localhost:5432/meucarromais?sslmode=disable"
-		fmt.Println("Usando DSN de fallback local.")
-	} else {
-	}
+	dsn := "postgresql://postgres:ClhNiGrLiawXGiDmtIWxPEXSWBHNqzLT@shuttle.proxy.rlwy.net:16516/railway"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

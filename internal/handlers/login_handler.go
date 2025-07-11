@@ -10,7 +10,7 @@ import (
 // LoginHandler godoc
 // @Summary      Login do usuário
 // @Description  Autentica um usuário e retorna seus dados
-// @Tags         auth
+// @Tags         Autenticação
 // @Accept       json
 // @Produce      json
 // @Param        request body json.LoginRequest true "Dados de login"

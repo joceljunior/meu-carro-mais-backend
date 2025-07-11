@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "auth"
+                    "Autenticação"
                 ],
                 "summary": "Login do usuário",
                 "parameters": [

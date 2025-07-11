@@ -47,5 +47,5 @@ paths:
             type: string
       summary: Login do usuário
       tags:
-      - auth
+      - Autenticação
 swagger: "2.0"
