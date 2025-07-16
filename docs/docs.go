@@ -63,6 +63,26 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "json.AnuncioDestaqueResponse": {
+            "type": "object",
+            "properties": {
+                "descricao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "preco": {
+                    "type": "number"
+                },
+                "titulo": {
+                    "type": "string"
+                }
+            }
+        },
         "json.LoginRequest": {
             "type": "object",
             "properties": {
@@ -79,6 +99,26 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaUsuarioResponse"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "nome_plano": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.LojaUsuarioResponse": {
+            "type": "object",
+            "properties": {
+                "anuncio_destaque": {
+                    "$ref": "#/definitions/json.AnuncioDestaqueResponse"
                 },
                 "id": {
                     "type": "integer"

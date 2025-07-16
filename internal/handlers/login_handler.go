@@ -24,7 +24,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Dados inválidos", http.StatusBadRequest)
 		return
 	}
+
 	resp, err := services.Login(req)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return

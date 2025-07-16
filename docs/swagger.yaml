@@ -1,4 +1,17 @@
 definitions:
+  json.AnuncioDestaqueResponse:
+    properties:
+      descricao:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      preco:
+        type: number
+      titulo:
+        type: string
+    type: object
   json.LoginRequest:
     properties:
       email:
@@ -10,6 +23,19 @@ definitions:
     properties:
       email:
         type: string
+      id:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaUsuarioResponse'
+      nome:
+        type: string
+      nome_plano:
+        type: string
+    type: object
+  json.LojaUsuarioResponse:
+    properties:
+      anuncio_destaque:
+        $ref: '#/definitions/json.AnuncioDestaqueResponse'
       id:
         type: integer
       nome:

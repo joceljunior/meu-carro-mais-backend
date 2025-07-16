@@ -31,6 +31,7 @@ func InitDB() *gorm.DB {
 		&models.HistoricoPlanoUsuario{},
 		&models.Carteira{},
 		&models.LogCarteira{},
+		&models.Anuncio{},
 	)
 	if err != nil {
 		log.Fatalf("Erro ao migrar tabelas: %v", err)
