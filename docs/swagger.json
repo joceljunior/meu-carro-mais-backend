@@ -4,6 +4,46 @@
         "contact": {}
     },
     "paths": {
+        "/createuser": {
+            "post": {
+                "description": "Cria um novo usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Criação de Usuário"
+                ],
+                "summary": "Criação do usuário",
+                "parameters": [
+                    {
+                        "description": "Dados do usuário",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado com sucesso",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Autentica um usuário e retorna seus dados",
@@ -113,6 +153,29 @@
                     "type": "integer"
                 },
                 "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.UserRequest": {
+            "type": "object",
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "senha": {
                     "type": "string"
                 }
             }

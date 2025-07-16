@@ -41,9 +41,50 @@ definitions:
       nome:
         type: string
     type: object
+  json.UserRequest:
+    properties:
+      cpf:
+        type: string
+      email:
+        type: string
+      imagem:
+        type: string
+      nome:
+        type: string
+      password:
+        type: string
+      senha:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /createuser:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo usuário
+      parameters:
+      - description: Dados do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Usuário criado com sucesso
+          schema:
+            type: string
+        "400":
+          description: Dados inválidos
+          schema:
+            type: string
+      summary: Criação do usuário
+      tags:
+      - Criação de Usuário
   /login:
     post:
       consumes:
