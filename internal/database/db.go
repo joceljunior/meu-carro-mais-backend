@@ -13,7 +13,7 @@ import (
 var DB *gorm.DB
 
 func InitDB() *gorm.DB {
-	dsn := "postgresql://postgres:ClhNiGrLiawXGiDmtIWxPEXSWBHNqzLT@shuttle.proxy.rlwy.net:16516/railway"
+	dsn := "postgres://postgres:CcbEg6cgbCg4BfCc64CafdaFEDEfaC3E@mainline.proxy.rlwy.net:36295/railway"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
