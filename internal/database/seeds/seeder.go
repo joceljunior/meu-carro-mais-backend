@@ -39,6 +39,10 @@ func (s *Seeder) Run() error {
 		return fmt.Errorf("erro ao executar seed categoria_anuncio: %v", err)
 	}
 
+	if err := s.seedCategoriaServico(); err != nil {
+		return fmt.Errorf("erro ao executar seed categoria_servico: %v", err)
+	}
+
 	if err := s.seedUsuario(); err != nil {
 		return fmt.Errorf("erro ao executar seed usuario: %v", err)
 	}
@@ -53,6 +57,10 @@ func (s *Seeder) Run() error {
 
 	if err := s.seedAnuncio(); err != nil {
 		return fmt.Errorf("erro ao executar seed anuncio: %v", err)
+	}
+
+	if err := s.seedServico(); err != nil {
+		return fmt.Errorf("erro ao executar seed servico: %v", err)
 	}
 
 	if err := s.seedCarteira(); err != nil {
@@ -142,6 +150,35 @@ func (s *Seeder) seedCategoriaAnuncio() error {
 			log.Printf("✅ CategoriaAnuncio criada: %s", categoria.Nome)
 		} else {
 			log.Printf("⏭️ CategoriaAnuncio já existe: %s", categoria.Nome)
+		}
+	}
+
+	return nil
+}
+
+// seedCategoriaServico popula a tabela categoria_servico
+func (s *Seeder) seedCategoriaServico() error {
+	log.Println("📝 Populando tabela categoria_servico...")
+
+	categorias := []models.CategoriaServico{
+		{Nome: "Manutenção"},
+		{Nome: "Revisão"},
+		{Nome: "Troca de Óleo"},
+		{Nome: "Alinhamento"},
+		{Nome: "Balanceamento"},
+		{Nome: "Ajuste de Freios"},
+	}
+
+	for _, categoria := range categorias {
+		var existing models.CategoriaServico
+		if err := s.db.Where("nome = ?", categoria.Nome).First(&existing).Error; err != nil {
+			// Se não existe, cria
+			if err := s.db.Create(&categoria).Error; err != nil {
+				return fmt.Errorf("erro ao criar categoria_servico %s: %v", categoria.Nome, err)
+			}
+			log.Printf("✅ CategoriaServico criada: %s", categoria.Nome)
+		} else {
+			log.Printf("⏭️ CategoriaServico já existe: %s", categoria.Nome)
 		}
 	}
 
@@ -390,6 +427,65 @@ func (s *Seeder) seedAnuncio() error {
 			log.Printf("✅ Anuncio criado: %s", anuncio.Titulo)
 		} else {
 			log.Printf("⏭️ Anuncio já existe: %s", anuncio.Titulo)
+		}
+	}
+
+	return nil
+}
+
+// seedServico popula a tabela servico
+func (s *Seeder) seedServico() error {
+	log.Println("📝 Populando tabela servico...")
+
+	// Busca primeira loja
+	var loja models.Loja
+	if err := s.db.First(&loja).Error; err != nil {
+		return fmt.Errorf("erro ao buscar loja: %v", err)
+	}
+
+	// Busca primeira categoria de serviço
+	var categoriaServico models.CategoriaServico
+	if err := s.db.First(&categoriaServico).Error; err != nil {
+		return fmt.Errorf("erro ao buscar categoria de serviço: %v", err)
+	}
+
+	servicos := []models.Servico{
+		{
+			Titulo:      "Troca de Óleo",
+			Descricao:   "Troca de óleo, filtro e óleo de filtro",
+			Preco:       150.00,
+			Imagem:      "https://via.placeholder.com/200x150",
+			IDLoja:      loja.ID,
+			IDCategoria: categoriaServico.ID,
+		},
+		{
+			Titulo:      "Alinhamento",
+			Descricao:   "Ajuste de direção, suspensão e direção",
+			Preco:       250.00,
+			Imagem:      "https://via.placeholder.com/200x150",
+			IDLoja:      loja.ID,
+			IDCategoria: categoriaServico.ID,
+		},
+		{
+			Titulo:      "Revisão Completa",
+			Descricao:   "Revisão completa do motor, freios, suspensão e direção",
+			Preco:       500.00,
+			Imagem:      "https://via.placeholder.com/200x150",
+			IDLoja:      loja.ID,
+			IDCategoria: categoriaServico.ID,
+		},
+	}
+
+	for _, servico := range servicos {
+		var existing models.Servico
+		if err := s.db.Where("titulo = ? AND id_loja = ?", servico.Titulo, servico.IDLoja).First(&existing).Error; err != nil {
+			// Se não existe, cria
+			if err := s.db.Create(&servico).Error; err != nil {
+				return fmt.Errorf("erro ao criar servico %s: %v", servico.Titulo, err)
+			}
+			log.Printf("✅ Servico criado: %s", servico.Titulo)
+		} else {
+			log.Printf("⏭️ Servico já existe: %s", servico.Titulo)
 		}
 	}
 

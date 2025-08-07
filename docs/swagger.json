@@ -140,6 +140,57 @@
                     }
                 }
             }
+        },
+        "/servicos/proximidade": {
+            "get": {
+                "description": "Retorna lista de serviços ordenados por proximidade do usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Lista serviços por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário",
+                        "name": "latitude",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário",
+                        "name": "longitude",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.ServicosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -248,6 +299,55 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/json.LojaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.ServicoResponse": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "destaque": {
+                    "type": "boolean"
+                },
+                "distancia": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_categoria": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "preco": {
+                    "type": "number"
+                },
+                "titulo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.ServicosResponse": {
+            "type": "object",
+            "properties": {
+                "servicos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.ServicoResponse"
                     }
                 },
                 "total": {

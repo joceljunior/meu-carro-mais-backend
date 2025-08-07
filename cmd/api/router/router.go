@@ -1,10 +1,11 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	swaggerFiles "github.com/swaggo/files"
 	_ "meu-carro-mais/docs"
+
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewRouter() *gin.Engine {
@@ -20,6 +21,7 @@ func NewRouter() *gin.Engine {
 		&LoginRouter{},
 		&ExemploRouter{},
 		&LojaRouter{},
+		&ServicoRouter{},
 	}
 
 	for _, rt := range routers {
@@ -27,4 +29,4 @@ func NewRouter() *gin.Engine {
 	}
 
 	return r
-} 
+}

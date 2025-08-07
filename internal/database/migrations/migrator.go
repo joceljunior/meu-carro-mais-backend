@@ -381,12 +381,16 @@ func (m *Migrator) createInitialTables(db *gorm.DB) error {
 		&models.Carteira{},
 		&models.LogCarteira{},
 		&models.Anuncio{},
+		&models.CategoriaServico{},
+		&models.Servico{},
 	)
 }
 
 // dropInitialTables remove todas as tabelas iniciais
 func (m *Migrator) dropInitialTables(db *gorm.DB) error {
 	tables := []interface{}{
+		&models.Servico{},
+		&models.CategoriaServico{},
 		&models.Anuncio{},
 		&models.LogCarteira{},
 		&models.Carteira{},
