@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"meu-carro-mais/internal/database/models"
+	"meu-carro-mais/internal/database/migrations"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,22 +22,13 @@ func InitDB() *gorm.DB {
 
 	DB = db
 
-	// Auto-migrate
-	err = db.AutoMigrate(
-		&models.TipoPlano{},
-		&models.CategoriaLojista{},
-		&models.Usuario{},
-		&models.Loja{},
-		&models.HistoricoPlanoUsuario{},
-		&models.Carteira{},
-		&models.LogCarteira{},
-		&models.Anuncio{},
-	)
-	if err != nil {
-		log.Fatalf("Erro ao migrar tabelas: %v", err)
+	// Executa as migrations
+	migrator := migrations.NewMigrator(db)
+	if err := migrator.Run(); err != nil {
+		log.Fatalf("Erro ao executar migrations: %v", err)
 	}
 
-	fmt.Println("Banco conectado e tabelas migradas com sucesso!")
+	fmt.Println("Banco conectado e migrations executadas com sucesso!")
 	return db
 }
 
@@ -46,4 +37,34 @@ func GetDB() *gorm.DB {
 		log.Fatal("Conexão com o banco de dados não inicializada! Chame InitDB() primeiro.")
 	}
 	return DB
+}
+
+// RunMigrations executa as migrations manualmente (útil para comandos CLI)
+func RunMigrations() error {
+	if DB == nil {
+		return fmt.Errorf("conexão com o banco de dados não inicializada")
+	}
+
+	migrator := migrations.NewMigrator(DB)
+	return migrator.Run()
+}
+
+// RollbackMigration executa o rollback da última migration
+func RollbackMigration() error {
+	if DB == nil {
+		return fmt.Errorf("conexão com o banco de dados não inicializada")
+	}
+
+	migrator := migrations.NewMigrator(DB)
+	return migrator.Rollback()
+}
+
+// MigrationStatus mostra o status das migrations
+func MigrationStatus() error {
+	if DB == nil {
+		return fmt.Errorf("conexão com o banco de dados não inicializada")
+	}
+
+	migrator := migrations.NewMigrator(DB)
+	return migrator.Status()
 }
