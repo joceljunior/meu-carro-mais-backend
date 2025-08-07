@@ -176,6 +176,12 @@ m.migrations = append(m.migrations, Migration{
 - **Campos**: `data_cadastro TIMESTAMP`, `ativo BOOLEAN`
 - **Índice**: `idx_usuario_ativo`
 
+### 008 - add_latitude_longitude_to_usuario
+- **Objetivo**: Adicionar campos de localização ao usuário
+- **Campos**: `latitude DECIMAL(10,8)`, `longitude DECIMAL(11,8)`
+- **Índices**: `idx_usuario_latitude`, `idx_usuario_longitude`
+- **Observação**: Campos podem ser nulos (NULL)
+
 ## Exemplos Práticos
 
 ### Exemplo 1: Adicionar Campo Simples
@@ -219,6 +225,18 @@ migration := m.NewMigration("015", "update_existing_data").
         "UPDATE usuarios SET ativo = true WHERE ativo IS NULL",
         "UPDATE usuarios SET ativo = false WHERE ativo IS NULL",
     ).
+    Build()
+```
+
+### Exemplo 5: Campos de Localização
+
+```go
+// Adicionar campos de localização (como latitude e longitude)
+migration := m.NewMigration("016", "add_location_fields").
+    AddColumnSQL("usuarios", "latitude", "DECIMAL(10,8)").
+    AddColumnSQL("usuarios", "longitude", "DECIMAL(11,8)").
+    AddIndexSQL("usuarios", "idx_usuario_latitude", "latitude").
+    AddIndexSQL("usuarios", "idx_usuario_longitude", "longitude").
     Build()
 ```
 

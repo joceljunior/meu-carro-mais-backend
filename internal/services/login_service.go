@@ -6,9 +6,14 @@ import (
 )
 
 func Login(req json.LoginRequest) (*json.LoginResponse, error) {
-	user, err := datasource.GetUserByEmail(req.Email, req.Senha)
+	// Primeiro, tenta buscar o usuário apenas por email
+	user, err := datasource.GetUserByEmailOnly(req.Email)
 	if err != nil {
-		return nil, err
+		// Se não encontrou o usuário, cria um novo
+		user, err = datasource.CreateUserFromLogin(req)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var anuncioResp json.AnuncioDestaqueResponse

@@ -32,6 +32,28 @@ definitions:
       nome_plano:
         type: string
     type: object
+  json.LojaResponse:
+    properties:
+      categoria:
+        type: string
+      cnpj:
+        type: string
+      distancia:
+        description: Distância em km
+        type: number
+      id:
+        type: integer
+      id_categoria:
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      nome:
+        type: string
+    type: object
   json.LojaUsuarioResponse:
     properties:
       anuncio_destaque:
@@ -40,6 +62,15 @@ definitions:
         type: integer
       nome:
         type: string
+    type: object
+  json.LojasResponse:
+    properties:
+      lojas:
+        items:
+          $ref: '#/definitions/json.LojaResponse'
+        type: array
+      total:
+        type: integer
     type: object
   json.UserRequest:
     properties:
@@ -89,9 +120,10 @@ paths:
     post:
       consumes:
       - application/json
-      description: Autentica um usuário e retorna seus dados
+      description: Valida se o email existe. Se existir, retorna os dados do usuário.
+        Se não existir, cria um novo usuário e retorna os dados.
       parameters:
-      - description: Dados de login
+      - description: Dados de login (email e senha)
         in: body
         name: request
         required: true
@@ -108,11 +140,45 @@ paths:
           description: Dados inválidos
           schema:
             type: string
-        "401":
-          description: Não autorizado
+        "500":
+          description: Erro interno do servidor
           schema:
             type: string
-      summary: Login do usuário
+      summary: Login/Criação do usuário
       tags:
       - Autenticação
+  /lojas/proximidade:
+    get:
+      consumes:
+      - application/json
+      description: Retorna lista de lojas ordenadas por proximidade do usuário
+      parameters:
+      - description: Latitude do usuário
+        in: query
+        name: latitude
+        required: true
+        type: number
+      - description: Longitude do usuário
+        in: query
+        name: longitude
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.LojasResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            type: string
+        "500":
+          description: Erro interno do servidor
+          schema:
+            type: string
+      summary: Lista lojas por proximidade
+      tags:
+      - Lojas
 swagger: "2.0"

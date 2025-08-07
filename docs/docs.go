@@ -57,7 +57,7 @@ const docTemplate = `{
         },
         "/login": {
             "post": {
-                "description": "Autentica um usuário e retorna seus dados",
+                "description": "Valida se o email existe. Se existir, retorna os dados do usuário. Se não existir, cria um novo usuário e retorna os dados.",
                 "consumes": [
                     "application/json"
                 ],
@@ -67,10 +67,10 @@ const docTemplate = `{
                 "tags": [
                     "Autenticação"
                 ],
-                "summary": "Login do usuário",
+                "summary": "Login/Criação do usuário",
                 "parameters": [
                     {
-                        "description": "Dados de login",
+                        "description": "Dados de login (email e senha)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -92,8 +92,59 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
-                    "401": {
-                        "description": "Não autorizado",
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/proximidade": {
+            "get": {
+                "description": "Retorna lista de lojas ordenadas por proximidade do usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Lista lojas por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário",
+                        "name": "latitude",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário",
+                        "name": "longitude",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.LojasResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
                         "schema": {
                             "type": "string"
                         }
@@ -154,6 +205,39 @@ const docTemplate = `{
                 }
             }
         },
+        "json.LojaResponse": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "cnpj": {
+                    "type": "string"
+                },
+                "distancia": {
+                    "description": "Distância em km",
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_categoria": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
         "json.LojaUsuarioResponse": {
             "type": "object",
             "properties": {
@@ -165,6 +249,20 @@ const docTemplate = `{
                 },
                 "nome": {
                     "type": "string"
+                }
+            }
+        },
+        "json.LojasResponse": {
+            "type": "object",
+            "properties": {
+                "lojas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.LojaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

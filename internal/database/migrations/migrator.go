@@ -230,6 +230,15 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration007)
 
+	// Migration 008: Adicionar campos latitude e longitude ao usuário
+	migration008 := m.NewMigration("008", "add_latitude_longitude_to_usuario").
+		AddColumnSQL("usuarios", "latitude", "DECIMAL(10,8)").
+		AddColumnSQL("usuarios", "longitude", "DECIMAL(11,8)").
+		AddIndexSQL("usuarios", "idx_usuario_latitude", "latitude").
+		AddIndexSQL("usuarios", "idx_usuario_longitude", "longitude").
+		Build()
+	m.migrations = append(m.migrations, migration008)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

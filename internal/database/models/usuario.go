@@ -14,6 +14,8 @@ type Usuario struct {
 	DataNascimento *time.Time `gorm:"type:date"`
 	DataCadastro   time.Time  `gorm:"autoCreateTime"`
 	Ativo          bool       `gorm:"default:true"`
+	Latitude       *float64   `gorm:"type:decimal(10,8)"`
+	Longitude      *float64   `gorm:"type:decimal(11,8)"`
 	IDPlano        uint
 	IDLoja         *uint
 	Plano          TipoPlano `gorm:"foreignKey:IDPlano"`
