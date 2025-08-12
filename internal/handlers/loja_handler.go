@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"encoding/json"
-	"net/http"
-	"strconv"
-
+	"fmt"
 	"meu-carro-mais/internal/services"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetLojasByProximidadeHandler godoc
@@ -14,54 +14,85 @@ import (
 // @Tags         Lojas
 // @Accept       json
 // @Produce      json
-// @Param        latitude query number true "Latitude do usuário"
-// @Param        longitude query number true "Longitude do usuário"
-// @Success      200  {object}  json.LojasResponse
-// @Failure      400  {string}  string "Parâmetros inválidos"
-// @Failure      500  {string}  string "Erro interno do servidor"
+// @Param        latitude  query     number  true  "Latitude do usuário"
+// @Param        longitude query     number  true  "Longitude do usuário"
+// @Success      200       {object}  json.LojasResponse
+// @Failure      400       {object}  map[string]interface{} "Parâmetros inválidos"
+// @Failure      500       {object}  map[string]interface{} "Erro interno do servidor"
 // @Router       /lojas/proximidade [get]
-func GetLojasByProximidadeHandler(w http.ResponseWriter, r *http.Request) {
+func GetLojasByProximidadeHandler(c *gin.Context) {
 	// Obtém os parâmetros da query string
-	latStr := r.URL.Query().Get("latitude")
-	lngStr := r.URL.Query().Get("longitude")
+	latStr := c.Query("latitude")
+	lngStr := c.Query("longitude")
 
 	if latStr == "" || lngStr == "" {
-		http.Error(w, "Parâmetros latitude e longitude são obrigatórios", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Parâmetros latitude e longitude são obrigatórios",
+		})
 		return
 	}
 
 	// Converte para float64
-	latitude, err := strconv.ParseFloat(latStr, 64)
-	if err != nil {
-		http.Error(w, "Latitude inválida", http.StatusBadRequest)
+	var latitude, longitude float64
+	if _, err := fmt.Sscanf(latStr, "%f", &latitude); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude deve ser um número válido",
+		})
 		return
 	}
 
-	longitude, err := strconv.ParseFloat(lngStr, 64)
-	if err != nil {
-		http.Error(w, "Longitude inválida", http.StatusBadRequest)
+	if _, err := fmt.Sscanf(lngStr, "%f", &longitude); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Longitude deve ser um número válido",
+		})
 		return
 	}
 
 	// Valida as coordenadas
 	if latitude < -90 || latitude > 90 {
-		http.Error(w, "Latitude deve estar entre -90 e 90", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude deve estar entre -90 e 90",
+		})
 		return
 	}
 
 	if longitude < -180 || longitude > 180 {
-		http.Error(w, "Longitude deve estar entre -180 e 180", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Longitude deve estar entre -180 e 180",
+		})
 		return
 	}
 
 	// Busca as lojas
 	resp, err := services.GetLojasByProximidade(latitude, longitude)
 	if err != nil {
-		http.Error(w, "Erro ao buscar lojas: "+err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao buscar lojas: " + err.Error(),
+		})
 		return
 	}
 
 	// Retorna a resposta
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	c.JSON(http.StatusOK, resp)
+}
+
+// GetCategoriasLojistaHandler godoc
+// @Summary      Lista categorias de lojista
+// @Description  Retorna todas as categorias de lojista disponíveis
+// @Tags         Lojas
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  json.CategoriasLojistaResponse
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /lojas/categorias [get]
+func GetCategoriasLojistaHandler(c *gin.Context) {
+	resp, err := services.GetCategoriasLojista()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 } 

@@ -1,0 +1,15 @@
+### Listar Todos os Anúncios
+GET http://localhost:8080/anuncios
+Content-Type: application/json
+
+### Listar Categorias de Anúncio
+GET http://localhost:8080/anuncios/categorias
+Content-Type: application/json
+
+### Listar Categorias de Serviço (para comparação)
+GET http://localhost:8080/servicos/categorias
+Content-Type: application/json
+
+### Listar Categorias de Lojista (para comparação)
+GET http://localhost:8080/lojas/categorias
+Content-Type: application/json

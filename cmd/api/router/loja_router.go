@@ -8,7 +8,9 @@ import (
 type LojaRouter struct{}
 
 func (lr *LojaRouter) RegisterRoutes(rg *gin.RouterGroup) {
-	rg.GET("/lojas/proximidade", func(c *gin.Context) {
-		handlers.GetLojasByProximidadeHandler(c.Writer, c.Request)
-	})
+	lojas := rg.Group("/lojas")
+	{
+		lojas.GET("/proximidade", handlers.GetLojasByProximidadeHandler)
+		lojas.GET("/categorias", handlers.GetCategoriasLojistaHandler)
+	}
 } 

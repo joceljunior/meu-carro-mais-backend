@@ -122,13 +122,13 @@ definitions:
 info:
   contact: {}
 paths:
-  /createuser:
+  /users:
     post:
       consumes:
       - application/json
-      description: Cria um novo usuário
+      description: Cria um novo usuário com todos os dados fornecidos
       parameters:
-      - description: Dados do usuário
+      - description: Dados completos do usuário
         in: body
         name: request
         required: true
@@ -140,14 +140,26 @@ paths:
         "201":
           description: Usuário criado com sucesso
           schema:
-            type: string
+            $ref: '#/definitions/json.UserResponse'
         "400":
           description: Dados inválidos
           schema:
-            type: string
-      summary: Criação do usuário
+            type: object
+            properties:
+              error:
+                type: string
+              details:
+                type: string
+        "500":
+          description: Erro interno do servidor
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+      summary: Criação do usuário completo
       tags:
-      - Criação de Usuário
+      - Usuários
   /login:
     post:
       consumes:
@@ -213,6 +225,28 @@ paths:
       summary: Lista lojas por proximidade
       tags:
       - Lojas
+  /lojas/categorias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as categorias de lojista disponíveis
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CategoriasLojistaResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+      summary: Lista categorias de lojista
+      tags:
+      - Lojas
   /servicos/proximidade:
     get:
       consumes:
@@ -247,4 +281,334 @@ paths:
       summary: Lista serviços por proximidade
       tags:
       - Serviços
+  /servicos/categorias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as categorias de serviço disponíveis
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CategoriasServicoResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+      summary: Lista categorias de serviço
+      tags:
+      - Serviços
+  /anuncios:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os anúncios disponíveis com informações da loja e categoria
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AnunciosResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+      summary: Lista todos os anúncios
+      tags:
+      - Anúncios
+  /anuncios/categorias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as categorias de anúncio disponíveis
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CategoriasAnuncioResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+      summary: Lista categorias de anúncio
+      tags:
+      - Anúncios
+definitions:
+  json.AnuncioDestaqueResponse:
+    properties:
+      descricao:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      preco:
+        type: number
+      titulo:
+        type: string
+    type: object
+  json.LoginRequest:
+    properties:
+      email:
+        type: string
+      senha:
+        type: string
+    type: object
+  json.LoginResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaUsuarioResponse'
+      nome:
+        type: string
+      nome_plano:
+        type: string
+    type: object
+  json.LojaResponse:
+    properties:
+      categoria:
+        type: string
+      cnpj:
+        type: string
+      distancia:
+        description: Distância em km
+        type: number
+      id:
+        type: integer
+      id_categoria:
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      nome:
+        type: string
+    type: object
+  json.LojaUsuarioResponse:
+    properties:
+      anuncio_destaque:
+        $ref: '#/definitions/json.AnuncioDestaqueResponse'
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.LojasResponse:
+    properties:
+      lojas:
+        items:
+          $ref: '#/definitions/json.LojaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.ServicoResponse:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+      destaque:
+        type: boolean
+      distancia:
+        type: number
+      id:
+        type: integer
+      id_categoria:
+        type: integer
+      imagem:
+        type: string
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      preco:
+        type: number
+      titulo:
+        type: string
+    type: object
+  json.ServicosResponse:
+    properties:
+      servicos:
+        items:
+          $ref: '#/definitions/json.ServicoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.UserRequest:
+    required:
+    - nome
+    - email
+    - senha
+    - cpf
+    properties:
+      cpf:
+        description: CPF do usuário
+        type: string
+      data_nascimento:
+        format: date-time
+        type: string
+      email:
+        description: Email do usuário
+        format: email
+        type: string
+      endereco:
+        description: Endereço do usuário
+        type: string
+      imagem:
+        description: URL da imagem do usuário
+        type: string
+      latitude:
+        format: float64
+        type: number
+      longitude:
+        format: float64
+        type: number
+      nome:
+        description: Nome completo do usuário
+        type: string
+      senha:
+        description: Senha do usuário (mínimo 6 caracteres)
+        minLength: 6
+        type: string
+      telefone:
+        description: Telefone do usuário
+        type: string
+    type: object
+  json.UserResponse:
+    properties:
+      ativo:
+        type: boolean
+      cpf:
+        type: string
+      data_cadastro:
+        format: date-time
+        type: string
+      data_nascimento:
+        format: date-time
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_plano:
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        format: float64
+        type: number
+      longitude:
+        format: float64
+        type: number
+      mensagem:
+        type: string
+      nome:
+        type: string
+      telefone:
+        type: string
+    type: object
+  json.CategoriaServicoResponse:
+    properties:
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.CategoriasServicoResponse:
+    properties:
+      categorias:
+        items:
+          $ref: '#/definitions/json.CategoriaServicoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CategoriaLojistaResponse:
+    properties:
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.CategoriasLojistaResponse:
+    properties:
+      categorias:
+        items:
+          $ref: '#/definitions/json.CategoriaLojistaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.AnuncioResponse:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+      destaque:
+        type: boolean
+      id:
+        type: integer
+      id_categoria:
+        type: integer
+      id_loja:
+        type: integer
+      imagem:
+        type: string
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      preco:
+        format: float64
+        type: number
+      titulo:
+        type: string
+    type: object
+  json.AnunciosResponse:
+    properties:
+      anuncios:
+        items:
+          $ref: '#/definitions/json.AnuncioResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CategoriaAnuncioResponse:
+    properties:
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.CategoriasAnuncioResponse:
+    properties:
+      categorias:
+        items:
+          $ref: '#/definitions/json.CategoriaAnuncioResponse'
+        type: array
+      total:
+        type: integer
+    type: object
 swagger: "2.0"

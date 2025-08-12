@@ -1,0 +1,7 @@
+### Listar Categorias de Serviço
+GET http://localhost:8080/servicos/categorias
+Content-Type: application/json
+
+### Listar Serviços por Proximidade (para comparação)
+GET http://localhost:8080/servicos/proximidade?latitude=-23.5505&longitude=-46.6333
+Content-Type: application/json

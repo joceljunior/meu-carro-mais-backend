@@ -13,3 +13,32 @@ func GetAnuncioDestaqueByLojaID(lojaID uint) (*models.Anuncio, error) {
 	}
 	return &anuncio, nil
 }
+
+// GetAnuncios retorna todos os anúncios com relacionamentos
+func GetAnuncios() ([]models.Anuncio, error) {
+	var anuncios []models.Anuncio
+	
+	err := database.DB.
+		Preload("Categoria").
+		Preload("Loja").
+		Preload("Loja.Categoria").
+		Find(&anuncios).Error
+	
+	if err != nil {
+		return nil, err
+	}
+	
+	return anuncios, nil
+}
+
+// GetCategoriasAnuncio retorna todas as categorias de anúncio
+func GetCategoriasAnuncio() ([]models.CategoriaAnuncio, error) {
+	var categorias []models.CategoriaAnuncio
+	
+	err := database.DB.Find(&categorias).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	return categorias, nil
+}

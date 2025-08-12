@@ -20,4 +20,5 @@ type Usuario struct {
 	IDLoja         *uint
 	Plano          TipoPlano `gorm:"foreignKey:IDPlano"`
 	Loja           Loja      `gorm:"foreignKey:IDLoja"`
+	Veiculos       []Veiculo `gorm:"foreignKey:IDUsuario"`
 }

@@ -22,6 +22,9 @@ func NewRouter() *gin.Engine {
 		&ExemploRouter{},
 		&LojaRouter{},
 		&ServicoRouter{},
+		&UserRouter{},
+		&AnuncioRouter{},
+		&VeiculoRouter{},
 	}
 
 	for _, rt := range routers {

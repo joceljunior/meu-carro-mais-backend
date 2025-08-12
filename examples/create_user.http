@@ -1,0 +1,42 @@
+### Criar Usuário Completo
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "nome": "João Silva",
+  "email": "joao.silva@email.com",
+  "senha": "123456",
+  "cpf": "123.456.789-00",
+  "imagem": "https://exemplo.com/foto.jpg",
+  "telefone": "(11) 99999-9999",
+  "endereco": "Rua das Flores, 123 - São Paulo/SP",
+  "data_nascimento": "1990-01-01T00:00:00Z",
+  "latitude": -23.5505,
+  "longitude": -46.6333
+}
+
+### Criar Usuário Mínimo (apenas campos obrigatórios)
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "nome": "Maria Santos",
+  "email": "maria.santos@email.com",
+  "senha": "123456",
+  "cpf": "987.654.321-00"
+}
+
+### Criar Usuário com Dados de Localização
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "nome": "Pedro Oliveira",
+  "email": "pedro.oliveira@email.com",
+  "senha": "123456",
+  "cpf": "111.222.333-44",
+  "telefone": "(21) 88888-8888",
+  "endereco": "Av. Atlântica, 456 - Rio de Janeiro/RJ",
+  "latitude": -22.9068,
+  "longitude": -43.1729
+}

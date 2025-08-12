@@ -1,35 +1,41 @@
 package handlers
 
 import (
-	"encoding/json"
-	jr "meu-carro-mais/internal/handlers/json"
+	"meu-carro-mais/internal/handlers/json"
 	"meu-carro-mais/internal/services"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // CreateUserHandler godoc
-// @Summary      Criação do usuário
-// @Description  Cria um novo usuário
-// @Tags         Criação de Usuário
+// @Summary      Criação do usuário completo
+// @Description  Cria um novo usuário com todos os dados fornecidos
+// @Tags         Usuários
 // @Accept       json
 // @Produce      json
-// @Param        request body json.UserRequest true "Dados do usuário"
-// @Success      201  {string}  string "Usuário criado com sucesso"
-// @Failure      400  {string}  string "Dados inválidos"
-// @Router       /createuser [post]
-func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	var req jr.UserRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Dados inválidos", http.StatusBadRequest)
+// @Param        request body json.UserRequest true "Dados completos do usuário"
+// @Success      201  {object}  json.UserResponse "Usuário criado com sucesso"
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /users [post]
+func CreateUserHandler(c *gin.Context) {
+	var req json.UserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Dados inválidos",
+			"details": err.Error(),
+		})
 		return
 	}
 
 	resp, err := services.CreateUser(req)
-
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+
+	c.JSON(http.StatusCreated, resp)
 }

@@ -9,7 +9,9 @@ import (
 type ServicoRouter struct{}
 
 func (sr *ServicoRouter) RegisterRoutes(rg *gin.RouterGroup) {
-	rg.GET("/servicos/proximidade", func(c *gin.Context) {
-		handlers.GetServicosByProximidadeHandler(c.Writer, c.Request)
-	})
+	servicos := rg.Group("/servicos")
+	{
+		servicos.GET("/proximidade", handlers.GetServicosByProximidadeHandler)
+		servicos.GET("/categorias", handlers.GetCategoriasServicoHandler)
+	}
 }

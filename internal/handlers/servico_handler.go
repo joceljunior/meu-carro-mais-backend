@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
-	"strconv"
+
+	"github.com/gin-gonic/gin"
 
 	"meu-carro-mais/internal/services"
 )
@@ -14,43 +15,66 @@ import (
 // @Tags         Serviços
 // @Accept       json
 // @Produce      json
-// @Param        latitude query number true "Latitude do usuário"
-// @Param        longitude query number true "Longitude do usuário"
-// @Success      200  {object}  json.ServicosResponse
-// @Failure      400  {string}  string "Parâmetros inválidos"
-// @Failure      500  {string}  string "Erro interno do servidor"
+// @Param        latitude  query     number  true  "Latitude do usuário"
+// @Param        longitude query     number  true  "Longitude do usuário"
+// @Success      200       {object}  json.ServicosResponse
+// @Failure      400       {string}  string "Parâmetros inválidos"
+// @Failure      500       {string}  string "Erro interno do servidor"
 // @Router       /servicos/proximidade [get]
-func GetServicosByProximidadeHandler(w http.ResponseWriter, r *http.Request) {
-	// Obtém os parâmetros de query
-	latitudeStr := r.URL.Query().Get("latitude")
-	longitudeStr := r.URL.Query().Get("longitude")
+func GetServicosByProximidadeHandler(c *gin.Context) {
+	latitudeStr := c.Query("latitude")
+	longitudeStr := c.Query("longitude")
 
 	if latitudeStr == "" || longitudeStr == "" {
-		http.Error(w, "Latitude e longitude são obrigatórios", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude e longitude são obrigatórios",
+		})
 		return
 	}
 
-	// Converte para float64
-	latitude, err := strconv.ParseFloat(latitudeStr, 64)
-	if err != nil {
-		http.Error(w, "Latitude inválida", http.StatusBadRequest)
+	var latitude, longitude float64
+	if _, err := fmt.Sscanf(latitudeStr, "%f", &latitude); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude deve ser um número válido",
+		})
 		return
 	}
 
-	longitude, err := strconv.ParseFloat(longitudeStr, 64)
-	if err != nil {
-		http.Error(w, "Longitude inválida", http.StatusBadRequest)
+	if _, err := fmt.Sscanf(longitudeStr, "%f", &longitude); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Longitude deve ser um número válido",
+		})
 		return
 	}
 
-	// Chama o serviço
 	resp, err := services.GetServicosByProximidade(latitude, longitude)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
-	// Retorna a resposta
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	c.JSON(http.StatusOK, resp)
+}
+
+// GetCategoriasServicoHandler godoc
+// @Summary      Lista categorias de serviço
+// @Description  Retorna todas as categorias de serviço disponíveis
+// @Tags         Serviços
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  json.CategoriasServicoResponse
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /servicos/categorias [get]
+func GetCategoriasServicoHandler(c *gin.Context) {
+	resp, err := services.GetCategoriasServico()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }

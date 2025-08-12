@@ -56,6 +56,18 @@ func GetLojasByProximidade(userLat, userLng float64) ([]models.Loja, error) {
 	return lojasOrdenadas, nil
 }
 
+// GetCategoriasLojista retorna todas as categorias de lojista
+func GetCategoriasLojista() ([]models.CategoriaLojista, error) {
+	var categorias []models.CategoriaLojista
+	
+	err := database.DB.Find(&categorias).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	return categorias, nil
+}
+
 // calcularDistancia calcula a distância entre dois pontos usando a fórmula de Haversine
 func calcularDistancia(lat1, lng1, lat2, lng2 float64) float64 {
 	const R = 6371 // Raio da Terra em km

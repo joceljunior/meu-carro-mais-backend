@@ -4,9 +4,9 @@
         "contact": {}
     },
     "paths": {
-        "/createuser": {
+        "/users": {
             "post": {
-                "description": "Cria um novo usuário",
+                "description": "Cria um novo usuário com todos os dados fornecidos",
                 "consumes": [
                     "application/json"
                 ],
@@ -14,12 +14,12 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Criação de Usuário"
+                    "Usuários"
                 ],
-                "summary": "Criação do usuário",
+                "summary": "Criação do usuário completo",
                 "parameters": [
                     {
-                        "description": "Dados do usuário",
+                        "description": "Dados completos do usuário",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -32,13 +32,32 @@
                     "201": {
                         "description": "Usuário criado com sucesso",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/json.UserResponse"
                         }
                     },
                     "400": {
                         "description": "Dados inválidos",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                },
+                                "details": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }
@@ -129,13 +148,57 @@
                     "400": {
                         "description": "Parâmetros inválidos",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/categorias": {
+            "get": {
+                "description": "Retorna todas as categorias de lojista disponíveis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Lista categorias de lojista",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CategoriasLojistaResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }
@@ -180,13 +243,125 @@
                     "400": {
                         "description": "Parâmetros inválidos",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/servicos/categorias": {
+            "get": {
+                "description": "Retorna todas as categorias de serviço disponíveis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Lista categorias de serviço",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CategoriasServicoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/anuncios": {
+            "get": {
+                "description": "Retorna todos os anúncios disponíveis com informações da loja e categoria",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Lista todos os anúncios",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnunciosResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/anuncios/categorias": {
+            "get": {
+                "description": "Retorna todas as categorias de anúncio disponíveis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Lista categorias de anúncio",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CategoriasAnuncioResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "error": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     }
                 }
@@ -306,6 +481,31 @@
                 }
             }
         },
+        "json.CategoriaLojistaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CategoriasLojistaResponse": {
+            "type": "object",
+            "properties": {
+                "categorias": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CategoriaLojistaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "json.ServicoResponse": {
             "type": "object",
             "properties": {
@@ -355,25 +555,209 @@
                 }
             }
         },
-        "json.UserRequest": {
+        "json.CategoriaServicoResponse": {
             "type": "object",
             "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CategoriasServicoResponse": {
+            "type": "object",
+            "properties": {
+                "categorias": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CategoriaServicoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.AnuncioResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "titulo": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "preco": {
+                    "type": "number",
+                    "format": "float64"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "destaque": {
+                    "type": "boolean"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_categoria": {
+                    "type": "integer"
+                },
+                "categoria": {
+                    "type": "string"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                }
+            }
+        },
+        "json.AnunciosResponse": {
+            "type": "object",
+            "properties": {
+                "anuncios": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.AnuncioResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CategoriaAnuncioResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CategoriasAnuncioResponse": {
+            "type": "object",
+            "properties": {
+                "categorias": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CategoriaAnuncioResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.UserRequest": {
+            "type": "object",
+            "required": [
+                "nome",
+                "email",
+                "senha",
+                "cpf"
+            ],
+            "properties": {
+                "cpf": {
+                    "type": "string",
+                    "description": "CPF do usuário"
+                },
+                "data_nascimento": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email do usuário"
+                },
+                "endereco": {
+                    "type": "string",
+                    "description": "Endereço do usuário"
+                },
+                "imagem": {
+                    "type": "string",
+                    "description": "URL da imagem do usuário"
+                },
+                "latitude": {
+                    "type": "number",
+                    "format": "float64"
+                },
+                "longitude": {
+                    "type": "number",
+                    "format": "float64"
+                },
+                "nome": {
+                    "type": "string",
+                    "description": "Nome completo do usuário"
+                },
+                "senha": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "Senha do usuário (mínimo 6 caracteres)"
+                },
+                "telefone": {
+                    "type": "string",
+                    "description": "Telefone do usuário"
+                }
+            }
+        },
+        "json.UserResponse": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
                 "cpf": {
                     "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "data_nascimento": {
+                    "type": "string",
+                    "format": "date-time"
                 },
                 "email": {
                     "type": "string"
                 },
+                "endereco": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_plano": {
+                    "type": "integer"
+                },
                 "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number",
+                    "format": "float64"
+                },
+                "longitude": {
+                    "type": "number",
+                    "format": "float64"
+                },
+                "mensagem": {
                     "type": "string"
                 },
                 "nome": {
                     "type": "string"
                 },
-                "password": {
-                    "type": "string"
-                },
-                "senha": {
+                "telefone": {
                     "type": "string"
                 }
             }

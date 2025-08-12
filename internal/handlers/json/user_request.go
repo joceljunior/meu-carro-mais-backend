@@ -1,10 +1,16 @@
 package json
 
+import "time"
+
 type UserRequest struct {
-	Email    string `json:"email"`
-	Senha    string `json:"senha"`
-	Nome     string `json:"nome"`
-	CPF      string `json:"cpf"`
-	Password string `json:"password"`
-	Imagem   string `json:"imagem,omitempty"`
+	Nome           string     `json:"nome" binding:"required"`
+	Email          string     `json:"email" binding:"required,email"`
+	Senha          string     `json:"senha" binding:"required,min=6"`
+	CPF            string     `json:"cpf" binding:"required"`
+	Imagem         string     `json:"imagem,omitempty"`
+	Telefone       string     `json:"telefone,omitempty"`
+	Endereco       string     `json:"endereco,omitempty"`
+	DataNascimento *time.Time `json:"data_nascimento,omitempty"`
+	Latitude       *float64   `json:"latitude,omitempty"`
+	Longitude      *float64   `json:"longitude,omitempty"`
 }

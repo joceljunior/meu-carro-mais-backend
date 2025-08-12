@@ -22,3 +22,8 @@ type CategoriaServicoResponse struct {
 	ID   uint   `json:"id"`
 	Nome string `json:"nome"`
 }
+
+type CategoriasServicoResponse struct {
+	Categorias []CategoriaServicoResponse `json:"categorias"`
+	Total      int                        `json:"total"`
+}

@@ -11,10 +11,33 @@ func GetServicosByProximidade(latitude, longitude float64) (*json.ServicosRespon
 		return nil, err
 	}
 
-	resp := &json.ServicosResponse{
+	response := &json.ServicosResponse{
 		Servicos: servicos,
 		Total:    len(servicos),
 	}
 
-	return resp, nil
+	return response, nil
+}
+
+func GetCategoriasServico() (*json.CategoriasServicoResponse, error) {
+	categorias, err := datasource.GetCategoriasServico()
+	if err != nil {
+		return nil, err
+	}
+
+	var categoriasResponse []json.CategoriaServicoResponse
+	for _, categoria := range categorias {
+		categoriaResp := json.CategoriaServicoResponse{
+			ID:   categoria.ID,
+			Nome: categoria.Nome,
+		}
+		categoriasResponse = append(categoriasResponse, categoriaResp)
+	}
+
+	response := &json.CategoriasServicoResponse{
+		Categorias: categoriasResponse,
+		Total:      len(categoriasResponse),
+	}
+
+	return response, nil
 }

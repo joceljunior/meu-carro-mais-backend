@@ -1,0 +1,19 @@
+### Listar Veículos de um Usuário
+GET http://localhost:8080/usuarios/1/veiculos
+Content-Type: application/json
+
+### Listar Histórico de Todos os Veículos de um Usuário
+GET http://localhost:8080/usuarios/1/historico
+Content-Type: application/json
+
+### Listar Histórico de um Veículo Específico
+GET http://localhost:8080/veiculos/1/historico
+Content-Type: application/json
+
+### Listar Anúncios (para comparação)
+GET http://localhost:8080/anuncios
+Content-Type: application/json
+
+### Listar Categorias de Anúncio (para comparação)
+GET http://localhost:8080/anuncios/categorias
+Content-Type: application/json

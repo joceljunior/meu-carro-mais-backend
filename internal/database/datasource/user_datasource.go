@@ -33,22 +33,29 @@ func GetUserByEmailOnly(email string) (*models.Usuario, error) {
 	return &usuario, nil
 }
 
-func CreateNewUser(json json.UserRequest) (*string, error) {
+func CreateNewUser(json json.UserRequest) (*models.Usuario, error) {
 	user := models.Usuario{
-		Email:   json.Email,
-		Senha:   json.Password,
-		IDLoja:  nil,
-		Nome:    json.Nome,
-		CPF:     json.CPF,
-		Imagem:  json.Imagem,
-		IDPlano: 1,
+		Email:          json.Email,
+		Senha:          json.Senha,
+		IDLoja:         nil,
+		Nome:           json.Nome,
+		CPF:            json.CPF,
+		Imagem:         json.Imagem,
+		Telefone:       json.Telefone,
+		Endereco:       json.Endereco,
+		DataNascimento: json.DataNascimento,
+		Latitude:       json.Latitude,
+		Longitude:      json.Longitude,
+		IDPlano:        1, // Plano padrão (Gratuito)
+		Ativo:          true,
 	}
 	err := database.DB.Create(&user).Error
 	if err != nil {
 		return nil, err
 	}
-	resp := "Usuário criado com sucesso"
-	return &resp, nil
+
+	// Recarrega o usuário com os relacionamentos
+	return GetUserByEmailOnly(json.Email)
 }
 
 // CreateUserFromLogin cria um novo usuário a partir dos dados do login

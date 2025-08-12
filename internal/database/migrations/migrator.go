@@ -239,6 +239,44 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration008)
 
+	// Migration 009: Criar tabelas de veículos e histórico
+	migration009 := m.NewMigration("009", "create_veiculos_tables").
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS veiculos (
+				id SERIAL PRIMARY KEY,
+				modelo VARCHAR(255) NOT NULL,
+				ano INTEGER NOT NULL,
+				cor VARCHAR(100) NOT NULL,
+				placa VARCHAR(10) UNIQUE NOT NULL,
+				id_usuario INTEGER NOT NULL,
+				data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				ativo BOOLEAN DEFAULT TRUE,
+				CONSTRAINT fk_veiculo_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+			)
+		`, `
+			DROP TABLE IF EXISTS veiculos CASCADE
+		`).
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS historico_veiculos (
+				id SERIAL PRIMARY KEY,
+				id_veiculo INTEGER NOT NULL,
+				id_anuncio INTEGER NOT NULL,
+				descricao VARCHAR(500) NOT NULL,
+				data TIMESTAMP NOT NULL,
+				data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				CONSTRAINT fk_historico_veiculo FOREIGN KEY (id_veiculo) REFERENCES veiculos(id),
+				CONSTRAINT fk_historico_anuncio FOREIGN KEY (id_anuncio) REFERENCES anuncios(id)
+			)
+		`, `
+			DROP TABLE IF EXISTS historico_veiculos CASCADE
+		`).
+		AddIndexSQL("veiculos", "idx_veiculo_usuario", "id_usuario").
+		AddIndexSQL("veiculos", "idx_veiculo_placa", "placa").
+		AddIndexSQL("historico_veiculos", "idx_historico_veiculo", "id_veiculo").
+		AddIndexSQL("historico_veiculos", "idx_historico_anuncio", "id_anuncio").
+		Build()
+	m.migrations = append(m.migrations, migration009)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
@@ -383,12 +421,16 @@ func (m *Migrator) createInitialTables(db *gorm.DB) error {
 		&models.Anuncio{},
 		&models.CategoriaServico{},
 		&models.Servico{},
+		&models.Veiculo{},
+		&models.HistoricoVeiculo{},
 	)
 }
 
 // dropInitialTables remove todas as tabelas iniciais
 func (m *Migrator) dropInitialTables(db *gorm.DB) error {
 	tables := []interface{}{
+		&models.HistoricoVeiculo{},
+		&models.Veiculo{},
 		&models.Servico{},
 		&models.CategoriaServico{},
 		&models.Anuncio{},

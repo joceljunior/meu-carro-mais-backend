@@ -63,3 +63,15 @@ func GetServicosByProximidade(latitude, longitude float64) ([]json.ServicoRespon
 
 	return servicosResponse, nil
 }
+
+// GetCategoriasServico retorna todas as categorias de serviço
+func GetCategoriasServico() ([]models.CategoriaServico, error) {
+	var categorias []models.CategoriaServico
+	
+	err := database.DB.Find(&categorias).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	return categorias, nil
+}

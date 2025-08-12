@@ -1,0 +1,11 @@
+### Listar Categorias de Lojista
+GET http://localhost:8080/lojas/categorias
+Content-Type: application/json
+
+### Listar Lojas por Proximidade (para comparação)
+GET http://localhost:8080/lojas/proximidade?latitude=-23.5505&longitude=-46.6333
+Content-Type: application/json
+
+### Listar Categorias de Serviço (para comparação)
+GET http://localhost:8080/servicos/categorias
+Content-Type: application/json

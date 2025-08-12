@@ -15,4 +15,14 @@ type LojaResponse struct {
 type LojasResponse struct {
 	Lojas []LojaResponse `json:"lojas"`
 	Total int            `json:"total"`
+}
+
+type CategoriaLojistaResponse struct {
+	ID   uint   `json:"id"`
+	Nome string `json:"nome"`
+}
+
+type CategoriasLojistaResponse struct {
+	Categorias []CategoriaLojistaResponse `json:"categorias"`
+	Total      int                        `json:"total"`
 } 
