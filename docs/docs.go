@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/anuncios": {
             "get": {
-                "description": "Retorna todos os anúncios disponíveis com informações da loja e categoria",
+                "description": "Retorna uma lista com todos os anúncios ativos",
                 "consumes": [
                     "application/json"
                 ],
@@ -30,9 +30,58 @@ const docTemplate = `{
                 "summary": "Lista todos os anúncios",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Lista de anúncios",
                         "schema": {
-                            "$ref": "#/definitions/json.AnunciosResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.AnuncioResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo anúncio com todos os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Criação do anúncio completo",
+                "parameters": [
+                    {
+                        "description": "Dados completos do anúncio",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.AnuncioRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Anúncio criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnuncioResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "500": {
@@ -63,6 +112,1290 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/json.CategoriasAnuncioResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/anuncios/{id}": {
+            "get": {
+                "description": "Retorna os dados de um anúncio específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Busca anúncio por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do anúncio",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Anúncio encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnuncioResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Anúncio não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um anúncio existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Atualiza anúncio",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do anúncio",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do anúncio",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.AnuncioRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Anúncio atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnuncioResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Anúncio não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete do anúncio, marcando como excluído sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Exclui anúncio (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do anúncio",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Anúncio excluído com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Anúncio não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/anuncios/{id}/restore": {
+            "post": {
+                "description": "Restaura um anúncio que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Restaura anúncio excluído",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do anúncio",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Anúncio restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Anúncio não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/avaliacoes": {
+            "get": {
+                "description": "Retorna todas as avaliações ativas do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Lista todas as avaliações",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacoesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria uma nova avaliação de loja no sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Cria uma nova avaliação",
+                "parameters": [
+                    {
+                        "description": "Dados da avaliação",
+                        "name": "avaliacao",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacaoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacaoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/avaliacoes/{id}": {
+            "get": {
+                "description": "Retorna uma avaliação específica pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Busca avaliação por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da avaliação",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacaoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Avaliação não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de uma avaliação existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Atualiza avaliação",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da avaliação",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados da avaliação",
+                        "name": "avaliacao",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacaoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacaoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Avaliação não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de uma avaliação, marcando-a como excluída",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Remove avaliação (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da avaliação",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Avaliação removida com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Avaliação não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/avaliacoes/{id}/restore": {
+            "post": {
+                "description": "Restaura uma avaliação que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Restaura avaliação",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da avaliação",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Avaliação restaurada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Avaliação não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/fotos": {
+            "get": {
+                "description": "Retorna todas as fotos ativas do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Lista todas as fotos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotosResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria uma nova foto no sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Cria uma nova foto",
+                "parameters": [
+                    {
+                        "description": "Dados da foto",
+                        "name": "foto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.FotoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/fotos/principal/{tipo}/{id}": {
+            "get": {
+                "description": "Retorna a foto principal de uma entidade específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Busca foto principal de uma entidade",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tipo da entidade (veiculo, veiculo_loja, produto, servico, loja)",
+                        "name": "tipo",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID da entidade",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Foto não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/fotos/{id}": {
+            "get": {
+                "description": "Retorna uma foto específica pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Busca foto por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da foto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Foto não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de uma foto existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Atualiza foto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da foto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados da foto",
+                        "name": "foto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.FotoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Foto não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de uma foto, marcando-a como excluída",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Remove foto (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da foto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Foto removida com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Foto não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/fotos/{id}/principal": {
+            "put": {
+                "description": "Define uma foto como principal da entidade",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Define foto como principal",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da foto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Foto definida como principal com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Foto não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/fotos/{id}/restore": {
+            "post": {
+                "description": "Restaura uma foto que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Restaura foto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da foto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Foto restaurada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Foto não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate": {
+            "get": {
+                "description": "Retorna todos os históricos de resgate ativos do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista todos os históricos de resgate",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo histórico de resgate no sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Cria um novo histórico de resgate",
+                "parameters": [
+                    {
+                        "description": "Dados do histórico de resgate",
+                        "name": "historico",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/{id}": {
+            "get": {
+                "description": "Retorna um histórico de resgate específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Busca histórico de resgate por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um histórico de resgate existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Atualiza histórico de resgate",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do histórico de resgate",
+                        "name": "historico",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de um histórico de resgate, marcando-o como excluído",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Remove histórico de resgate (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Histórico removido com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/{id}/restore": {
+            "post": {
+                "description": "Restaura um histórico de resgate que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Restaura histórico de resgate",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Histórico restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/{id}/status": {
+            "put": {
+                "description": "Atualiza apenas o status de um histórico de resgate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Atualiza status do histórico de resgate",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Novo status",
+                        "name": "status",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status atualizado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "500": {
@@ -116,6 +1449,85 @@ const docTemplate = `{
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas": {
+            "get": {
+                "description": "Retorna uma lista com todas as lojas ativas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Lista todas as lojas",
+                "responses": {
+                    "200": {
+                        "description": "Lista de lojas",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.LojaResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria uma nova loja com todos os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Criação da loja completa",
+                "parameters": [
+                    {
+                        "description": "Dados completos da loja",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.LojaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Loja criada com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.LojaResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -189,6 +1601,921 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}": {
+            "get": {
+                "description": "Retorna os dados de uma loja específica pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Busca loja por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loja encontrada",
+                        "schema": {
+                            "$ref": "#/definitions/json.LojaResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Loja não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de uma loja existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Atualiza loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados da loja",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.LojaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loja atualizada com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.LojaResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Loja não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete da loja, marcando como excluída sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Exclui loja (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loja excluída com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Loja não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/avaliacoes": {
+            "get": {
+                "description": "Retorna todas as avaliações de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Lista avaliações de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacoesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/avaliacoes/estatisticas": {
+            "get": {
+                "description": "Retorna estatísticas detalhadas das avaliações de uma loja",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Estatísticas de avaliações de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacaoEstatisticasResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/fotos": {
+            "get": {
+                "description": "Retorna todas as fotos de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Lista fotos de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/historicos-resgate": {
+            "get": {
+                "description": "Retorna todos os históricos de resgate de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista históricos de resgate de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/produtos": {
+            "get": {
+                "description": "Retorna todos os produtos ativos de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Lista produtos de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.ProdutosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/restore": {
+            "post": {
+                "description": "Restaura uma loja que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Restaura loja excluída",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Loja restaurada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Loja não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/veiculos": {
+            "get": {
+                "description": "Retorna todos os veículos ativos de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos de Loja"
+                ],
+                "summary": "Lista veículos de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculosLojaResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/produtos": {
+            "get": {
+                "description": "Retorna todos os produtos ativos do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Lista todos os produtos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.ProdutosResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo produto no sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Cria um novo produto",
+                "parameters": [
+                    {
+                        "description": "Dados do produto",
+                        "name": "produto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.ProdutoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.ProdutoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/produtos/{id}": {
+            "get": {
+                "description": "Retorna um produto específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Busca produto por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do produto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.ProdutoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um produto existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Atualiza produto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do produto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do produto",
+                        "name": "produto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.ProdutoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.ProdutoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de um produto, marcando-o como excluído",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Remove produto (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do produto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto removido com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/produtos/{id}/fotos": {
+            "get": {
+                "description": "Retorna todas as fotos de um produto específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Lista fotos de um produto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do produto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de produto inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/produtos/{id}/restore": {
+            "post": {
+                "description": "Restaura um produto que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Restaura produto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do produto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/servicos": {
+            "get": {
+                "description": "Retorna uma lista com todos os serviços ativos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Lista todos os serviços",
+                "responses": {
+                    "200": {
+                        "description": "Lista de serviços",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.ServicoResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo serviço com todos os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Criação do serviço completo",
+                "parameters": [
+                    {
+                        "description": "Dados completos do serviço",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.ServicoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Serviço criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.ServicoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -280,6 +2607,271 @@ const docTemplate = `{
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/servicos/{id}": {
+            "get": {
+                "description": "Retorna os dados de um serviço específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Busca serviço por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do serviço",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Serviço encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/json.ServicoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Serviço não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um serviço existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Atualiza serviço",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do serviço",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do serviço",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.ServicoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Serviço atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.ServicoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Serviço não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete do serviço, marcando como excluído sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Exclui serviço (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do serviço",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Serviço excluído com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Serviço não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/servicos/{id}/fotos": {
+            "get": {
+                "description": "Retorna todas as fotos de um serviço específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Lista fotos de um serviço",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do serviço",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de serviço inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/servicos/{id}/restore": {
+            "post": {
+                "description": "Restaura um serviço que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Restaura serviço excluído",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do serviço",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Serviço restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Serviço não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -529,6 +3121,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/{id}/avaliacoes": {
+            "get": {
+                "description": "Retorna todas as avaliações feitas por um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Avaliações"
+                ],
+                "summary": "Lista avaliações de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AvaliacoesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}/restore": {
             "post": {
                 "description": "Restaura um usuário que foi soft deleted",
@@ -675,7 +3313,687 @@ const docTemplate = `{
                 }
             }
         },
-        "/veiculos/{id_veiculo}/historico": {
+        "/usuarios/{id}/historicos-resgate": {
+            "get": {
+                "description": "Retorna todos os históricos de resgate de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista históricos de resgate de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos": {
+            "get": {
+                "description": "Retorna uma lista com todos os veículos ativos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos"
+                ],
+                "summary": "Lista todos os veículos",
+                "responses": {
+                    "200": {
+                        "description": "Lista de veículos",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.VeiculoResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo veículo com todos os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos"
+                ],
+                "summary": "Criação do veículo completo",
+                "parameters": [
+                    {
+                        "description": "Dados completos do veículo",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Veículo criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos-loja": {
+            "get": {
+                "description": "Retorna uma lista com todos os veículos de loja ativos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos de Loja"
+                ],
+                "summary": "Lista todos os veículos de loja",
+                "responses": {
+                    "200": {
+                        "description": "Lista de veículos de loja",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.VeiculoLojaResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo veículo de loja com todos os dados fornecidos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos de Loja"
+                ],
+                "summary": "Criação do veículo de loja completo",
+                "parameters": [
+                    {
+                        "description": "Dados completos do veículo de loja",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoLojaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Veículo de loja criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoLojaResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos-loja/{id}": {
+            "get": {
+                "description": "Retorna os dados de um veículo de loja específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos de Loja"
+                ],
+                "summary": "Busca veículo de loja por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo de loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo de loja encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoLojaResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo de loja não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um veículo de loja existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos de Loja"
+                ],
+                "summary": "Atualiza veículo de loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo de loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do veículo de loja",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoLojaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo de loja atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoLojaResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo de loja não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete do veículo de loja, marcando como excluído sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos de Loja"
+                ],
+                "summary": "Exclui veículo de loja (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo de loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo de loja excluído com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo de loja não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos-loja/{id}/fotos": {
+            "get": {
+                "description": "Retorna todas as fotos de um veículo de loja específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Lista fotos de um veículo de loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo de loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de veículo de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos-loja/{id}/restore": {
+            "post": {
+                "description": "Restaura um veículo de loja que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos de Loja"
+                ],
+                "summary": "Restaura veículo de loja excluído",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo de loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo de loja restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo de loja não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos/{id}": {
+            "get": {
+                "description": "Retorna os dados de um veículo específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos"
+                ],
+                "summary": "Busca veículo por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um veículo existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos"
+                ],
+                "summary": "Atualiza veículo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do veículo",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete do veículo, marcando como excluído sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos"
+                ],
+                "summary": "Exclui veículo (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo excluído com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos/{id}/fotos": {
+            "get": {
+                "description": "Retorna todas as fotos de um veículo específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Lista fotos de um veículo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.FotosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de veículo inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos/{id}/historico": {
             "get": {
                 "description": "Retorna o histórico completo de um veículo específico",
                 "consumes": [
@@ -692,7 +4010,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "ID do veículo",
-                        "name": "id_veiculo",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -706,6 +4024,60 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "ID de veículo inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos/{id}/restore": {
+            "post": {
+                "description": "Restaura um veículo que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos"
+                ],
+                "summary": "Restaura veículo excluído",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo não encontrado",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -743,6 +4115,58 @@ const docTemplate = `{
                 }
             }
         },
+        "json.AnuncioRequest": {
+            "type": "object",
+            "required": [
+                "descricao",
+                "id_categoria",
+                "id_loja",
+                "preco",
+                "tipo_anuncio",
+                "titulo"
+            ],
+            "properties": {
+                "descricao": {
+                    "type": "string"
+                },
+                "destaque": {
+                    "type": "boolean"
+                },
+                "id_categoria": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "preco": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "tipo_anuncio": {
+                    "type": "string",
+                    "enum": [
+                        "produto",
+                        "servico",
+                        "veiculo"
+                    ]
+                },
+                "titulo": {
+                    "type": "string"
+                }
+            }
+        },
         "json.AnuncioResponse": {
             "type": "object",
             "properties": {
@@ -764,6 +4188,15 @@ const docTemplate = `{
                 "id_loja": {
                     "type": "integer"
                 },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
                 "imagem": {
                     "type": "string"
                 },
@@ -773,8 +4206,20 @@ const docTemplate = `{
                 "preco": {
                     "type": "number"
                 },
+                "produto": {
+                    "$ref": "#/definitions/json.ProdutoResponse"
+                },
+                "servico": {
+                    "$ref": "#/definitions/json.ServicoResponse"
+                },
+                "tipo_anuncio": {
+                    "type": "string"
+                },
                 "titulo": {
                     "type": "string"
+                },
+                "veiculo": {
+                    "$ref": "#/definitions/json.VeiculoResponse"
                 }
             }
         },
@@ -786,6 +4231,111 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/json.AnuncioResponse"
                     }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.AvaliacaoEstatisticasResponse": {
+            "type": "object",
+            "properties": {
+                "media_nota": {
+                    "type": "number"
+                },
+                "nota_1": {
+                    "type": "integer"
+                },
+                "nota_2": {
+                    "type": "integer"
+                },
+                "nota_3": {
+                    "type": "integer"
+                },
+                "nota_4": {
+                    "type": "integer"
+                },
+                "nota_5": {
+                    "type": "integer"
+                },
+                "total_avaliacoes": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.AvaliacaoRequest": {
+            "type": "object",
+            "required": [
+                "id_loja",
+                "id_usuario",
+                "nota"
+            ],
+            "properties": {
+                "comentario": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "nota": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                }
+            }
+        },
+        "json.AvaliacaoResponse": {
+            "type": "object",
+            "properties": {
+                "comentario": {
+                    "type": "string"
+                },
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_avaliacao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "nota": {
+                    "type": "integer"
+                },
+                "usuario": {
+                    "description": "Dados relacionados",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.UserResponse"
+                        }
+                    ]
+                }
+            }
+        },
+        "json.AvaliacoesResponse": {
+            "type": "object",
+            "properties": {
+                "avaliacoes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.AvaliacaoResponse"
+                    }
+                },
+                "media_nota": {
+                    "type": "number"
                 },
                 "total": {
                     "type": "integer"
@@ -867,6 +4417,250 @@ const docTemplate = `{
                 }
             }
         },
+        "json.FotoRequest": {
+            "type": "object",
+            "required": [
+                "nome_arquivo",
+                "tamanho",
+                "tipo_entidade",
+                "tipo_mime",
+                "url"
+            ],
+            "properties": {
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "id_veiculo_loja": {
+                    "type": "integer"
+                },
+                "nome_arquivo": {
+                    "type": "string"
+                },
+                "ordem": {
+                    "type": "integer"
+                },
+                "principal": {
+                    "type": "boolean"
+                },
+                "tamanho": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "tipo_entidade": {
+                    "type": "string",
+                    "enum": [
+                        "veiculo",
+                        "veiculo_loja",
+                        "produto",
+                        "servico",
+                        "loja"
+                    ]
+                },
+                "tipo_mime": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.FotoResponse": {
+            "type": "object",
+            "properties": {
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_upload": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "id_veiculo_loja": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "nome_arquivo": {
+                    "type": "string"
+                },
+                "ordem": {
+                    "type": "integer"
+                },
+                "principal": {
+                    "type": "boolean"
+                },
+                "produto": {
+                    "$ref": "#/definitions/json.ProdutoResponse"
+                },
+                "servico": {
+                    "$ref": "#/definitions/json.ServicoResponse"
+                },
+                "tamanho": {
+                    "type": "integer"
+                },
+                "tipo_entidade": {
+                    "type": "string"
+                },
+                "tipo_mime": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "veiculo": {
+                    "description": "Dados relacionados (opcionais)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.VeiculoResponse"
+                        }
+                    ]
+                },
+                "veiculo_loja": {
+                    "$ref": "#/definitions/json.VeiculoLojaResponse"
+                }
+            }
+        },
+        "json.FotosResponse": {
+            "type": "object",
+            "properties": {
+                "fotos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.FotoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.HistoricoResgateRequest": {
+            "type": "object",
+            "required": [
+                "id_loja",
+                "id_usuario",
+                "tipo_resgate",
+                "valor"
+            ],
+            "properties": {
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "pendente",
+                        "confirmado",
+                        "cancelado"
+                    ]
+                },
+                "tipo_resgate": {
+                    "type": "string",
+                    "enum": [
+                        "produto",
+                        "servico",
+                        "veiculo"
+                    ]
+                },
+                "valor": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            }
+        },
+        "json.HistoricoResgateResponse": {
+            "type": "object",
+            "properties": {
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_resgate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "produto": {
+                    "$ref": "#/definitions/json.ProdutoResponse"
+                },
+                "servico": {
+                    "$ref": "#/definitions/json.ServicoResponse"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tipo_resgate": {
+                    "type": "string"
+                },
+                "usuario": {
+                    "description": "Dados relacionados",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.UserResponse"
+                        }
+                    ]
+                },
+                "valor": {
+                    "type": "number"
+                },
+                "veiculo": {
+                    "$ref": "#/definitions/json.VeiculoResponse"
+                }
+            }
+        },
         "json.HistoricoVeiculoResponse": {
             "type": "object",
             "properties": {
@@ -886,6 +4680,20 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "id_veiculo": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.HistoricosResgateResponse": {
+            "type": "object",
+            "properties": {
+                "historicos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.HistoricoResgateResponse"
+                    }
+                },
+                "total": {
                     "type": "integer"
                 }
             }
@@ -931,6 +4739,36 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nome_plano": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.LojaRequest": {
+            "type": "object",
+            "required": [
+                "cnpj",
+                "id_categoria",
+                "latitude",
+                "longitude",
+                "nome"
+            ],
+            "properties": {
+                "cnpj": {
+                    "type": "string"
+                },
+                "id_categoria": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "nome": {
                     "type": "string"
                 }
             }
@@ -993,6 +4831,119 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "json.ProdutoRequest": {
+            "type": "object",
+            "required": [
+                "id_loja",
+                "nome",
+                "preco"
+            ],
+            "properties": {
+                "descricao": {
+                    "type": "string"
+                },
+                "estoque": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "preco": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            }
+        },
+        "json.ProdutoResponse": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "estoque": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "preco": {
+                    "type": "number"
+                }
+            }
+        },
+        "json.ProdutosResponse": {
+            "type": "object",
+            "properties": {
+                "produtos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.ProdutoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.ServicoRequest": {
+            "type": "object",
+            "required": [
+                "descricao",
+                "id_categoria",
+                "id_loja",
+                "preco",
+                "titulo"
+            ],
+            "properties": {
+                "descricao": {
+                    "type": "string"
+                },
+                "destaque": {
+                    "type": "boolean"
+                },
+                "id_categoria": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "preco": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "titulo": {
+                    "type": "string"
                 }
             }
         },
@@ -1137,6 +5088,96 @@ const docTemplate = `{
                 }
             }
         },
+        "json.VeiculoLojaRequest": {
+            "type": "object",
+            "required": [
+                "ano",
+                "cor",
+                "id_loja",
+                "modelo",
+                "placa"
+            ],
+            "properties": {
+                "ano": {
+                    "type": "integer",
+                    "maximum": 2030,
+                    "minimum": 1900
+                },
+                "cor": {
+                    "type": "string"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.VeiculoLojaResponse": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "ativo": {
+                    "type": "boolean"
+                },
+                "cor": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.VeiculoRequest": {
+            "type": "object",
+            "required": [
+                "ano",
+                "cor",
+                "id_usuario",
+                "modelo",
+                "placa"
+            ],
+            "properties": {
+                "ano": {
+                    "type": "integer",
+                    "maximum": 2030,
+                    "minimum": 1900
+                },
+                "cor": {
+                    "type": "string"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                }
+            }
+        },
         "json.VeiculoResponse": {
             "type": "object",
             "properties": {
@@ -1163,6 +5204,20 @@ const docTemplate = `{
                 },
                 "placa": {
                     "type": "string"
+                }
+            }
+        },
+        "json.VeiculosLojaResponse": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                },
+                "veiculos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.VeiculoLojaResponse"
+                    }
                 }
             }
         },

@@ -90,3 +90,101 @@ func GetHistoricosByUsuario(idUsuario uint) (*json.HistoricosVeiculoResponse, er
 
 	return response, nil
 }
+
+// CreateVeiculo cria um novo veículo
+func CreateVeiculo(req json.VeiculoRequest) (*json.VeiculoResponse, error) {
+	veiculo, err := datasource.CreateVeiculo(req)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.VeiculoResponse{
+		ID:           veiculo.ID,
+		Modelo:       veiculo.Modelo,
+		Ano:          veiculo.Ano,
+		Cor:          veiculo.Cor,
+		Placa:        veiculo.Placa,
+		IDUsuario:    veiculo.IDUsuario,
+		DataCadastro: veiculo.DataCadastro,
+		Ativo:        veiculo.Ativo,
+	}
+
+	return response, nil
+}
+
+// GetVeiculoByID busca um veículo por ID
+func GetVeiculoByID(id uint) (*json.VeiculoResponse, error) {
+	veiculo, err := datasource.GetVeiculoByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.VeiculoResponse{
+		ID:           veiculo.ID,
+		Modelo:       veiculo.Modelo,
+		Ano:          veiculo.Ano,
+		Cor:          veiculo.Cor,
+		Placa:        veiculo.Placa,
+		IDUsuario:    veiculo.IDUsuario,
+		DataCadastro: veiculo.DataCadastro,
+		Ativo:        veiculo.Ativo,
+	}
+
+	return response, nil
+}
+
+// GetAllVeiculos retorna todos os veículos ativos
+func GetAllVeiculos() ([]json.VeiculoResponse, error) {
+	veiculos, err := datasource.GetAllVeiculos()
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []json.VeiculoResponse
+	for _, veiculo := range veiculos {
+		response := json.VeiculoResponse{
+			ID:           veiculo.ID,
+			Modelo:       veiculo.Modelo,
+			Ano:          veiculo.Ano,
+			Cor:          veiculo.Cor,
+			Placa:        veiculo.Placa,
+			IDUsuario:    veiculo.IDUsuario,
+			DataCadastro: veiculo.DataCadastro,
+			Ativo:        veiculo.Ativo,
+		}
+		responses = append(responses, response)
+	}
+
+	return responses, nil
+}
+
+// UpdateVeiculo atualiza um veículo existente
+func UpdateVeiculo(id uint, req json.VeiculoRequest) (*json.VeiculoResponse, error) {
+	veiculo, err := datasource.UpdateVeiculo(id, req)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.VeiculoResponse{
+		ID:           veiculo.ID,
+		Modelo:       veiculo.Modelo,
+		Ano:          veiculo.Ano,
+		Cor:          veiculo.Cor,
+		Placa:        veiculo.Placa,
+		IDUsuario:    veiculo.IDUsuario,
+		DataCadastro: veiculo.DataCadastro,
+		Ativo:        veiculo.Ativo,
+	}
+
+	return response, nil
+}
+
+// SoftDeleteVeiculo realiza soft delete do veículo
+func SoftDeleteVeiculo(id uint) error {
+	return datasource.SoftDeleteVeiculo(id)
+}
+
+// RestoreVeiculo restaura um veículo que foi soft deleted
+func RestoreVeiculo(id uint) error {
+	return datasource.RestoreVeiculo(id)
+}

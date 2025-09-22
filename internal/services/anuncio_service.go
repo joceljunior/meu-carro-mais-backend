@@ -69,3 +69,145 @@ func GetCategoriasAnuncio() (*json.CategoriasAnuncioResponse, error) {
 
 	return response, nil
 }
+
+// CreateAnuncio cria um novo anúncio
+func CreateAnuncio(req json.AnuncioRequest) (*json.AnuncioResponse, error) {
+	anuncio, err := datasource.CreateAnuncio(req)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.AnuncioResponse{
+		ID:          anuncio.ID,
+		Titulo:      anuncio.Titulo,
+		Descricao:   anuncio.Descricao,
+		Preco:       anuncio.Preco,
+		Imagem:      anuncio.Imagem,
+		Destaque:    anuncio.Destaque,
+		IDLoja:      anuncio.IDLoja,
+		IDCategoria: anuncio.IDCategoria,
+		Categoria:   anuncio.Categoria.Nome,
+		Loja: json.LojaResponse{
+			ID:          anuncio.Loja.ID,
+			Nome:        anuncio.Loja.Nome,
+			CNPJ:        anuncio.Loja.CNPJ,
+			Imagem:      anuncio.Loja.Imagem,
+			Latitude:    anuncio.Loja.Latitude,
+			Longitude:   anuncio.Loja.Longitude,
+			IDCategoria: anuncio.Loja.IDCategoria,
+			Categoria:   anuncio.Loja.Categoria.Nome,
+		},
+	}
+
+	return response, nil
+}
+
+// GetAnuncioByID busca um anúncio por ID
+func GetAnuncioByID(id uint) (*json.AnuncioResponse, error) {
+	anuncio, err := datasource.GetAnuncioByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.AnuncioResponse{
+		ID:          anuncio.ID,
+		Titulo:      anuncio.Titulo,
+		Descricao:   anuncio.Descricao,
+		Preco:       anuncio.Preco,
+		Imagem:      anuncio.Imagem,
+		Destaque:    anuncio.Destaque,
+		IDLoja:      anuncio.IDLoja,
+		IDCategoria: anuncio.IDCategoria,
+		Categoria:   anuncio.Categoria.Nome,
+		Loja: json.LojaResponse{
+			ID:          anuncio.Loja.ID,
+			Nome:        anuncio.Loja.Nome,
+			CNPJ:        anuncio.Loja.CNPJ,
+			Imagem:      anuncio.Loja.Imagem,
+			Latitude:    anuncio.Loja.Latitude,
+			Longitude:   anuncio.Loja.Longitude,
+			IDCategoria: anuncio.Loja.IDCategoria,
+			Categoria:   anuncio.Loja.Categoria.Nome,
+		},
+	}
+
+	return response, nil
+}
+
+// GetAllAnuncios retorna todos os anúncios ativos
+func GetAllAnuncios() ([]json.AnuncioResponse, error) {
+	anuncios, err := datasource.GetAllAnuncios()
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []json.AnuncioResponse
+	for _, anuncio := range anuncios {
+		response := json.AnuncioResponse{
+			ID:          anuncio.ID,
+			Titulo:      anuncio.Titulo,
+			Descricao:   anuncio.Descricao,
+			Preco:       anuncio.Preco,
+			Imagem:      anuncio.Imagem,
+			Destaque:    anuncio.Destaque,
+			IDLoja:      anuncio.IDLoja,
+			IDCategoria: anuncio.IDCategoria,
+			Categoria:   anuncio.Categoria.Nome,
+			Loja: json.LojaResponse{
+				ID:          anuncio.Loja.ID,
+				Nome:        anuncio.Loja.Nome,
+				CNPJ:        anuncio.Loja.CNPJ,
+				Imagem:      anuncio.Loja.Imagem,
+				Latitude:    anuncio.Loja.Latitude,
+				Longitude:   anuncio.Loja.Longitude,
+				IDCategoria: anuncio.Loja.IDCategoria,
+				Categoria:   anuncio.Loja.Categoria.Nome,
+			},
+		}
+		responses = append(responses, response)
+	}
+
+	return responses, nil
+}
+
+// UpdateAnuncio atualiza um anúncio existente
+func UpdateAnuncio(id uint, req json.AnuncioRequest) (*json.AnuncioResponse, error) {
+	anuncio, err := datasource.UpdateAnuncio(id, req)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.AnuncioResponse{
+		ID:          anuncio.ID,
+		Titulo:      anuncio.Titulo,
+		Descricao:   anuncio.Descricao,
+		Preco:       anuncio.Preco,
+		Imagem:      anuncio.Imagem,
+		Destaque:    anuncio.Destaque,
+		IDLoja:      anuncio.IDLoja,
+		IDCategoria: anuncio.IDCategoria,
+		Categoria:   anuncio.Categoria.Nome,
+		Loja: json.LojaResponse{
+			ID:          anuncio.Loja.ID,
+			Nome:        anuncio.Loja.Nome,
+			CNPJ:        anuncio.Loja.CNPJ,
+			Imagem:      anuncio.Loja.Imagem,
+			Latitude:    anuncio.Loja.Latitude,
+			Longitude:   anuncio.Loja.Longitude,
+			IDCategoria: anuncio.Loja.IDCategoria,
+			Categoria:   anuncio.Loja.Categoria.Nome,
+		},
+	}
+
+	return response, nil
+}
+
+// SoftDeleteAnuncio realiza soft delete do anúncio
+func SoftDeleteAnuncio(id uint) error {
+	return datasource.SoftDeleteAnuncio(id)
+}
+
+// RestoreAnuncio restaura um anúncio que foi soft deleted
+func RestoreAnuncio(id uint) error {
+	return datasource.RestoreAnuncio(id)
+}

@@ -1,0 +1,68 @@
+### Exemplos de CRUD para Produtos
+
+### 1. Criar um novo produto
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "nome": "Óleo de Motor 5W30",
+  "descricao": "Óleo sintético para motor, 1 litro",
+  "preco": 45.90,
+  "imagem": "https://exemplo.com/oleo-motor.jpg",
+  "estoque": 50,
+  "id_loja": 1
+}
+
+### 2. Listar todos os produtos
+GET http://localhost:8080/produtos
+
+### 3. Buscar produto por ID
+GET http://localhost:8080/produtos/1
+
+### 4. Atualizar produto
+PUT http://localhost:8080/produtos/1
+Content-Type: application/json
+
+{
+  "nome": "Óleo de Motor 5W30 Premium",
+  "descricao": "Óleo sintético premium para motor, 1 litro",
+  "preco": 52.90,
+  "imagem": "https://exemplo.com/oleo-motor-premium.jpg",
+  "estoque": 30,
+  "id_loja": 1
+}
+
+### 5. Soft delete produto
+DELETE http://localhost:8080/produtos/1
+
+### 6. Restaurar produto
+POST http://localhost:8080/produtos/1/restore
+
+### 7. Listar produtos de uma loja específica
+GET http://localhost:8080/lojas/1/produtos
+
+### 8. Criar outro produto para teste
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "nome": "Filtro de Ar",
+  "descricao": "Filtro de ar para motor, compatível com vários modelos",
+  "preco": 25.50,
+  "imagem": "https://exemplo.com/filtro-ar.jpg",
+  "estoque": 100,
+  "id_loja": 1
+}
+
+### 9. Criar produto para outra loja
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "nome": "Pneu 205/55 R16",
+  "descricao": "Pneu radial, índice de velocidade H",
+  "preco": 320.00,
+  "imagem": "https://exemplo.com/pneu.jpg",
+  "estoque": 20,
+  "id_loja": 2
+}

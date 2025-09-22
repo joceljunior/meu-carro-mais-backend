@@ -1,0 +1,50 @@
+### Exemplos de CRUD de Serviços
+
+### 1. Criar serviço
+POST http://localhost:8080/servicos
+Content-Type: application/json
+
+{
+  "titulo": "Troca de Óleo",
+  "descricao": "Troca completa de óleo do motor com filtro",
+  "preco": 89.90,
+  "imagem": "https://example.com/troca-oleo.jpg",
+  "destaque": true,
+  "id_loja": 1,
+  "id_categoria": 1
+}
+
+### 2. Listar todos os serviços
+GET http://localhost:8080/servicos
+
+### 3. Buscar serviço por ID
+GET http://localhost:8080/servicos/1
+
+### 4. Atualizar serviço
+PUT http://localhost:8080/servicos/1
+Content-Type: application/json
+
+{
+  "titulo": "Troca de Óleo Premium",
+  "descricao": "Troca completa de óleo do motor com filtro premium",
+  "preco": 129.90,
+  "imagem": "https://example.com/troca-oleo-premium.jpg",
+  "destaque": true,
+  "id_loja": 1,
+  "id_categoria": 1
+}
+
+### 5. Soft delete serviço (inativar)
+DELETE http://localhost:8080/servicos/1
+
+### 6. Restaurar serviço excluído
+POST http://localhost:8080/servicos/1/restore
+
+### 7. Verificar se serviço foi restaurado
+GET http://localhost:8080/servicos/1
+
+### 8. Listar serviços por proximidade (endpoint existente)
+GET http://localhost:8080/servicos/proximidade?latitude=-23.5505&longitude=-46.6333
+
+### 9. Listar categorias de serviço (endpoint existente)
+GET http://localhost:8080/servicos/categorias

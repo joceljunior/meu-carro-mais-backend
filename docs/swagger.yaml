@@ -12,6 +12,43 @@ definitions:
       titulo:
         type: string
     type: object
+  json.AnuncioRequest:
+    properties:
+      descricao:
+        type: string
+      destaque:
+        type: boolean
+      id_categoria:
+        type: integer
+      id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_veiculo:
+        type: integer
+      imagem:
+        type: string
+      preco:
+        minimum: 0
+        type: number
+      tipo_anuncio:
+        enum:
+        - produto
+        - servico
+        - veiculo
+        type: string
+      titulo:
+        type: string
+    required:
+    - descricao
+    - id_categoria
+    - id_loja
+    - preco
+    - tipo_anuncio
+    - titulo
+    type: object
   json.AnuncioResponse:
     properties:
       categoria:
@@ -26,14 +63,28 @@ definitions:
         type: integer
       id_loja:
         type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_veiculo:
+        type: integer
       imagem:
         type: string
       loja:
         $ref: '#/definitions/json.LojaResponse'
       preco:
         type: number
+      produto:
+        $ref: '#/definitions/json.ProdutoResponse'
+      servico:
+        $ref: '#/definitions/json.ServicoResponse'
+      tipo_anuncio:
+        type: string
       titulo:
         type: string
+      veiculo:
+        $ref: '#/definitions/json.VeiculoResponse'
     type: object
   json.AnunciosResponse:
     properties:
@@ -41,6 +92,75 @@ definitions:
         items:
           $ref: '#/definitions/json.AnuncioResponse'
         type: array
+      total:
+        type: integer
+    type: object
+  json.AvaliacaoEstatisticasResponse:
+    properties:
+      media_nota:
+        type: number
+      nota_1:
+        type: integer
+      nota_2:
+        type: integer
+      nota_3:
+        type: integer
+      nota_4:
+        type: integer
+      nota_5:
+        type: integer
+      total_avaliacoes:
+        type: integer
+    type: object
+  json.AvaliacaoRequest:
+    properties:
+      comentario:
+        maxLength: 500
+        type: string
+      id_loja:
+        type: integer
+      id_usuario:
+        type: integer
+      nota:
+        maximum: 5
+        minimum: 1
+        type: integer
+    required:
+    - id_loja
+    - id_usuario
+    - nota
+    type: object
+  json.AvaliacaoResponse:
+    properties:
+      comentario:
+        type: string
+      data_atualizacao:
+        type: string
+      data_avaliacao:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_usuario:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      nota:
+        type: integer
+      usuario:
+        allOf:
+        - $ref: '#/definitions/json.UserResponse'
+        description: Dados relacionados
+    type: object
+  json.AvaliacoesResponse:
+    properties:
+      avaliacoes:
+        items:
+          $ref: '#/definitions/json.AvaliacaoResponse'
+        type: array
+      media_nota:
+        type: number
       total:
         type: integer
     type: object
@@ -92,6 +212,170 @@ definitions:
       total:
         type: integer
     type: object
+  json.FotoRequest:
+    properties:
+      id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_veiculo:
+        type: integer
+      id_veiculo_loja:
+        type: integer
+      nome_arquivo:
+        type: string
+      ordem:
+        type: integer
+      principal:
+        type: boolean
+      tamanho:
+        minimum: 1
+        type: integer
+      tipo_entidade:
+        enum:
+        - veiculo
+        - veiculo_loja
+        - produto
+        - servico
+        - loja
+        type: string
+      tipo_mime:
+        type: string
+      url:
+        type: string
+    required:
+    - nome_arquivo
+    - tamanho
+    - tipo_entidade
+    - tipo_mime
+    - url
+    type: object
+  json.FotoResponse:
+    properties:
+      data_atualizacao:
+        type: string
+      data_upload:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_veiculo:
+        type: integer
+      id_veiculo_loja:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      nome_arquivo:
+        type: string
+      ordem:
+        type: integer
+      principal:
+        type: boolean
+      produto:
+        $ref: '#/definitions/json.ProdutoResponse'
+      servico:
+        $ref: '#/definitions/json.ServicoResponse'
+      tamanho:
+        type: integer
+      tipo_entidade:
+        type: string
+      tipo_mime:
+        type: string
+      url:
+        type: string
+      veiculo:
+        allOf:
+        - $ref: '#/definitions/json.VeiculoResponse'
+        description: Dados relacionados (opcionais)
+      veiculo_loja:
+        $ref: '#/definitions/json.VeiculoLojaResponse'
+    type: object
+  json.FotosResponse:
+    properties:
+      fotos:
+        items:
+          $ref: '#/definitions/json.FotoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.HistoricoResgateRequest:
+    properties:
+      id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_usuario:
+        type: integer
+      id_veiculo:
+        type: integer
+      status:
+        enum:
+        - pendente
+        - confirmado
+        - cancelado
+        type: string
+      tipo_resgate:
+        enum:
+        - produto
+        - servico
+        - veiculo
+        type: string
+      valor:
+        minimum: 0
+        type: number
+    required:
+    - id_loja
+    - id_usuario
+    - tipo_resgate
+    - valor
+    type: object
+  json.HistoricoResgateResponse:
+    properties:
+      data_atualizacao:
+        type: string
+      data_resgate:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_usuario:
+        type: integer
+      id_veiculo:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      produto:
+        $ref: '#/definitions/json.ProdutoResponse'
+      servico:
+        $ref: '#/definitions/json.ServicoResponse'
+      status:
+        type: string
+      tipo_resgate:
+        type: string
+      usuario:
+        allOf:
+        - $ref: '#/definitions/json.UserResponse'
+        description: Dados relacionados
+      valor:
+        type: number
+      veiculo:
+        $ref: '#/definitions/json.VeiculoResponse'
+    type: object
   json.HistoricoVeiculoResponse:
     properties:
       data:
@@ -105,6 +389,15 @@ definitions:
       id_anuncio:
         type: integer
       id_veiculo:
+        type: integer
+    type: object
+  json.HistoricosResgateResponse:
+    properties:
+      historicos:
+        items:
+          $ref: '#/definitions/json.HistoricoResgateResponse'
+        type: array
+      total:
         type: integer
     type: object
   json.HistoricosVeiculoResponse:
@@ -135,6 +428,27 @@ definitions:
         type: string
       nome_plano:
         type: string
+    type: object
+  json.LojaRequest:
+    properties:
+      cnpj:
+        type: string
+      id_categoria:
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      nome:
+        type: string
+    required:
+    - cnpj
+    - id_categoria
+    - latitude
+    - longitude
+    - nome
     type: object
   json.LojaResponse:
     properties:
@@ -175,6 +489,83 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  json.ProdutoRequest:
+    properties:
+      descricao:
+        type: string
+      estoque:
+        minimum: 0
+        type: integer
+      id_loja:
+        type: integer
+      imagem:
+        type: string
+      nome:
+        type: string
+      preco:
+        minimum: 0
+        type: number
+    required:
+    - id_loja
+    - nome
+    - preco
+    type: object
+  json.ProdutoResponse:
+    properties:
+      ativo:
+        type: boolean
+      data_cadastro:
+        type: string
+      descricao:
+        type: string
+      estoque:
+        type: integer
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      imagem:
+        type: string
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      nome:
+        type: string
+      preco:
+        type: number
+    type: object
+  json.ProdutosResponse:
+    properties:
+      produtos:
+        items:
+          $ref: '#/definitions/json.ProdutoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.ServicoRequest:
+    properties:
+      descricao:
+        type: string
+      destaque:
+        type: boolean
+      id_categoria:
+        type: integer
+      id_loja:
+        type: integer
+      imagem:
+        type: string
+      preco:
+        minimum: 0
+        type: number
+      titulo:
+        type: string
+    required:
+    - descricao
+    - id_categoria
+    - id_loja
+    - preco
+    - titulo
     type: object
   json.ServicoResponse:
     properties:
@@ -270,6 +661,69 @@ definitions:
       telefone:
         type: string
     type: object
+  json.VeiculoLojaRequest:
+    properties:
+      ano:
+        maximum: 2030
+        minimum: 1900
+        type: integer
+      cor:
+        type: string
+      id_loja:
+        type: integer
+      modelo:
+        type: string
+      placa:
+        type: string
+    required:
+    - ano
+    - cor
+    - id_loja
+    - modelo
+    - placa
+    type: object
+  json.VeiculoLojaResponse:
+    properties:
+      ano:
+        type: integer
+      ativo:
+        type: boolean
+      cor:
+        type: string
+      data_cadastro:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      modelo:
+        type: string
+      placa:
+        type: string
+    type: object
+  json.VeiculoRequest:
+    properties:
+      ano:
+        maximum: 2030
+        minimum: 1900
+        type: integer
+      cor:
+        type: string
+      id_usuario:
+        type: integer
+      modelo:
+        type: string
+      placa:
+        type: string
+    required:
+    - ano
+    - cor
+    - id_usuario
+    - modelo
+    - placa
+    type: object
   json.VeiculoResponse:
     properties:
       ano:
@@ -289,6 +743,15 @@ definitions:
       placa:
         type: string
     type: object
+  json.VeiculosLojaResponse:
+    properties:
+      total:
+        type: integer
+      veiculos:
+        items:
+          $ref: '#/definitions/json.VeiculoLojaResponse'
+        type: array
+    type: object
   json.VeiculosResponse:
     properties:
       total:
@@ -305,21 +768,204 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna todos os anúncios disponíveis com informações da loja e
-        categoria
+      description: Retorna uma lista com todos os anúncios ativos
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Lista de anúncios
           schema:
-            $ref: '#/definitions/json.AnunciosResponse'
+            items:
+              $ref: '#/definitions/json.AnuncioResponse'
+            type: array
         "500":
           description: Erro interno do servidor
           schema:
             additionalProperties: true
             type: object
       summary: Lista todos os anúncios
+      tags:
+      - Anúncios
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo anúncio com todos os dados fornecidos
+      parameters:
+      - description: Dados completos do anúncio
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.AnuncioRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Anúncio criado com sucesso
+          schema:
+            $ref: '#/definitions/json.AnuncioResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação do anúncio completo
+      tags:
+      - Anúncios
+  /anuncios/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete do anúncio, marcando como excluído sem remover
+        do banco
+      parameters:
+      - description: ID do anúncio
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Anúncio excluído com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Anúncio não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui anúncio (soft delete)
+      tags:
+      - Anúncios
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de um anúncio específico pelo ID
+      parameters:
+      - description: ID do anúncio
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Anúncio encontrado
+          schema:
+            $ref: '#/definitions/json.AnuncioResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Anúncio não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca anúncio por ID
+      tags:
+      - Anúncios
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um anúncio existente
+      parameters:
+      - description: ID do anúncio
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do anúncio
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.AnuncioRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Anúncio atualizado com sucesso
+          schema:
+            $ref: '#/definitions/json.AnuncioResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Anúncio não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza anúncio
+      tags:
+      - Anúncios
+  /anuncios/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um anúncio que foi soft deleted
+      parameters:
+      - description: ID do anúncio
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Anúncio restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Anúncio não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura anúncio excluído
       tags:
       - Anúncios
   /anuncios/categorias:
@@ -342,6 +988,733 @@ paths:
       summary: Lista categorias de anúncio
       tags:
       - Anúncios
+  /avaliacoes:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as avaliações ativas do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AvaliacoesResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todas as avaliações
+      tags:
+      - Avaliações
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova avaliação de loja no sistema
+      parameters:
+      - description: Dados da avaliação
+        in: body
+        name: avaliacao
+        required: true
+        schema:
+          $ref: '#/definitions/json.AvaliacaoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.AvaliacaoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria uma nova avaliação
+      tags:
+      - Avaliações
+  /avaliacoes/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de uma avaliação, marcando-a como excluída
+      parameters:
+      - description: ID da avaliação
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Avaliação removida com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Avaliação não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove avaliação (soft delete)
+      tags:
+      - Avaliações
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma avaliação específica pelo ID
+      parameters:
+      - description: ID da avaliação
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AvaliacaoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Avaliação não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca avaliação por ID
+      tags:
+      - Avaliações
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma avaliação existente
+      parameters:
+      - description: ID da avaliação
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados da avaliação
+        in: body
+        name: avaliacao
+        required: true
+        schema:
+          $ref: '#/definitions/json.AvaliacaoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AvaliacaoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Avaliação não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza avaliação
+      tags:
+      - Avaliações
+  /avaliacoes/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura uma avaliação que foi soft deleted
+      parameters:
+      - description: ID da avaliação
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Avaliação restaurada com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Avaliação não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura avaliação
+      tags:
+      - Avaliações
+  /fotos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as fotos ativas do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotosResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todas as fotos
+      tags:
+      - Fotos
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova foto no sistema
+      parameters:
+      - description: Dados da foto
+        in: body
+        name: foto
+        required: true
+        schema:
+          $ref: '#/definitions/json.FotoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.FotoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria uma nova foto
+      tags:
+      - Fotos
+  /fotos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de uma foto, marcando-a como excluída
+      parameters:
+      - description: ID da foto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Foto removida com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Foto não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove foto (soft delete)
+      tags:
+      - Fotos
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma foto específica pelo ID
+      parameters:
+      - description: ID da foto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Foto não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca foto por ID
+      tags:
+      - Fotos
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma foto existente
+      parameters:
+      - description: ID da foto
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados da foto
+        in: body
+        name: foto
+        required: true
+        schema:
+          $ref: '#/definitions/json.FotoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Foto não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza foto
+      tags:
+      - Fotos
+  /fotos/{id}/principal:
+    put:
+      consumes:
+      - application/json
+      description: Define uma foto como principal da entidade
+      parameters:
+      - description: ID da foto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Foto definida como principal com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Foto não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Define foto como principal
+      tags:
+      - Fotos
+  /fotos/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura uma foto que foi soft deleted
+      parameters:
+      - description: ID da foto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Foto restaurada com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Foto não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura foto
+      tags:
+      - Fotos
+  /fotos/principal/{tipo}/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna a foto principal de uma entidade específica
+      parameters:
+      - description: Tipo da entidade (veiculo, veiculo_loja, produto, servico, loja)
+        in: path
+        name: tipo
+        required: true
+        type: string
+      - description: ID da entidade
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotoResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Foto não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca foto principal de uma entidade
+      tags:
+      - Fotos
+  /historicos-resgate:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de resgate ativos do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os históricos de resgate
+      tags:
+      - Histórico de Resgates
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo histórico de resgate no sistema
+      parameters:
+      - description: Dados do histórico de resgate
+        in: body
+        name: historico
+        required: true
+        schema:
+          $ref: '#/definitions/json.HistoricoResgateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria um novo histórico de resgate
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de um histórico de resgate, marcando-o como
+        excluído
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Histórico removido com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove histórico de resgate (soft delete)
+      tags:
+      - Histórico de Resgates
+    get:
+      consumes:
+      - application/json
+      description: Retorna um histórico de resgate específico pelo ID
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca histórico de resgate por ID
+      tags:
+      - Histórico de Resgates
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um histórico de resgate existente
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do histórico de resgate
+        in: body
+        name: historico
+        required: true
+        schema:
+          $ref: '#/definitions/json.HistoricoResgateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza histórico de resgate
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um histórico de resgate que foi soft deleted
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Histórico restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura histórico de resgate
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/{id}/status:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza apenas o status de um histórico de resgate
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Novo status
+        in: body
+        name: status
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Status atualizado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza status do histórico de resgate
+      tags:
+      - Histórico de Resgates
   /login:
     post:
       consumes:
@@ -373,6 +1746,396 @@ paths:
       summary: Login/Criação do usuário
       tags:
       - Autenticação
+  /lojas:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todas as lojas ativas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de lojas
+          schema:
+            items:
+              $ref: '#/definitions/json.LojaResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todas as lojas
+      tags:
+      - Lojas
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova loja com todos os dados fornecidos
+      parameters:
+      - description: Dados completos da loja
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.LojaRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Loja criada com sucesso
+          schema:
+            $ref: '#/definitions/json.LojaResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação da loja completa
+      tags:
+      - Lojas
+  /lojas/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete da loja, marcando como excluída sem remover
+        do banco
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Loja excluída com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Loja não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui loja (soft delete)
+      tags:
+      - Lojas
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de uma loja específica pelo ID
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Loja encontrada
+          schema:
+            $ref: '#/definitions/json.LojaResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Loja não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca loja por ID
+      tags:
+      - Lojas
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma loja existente
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados da loja
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.LojaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Loja atualizada com sucesso
+          schema:
+            $ref: '#/definitions/json.LojaResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Loja não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza loja
+      tags:
+      - Lojas
+  /lojas/{id}/avaliacoes:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as avaliações de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AvaliacoesResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista avaliações de uma loja
+      tags:
+      - Avaliações
+  /lojas/{id}/avaliacoes/estatisticas:
+    get:
+      consumes:
+      - application/json
+      description: Retorna estatísticas detalhadas das avaliações de uma loja
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AvaliacaoEstatisticasResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Estatísticas de avaliações de uma loja
+      tags:
+      - Avaliações
+  /lojas/{id}/fotos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as fotos de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotosResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista fotos de uma loja
+      tags:
+      - Fotos
+  /lojas/{id}/historicos-resgate:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de resgate de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista históricos de resgate de uma loja
+      tags:
+      - Histórico de Resgates
+  /lojas/{id}/produtos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os produtos ativos de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.ProdutosResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista produtos de uma loja
+      tags:
+      - Produtos
+  /lojas/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura uma loja que foi soft deleted
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Loja restaurada com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Loja não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura loja excluída
+      tags:
+      - Lojas
+  /lojas/{id}/veiculos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os veículos ativos de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.VeiculosLojaResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista veículos de uma loja
+      tags:
+      - Veículos de Loja
   /lojas/categorias:
     get:
       consumes:
@@ -429,6 +2192,473 @@ paths:
       summary: Lista lojas por proximidade
       tags:
       - Lojas
+  /produtos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os produtos ativos do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.ProdutosResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os produtos
+      tags:
+      - Produtos
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo produto no sistema
+      parameters:
+      - description: Dados do produto
+        in: body
+        name: produto
+        required: true
+        schema:
+          $ref: '#/definitions/json.ProdutoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.ProdutoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria um novo produto
+      tags:
+      - Produtos
+  /produtos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de um produto, marcando-o como excluído
+      parameters:
+      - description: ID do produto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produto removido com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Produto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove produto (soft delete)
+      tags:
+      - Produtos
+    get:
+      consumes:
+      - application/json
+      description: Retorna um produto específico pelo ID
+      parameters:
+      - description: ID do produto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.ProdutoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Produto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca produto por ID
+      tags:
+      - Produtos
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um produto existente
+      parameters:
+      - description: ID do produto
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do produto
+        in: body
+        name: produto
+        required: true
+        schema:
+          $ref: '#/definitions/json.ProdutoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.ProdutoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Produto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza produto
+      tags:
+      - Produtos
+  /produtos/{id}/fotos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as fotos de um produto específico
+      parameters:
+      - description: ID do produto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotosResponse'
+        "400":
+          description: ID de produto inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista fotos de um produto
+      tags:
+      - Fotos
+  /produtos/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um produto que foi soft deleted
+      parameters:
+      - description: ID do produto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produto restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Produto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura produto
+      tags:
+      - Produtos
+  /servicos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os serviços ativos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de serviços
+          schema:
+            items:
+              $ref: '#/definitions/json.ServicoResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os serviços
+      tags:
+      - Serviços
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo serviço com todos os dados fornecidos
+      parameters:
+      - description: Dados completos do serviço
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.ServicoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Serviço criado com sucesso
+          schema:
+            $ref: '#/definitions/json.ServicoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação do serviço completo
+      tags:
+      - Serviços
+  /servicos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete do serviço, marcando como excluído sem remover
+        do banco
+      parameters:
+      - description: ID do serviço
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Serviço excluído com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Serviço não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui serviço (soft delete)
+      tags:
+      - Serviços
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de um serviço específico pelo ID
+      parameters:
+      - description: ID do serviço
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Serviço encontrado
+          schema:
+            $ref: '#/definitions/json.ServicoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Serviço não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca serviço por ID
+      tags:
+      - Serviços
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um serviço existente
+      parameters:
+      - description: ID do serviço
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do serviço
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.ServicoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Serviço atualizado com sucesso
+          schema:
+            $ref: '#/definitions/json.ServicoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Serviço não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza serviço
+      tags:
+      - Serviços
+  /servicos/{id}/fotos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as fotos de um serviço específico
+      parameters:
+      - description: ID do serviço
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotosResponse'
+        "400":
+          description: ID de serviço inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista fotos de um serviço
+      tags:
+      - Fotos
+  /servicos/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um serviço que foi soft deleted
+      parameters:
+      - description: ID do serviço
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Serviço restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Serviço não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura serviço excluído
+      tags:
+      - Serviços
   /servicos/categorias:
     get:
       consumes:
@@ -650,6 +2880,37 @@ paths:
       summary: Atualiza usuário
       tags:
       - Usuários
+  /users/{id}/avaliacoes:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as avaliações feitas por um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AvaliacoesResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista avaliações de um usuário
+      tags:
+      - Avaliações
   /users/{id}/restore:
     post:
       consumes:
@@ -749,7 +3010,471 @@ paths:
       summary: Lista veículos de um usuário
       tags:
       - Veículos
-  /veiculos/{id_veiculo}/historico:
+  /usuarios/{id}/historicos-resgate:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de resgate de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista históricos de resgate de um usuário
+      tags:
+      - Histórico de Resgates
+  /veiculos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os veículos ativos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de veículos
+          schema:
+            items:
+              $ref: '#/definitions/json.VeiculoResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os veículos
+      tags:
+      - Veículos
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo veículo com todos os dados fornecidos
+      parameters:
+      - description: Dados completos do veículo
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.VeiculoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Veículo criado com sucesso
+          schema:
+            $ref: '#/definitions/json.VeiculoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação do veículo completo
+      tags:
+      - Veículos
+  /veiculos-loja:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os veículos de loja ativos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de veículos de loja
+          schema:
+            items:
+              $ref: '#/definitions/json.VeiculoLojaResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os veículos de loja
+      tags:
+      - Veículos de Loja
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo veículo de loja com todos os dados fornecidos
+      parameters:
+      - description: Dados completos do veículo de loja
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.VeiculoLojaRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Veículo de loja criado com sucesso
+          schema:
+            $ref: '#/definitions/json.VeiculoLojaResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação do veículo de loja completo
+      tags:
+      - Veículos de Loja
+  /veiculos-loja/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete do veículo de loja, marcando como excluído
+        sem remover do banco
+      parameters:
+      - description: ID do veículo de loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo de loja excluído com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo de loja não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui veículo de loja (soft delete)
+      tags:
+      - Veículos de Loja
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de um veículo de loja específico pelo ID
+      parameters:
+      - description: ID do veículo de loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo de loja encontrado
+          schema:
+            $ref: '#/definitions/json.VeiculoLojaResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo de loja não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca veículo de loja por ID
+      tags:
+      - Veículos de Loja
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um veículo de loja existente
+      parameters:
+      - description: ID do veículo de loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do veículo de loja
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.VeiculoLojaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo de loja atualizado com sucesso
+          schema:
+            $ref: '#/definitions/json.VeiculoLojaResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo de loja não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza veículo de loja
+      tags:
+      - Veículos de Loja
+  /veiculos-loja/{id}/fotos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as fotos de um veículo de loja específico
+      parameters:
+      - description: ID do veículo de loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotosResponse'
+        "400":
+          description: ID de veículo de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista fotos de um veículo de loja
+      tags:
+      - Fotos
+  /veiculos-loja/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um veículo de loja que foi soft deleted
+      parameters:
+      - description: ID do veículo de loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo de loja restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo de loja não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura veículo de loja excluído
+      tags:
+      - Veículos de Loja
+  /veiculos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete do veículo, marcando como excluído sem remover
+        do banco
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo excluído com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui veículo (soft delete)
+      tags:
+      - Veículos
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de um veículo específico pelo ID
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo encontrado
+          schema:
+            $ref: '#/definitions/json.VeiculoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca veículo por ID
+      tags:
+      - Veículos
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um veículo existente
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do veículo
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.VeiculoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo atualizado com sucesso
+          schema:
+            $ref: '#/definitions/json.VeiculoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza veículo
+      tags:
+      - Veículos
+  /veiculos/{id}/fotos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as fotos de um veículo específico
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.FotosResponse'
+        "400":
+          description: ID de veículo inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista fotos de um veículo
+      tags:
+      - Fotos
+  /veiculos/{id}/historico:
     get:
       consumes:
       - application/json
@@ -757,7 +3482,7 @@ paths:
       parameters:
       - description: ID do veículo
         in: path
-        name: id_veiculo
+        name: id
         required: true
         type: integer
       produces:
@@ -778,6 +3503,43 @@ paths:
             additionalProperties: true
             type: object
       summary: Lista histórico de um veículo
+      tags:
+      - Veículos
+  /veiculos/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um veículo que foi soft deleted
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura veículo excluído
       tags:
       - Veículos
 swagger: "2.0"

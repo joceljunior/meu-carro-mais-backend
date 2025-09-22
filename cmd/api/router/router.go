@@ -25,6 +25,11 @@ func NewRouter() *gin.Engine {
 		&UserRouter{},
 		&AnuncioRouter{},
 		&VeiculoRouter{},
+		&VeiculoLojaRouter{},
+		&ProdutoRouter{},
+		&HistoricoResgateRouter{},
+		&AvaliacaoRouter{},
+		&FotoRouter{},
 	}
 
 	for _, rt := range routers {

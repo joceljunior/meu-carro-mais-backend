@@ -1,0 +1,105 @@
+### Exemplos de CRUD para Histórico de Resgates
+
+### 1. Criar um novo histórico de resgate de produto
+POST http://localhost:8080/historicos-resgate
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_produto": 1,
+  "id_loja": 1,
+  "tipo_resgate": "produto",
+  "valor": 45.90,
+  "status": "pendente"
+}
+
+### 2. Criar um novo histórico de resgate de serviço
+POST http://localhost:8080/historicos-resgate
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_servico": 1,
+  "id_loja": 1,
+  "tipo_resgate": "servico",
+  "valor": 120.00,
+  "status": "pendente"
+}
+
+### 3. Criar um novo histórico de resgate de veículo
+POST http://localhost:8080/historicos-resgate
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_veiculo": 1,
+  "id_loja": 1,
+  "tipo_resgate": "veiculo",
+  "valor": 25000.00,
+  "status": "pendente"
+}
+
+### 4. Listar todos os históricos de resgate
+GET http://localhost:8080/historicos-resgate
+
+### 5. Buscar histórico de resgate por ID
+GET http://localhost:8080/historicos-resgate/1
+
+### 6. Atualizar histórico de resgate
+PUT http://localhost:8080/historicos-resgate/1
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_produto": 1,
+  "id_loja": 1,
+  "tipo_resgate": "produto",
+  "valor": 50.00,
+  "status": "confirmado"
+}
+
+### 7. Atualizar apenas o status do histórico
+PUT http://localhost:8080/historicos-resgate/1/status
+Content-Type: application/json
+
+{
+  "status": "confirmado"
+}
+
+### 8. Soft delete histórico de resgate
+DELETE http://localhost:8080/historicos-resgate/1
+
+### 9. Restaurar histórico de resgate
+POST http://localhost:8080/historicos-resgate/1/restore
+
+### 10. Listar históricos de resgate de um usuário específico
+GET http://localhost:8080/users/1/historicos-resgate
+
+### 11. Listar históricos de resgate de uma loja específica
+GET http://localhost:8080/lojas/1/historicos-resgate
+
+### 12. Criar histórico de resgate com status confirmado
+POST http://localhost:8080/historicos-resgate
+Content-Type: application/json
+
+{
+  "id_usuario": 2,
+  "id_produto": 2,
+  "id_loja": 1,
+  "tipo_resgate": "produto",
+  "valor": 75.50,
+  "status": "confirmado"
+}
+
+### 13. Criar histórico de resgate com status cancelado
+POST http://localhost:8080/historicos-resgate
+Content-Type: application/json
+
+{
+  "id_usuario": 3,
+  "id_servico": 2,
+  "id_loja": 2,
+  "tipo_resgate": "servico",
+  "valor": 200.00,
+  "status": "cancelado"
+}

@@ -1,0 +1,622 @@
+package services
+
+import (
+	"meu-carro-mais/internal/database/datasource"
+	"meu-carro-mais/internal/handlers/json"
+)
+
+// CreateHistoricoResgate cria um novo histórico de resgate
+func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*json.HistoricoResgateResponse, error) {
+	historico, err := datasource.CreateHistoricoResgate(req)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.HistoricoResgateResponse{
+		ID:              historico.ID,
+		IDUsuario:       historico.IDUsuario,
+		IDProduto:       historico.IDProduto,
+		IDServico:       historico.IDServico,
+		IDVeiculo:       historico.IDVeiculo,
+		IDLoja:          historico.IDLoja,
+		TipoResgate:     historico.TipoResgate,
+		Valor:           historico.Valor,
+		Status:          historico.Status,
+		DataResgate:     historico.DataResgate,
+		DataAtualizacao: historico.DataAtualizacao,
+		Usuario: json.UserResponse{
+			ID:             historico.Usuario.ID,
+			Nome:           historico.Usuario.Nome,
+			Email:          historico.Usuario.Email,
+			CPF:            historico.Usuario.CPF,
+			Imagem:         historico.Usuario.Imagem,
+			Telefone:       historico.Usuario.Telefone,
+			Endereco:       historico.Usuario.Endereco,
+			DataNascimento: historico.Usuario.DataNascimento,
+			DataCadastro:   historico.Usuario.DataCadastro,
+			Ativo:          historico.Usuario.Ativo,
+			Latitude:       historico.Usuario.Latitude,
+			Longitude:      historico.Usuario.Longitude,
+			IDPlano:        historico.Usuario.IDPlano,
+			IDLoja:         historico.Usuario.IDLoja,
+		},
+		Loja: json.LojaResponse{
+			ID:          historico.Loja.ID,
+			Nome:        historico.Loja.Nome,
+			CNPJ:        historico.Loja.CNPJ,
+			Imagem:      historico.Loja.Imagem,
+			Latitude:    historico.Loja.Latitude,
+			Longitude:   historico.Loja.Longitude,
+			IDCategoria: historico.Loja.IDCategoria,
+			Categoria:   historico.Loja.Categoria.Nome,
+		},
+	}
+
+	// Adiciona dados do produto se existir
+	if historico.Produto != nil {
+		produtoResp := &json.ProdutoResponse{
+			ID:           historico.Produto.ID,
+			Nome:         historico.Produto.Nome,
+			Descricao:    historico.Produto.Descricao,
+			Preco:        historico.Produto.Preco,
+			Imagem:       historico.Produto.Imagem,
+			Estoque:      historico.Produto.Estoque,
+			Ativo:        historico.Produto.Ativo,
+			IDLoja:       historico.Produto.IDLoja,
+			DataCadastro: historico.Produto.DataCadastro,
+		}
+		response.Produto = produtoResp
+	}
+
+	// Adiciona dados do serviço se existir
+	if historico.Servico != nil {
+		servicoResp := &json.ServicoResponse{
+			ID:          historico.Servico.ID,
+			Titulo:      historico.Servico.Titulo,
+			Descricao:   historico.Servico.Descricao,
+			Preco:       historico.Servico.Preco,
+			Imagem:      historico.Servico.Imagem,
+			Destaque:    historico.Servico.Destaque,
+			IDCategoria: historico.Servico.IDCategoria,
+			Categoria:   historico.Servico.Categoria.Nome,
+		}
+		response.Servico = servicoResp
+	}
+
+	// Adiciona dados do veículo se existir
+	if historico.Veiculo != nil {
+		veiculoResp := &json.VeiculoResponse{
+			ID:           historico.Veiculo.ID,
+			Modelo:       historico.Veiculo.Modelo,
+			Ano:          historico.Veiculo.Ano,
+			Cor:          historico.Veiculo.Cor,
+			Placa:        historico.Veiculo.Placa,
+			IDUsuario:    historico.Veiculo.IDUsuario,
+			DataCadastro: historico.Veiculo.DataCadastro,
+			Ativo:        historico.Veiculo.Ativo,
+		}
+		response.Veiculo = veiculoResp
+	}
+
+	return response, nil
+}
+
+// GetHistoricoResgateByID busca um histórico por ID
+func GetHistoricoResgateByID(id uint) (*json.HistoricoResgateResponse, error) {
+	historico, err := datasource.GetHistoricoResgateByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.HistoricoResgateResponse{
+		ID:              historico.ID,
+		IDUsuario:       historico.IDUsuario,
+		IDProduto:       historico.IDProduto,
+		IDServico:       historico.IDServico,
+		IDVeiculo:       historico.IDVeiculo,
+		IDLoja:          historico.IDLoja,
+		TipoResgate:     historico.TipoResgate,
+		Valor:           historico.Valor,
+		Status:          historico.Status,
+		DataResgate:     historico.DataResgate,
+		DataAtualizacao: historico.DataAtualizacao,
+		Usuario: json.UserResponse{
+			ID:             historico.Usuario.ID,
+			Nome:           historico.Usuario.Nome,
+			Email:          historico.Usuario.Email,
+			CPF:            historico.Usuario.CPF,
+			Imagem:         historico.Usuario.Imagem,
+			Telefone:       historico.Usuario.Telefone,
+			Endereco:       historico.Usuario.Endereco,
+			DataNascimento: historico.Usuario.DataNascimento,
+			DataCadastro:   historico.Usuario.DataCadastro,
+			Ativo:          historico.Usuario.Ativo,
+			Latitude:       historico.Usuario.Latitude,
+			Longitude:      historico.Usuario.Longitude,
+			IDPlano:        historico.Usuario.IDPlano,
+			IDLoja:         historico.Usuario.IDLoja,
+		},
+		Loja: json.LojaResponse{
+			ID:          historico.Loja.ID,
+			Nome:        historico.Loja.Nome,
+			CNPJ:        historico.Loja.CNPJ,
+			Imagem:      historico.Loja.Imagem,
+			Latitude:    historico.Loja.Latitude,
+			Longitude:   historico.Loja.Longitude,
+			IDCategoria: historico.Loja.IDCategoria,
+			Categoria:   historico.Loja.Categoria.Nome,
+		},
+	}
+
+	// Adiciona dados do produto se existir
+	if historico.Produto != nil {
+		produtoResp := &json.ProdutoResponse{
+			ID:           historico.Produto.ID,
+			Nome:         historico.Produto.Nome,
+			Descricao:    historico.Produto.Descricao,
+			Preco:        historico.Produto.Preco,
+			Imagem:       historico.Produto.Imagem,
+			Estoque:      historico.Produto.Estoque,
+			Ativo:        historico.Produto.Ativo,
+			IDLoja:       historico.Produto.IDLoja,
+			DataCadastro: historico.Produto.DataCadastro,
+		}
+		response.Produto = produtoResp
+	}
+
+	// Adiciona dados do serviço se existir
+	if historico.Servico != nil {
+		servicoResp := &json.ServicoResponse{
+			ID:          historico.Servico.ID,
+			Titulo:      historico.Servico.Titulo,
+			Descricao:   historico.Servico.Descricao,
+			Preco:       historico.Servico.Preco,
+			Imagem:      historico.Servico.Imagem,
+			Destaque:    historico.Servico.Destaque,
+			IDCategoria: historico.Servico.IDCategoria,
+			Categoria:   historico.Servico.Categoria.Nome,
+		}
+		response.Servico = servicoResp
+	}
+
+	// Adiciona dados do veículo se existir
+	if historico.Veiculo != nil {
+		veiculoResp := &json.VeiculoResponse{
+			ID:           historico.Veiculo.ID,
+			Modelo:       historico.Veiculo.Modelo,
+			Ano:          historico.Veiculo.Ano,
+			Cor:          historico.Veiculo.Cor,
+			Placa:        historico.Veiculo.Placa,
+			IDUsuario:    historico.Veiculo.IDUsuario,
+			DataCadastro: historico.Veiculo.DataCadastro,
+			Ativo:        historico.Veiculo.Ativo,
+		}
+		response.Veiculo = veiculoResp
+	}
+
+	return response, nil
+}
+
+// GetAllHistoricosResgate retorna todos os históricos ativos
+func GetAllHistoricosResgate() ([]json.HistoricoResgateResponse, error) {
+	historicos, err := datasource.GetAllHistoricosResgate()
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []json.HistoricoResgateResponse
+	for _, historico := range historicos {
+		response := json.HistoricoResgateResponse{
+			ID:              historico.ID,
+			IDUsuario:       historico.IDUsuario,
+			IDProduto:       historico.IDProduto,
+			IDServico:       historico.IDServico,
+			IDVeiculo:       historico.IDVeiculo,
+			IDLoja:          historico.IDLoja,
+			TipoResgate:     historico.TipoResgate,
+			Valor:           historico.Valor,
+			Status:          historico.Status,
+			DataResgate:     historico.DataResgate,
+			DataAtualizacao: historico.DataAtualizacao,
+			Usuario: json.UserResponse{
+				ID:             historico.Usuario.ID,
+				Nome:           historico.Usuario.Nome,
+				Email:          historico.Usuario.Email,
+				CPF:            historico.Usuario.CPF,
+				Imagem:         historico.Usuario.Imagem,
+				Telefone:       historico.Usuario.Telefone,
+				Endereco:       historico.Usuario.Endereco,
+				DataNascimento: historico.Usuario.DataNascimento,
+				DataCadastro:   historico.Usuario.DataCadastro,
+				Ativo:          historico.Usuario.Ativo,
+				Latitude:       historico.Usuario.Latitude,
+				Longitude:      historico.Usuario.Longitude,
+				IDPlano:        historico.Usuario.IDPlano,
+				IDLoja:         historico.Usuario.IDLoja,
+			},
+			Loja: json.LojaResponse{
+				ID:          historico.Loja.ID,
+				Nome:        historico.Loja.Nome,
+				CNPJ:        historico.Loja.CNPJ,
+				Imagem:      historico.Loja.Imagem,
+				Latitude:    historico.Loja.Latitude,
+				Longitude:   historico.Loja.Longitude,
+				IDCategoria: historico.Loja.IDCategoria,
+				Categoria:   historico.Loja.Categoria.Nome,
+			},
+		}
+
+		// Adiciona dados do produto se existir
+		if historico.Produto != nil {
+			produtoResp := &json.ProdutoResponse{
+				ID:           historico.Produto.ID,
+				Nome:         historico.Produto.Nome,
+				Descricao:    historico.Produto.Descricao,
+				Preco:        historico.Produto.Preco,
+				Imagem:       historico.Produto.Imagem,
+				Estoque:      historico.Produto.Estoque,
+				Ativo:        historico.Produto.Ativo,
+				IDLoja:       historico.Produto.IDLoja,
+				DataCadastro: historico.Produto.DataCadastro,
+			}
+			response.Produto = produtoResp
+		}
+
+		// Adiciona dados do serviço se existir
+		if historico.Servico != nil {
+			servicoResp := &json.ServicoResponse{
+				ID:          historico.Servico.ID,
+				Titulo:      historico.Servico.Titulo,
+				Descricao:   historico.Servico.Descricao,
+				Preco:       historico.Servico.Preco,
+				Imagem:      historico.Servico.Imagem,
+				Destaque:    historico.Servico.Destaque,
+				IDCategoria: historico.Servico.IDCategoria,
+				Categoria:   historico.Servico.Categoria.Nome,
+			}
+			response.Servico = servicoResp
+		}
+
+		// Adiciona dados do veículo se existir
+		if historico.Veiculo != nil {
+			veiculoResp := &json.VeiculoResponse{
+				ID:           historico.Veiculo.ID,
+				Modelo:       historico.Veiculo.Modelo,
+				Ano:          historico.Veiculo.Ano,
+				Cor:          historico.Veiculo.Cor,
+				Placa:        historico.Veiculo.Placa,
+				IDUsuario:    historico.Veiculo.IDUsuario,
+				DataCadastro: historico.Veiculo.DataCadastro,
+				Ativo:        historico.Veiculo.Ativo,
+			}
+			response.Veiculo = veiculoResp
+		}
+
+		responses = append(responses, response)
+	}
+
+	return responses, nil
+}
+
+// GetHistoricosResgateByUsuarioID retorna todos os históricos de um usuário específico
+func GetHistoricosResgateByUsuarioID(idUsuario uint) (*json.HistoricosResgateResponse, error) {
+	historicos, err := datasource.GetHistoricosResgateByUsuarioID(idUsuario)
+	if err != nil {
+		return nil, err
+	}
+
+	var historicosResponse []json.HistoricoResgateResponse
+	for _, historico := range historicos {
+		historicoResp := json.HistoricoResgateResponse{
+			ID:              historico.ID,
+			IDUsuario:       historico.IDUsuario,
+			IDProduto:       historico.IDProduto,
+			IDServico:       historico.IDServico,
+			IDVeiculo:       historico.IDVeiculo,
+			IDLoja:          historico.IDLoja,
+			TipoResgate:     historico.TipoResgate,
+			Valor:           historico.Valor,
+			Status:          historico.Status,
+			DataResgate:     historico.DataResgate,
+			DataAtualizacao: historico.DataAtualizacao,
+			Usuario: json.UserResponse{
+				ID:             historico.Usuario.ID,
+				Nome:           historico.Usuario.Nome,
+				Email:          historico.Usuario.Email,
+				CPF:            historico.Usuario.CPF,
+				Imagem:         historico.Usuario.Imagem,
+				Telefone:       historico.Usuario.Telefone,
+				Endereco:       historico.Usuario.Endereco,
+				DataNascimento: historico.Usuario.DataNascimento,
+				DataCadastro:   historico.Usuario.DataCadastro,
+				Ativo:          historico.Usuario.Ativo,
+				Latitude:       historico.Usuario.Latitude,
+				Longitude:      historico.Usuario.Longitude,
+				IDPlano:        historico.Usuario.IDPlano,
+				IDLoja:         historico.Usuario.IDLoja,
+			},
+			Loja: json.LojaResponse{
+				ID:          historico.Loja.ID,
+				Nome:        historico.Loja.Nome,
+				CNPJ:        historico.Loja.CNPJ,
+				Imagem:      historico.Loja.Imagem,
+				Latitude:    historico.Loja.Latitude,
+				Longitude:   historico.Loja.Longitude,
+				IDCategoria: historico.Loja.IDCategoria,
+				Categoria:   historico.Loja.Categoria.Nome,
+			},
+		}
+
+		// Adiciona dados do produto se existir
+		if historico.Produto != nil {
+			produtoResp := &json.ProdutoResponse{
+				ID:           historico.Produto.ID,
+				Nome:         historico.Produto.Nome,
+				Descricao:    historico.Produto.Descricao,
+				Preco:        historico.Produto.Preco,
+				Imagem:       historico.Produto.Imagem,
+				Estoque:      historico.Produto.Estoque,
+				Ativo:        historico.Produto.Ativo,
+				IDLoja:       historico.Produto.IDLoja,
+				DataCadastro: historico.Produto.DataCadastro,
+			}
+			historicoResp.Produto = produtoResp
+		}
+
+		// Adiciona dados do serviço se existir
+		if historico.Servico != nil {
+			servicoResp := &json.ServicoResponse{
+				ID:          historico.Servico.ID,
+				Titulo:      historico.Servico.Titulo,
+				Descricao:   historico.Servico.Descricao,
+				Preco:       historico.Servico.Preco,
+				Imagem:      historico.Servico.Imagem,
+				Destaque:    historico.Servico.Destaque,
+				IDCategoria: historico.Servico.IDCategoria,
+				Categoria:   historico.Servico.Categoria.Nome,
+			}
+			historicoResp.Servico = servicoResp
+		}
+
+		// Adiciona dados do veículo se existir
+		if historico.Veiculo != nil {
+			veiculoResp := &json.VeiculoResponse{
+				ID:           historico.Veiculo.ID,
+				Modelo:       historico.Veiculo.Modelo,
+				Ano:          historico.Veiculo.Ano,
+				Cor:          historico.Veiculo.Cor,
+				Placa:        historico.Veiculo.Placa,
+				IDUsuario:    historico.Veiculo.IDUsuario,
+				DataCadastro: historico.Veiculo.DataCadastro,
+				Ativo:        historico.Veiculo.Ativo,
+			}
+			historicoResp.Veiculo = veiculoResp
+		}
+
+		historicosResponse = append(historicosResponse, historicoResp)
+	}
+
+	response := &json.HistoricosResgateResponse{
+		Historicos: historicosResponse,
+		Total:      len(historicosResponse),
+	}
+
+	return response, nil
+}
+
+// GetHistoricosResgateByLojaID retorna todos os históricos de uma loja específica
+func GetHistoricosResgateByLojaID(idLoja uint) (*json.HistoricosResgateResponse, error) {
+	historicos, err := datasource.GetHistoricosResgateByLojaID(idLoja)
+	if err != nil {
+		return nil, err
+	}
+
+	var historicosResponse []json.HistoricoResgateResponse
+	for _, historico := range historicos {
+		historicoResp := json.HistoricoResgateResponse{
+			ID:              historico.ID,
+			IDUsuario:       historico.IDUsuario,
+			IDProduto:       historico.IDProduto,
+			IDServico:       historico.IDServico,
+			IDVeiculo:       historico.IDVeiculo,
+			IDLoja:          historico.IDLoja,
+			TipoResgate:     historico.TipoResgate,
+			Valor:           historico.Valor,
+			Status:          historico.Status,
+			DataResgate:     historico.DataResgate,
+			DataAtualizacao: historico.DataAtualizacao,
+			Usuario: json.UserResponse{
+				ID:             historico.Usuario.ID,
+				Nome:           historico.Usuario.Nome,
+				Email:          historico.Usuario.Email,
+				CPF:            historico.Usuario.CPF,
+				Imagem:         historico.Usuario.Imagem,
+				Telefone:       historico.Usuario.Telefone,
+				Endereco:       historico.Usuario.Endereco,
+				DataNascimento: historico.Usuario.DataNascimento,
+				DataCadastro:   historico.Usuario.DataCadastro,
+				Ativo:          historico.Usuario.Ativo,
+				Latitude:       historico.Usuario.Latitude,
+				Longitude:      historico.Usuario.Longitude,
+				IDPlano:        historico.Usuario.IDPlano,
+				IDLoja:         historico.Usuario.IDLoja,
+			},
+			Loja: json.LojaResponse{
+				ID:          historico.Loja.ID,
+				Nome:        historico.Loja.Nome,
+				CNPJ:        historico.Loja.CNPJ,
+				Imagem:      historico.Loja.Imagem,
+				Latitude:    historico.Loja.Latitude,
+				Longitude:   historico.Loja.Longitude,
+				IDCategoria: historico.Loja.IDCategoria,
+				Categoria:   historico.Loja.Categoria.Nome,
+			},
+		}
+
+		// Adiciona dados do produto se existir
+		if historico.Produto != nil {
+			produtoResp := &json.ProdutoResponse{
+				ID:           historico.Produto.ID,
+				Nome:         historico.Produto.Nome,
+				Descricao:    historico.Produto.Descricao,
+				Preco:        historico.Produto.Preco,
+				Imagem:       historico.Produto.Imagem,
+				Estoque:      historico.Produto.Estoque,
+				Ativo:        historico.Produto.Ativo,
+				IDLoja:       historico.Produto.IDLoja,
+				DataCadastro: historico.Produto.DataCadastro,
+			}
+			historicoResp.Produto = produtoResp
+		}
+
+		// Adiciona dados do serviço se existir
+		if historico.Servico != nil {
+			servicoResp := &json.ServicoResponse{
+				ID:          historico.Servico.ID,
+				Titulo:      historico.Servico.Titulo,
+				Descricao:   historico.Servico.Descricao,
+				Preco:       historico.Servico.Preco,
+				Imagem:      historico.Servico.Imagem,
+				Destaque:    historico.Servico.Destaque,
+				IDCategoria: historico.Servico.IDCategoria,
+				Categoria:   historico.Servico.Categoria.Nome,
+			}
+			historicoResp.Servico = servicoResp
+		}
+
+		// Adiciona dados do veículo se existir
+		if historico.Veiculo != nil {
+			veiculoResp := &json.VeiculoResponse{
+				ID:           historico.Veiculo.ID,
+				Modelo:       historico.Veiculo.Modelo,
+				Ano:          historico.Veiculo.Ano,
+				Cor:          historico.Veiculo.Cor,
+				Placa:        historico.Veiculo.Placa,
+				IDUsuario:    historico.Veiculo.IDUsuario,
+				DataCadastro: historico.Veiculo.DataCadastro,
+				Ativo:        historico.Veiculo.Ativo,
+			}
+			historicoResp.Veiculo = veiculoResp
+		}
+
+		historicosResponse = append(historicosResponse, historicoResp)
+	}
+
+	response := &json.HistoricosResgateResponse{
+		Historicos: historicosResponse,
+		Total:      len(historicosResponse),
+	}
+
+	return response, nil
+}
+
+// UpdateHistoricoResgate atualiza um histórico existente
+func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*json.HistoricoResgateResponse, error) {
+	historico, err := datasource.UpdateHistoricoResgate(id, req)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.HistoricoResgateResponse{
+		ID:              historico.ID,
+		IDUsuario:       historico.IDUsuario,
+		IDProduto:       historico.IDProduto,
+		IDServico:       historico.IDServico,
+		IDVeiculo:       historico.IDVeiculo,
+		IDLoja:          historico.IDLoja,
+		TipoResgate:     historico.TipoResgate,
+		Valor:           historico.Valor,
+		Status:          historico.Status,
+		DataResgate:     historico.DataResgate,
+		DataAtualizacao: historico.DataAtualizacao,
+		Usuario: json.UserResponse{
+			ID:             historico.Usuario.ID,
+			Nome:           historico.Usuario.Nome,
+			Email:          historico.Usuario.Email,
+			CPF:            historico.Usuario.CPF,
+			Imagem:         historico.Usuario.Imagem,
+			Telefone:       historico.Usuario.Telefone,
+			Endereco:       historico.Usuario.Endereco,
+			DataNascimento: historico.Usuario.DataNascimento,
+			DataCadastro:   historico.Usuario.DataCadastro,
+			Ativo:          historico.Usuario.Ativo,
+			Latitude:       historico.Usuario.Latitude,
+			Longitude:      historico.Usuario.Longitude,
+			IDPlano:        historico.Usuario.IDPlano,
+			IDLoja:         historico.Usuario.IDLoja,
+		},
+		Loja: json.LojaResponse{
+			ID:          historico.Loja.ID,
+			Nome:        historico.Loja.Nome,
+			CNPJ:        historico.Loja.CNPJ,
+			Imagem:      historico.Loja.Imagem,
+			Latitude:    historico.Loja.Latitude,
+			Longitude:   historico.Loja.Longitude,
+			IDCategoria: historico.Loja.IDCategoria,
+			Categoria:   historico.Loja.Categoria.Nome,
+		},
+	}
+
+	// Adiciona dados do produto se existir
+	if historico.Produto != nil {
+		produtoResp := &json.ProdutoResponse{
+			ID:           historico.Produto.ID,
+			Nome:         historico.Produto.Nome,
+			Descricao:    historico.Produto.Descricao,
+			Preco:        historico.Produto.Preco,
+			Imagem:       historico.Produto.Imagem,
+			Estoque:      historico.Produto.Estoque,
+			Ativo:        historico.Produto.Ativo,
+			IDLoja:       historico.Produto.IDLoja,
+			DataCadastro: historico.Produto.DataCadastro,
+		}
+		response.Produto = produtoResp
+	}
+
+	// Adiciona dados do serviço se existir
+	if historico.Servico != nil {
+		servicoResp := &json.ServicoResponse{
+			ID:          historico.Servico.ID,
+			Titulo:      historico.Servico.Titulo,
+			Descricao:   historico.Servico.Descricao,
+			Preco:       historico.Servico.Preco,
+			Imagem:      historico.Servico.Imagem,
+			Destaque:    historico.Servico.Destaque,
+			IDCategoria: historico.Servico.IDCategoria,
+			Categoria:   historico.Servico.Categoria.Nome,
+		}
+		response.Servico = servicoResp
+	}
+
+	// Adiciona dados do veículo se existir
+	if historico.Veiculo != nil {
+		veiculoResp := &json.VeiculoResponse{
+			ID:           historico.Veiculo.ID,
+			Modelo:       historico.Veiculo.Modelo,
+			Ano:          historico.Veiculo.Ano,
+			Cor:          historico.Veiculo.Cor,
+			Placa:        historico.Veiculo.Placa,
+			IDUsuario:    historico.Veiculo.IDUsuario,
+			DataCadastro: historico.Veiculo.DataCadastro,
+			Ativo:        historico.Veiculo.Ativo,
+		}
+		response.Veiculo = veiculoResp
+	}
+
+	return response, nil
+}
+
+// UpdateStatusHistoricoResgate atualiza apenas o status de um histórico
+func UpdateStatusHistoricoResgate(id uint, status string) error {
+	return datasource.UpdateStatusHistoricoResgate(id, status)
+}
+
+// SoftDeleteHistoricoResgate realiza soft delete do histórico
+func SoftDeleteHistoricoResgate(id uint) error {
+	return datasource.SoftDeleteHistoricoResgate(id)
+}
+
+// RestoreHistoricoResgate restaura um histórico que foi soft deleted
+func RestoreHistoricoResgate(id uint) error {
+	return datasource.RestoreHistoricoResgate(id)
+}

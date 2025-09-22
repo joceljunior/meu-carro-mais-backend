@@ -1,0 +1,43 @@
+### Exemplos de CRUD de Veículos de Loja
+
+### 1. Criar veículo de loja
+POST http://localhost:8080/veiculos-loja
+Content-Type: application/json
+
+{
+  "modelo": "Ford Transit",
+  "ano": 2022,
+  "cor": "Branco",
+  "placa": "XYZ-9876",
+  "id_loja": 1
+}
+
+### 2. Listar todos os veículos de loja
+GET http://localhost:8080/veiculos-loja
+
+### 3. Buscar veículo de loja por ID
+GET http://localhost:8080/veiculos-loja/1
+
+### 4. Atualizar veículo de loja
+PUT http://localhost:8080/veiculos-loja/1
+Content-Type: application/json
+
+{
+  "modelo": "Ford Transit Custom",
+  "ano": 2023,
+  "cor": "Azul",
+  "placa": "XYZ-9876",
+  "id_loja": 1
+}
+
+### 5. Soft delete veículo de loja (inativar)
+DELETE http://localhost:8080/veiculos-loja/1
+
+### 6. Restaurar veículo de loja excluído
+POST http://localhost:8080/veiculos-loja/1/restore
+
+### 7. Verificar se veículo de loja foi restaurado
+GET http://localhost:8080/veiculos-loja/1
+
+### 8. Listar veículos de uma loja específica
+GET http://localhost:8080/lojas/1/veiculos

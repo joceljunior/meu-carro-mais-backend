@@ -1,0 +1,109 @@
+### Exemplos de CRUD para Avaliações
+
+### 1. Criar uma nova avaliação
+POST http://localhost:8080/avaliacoes
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_loja": 1,
+  "nota": 5,
+  "comentario": "Excelente atendimento! Serviço de qualidade e preço justo."
+}
+
+### 2. Criar outra avaliação
+POST http://localhost:8080/avaliacoes
+Content-Type: application/json
+
+{
+  "id_usuario": 2,
+  "id_loja": 1,
+  "nota": 4,
+  "comentario": "Muito bom, mas poderia melhorar o tempo de espera."
+}
+
+### 3. Criar avaliação sem comentário
+POST http://localhost:8080/avaliacoes
+Content-Type: application/json
+
+{
+  "id_usuario": 3,
+  "id_loja": 1,
+  "nota": 3
+}
+
+### 4. Listar todas as avaliações
+GET http://localhost:8080/avaliacoes
+
+### 5. Buscar avaliação por ID
+GET http://localhost:8080/avaliacoes/1
+
+### 6. Atualizar avaliação
+PUT http://localhost:8080/avaliacoes/1
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_loja": 1,
+  "nota": 5,
+  "comentario": "Atualizado: Excelente atendimento! Serviço de qualidade e preço justo. Recomendo!"
+}
+
+### 7. Soft delete avaliação
+DELETE http://localhost:8080/avaliacoes/1
+
+### 8. Restaurar avaliação
+POST http://localhost:8080/avaliacoes/1/restore
+
+### 9. Listar avaliações de uma loja específica
+GET http://localhost:8080/lojas/1/avaliacoes
+
+### 10. Listar avaliações de um usuário específico
+GET http://localhost:8080/users/1/avaliacoes
+
+### 11. Estatísticas de avaliações de uma loja
+GET http://localhost:8080/lojas/1/avaliacoes/estatisticas
+
+### 12. Criar avaliação para outra loja
+POST http://localhost:8080/avaliacoes
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_loja": 2,
+  "nota": 2,
+  "comentario": "Atendimento ruim, demorou muito para ser atendido."
+}
+
+### 13. Criar avaliação com nota máxima
+POST http://localhost:8080/avaliacoes
+Content-Type: application/json
+
+{
+  "id_usuario": 4,
+  "id_loja": 1,
+  "nota": 5,
+  "comentario": "Perfeito! Superou todas as expectativas. Equipe muito profissional e prestativa."
+}
+
+### 14. Criar avaliação com nota mínima
+POST http://localhost:8080/avaliacoes
+Content-Type: application/json
+
+{
+  "id_usuario": 5,
+  "id_loja": 1,
+  "nota": 1,
+  "comentario": "Muito ruim. Não recomendo. Atendimento péssimo e serviço de má qualidade."
+}
+
+### 15. Tentar criar avaliação duplicada (deve falhar)
+POST http://localhost:8080/avaliacoes
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_loja": 1,
+  "nota": 4,
+  "comentario": "Tentativa de avaliação duplicada"
+}

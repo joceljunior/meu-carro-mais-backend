@@ -1,0 +1,47 @@
+### Exemplos de CRUD de Anúncios
+
+### 1. Criar anúncio
+POST http://localhost:8080/anuncios
+Content-Type: application/json
+
+{
+  "titulo": "Troca de Óleo Completa",
+  "descricao": "Troca de óleo do motor com filtro incluído",
+  "preco": 89.90,
+  "imagem": "https://example.com/troca-oleo.jpg",
+  "destaque": true,
+  "id_loja": 1,
+  "id_categoria": 1
+}
+
+### 2. Listar todos os anúncios
+GET http://localhost:8080/anuncios
+
+### 3. Buscar anúncio por ID
+GET http://localhost:8080/anuncios/1
+
+### 4. Atualizar anúncio
+PUT http://localhost:8080/anuncios/1
+Content-Type: application/json
+
+{
+  "titulo": "Troca de Óleo Premium",
+  "descricao": "Troca de óleo do motor com filtro premium incluído",
+  "preco": 129.90,
+  "imagem": "https://example.com/troca-oleo-premium.jpg",
+  "destaque": true,
+  "id_loja": 1,
+  "id_categoria": 1
+}
+
+### 5. Soft delete anúncio (inativar)
+DELETE http://localhost:8080/anuncios/1
+
+### 6. Restaurar anúncio excluído
+POST http://localhost:8080/anuncios/1/restore
+
+### 7. Verificar se anúncio foi restaurado
+GET http://localhost:8080/anuncios/1
+
+### 8. Listar categorias de anúncio (endpoint existente)
+GET http://localhost:8080/anuncios/categorias

@@ -1,13 +1,16 @@
 package datasource
 
 import (
+	"errors"
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/models"
+	"meu-carro-mais/internal/handlers/json"
+	"time"
 )
 
 func GetAnuncioDestaqueByLojaID(lojaID uint) (*models.Anuncio, error) {
 	var anuncio models.Anuncio
-	err := database.DB.Where("id_loja = ? AND destaque = ?", lojaID, true).First(&anuncio).Error
+	err := database.DB.Where("id_loja = ? AND destaque = ? AND data_exclusao IS NULL", lojaID, true).First(&anuncio).Error
 	if err != nil {
 		return nil, err
 	}
@@ -17,28 +20,146 @@ func GetAnuncioDestaqueByLojaID(lojaID uint) (*models.Anuncio, error) {
 // GetAnuncios retorna todos os anúncios com relacionamentos
 func GetAnuncios() ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
-	
+
 	err := database.DB.
 		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
+		Where("data_exclusao IS NULL").
 		Find(&anuncios).Error
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return anuncios, nil
 }
 
 // GetCategoriasAnuncio retorna todas as categorias de anúncio
 func GetCategoriasAnuncio() ([]models.CategoriaAnuncio, error) {
 	var categorias []models.CategoriaAnuncio
-	
+
 	err := database.DB.Find(&categorias).Error
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return categorias, nil
+}
+
+// CreateAnuncio cria um novo anúncio
+func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
+	anuncio := models.Anuncio{
+		Titulo:      req.Titulo,
+		Descricao:   req.Descricao,
+		Preco:       req.Preco,
+		Imagem:      req.Imagem,
+		Destaque:    req.Destaque,
+		IDLoja:      req.IDLoja,
+		IDCategoria: req.IDCategoria,
+	}
+
+	err := database.DB.Create(&anuncio).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Recarrega o anúncio com os relacionamentos
+	return GetAnuncioByID(anuncio.ID)
+}
+
+// GetAnuncioByID busca anúncio por ID (apenas anúncios não excluídos)
+func GetAnuncioByID(id uint) (*models.Anuncio, error) {
+	var anuncio models.Anuncio
+	err := database.DB.
+		Preload("Categoria").
+		Preload("Loja").
+		Preload("Loja.Categoria").
+		Where("id = ? AND data_exclusao IS NULL", id).
+		First(&anuncio).Error
+	if err != nil {
+		return nil, err
+	}
+	return &anuncio, nil
+}
+
+// GetAllAnuncios retorna todos os anúncios ativos (não excluídos)
+func GetAllAnuncios() ([]models.Anuncio, error) {
+	var anuncios []models.Anuncio
+	err := database.DB.
+		Preload("Categoria").
+		Preload("Loja").
+		Preload("Loja.Categoria").
+		Where("data_exclusao IS NULL").
+		Order("data_cadastro DESC").
+		Find(&anuncios).Error
+	if err != nil {
+		return nil, err
+	}
+	return anuncios, nil
+}
+
+// UpdateAnuncio atualiza um anúncio existente
+func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
+	// Verifica se o anúncio existe e não foi excluído
+	anuncio, err := GetAnuncioByID(id)
+	if err != nil {
+		return nil, errors.New("anúncio não encontrado")
+	}
+
+	// Atualiza os campos
+	anuncio.Titulo = req.Titulo
+	anuncio.Descricao = req.Descricao
+	anuncio.Preco = req.Preco
+	anuncio.Imagem = req.Imagem
+	anuncio.Destaque = req.Destaque
+	anuncio.IDLoja = req.IDLoja
+	anuncio.IDCategoria = req.IDCategoria
+
+	err = database.DB.Save(&anuncio).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Recarrega o anúncio com os relacionamentos
+	return GetAnuncioByID(id)
+}
+
+// SoftDeleteAnuncio realiza soft delete do anúncio (marca como excluído)
+func SoftDeleteAnuncio(id uint) error {
+	// Verifica se o anúncio existe e não foi excluído
+	_, err := GetAnuncioByID(id)
+	if err != nil {
+		return errors.New("anúncio não encontrado")
+	}
+
+	// Atualiza a data de exclusão
+	now := time.Now()
+	err = database.DB.Model(&models.Anuncio{}).
+		Where("id = ?", id).
+		Update("data_exclusao", now).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// RestoreAnuncio restaura um anúncio que foi soft deleted
+func RestoreAnuncio(id uint) error {
+	var anuncio models.Anuncio
+	err := database.DB.Where("id = ? AND data_exclusao IS NOT NULL", id).First(&anuncio).Error
+	if err != nil {
+		return errors.New("anúncio não encontrado ou não foi excluído")
+	}
+
+	// Remove a data de exclusão
+	err = database.DB.Model(&models.Anuncio{}).
+		Where("id = ?", id).
+		Update("data_exclusao", nil).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

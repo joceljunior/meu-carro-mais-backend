@@ -1,0 +1,48 @@
+### Exemplos de CRUD de Lojas
+
+### 1. Criar loja
+POST http://localhost:8080/lojas
+Content-Type: application/json
+
+{
+  "nome": "Auto Center São Paulo",
+  "cnpj": "12.345.678/0001-90",
+  "imagem": "https://example.com/auto-center.jpg",
+  "latitude": -23.5505,
+  "longitude": -46.6333,
+  "id_categoria": 1
+}
+
+### 2. Listar todas as lojas
+GET http://localhost:8080/lojas
+
+### 3. Buscar loja por ID
+GET http://localhost:8080/lojas/1
+
+### 4. Atualizar loja
+PUT http://localhost:8080/lojas/1
+Content-Type: application/json
+
+{
+  "nome": "Auto Center São Paulo - Filial Centro",
+  "cnpj": "12.345.678/0001-90",
+  "imagem": "https://example.com/auto-center-centro.jpg",
+  "latitude": -23.5505,
+  "longitude": -46.6333,
+  "id_categoria": 1
+}
+
+### 5. Soft delete loja (inativar)
+DELETE http://localhost:8080/lojas/1
+
+### 6. Restaurar loja excluída
+POST http://localhost:8080/lojas/1/restore
+
+### 7. Verificar se loja foi restaurada
+GET http://localhost:8080/lojas/1
+
+### 8. Listar lojas por proximidade (endpoint existente)
+GET http://localhost:8080/lojas/proximidade?latitude=-23.5505&longitude=-46.6333
+
+### 9. Listar categorias de lojista (endpoint existente)
+GET http://localhost:8080/lojas/categorias

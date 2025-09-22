@@ -1,0 +1,49 @@
+### Exemplos de CRUD de Veículos
+
+### 1. Criar veículo
+POST http://localhost:8080/veiculos
+Content-Type: application/json
+
+{
+  "modelo": "Honda Civic",
+  "ano": 2020,
+  "cor": "Prata",
+  "placa": "ABC-1234",
+  "id_usuario": 1
+}
+
+### 2. Listar todos os veículos
+GET http://localhost:8080/veiculos
+
+### 3. Buscar veículo por ID
+GET http://localhost:8080/veiculos/1
+
+### 4. Atualizar veículo
+PUT http://localhost:8080/veiculos/1
+Content-Type: application/json
+
+{
+  "modelo": "Honda Civic Touring",
+  "ano": 2021,
+  "cor": "Branco",
+  "placa": "ABC-1234",
+  "id_usuario": 1
+}
+
+### 5. Soft delete veículo (inativar)
+DELETE http://localhost:8080/veiculos/1
+
+### 6. Restaurar veículo excluído
+POST http://localhost:8080/veiculos/1/restore
+
+### 7. Verificar se veículo foi restaurado
+GET http://localhost:8080/veiculos/1
+
+### 8. Listar veículos de um usuário (endpoint existente)
+GET http://localhost:8080/usuarios/1/veiculos
+
+### 9. Listar histórico de um veículo (endpoint existente)
+GET http://localhost:8080/veiculos/1/historico
+
+### 10. Listar histórico de todos os veículos de um usuário (endpoint existente)
+GET http://localhost:8080/usuarios/1/historico
