@@ -15,9 +15,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users": {
-            "post": {
-                "description": "Cria um novo usuário com todos os dados fornecidos",
+        "/anuncios": {
+            "get": {
+                "description": "Retorna todos os anúncios disponíveis com informações da loja e categoria",
                 "consumes": [
                     "application/json"
                 ],
@@ -25,50 +25,51 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usuários"
+                    "Anúncios"
                 ],
-                "summary": "Criação do usuário completo",
-                "parameters": [
-                    {
-                        "description": "Dados completos do usuário",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/json.UserRequest"
-                        }
-                    }
-                ],
+                "summary": "Lista todos os anúncios",
                 "responses": {
-                    "201": {
-                        "description": "Usuário criado com sucesso",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/json.UserResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                },
-                                "details": {
-                                    "type": "string"
-                                }
-                            }
+                            "$ref": "#/definitions/json.AnunciosResponse"
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/anuncios/categorias": {
+            "get": {
+                "description": "Retorna todas as categorias de anúncio disponíveis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Lista categorias de anúncio",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CategoriasAnuncioResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -120,6 +121,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/lojas/categorias": {
+            "get": {
+                "description": "Retorna todas as categorias de lojista disponíveis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Lista categorias de lojista",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CategoriasLojistaResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/lojas/proximidade": {
             "get": {
                 "description": "Retorna lista de lojas ordenadas por proximidade do usuário",
@@ -160,30 +191,22 @@ const docTemplate = `{
                         "description": "Parâmetros inválidos",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     }
                 }
             }
         },
-        "/lojas/categorias": {
+        "/servicos/categorias": {
             "get": {
-                "description": "Retorna todas as categorias de lojista disponíveis",
+                "description": "Retorna todas as categorias de serviço disponíveis",
                 "consumes": [
                     "application/json"
                 ],
@@ -191,25 +214,21 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Lojas"
+                    "Serviços"
                 ],
-                "summary": "Lista categorias de lojista",
+                "summary": "Lista categorias de serviço",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/json.CategoriasLojistaResponse"
+                            "$ref": "#/definitions/json.CategoriasServicoResponse"
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -254,31 +273,21 @@ const docTemplate = `{
                     "400": {
                         "description": "Parâmetros inválidos",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "type": "string"
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "type": "string"
                         }
                     }
                 }
             }
         },
-        "/servicos/categorias": {
+        "/users": {
             "get": {
-                "description": "Retorna todas as categorias de serviço disponíveis",
+                "description": "Retorna uma lista com todos os usuários ativos",
                 "consumes": [
                     "application/json"
                 ],
@@ -286,33 +295,30 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Serviços"
+                    "Usuários"
                 ],
-                "summary": "Lista categorias de serviço",
+                "summary": "Lista todos os usuários",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Lista de usuários",
                         "schema": {
-                            "$ref": "#/definitions/json.CategoriasServicoResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.UserResponse"
+                            }
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     }
                 }
-            }
-        },
-        "/anuncios": {
-            "get": {
-                "description": "Retorna todos os anúncios disponíveis com informações da loja e categoria",
+            },
+            "post": {
+                "description": "Cria um novo usuário com todos os dados fornecidos",
                 "consumes": [
                     "application/json"
                 ],
@@ -320,113 +326,258 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Anúncios"
+                    "Usuários"
                 ],
-                "summary": "Lista todos os anúncios",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnunciosResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/categorias": {
-            "get": {
-                "description": "Retorna todas as categorias de anúncio disponíveis",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Lista categorias de anúncio",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.CategoriasAnuncioResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/usuarios/{id_usuario}/veiculos": {
-            "get": {
-                "description": "Retorna todos os veículos ativos de um usuário específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Veículos"
-                ],
-                "summary": "Lista veículos de um usuário",
+                "summary": "Criação do usuário completo",
                 "parameters": [
                     {
-                        "description": "ID do usuário",
-                        "in": "path",
-                        "name": "id_usuario",
+                        "description": "Dados completos do usuário",
+                        "name": "request",
+                        "in": "body",
                         "required": true,
-                        "type": "integer"
+                        "schema": {
+                            "$ref": "#/definitions/json.UserRequest"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Usuário criado com sucesso",
                         "schema": {
-                            "$ref": "#/definitions/json.VeiculosResponse"
+                            "$ref": "#/definitions/json.UserResponse"
                         }
                     },
                     "400": {
-                        "description": "ID de usuário inválido",
+                        "description": "Dados inválidos",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Retorna os dados de um usuário específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Busca usuário por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/json.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um usuário existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Atualiza usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do usuário",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.UserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete do usuário, marcando como excluído sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Exclui usuário (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário excluído com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/restore": {
+            "post": {
+                "description": "Restaura um usuário que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Restaura usuário excluído",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -447,11 +598,11 @@ const docTemplate = `{
                 "summary": "Lista histórico de todos os veículos de um usuário",
                 "parameters": [
                     {
+                        "type": "integer",
                         "description": "ID do usuário",
-                        "in": "path",
                         "name": "id_usuario",
-                        "required": true,
-                        "type": "integer"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -465,22 +616,60 @@ const docTemplate = `{
                         "description": "ID de usuário inválido",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/usuarios/{id_usuario}/veiculos": {
+            "get": {
+                "description": "Retorna todos os veículos ativos de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Veículos"
+                ],
+                "summary": "Lista veículos de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id_usuario",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.VeiculosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -501,11 +690,11 @@ const docTemplate = `{
                 "summary": "Lista histórico de um veículo",
                 "parameters": [
                     {
+                        "type": "integer",
                         "description": "ID do veículo",
-                        "in": "path",
                         "name": "id_veiculo",
-                        "required": true,
-                        "type": "integer"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -519,22 +708,14 @@ const docTemplate = `{
                         "description": "ID de veículo inválido",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "object",
-                            "properties": {
-                                "error": {
-                                    "type": "string"
-                                }
-                            }
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -559,6 +740,167 @@ const docTemplate = `{
                 },
                 "titulo": {
                     "type": "string"
+                }
+            }
+        },
+        "json.AnuncioResponse": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "destaque": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_categoria": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "preco": {
+                    "type": "number"
+                },
+                "titulo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.AnunciosResponse": {
+            "type": "object",
+            "properties": {
+                "anuncios": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.AnuncioResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CategoriaAnuncioResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CategoriaLojistaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CategoriaServicoResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CategoriasAnuncioResponse": {
+            "type": "object",
+            "properties": {
+                "categorias": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CategoriaAnuncioResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CategoriasLojistaResponse": {
+            "type": "object",
+            "properties": {
+                "categorias": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CategoriaLojistaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CategoriasServicoResponse": {
+            "type": "object",
+            "properties": {
+                "categorias": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CategoriaServicoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.HistoricoVeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_anuncio": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.HistoricosVeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "historicos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.HistoricoVeiculoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -654,31 +996,6 @@ const docTemplate = `{
                 }
             }
         },
-        "json.CategoriaLojistaResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "nome": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.CategoriasLojistaResponse": {
-            "type": "object",
-            "properties": {
-                "categorias": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.CategoriaLojistaResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "json.ServicoResponse": {
             "type": "object",
             "properties": {
@@ -728,239 +1045,45 @@ const docTemplate = `{
                 }
             }
         },
-        "json.CategoriaServicoResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "nome": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.CategoriasServicoResponse": {
-            "type": "object",
-            "properties": {
-                "categorias": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.CategoriaServicoResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.AnuncioResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "titulo": {
-                    "type": "string"
-                },
-                "descricao": {
-                    "type": "string"
-                },
-                "preco": {
-                    "type": "number",
-                    "format": "float64"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "destaque": {
-                    "type": "boolean"
-                },
-                "id_loja": {
-                    "type": "integer"
-                },
-                "id_categoria": {
-                    "type": "integer"
-                },
-                "categoria": {
-                    "type": "string"
-                },
-                "loja": {
-                    "$ref": "#/definitions/json.LojaResponse"
-                }
-            }
-        },
-        "json.AnunciosResponse": {
-            "type": "object",
-            "properties": {
-                "anuncios": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.AnuncioResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.CategoriaAnuncioResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "nome": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.CategoriasAnuncioResponse": {
-            "type": "object",
-            "properties": {
-                "categorias": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.CategoriaAnuncioResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.VeiculoResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "modelo": {
-                    "type": "string"
-                },
-                "ano": {
-                    "type": "integer"
-                },
-                "cor": {
-                    "type": "string"
-                },
-                "placa": {
-                    "type": "string"
-                },
-                "id_usuario": {
-                    "type": "integer"
-                },
-                "data_cadastro": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "ativo": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "json.VeiculosResponse": {
-            "type": "object",
-            "properties": {
-                "veiculos": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.VeiculoResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.HistoricoVeiculoResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "id_veiculo": {
-                    "type": "integer"
-                },
-                "id_anuncio": {
-                    "type": "integer"
-                },
-                "descricao": {
-                    "type": "string"
-                },
-                "data": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "data_cadastro": {
-                    "type": "string",
-                    "format": "date-time"
-                }
-            }
-        },
-        "json.HistoricosVeiculoResponse": {
-            "type": "object",
-            "properties": {
-                "historicos": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.HistoricoVeiculoResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "json.UserRequest": {
             "type": "object",
             "required": [
-                "nome",
+                "cpf",
                 "email",
-                "senha",
-                "cpf"
+                "nome",
+                "senha"
             ],
             "properties": {
                 "cpf": {
-                    "type": "string",
-                    "description": "CPF do usuário"
+                    "type": "string"
                 },
                 "data_nascimento": {
-                    "type": "string",
-                    "format": "date-time"
+                    "type": "string"
                 },
                 "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "Email do usuário"
+                    "type": "string"
                 },
                 "endereco": {
-                    "type": "string",
-                    "description": "Endereço do usuário"
+                    "type": "string"
                 },
                 "imagem": {
-                    "type": "string",
-                    "description": "URL da imagem do usuário"
+                    "type": "string"
                 },
                 "latitude": {
-                    "type": "number",
-                    "format": "float64"
+                    "type": "number"
                 },
                 "longitude": {
-                    "type": "number",
-                    "format": "float64"
+                    "type": "number"
                 },
                 "nome": {
-                    "type": "string",
-                    "description": "Nome completo do usuário"
+                    "type": "string"
                 },
                 "senha": {
                     "type": "string",
-                    "minLength": 6,
-                    "description": "Senha do usuário (mínimo 6 caracteres)"
+                    "minLength": 6
                 },
                 "telefone": {
-                    "type": "string",
-                    "description": "Telefone do usuário"
+                    "type": "string"
                 }
             }
         },
@@ -974,12 +1097,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "data_cadastro": {
-                    "type": "string",
-                    "format": "date-time"
+                    "type": "string"
                 },
                 "data_nascimento": {
-                    "type": "string",
-                    "format": "date-time"
+                    "type": "string"
                 },
                 "email": {
                     "type": "string"
@@ -1000,12 +1121,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "latitude": {
-                    "type": "number",
-                    "format": "float64"
+                    "type": "number"
                 },
                 "longitude": {
-                    "type": "number",
-                    "format": "float64"
+                    "type": "number"
                 },
                 "mensagem": {
                     "type": "string"
@@ -1015,6 +1134,49 @@ const docTemplate = `{
                 },
                 "telefone": {
                     "type": "string"
+                }
+            }
+        },
+        "json.VeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "ano": {
+                    "type": "integer"
+                },
+                "ativo": {
+                    "type": "boolean"
+                },
+                "cor": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.VeiculosResponse": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                },
+                "veiculos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.VeiculoResponse"
+                    }
                 }
             }
         }

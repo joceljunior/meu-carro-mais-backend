@@ -1,0 +1,48 @@
+### Exemplos de CRUD de Usuários
+
+### 1. Criar usuário
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "nome": "João Silva",
+  "email": "joao.silva@email.com",
+  "senha": "123456",
+  "cpf": "12345678901",
+  "telefone": "(11) 99999-9999",
+  "endereco": "Rua das Flores, 123",
+  "data_nascimento": "1990-01-15T00:00:00Z",
+  "latitude": -23.5505,
+  "longitude": -46.6333
+}
+
+### 2. Listar todos os usuários
+GET http://localhost:8080/users
+
+### 3. Buscar usuário por ID
+GET http://localhost:8080/users/1
+
+### 4. Atualizar usuário
+PUT http://localhost:8080/users/1
+Content-Type: application/json
+
+{
+  "nome": "João Silva Santos",
+  "email": "joao.silva@email.com",
+  "senha": "123456",
+  "cpf": "12345678901",
+  "telefone": "(11) 99999-8888",
+  "endereco": "Rua das Flores, 456",
+  "data_nascimento": "1990-01-15T00:00:00Z",
+  "latitude": -23.5505,
+  "longitude": -46.6333
+}
+
+### 5. Soft delete usuário (inativar)
+DELETE http://localhost:8080/users/1
+
+### 6. Restaurar usuário excluído
+POST http://localhost:8080/users/1/restore
+
+### 7. Verificar se usuário foi restaurado
+GET http://localhost:8080/users/1

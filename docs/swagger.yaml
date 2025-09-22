@@ -12,6 +12,110 @@ definitions:
       titulo:
         type: string
     type: object
+  json.AnuncioResponse:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+      destaque:
+        type: boolean
+      id:
+        type: integer
+      id_categoria:
+        type: integer
+      id_loja:
+        type: integer
+      imagem:
+        type: string
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      preco:
+        type: number
+      titulo:
+        type: string
+    type: object
+  json.AnunciosResponse:
+    properties:
+      anuncios:
+        items:
+          $ref: '#/definitions/json.AnuncioResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CategoriaAnuncioResponse:
+    properties:
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.CategoriaLojistaResponse:
+    properties:
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.CategoriaServicoResponse:
+    properties:
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.CategoriasAnuncioResponse:
+    properties:
+      categorias:
+        items:
+          $ref: '#/definitions/json.CategoriaAnuncioResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CategoriasLojistaResponse:
+    properties:
+      categorias:
+        items:
+          $ref: '#/definitions/json.CategoriaLojistaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CategoriasServicoResponse:
+    properties:
+      categorias:
+        items:
+          $ref: '#/definitions/json.CategoriaServicoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.HistoricoVeiculoResponse:
+    properties:
+      data:
+        type: string
+      data_cadastro:
+        type: string
+      descricao:
+        type: string
+      id:
+        type: integer
+      id_anuncio:
+        type: integer
+      id_veiculo:
+        type: integer
+    type: object
+  json.HistoricosVeiculoResponse:
+    properties:
+      historicos:
+        items:
+          $ref: '#/definitions/json.HistoricoVeiculoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
   json.LoginRequest:
     properties:
       email:
@@ -108,58 +212,136 @@ definitions:
     properties:
       cpf:
         type: string
+      data_nascimento:
+        type: string
       email:
+        type: string
+      endereco:
         type: string
       imagem:
         type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
       nome:
         type: string
-      password:
-        type: string
       senha:
+        minLength: 6
         type: string
+      telefone:
+        type: string
+    required:
+    - cpf
+    - email
+    - nome
+    - senha
+    type: object
+  json.UserResponse:
+    properties:
+      ativo:
+        type: boolean
+      cpf:
+        type: string
+      data_cadastro:
+        type: string
+      data_nascimento:
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_plano:
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      mensagem:
+        type: string
+      nome:
+        type: string
+      telefone:
+        type: string
+    type: object
+  json.VeiculoResponse:
+    properties:
+      ano:
+        type: integer
+      ativo:
+        type: boolean
+      cor:
+        type: string
+      data_cadastro:
+        type: string
+      id:
+        type: integer
+      id_usuario:
+        type: integer
+      modelo:
+        type: string
+      placa:
+        type: string
+    type: object
+  json.VeiculosResponse:
+    properties:
+      total:
+        type: integer
+      veiculos:
+        items:
+          $ref: '#/definitions/json.VeiculoResponse'
+        type: array
     type: object
 info:
   contact: {}
 paths:
-  /users:
-    post:
+  /anuncios:
+    get:
       consumes:
       - application/json
-      description: Cria um novo usuário com todos os dados fornecidos
-      parameters:
-      - description: Dados completos do usuário
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/json.UserRequest'
+      description: Retorna todos os anúncios disponíveis com informações da loja e
+        categoria
       produces:
       - application/json
       responses:
-        "201":
-          description: Usuário criado com sucesso
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/json.UserResponse'
-        "400":
-          description: Dados inválidos
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-              details:
-                type: string
+            $ref: '#/definitions/json.AnunciosResponse'
         "500":
           description: Erro interno do servidor
           schema:
+            additionalProperties: true
             type: object
-            properties:
-              error:
-                type: string
-      summary: Criação do usuário completo
+      summary: Lista todos os anúncios
       tags:
-      - Usuários
+      - Anúncios
+  /anuncios/categorias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as categorias de anúncio disponíveis
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CategoriasAnuncioResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista categorias de anúncio
+      tags:
+      - Anúncios
   /login:
     post:
       consumes:
@@ -191,6 +373,26 @@ paths:
       summary: Login/Criação do usuário
       tags:
       - Autenticação
+  /lojas/categorias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as categorias de lojista disponíveis
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CategoriasLojistaResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista categorias de lojista
+      tags:
+      - Lojas
   /lojas/proximidade:
     get:
       consumes:
@@ -217,36 +419,36 @@ paths:
         "400":
           description: Parâmetros inválidos
           schema:
-            type: string
+            additionalProperties: true
+            type: object
         "500":
           description: Erro interno do servidor
           schema:
-            type: string
+            additionalProperties: true
+            type: object
       summary: Lista lojas por proximidade
       tags:
       - Lojas
-  /lojas/categorias:
+  /servicos/categorias:
     get:
       consumes:
       - application/json
-      description: Retorna todas as categorias de lojista disponíveis
+      description: Retorna todas as categorias de serviço disponíveis
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/json.CategoriasLojistaResponse'
+            $ref: '#/definitions/json.CategoriasServicoResponse'
         "500":
           description: Erro interno do servidor
           schema:
+            additionalProperties: true
             type: object
-            properties:
-              error:
-                type: string
-      summary: Lista categorias de lojista
+      summary: Lista categorias de serviço
       tags:
-      - Lojas
+      - Serviços
   /servicos/proximidade:
     get:
       consumes:
@@ -281,334 +483,301 @@ paths:
       summary: Lista serviços por proximidade
       tags:
       - Serviços
-  /servicos/categorias:
+  /users:
     get:
       consumes:
       - application/json
-      description: Retorna todas as categorias de serviço disponíveis
+      description: Retorna uma lista com todos os usuários ativos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de usuários
+          schema:
+            items:
+              $ref: '#/definitions/json.UserResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os usuários
+      tags:
+      - Usuários
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo usuário com todos os dados fornecidos
+      parameters:
+      - description: Dados completos do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Usuário criado com sucesso
+          schema:
+            $ref: '#/definitions/json.UserResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação do usuário completo
+      tags:
+      - Usuários
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete do usuário, marcando como excluído sem remover
+        do banco
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuário excluído com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui usuário (soft delete)
+      tags:
+      - Usuários
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de um usuário específico pelo ID
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuário encontrado
+          schema:
+            $ref: '#/definitions/json.UserResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca usuário por ID
+      tags:
+      - Usuários
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um usuário existente
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do usuário
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuário atualizado com sucesso
+          schema:
+            $ref: '#/definitions/json.UserResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza usuário
+      tags:
+      - Usuários
+  /users/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um usuário que foi soft deleted
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuário restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura usuário excluído
+      tags:
+      - Usuários
+  /usuarios/{id_usuario}/historico:
+    get:
+      consumes:
+      - application/json
+      description: Retorna o histórico de todos os veículos de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id_usuario
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/json.CategoriasServicoResponse'
+            $ref: '#/definitions/json.HistoricosVeiculoResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
         "500":
           description: Erro interno do servidor
           schema:
+            additionalProperties: true
             type: object
-            properties:
-              error:
-                type: string
-      summary: Lista categorias de serviço
+      summary: Lista histórico de todos os veículos de um usuário
       tags:
-      - Serviços
-  /anuncios:
+      - Veículos
+  /usuarios/{id_usuario}/veiculos:
     get:
       consumes:
       - application/json
-      description: Retorna todos os anúncios disponíveis com informações da loja e categoria
+      description: Retorna todos os veículos ativos de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id_usuario
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/json.AnunciosResponse'
+            $ref: '#/definitions/json.VeiculosResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
         "500":
           description: Erro interno do servidor
           schema:
+            additionalProperties: true
             type: object
-            properties:
-              error:
-                type: string
-      summary: Lista todos os anúncios
+      summary: Lista veículos de um usuário
       tags:
-      - Anúncios
-  /anuncios/categorias:
+      - Veículos
+  /veiculos/{id_veiculo}/historico:
     get:
       consumes:
       - application/json
-      description: Retorna todas as categorias de anúncio disponíveis
+      description: Retorna o histórico completo de um veículo específico
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id_veiculo
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/json.CategoriasAnuncioResponse'
+            $ref: '#/definitions/json.HistoricosVeiculoResponse'
+        "400":
+          description: ID de veículo inválido
+          schema:
+            additionalProperties: true
+            type: object
         "500":
           description: Erro interno do servidor
           schema:
+            additionalProperties: true
             type: object
-            properties:
-              error:
-                type: string
-      summary: Lista categorias de anúncio
+      summary: Lista histórico de um veículo
       tags:
-      - Anúncios
-definitions:
-  json.AnuncioDestaqueResponse:
-    properties:
-      descricao:
-        type: string
-      id:
-        type: integer
-      imagem:
-        type: string
-      preco:
-        type: number
-      titulo:
-        type: string
-    type: object
-  json.LoginRequest:
-    properties:
-      email:
-        type: string
-      senha:
-        type: string
-    type: object
-  json.LoginResponse:
-    properties:
-      email:
-        type: string
-      id:
-        type: integer
-      loja:
-        $ref: '#/definitions/json.LojaUsuarioResponse'
-      nome:
-        type: string
-      nome_plano:
-        type: string
-    type: object
-  json.LojaResponse:
-    properties:
-      categoria:
-        type: string
-      cnpj:
-        type: string
-      distancia:
-        description: Distância em km
-        type: number
-      id:
-        type: integer
-      id_categoria:
-        type: integer
-      imagem:
-        type: string
-      latitude:
-        type: number
-      longitude:
-        type: number
-      nome:
-        type: string
-    type: object
-  json.LojaUsuarioResponse:
-    properties:
-      anuncio_destaque:
-        $ref: '#/definitions/json.AnuncioDestaqueResponse'
-      id:
-        type: integer
-      nome:
-        type: string
-    type: object
-  json.LojasResponse:
-    properties:
-      lojas:
-        items:
-          $ref: '#/definitions/json.LojaResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.ServicoResponse:
-    properties:
-      categoria:
-        type: string
-      descricao:
-        type: string
-      destaque:
-        type: boolean
-      distancia:
-        type: number
-      id:
-        type: integer
-      id_categoria:
-        type: integer
-      imagem:
-        type: string
-      loja:
-        $ref: '#/definitions/json.LojaResponse'
-      preco:
-        type: number
-      titulo:
-        type: string
-    type: object
-  json.ServicosResponse:
-    properties:
-      servicos:
-        items:
-          $ref: '#/definitions/json.ServicoResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.UserRequest:
-    required:
-    - nome
-    - email
-    - senha
-    - cpf
-    properties:
-      cpf:
-        description: CPF do usuário
-        type: string
-      data_nascimento:
-        format: date-time
-        type: string
-      email:
-        description: Email do usuário
-        format: email
-        type: string
-      endereco:
-        description: Endereço do usuário
-        type: string
-      imagem:
-        description: URL da imagem do usuário
-        type: string
-      latitude:
-        format: float64
-        type: number
-      longitude:
-        format: float64
-        type: number
-      nome:
-        description: Nome completo do usuário
-        type: string
-      senha:
-        description: Senha do usuário (mínimo 6 caracteres)
-        minLength: 6
-        type: string
-      telefone:
-        description: Telefone do usuário
-        type: string
-    type: object
-  json.UserResponse:
-    properties:
-      ativo:
-        type: boolean
-      cpf:
-        type: string
-      data_cadastro:
-        format: date-time
-        type: string
-      data_nascimento:
-        format: date-time
-        type: string
-      email:
-        type: string
-      endereco:
-        type: string
-      id:
-        type: integer
-      id_loja:
-        type: integer
-      id_plano:
-        type: integer
-      imagem:
-        type: string
-      latitude:
-        format: float64
-        type: number
-      longitude:
-        format: float64
-        type: number
-      mensagem:
-        type: string
-      nome:
-        type: string
-      telefone:
-        type: string
-    type: object
-  json.CategoriaServicoResponse:
-    properties:
-      id:
-        type: integer
-      nome:
-        type: string
-    type: object
-  json.CategoriasServicoResponse:
-    properties:
-      categorias:
-        items:
-          $ref: '#/definitions/json.CategoriaServicoResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.CategoriaLojistaResponse:
-    properties:
-      id:
-        type: integer
-      nome:
-        type: string
-    type: object
-  json.CategoriasLojistaResponse:
-    properties:
-      categorias:
-        items:
-          $ref: '#/definitions/json.CategoriaLojistaResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.AnuncioResponse:
-    properties:
-      categoria:
-        type: string
-      descricao:
-        type: string
-      destaque:
-        type: boolean
-      id:
-        type: integer
-      id_categoria:
-        type: integer
-      id_loja:
-        type: integer
-      imagem:
-        type: string
-      loja:
-        $ref: '#/definitions/json.LojaResponse'
-      preco:
-        format: float64
-        type: number
-      titulo:
-        type: string
-    type: object
-  json.AnunciosResponse:
-    properties:
-      anuncios:
-        items:
-          $ref: '#/definitions/json.AnuncioResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.CategoriaAnuncioResponse:
-    properties:
-      id:
-        type: integer
-      nome:
-        type: string
-    type: object
-  json.CategoriasAnuncioResponse:
-    properties:
-      categorias:
-        items:
-          $ref: '#/definitions/json.CategoriaAnuncioResponse'
-        type: array
-      total:
-        type: integer
-    type: object
+      - Veículos
 swagger: "2.0"
