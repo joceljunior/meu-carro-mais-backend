@@ -1,0 +1,145 @@
+### Exemplos de uso da API de Pagamentos
+
+### 1. Criar sessão de checkout para plano mensal
+POST http://localhost:8080/pagamentos/checkout
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "tipo_plano": "monthly",
+  "success_url": "https://meuapp.com/success",
+  "cancel_url": "https://meuapp.com/cancel"
+}
+
+### 2. Criar sessão de checkout para plano anual
+POST http://localhost:8080/pagamentos/checkout
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "tipo_plano": "yearly",
+  "success_url": "https://meuapp.com/success",
+  "cancel_url": "https://meuapp.com/cancel"
+}
+
+### 3. Processar webhook do Stripe (checkout.session.completed)
+POST http://localhost:8080/pagamentos/webhook
+Content-Type: application/json
+Stripe-Signature: t=1234567890,v1=signature
+
+{
+  "id": "evt_1234567890",
+  "object": "event",
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_1234567890",
+      "object": "checkout.session",
+      "amount_total": 2990,
+      "currency": "brl",
+      "customer": "cus_1234567890",
+      "customer_email": "usuario@example.com",
+      "payment_status": "paid",
+      "status": "complete",
+      "url": "https://checkout.stripe.com/c/pay/cs_test_1234567890",
+      "metadata": {
+        "user_id": "1",
+        "tipo_plano": "monthly"
+      }
+    }
+  },
+  "created": 1234567890,
+  "livemode": false,
+  "pending_webhooks": 1
+}
+
+### 4. Processar webhook do Stripe (checkout.session.expired)
+POST http://localhost:8080/pagamentos/webhook
+Content-Type: application/json
+Stripe-Signature: t=1234567890,v1=signature
+
+{
+  "id": "evt_1234567890",
+  "object": "event",
+  "type": "checkout.session.expired",
+  "data": {
+    "object": {
+      "id": "cs_test_1234567890",
+      "object": "checkout.session",
+      "amount_total": 2990,
+      "currency": "brl",
+      "customer": "cus_1234567890",
+      "customer_email": "usuario@example.com",
+      "payment_status": "unpaid",
+      "status": "expired",
+      "url": "https://checkout.stripe.com/c/pay/cs_test_1234567890",
+      "metadata": {
+        "user_id": "1",
+        "tipo_plano": "monthly"
+      }
+    }
+  },
+  "created": 1234567890,
+  "livemode": false,
+  "pending_webhooks": 1
+}
+
+### 5. Listar todos os históricos de pagamento
+GET http://localhost:8080/pagamentos/historicos
+
+### 6. Buscar histórico de pagamento por ID
+GET http://localhost:8080/pagamentos/historicos/1
+
+### 7. Listar históricos de pagamento de um usuário
+GET http://localhost:8080/usuarios/1/historicos-pagamento
+
+### 8. Soft delete de histórico de pagamento
+DELETE http://localhost:8080/pagamentos/historicos/1
+
+### 9. Restaurar histórico de pagamento
+POST http://localhost:8080/pagamentos/historicos/1/restore
+
+### 10. Exemplo de resposta do checkout
+# {
+#   "session_url": "https://checkout.stripe.com/c/pay/cs_test_1234567890",
+#   "session_id": "cs_test_1234567890",
+#   "mensagem": "Sessão de checkout criada com sucesso"
+# }
+
+### 11. Exemplo de resposta do webhook
+# {
+#   "mensagem": "Checkout session completed processado com sucesso",
+#   "status": "success"
+# }
+
+### 12. Exemplo de histórico de pagamento
+# {
+#   "id": 1,
+#   "id_usuario": 1,
+#   "stripe_session_id": "cs_test_1234567890",
+#   "stripe_payment_id": "pi_1234567890",
+#   "status": "completed",
+#   "tipo_plano": "monthly",
+#   "valor": 29.90,
+#   "moeda": "BRL",
+#   "data_pagamento": "2024-01-01T10:00:00Z",
+#   "data_vencimento": "2024-02-01T10:00:00Z",
+#   "data_criacao": "2024-01-01T09:00:00Z",
+#   "data_atualizacao": "2024-01-01T10:00:00Z",
+#   "usuario": {
+#     "id": 1,
+#     "nome": "João Silva",
+#     "email": "joao@example.com",
+#     "cpf": "12345678901",
+#     "imagem": "https://example.com/avatar.jpg",
+#     "telefone": "11999999999",
+#     "endereco": "Rua das Flores, 123",
+#     "data_nascimento": "1990-01-01T00:00:00Z",
+#     "data_cadastro": "2024-01-01T00:00:00Z",
+#     "ativo": true,
+#     "latitude": -23.5505,
+#     "longitude": -46.6333,
+#     "id_plano": 2,
+#     "id_loja": null
+#   }
+# }

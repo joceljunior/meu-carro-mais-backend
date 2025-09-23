@@ -2100,6 +2100,337 @@
                 }
             }
         },
+        "/pagamentos/checkout": {
+            "post": {
+                "description": "Cria uma sessão de checkout no Stripe para pagamento premium",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Cria sessão de checkout",
+                "parameters": [
+                    {
+                        "description": "Dados do checkout",
+                        "name": "checkout",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CheckoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CheckoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/pagamentos/historicos": {
+            "get": {
+                "description": "Retorna todos os históricos de pagamento do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Lista todos os históricos de pagamento",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosPagamentoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/pagamentos/historicos/{id}": {
+            "get": {
+                "description": "Retorna um histórico de pagamento específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Busca histórico de pagamento por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de pagamento",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoPagamentoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de um histórico de pagamento",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Remove histórico de pagamento (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de pagamento",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Histórico removido com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/pagamentos/historicos/{id}/restore": {
+            "post": {
+                "description": "Restaura um histórico de pagamento que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Restaura histórico de pagamento",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de pagamento",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Histórico restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/pagamentos/usuarios/{id}/historicos": {
+            "get": {
+                "description": "Retorna todos os históricos de pagamento de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Lista históricos de pagamento de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosPagamentoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/pagamentos/webhook": {
+            "post": {
+                "description": "Processa webhooks do Stripe para atualizar status de pagamentos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Processa webhook do Stripe",
+                "parameters": [
+                    {
+                        "description": "Dados do webhook",
+                        "name": "webhook",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.WebhookRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.WebhookResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/produtos": {
             "get": {
                 "description": "Retorna todos os produtos ativos do sistema",
@@ -4406,6 +4737,47 @@
                 }
             }
         },
+        "json.CheckoutRequest": {
+            "type": "object",
+            "required": [
+                "cancel_url",
+                "id_usuario",
+                "success_url",
+                "tipo_plano"
+            ],
+            "properties": {
+                "cancel_url": {
+                    "type": "string"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "success_url": {
+                    "type": "string"
+                },
+                "tipo_plano": {
+                    "type": "string",
+                    "enum": [
+                        "monthly",
+                        "yearly"
+                    ]
+                }
+            }
+        },
+        "json.CheckoutResponse": {
+            "type": "object",
+            "properties": {
+                "mensagem": {
+                    "type": "string"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "session_url": {
+                    "type": "string"
+                }
+            }
+        },
         "json.FotoRequest": {
             "type": "object",
             "required": [
@@ -4546,6 +4918,55 @@
                 }
             }
         },
+        "json.HistoricoPagamentoResponse": {
+            "type": "object",
+            "properties": {
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_criacao": {
+                    "type": "string"
+                },
+                "data_pagamento": {
+                    "type": "string"
+                },
+                "data_vencimento": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "moeda": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "stripe_payment_id": {
+                    "type": "string"
+                },
+                "stripe_session_id": {
+                    "type": "string"
+                },
+                "tipo_plano": {
+                    "type": "string"
+                },
+                "usuario": {
+                    "description": "Dados do usuário",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.UserResponse"
+                        }
+                    ]
+                },
+                "valor": {
+                    "type": "number"
+                }
+            }
+        },
         "json.HistoricoResgateRequest": {
             "type": "object",
             "required": [
@@ -4669,6 +5090,20 @@
                     "type": "integer"
                 },
                 "id_veiculo": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.HistoricosPagamentoResponse": {
+            "type": "object",
+            "properties": {
+                "historicos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.HistoricoPagamentoResponse"
+                    }
+                },
+                "total": {
                     "type": "integer"
                 }
             }
@@ -5221,6 +5656,101 @@
                     "items": {
                         "$ref": "#/definitions/json.VeiculoResponse"
                     }
+                }
+            }
+        },
+        "json.WebhookData": {
+            "type": "object",
+            "properties": {
+                "object": {
+                    "$ref": "#/definitions/json.WebhookObject"
+                }
+            }
+        },
+        "json.WebhookObject": {
+            "type": "object",
+            "properties": {
+                "amount_total": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "customer": {
+                    "type": "string"
+                },
+                "customer_email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "object": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.WebhookRequest": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/json.WebhookData"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "livemode": {
+                    "type": "boolean"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "pending_webhooks": {
+                    "type": "integer"
+                },
+                "request": {
+                    "$ref": "#/definitions/json.WebhookRequestData"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.WebhookRequestData": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "idempotency_key": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.WebhookResponse": {
+            "type": "object",
+            "properties": {
+                "mensagem": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }

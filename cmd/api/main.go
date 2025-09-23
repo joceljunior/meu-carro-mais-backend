@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"meu-carro-mais/internal/config"
 	"meu-carro-mais/internal/database"
 	"os"
 
@@ -13,6 +14,7 @@ import (
 func main() {
 
 	database.InitDB()
+	config.InitStripe()
 
 	ginMode := os.Getenv("GIN_MODE")
 	if ginMode == "" {

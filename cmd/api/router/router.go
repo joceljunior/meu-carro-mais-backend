@@ -30,6 +30,7 @@ func NewRouter() *gin.Engine {
 		&HistoricoResgateRouter{},
 		&AvaliacaoRouter{},
 		&FotoRouter{},
+		&PagamentoRouter{},
 	}
 
 	for _, rt := range routers {

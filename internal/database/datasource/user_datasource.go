@@ -179,3 +179,22 @@ func RestoreUser(id uint) error {
 
 	return nil
 }
+
+// UpdateUserPlano atualiza apenas o plano de um usuário
+func UpdateUserPlano(id uint, planoID uint) error {
+	// Verifica se o usuário existe
+	_, err := GetUserByID(id)
+	if err != nil {
+		return errors.New("usuário não encontrado")
+	}
+
+	// Atualiza apenas o plano
+	err = database.DB.Model(&models.Usuario{}).
+		Where("id = ?", id).
+		Update("id_plano", planoID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

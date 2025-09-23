@@ -212,6 +212,34 @@ definitions:
       total:
         type: integer
     type: object
+  json.CheckoutRequest:
+    properties:
+      cancel_url:
+        type: string
+      id_usuario:
+        type: integer
+      success_url:
+        type: string
+      tipo_plano:
+        enum:
+        - monthly
+        - yearly
+        type: string
+    required:
+    - cancel_url
+    - id_usuario
+    - success_url
+    - tipo_plano
+    type: object
+  json.CheckoutResponse:
+    properties:
+      mensagem:
+        type: string
+      session_id:
+        type: string
+      session_url:
+        type: string
+    type: object
   json.FotoRequest:
     properties:
       id_loja:
@@ -306,6 +334,37 @@ definitions:
       total:
         type: integer
     type: object
+  json.HistoricoPagamentoResponse:
+    properties:
+      data_atualizacao:
+        type: string
+      data_criacao:
+        type: string
+      data_pagamento:
+        type: string
+      data_vencimento:
+        type: string
+      id:
+        type: integer
+      id_usuario:
+        type: integer
+      moeda:
+        type: string
+      status:
+        type: string
+      stripe_payment_id:
+        type: string
+      stripe_session_id:
+        type: string
+      tipo_plano:
+        type: string
+      usuario:
+        allOf:
+        - $ref: '#/definitions/json.UserResponse'
+        description: Dados do usuário
+      valor:
+        type: number
+    type: object
   json.HistoricoResgateRequest:
     properties:
       id_loja:
@@ -389,6 +448,15 @@ definitions:
       id_anuncio:
         type: integer
       id_veiculo:
+        type: integer
+    type: object
+  json.HistoricosPagamentoResponse:
+    properties:
+      historicos:
+        items:
+          $ref: '#/definitions/json.HistoricoPagamentoResponse'
+        type: array
+      total:
         type: integer
     type: object
   json.HistoricosResgateResponse:
@@ -760,6 +828,68 @@ definitions:
         items:
           $ref: '#/definitions/json.VeiculoResponse'
         type: array
+    type: object
+  json.WebhookData:
+    properties:
+      object:
+        $ref: '#/definitions/json.WebhookObject'
+    type: object
+  json.WebhookObject:
+    properties:
+      amount_total:
+        type: integer
+      currency:
+        type: string
+      customer:
+        type: string
+      customer_email:
+        type: string
+      id:
+        type: string
+      metadata:
+        additionalProperties: true
+        type: object
+      object:
+        type: string
+      payment_status:
+        type: string
+      status:
+        type: string
+      url:
+        type: string
+    type: object
+  json.WebhookRequest:
+    properties:
+      created:
+        type: integer
+      data:
+        $ref: '#/definitions/json.WebhookData'
+      id:
+        type: string
+      livemode:
+        type: boolean
+      object:
+        type: string
+      pending_webhooks:
+        type: integer
+      request:
+        $ref: '#/definitions/json.WebhookRequestData'
+      type:
+        type: string
+    type: object
+  json.WebhookRequestData:
+    properties:
+      id:
+        type: string
+      idempotency_key:
+        type: string
+    type: object
+  json.WebhookResponse:
+    properties:
+      mensagem:
+        type: string
+      status:
+        type: string
     type: object
 info:
   contact: {}
@@ -2192,6 +2322,230 @@ paths:
       summary: Lista lojas por proximidade
       tags:
       - Lojas
+  /pagamentos/checkout:
+    post:
+      consumes:
+      - application/json
+      description: Cria uma sessão de checkout no Stripe para pagamento premium
+      parameters:
+      - description: Dados do checkout
+        in: body
+        name: checkout
+        required: true
+        schema:
+          $ref: '#/definitions/json.CheckoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CheckoutResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria sessão de checkout
+      tags:
+      - Pagamentos
+  /pagamentos/historicos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de pagamento do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosPagamentoResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os históricos de pagamento
+      tags:
+      - Pagamentos
+  /pagamentos/historicos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de um histórico de pagamento
+      parameters:
+      - description: ID do histórico de pagamento
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Histórico removido com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove histórico de pagamento (soft delete)
+      tags:
+      - Pagamentos
+    get:
+      consumes:
+      - application/json
+      description: Retorna um histórico de pagamento específico pelo ID
+      parameters:
+      - description: ID do histórico de pagamento
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricoPagamentoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca histórico de pagamento por ID
+      tags:
+      - Pagamentos
+  /pagamentos/historicos/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um histórico de pagamento que foi soft deleted
+      parameters:
+      - description: ID do histórico de pagamento
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Histórico restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura histórico de pagamento
+      tags:
+      - Pagamentos
+  /pagamentos/usuarios/{id}/historicos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de pagamento de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosPagamentoResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista históricos de pagamento de um usuário
+      tags:
+      - Pagamentos
+  /pagamentos/webhook:
+    post:
+      consumes:
+      - application/json
+      description: Processa webhooks do Stripe para atualizar status de pagamentos
+      parameters:
+      - description: Dados do webhook
+        in: body
+        name: webhook
+        required: true
+        schema:
+          $ref: '#/definitions/json.WebhookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.WebhookResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Processa webhook do Stripe
+      tags:
+      - Pagamentos
   /produtos:
     get:
       consumes:

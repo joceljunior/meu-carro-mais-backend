@@ -8,6 +8,8 @@ require (
 	gorm.io/gorm v1.30.0
 )
 
+require github.com/stripe/stripe-go/v76 v76.25.0 // indirect
+
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/bytedance/sonic v1.13.3 // indirect
