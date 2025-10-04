@@ -285,6 +285,29 @@ func (m *Migrator) registerMigrations() {
 		Down:    m.dropComplementaryTables,
 	})
 
+	// Migration 011: Remover constraint única do campo stripe_payment_id
+	migration011 := m.NewMigration("011", "remove_stripe_payment_id_unique_constraint").
+		ExecuteSQL(`
+			-- Remove a constraint única do campo stripe_payment_id se ela existir
+			DO $$ 
+			BEGIN
+				-- Verifica se a constraint existe antes de tentar removê-la
+				IF EXISTS (
+					SELECT 1 FROM information_schema.table_constraints 
+					WHERE constraint_name = 'uni_historico_pagamentos_stripe_payment_id'
+					AND table_name = 'historico_pagamentos'
+				) THEN
+					ALTER TABLE historico_pagamentos DROP CONSTRAINT uni_historico_pagamentos_stripe_payment_id;
+				END IF;
+			END $$;
+		`, `
+			-- Rollback: Recria a constraint única (não recomendado em produção)
+			-- ALTER TABLE historico_pagamentos ADD CONSTRAINT uni_historico_pagamentos_stripe_payment_id UNIQUE (stripe_payment_id);
+			SELECT 'Rollback não implementado para esta migration' as message;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration011)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

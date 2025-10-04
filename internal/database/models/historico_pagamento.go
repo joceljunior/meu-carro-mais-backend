@@ -6,7 +6,7 @@ type HistoricoPagamento struct {
 	ID              uint       `gorm:"primaryKey"`
 	IDUsuario       uint       `gorm:"not null"`
 	StripeSessionID string     `gorm:"size:255;unique;not null"`
-	StripePaymentID string     `gorm:"size:255;unique"`
+	StripePaymentID string     `gorm:"size:255"`
 	Status          string     `gorm:"size:50;not null;default:'pending'"` // pending, completed, failed, canceled
 	TipoPlano       string     `gorm:"size:50;not null"`                   // monthly, yearly
 	Valor           float64    `gorm:"type:decimal(10,2);not null"`
