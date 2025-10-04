@@ -86,6 +86,17 @@ No Railway, a variável `SWAGGER_HOST` já está configurada automaticamente par
 SWAGGER_HOST=meu-carro-mais-production.up.railway.app
 ```
 
+### Configuração de CORS
+
+A API está configurada com CORS para permitir requisições de qualquer origem. Configurações atuais:
+
+- ✅ **AllowOrigins**: `*` (todas as origens)
+- ✅ **AllowMethods**: GET, POST, PUT, PATCH, DELETE, OPTIONS
+- ✅ **AllowHeaders**: Origin, Content-Type, Accept, Authorization, Stripe-Signature
+- ✅ **AllowCredentials**: true
+
+Para produção, é recomendado restringir as origens permitidas editando `cmd/api/router/router.go`.
+
 ## Estrutura do Projeto
 
 ```
