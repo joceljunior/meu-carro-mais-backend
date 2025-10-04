@@ -15,8 +15,21 @@ func NewRouter() *gin.Engine {
 	r := gin.Default()
 
 	// Configuração de CORS
+	corsOrigins := []string{
+		"https://meu-carro-mais-production.up.railway.app",
+		"http://localhost:3000",
+		"http://localhost:8080",
+		"http://127.0.0.1:3000",
+		"http://127.0.0.1:8080",
+	}
+
+	// Se estiver em desenvolvimento, permite todas as origens
+	if os.Getenv("GIN_MODE") != "release" {
+		corsOrigins = []string{"*"}
+	}
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // Permite todas as origens (ajuste conforme necessário)
+		AllowOrigins:     corsOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "Stripe-Signature"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -27,22 +40,9 @@ func NewRouter() *gin.Engine {
 	// Configura o host do Swagger baseado no ambiente
 	swaggerHost := os.Getenv("SWAGGER_HOST")
 	if swaggerHost == "" {
-		// Detecta se está rodando localmente ou em produção
-		port := os.Getenv("PORT")
-		ginMode := os.Getenv("GIN_MODE")
-
-		// Se não está em modo release ou não tem porta definida, assume localhost
-		if ginMode != "release" || port == "" {
-			if port == "" {
-				port = "8080"
-			}
-			swaggerHost = "localhost:" + port
-			docs.SwaggerInfo.Schemes = []string{"http"}
-		} else {
-			// Em produção, usa a URL do Railway
-			swaggerHost = "meu-carro-mais-production.up.railway.app"
-			docs.SwaggerInfo.Schemes = []string{"https", "http"}
-		}
+		// Em produção, sempre usa a URL do Railway
+		swaggerHost = "meu-carro-mais-production.up.railway.app"
+		docs.SwaggerInfo.Schemes = []string{"https", "http"}
 	} else {
 		// Se SWAGGER_HOST está definido, detecta o scheme baseado no host
 		if swaggerHost == "localhost:8080" || swaggerHost == "127.0.0.1:8080" {
