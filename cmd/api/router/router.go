@@ -38,22 +38,7 @@ func NewRouter() *gin.Engine {
 	}))
 
 	// Configura o host do Swagger baseado no ambiente
-	swaggerHost := os.Getenv("SWAGGER_HOST")
-	if swaggerHost == "" {
-		// Em produção, sempre usa a URL do Railway
-		swaggerHost = "meu-carro-mais-production.up.railway.app"
-		docs.SwaggerInfo.Schemes = []string{"https", "http"}
-	} else {
-		// Se SWAGGER_HOST está definido, detecta o scheme baseado no host
-		if swaggerHost == "localhost:8080" || swaggerHost == "127.0.0.1:8080" {
-			docs.SwaggerInfo.Schemes = []string{"http"}
-		} else {
-			docs.SwaggerInfo.Schemes = []string{"https", "http"}
-		}
-	}
-
-	docs.SwaggerInfo.Host = swaggerHost
-	docs.SwaggerInfo.BasePath = "/"
+	configureSwaggerHost()
 
 	// Swagger UI na raiz e em /swagger
 	r.GET("/", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -82,4 +67,33 @@ func NewRouter() *gin.Engine {
 	}
 
 	return r
+}
+
+// configureSwaggerHost configura o host do Swagger baseado no ambiente
+func configureSwaggerHost() {
+	// Detecta o ambiente baseado em variáveis de ambiente
+	ginMode := os.Getenv("GIN_MODE")
+	railwayEnvironment := os.Getenv("RAILWAY_ENVIRONMENT")
+	port := os.Getenv("PORT")
+
+	// Se estiver rodando no Railway (produção)
+	if railwayEnvironment == "production" || ginMode == "release" {
+		docs.SwaggerInfo.Host = "meu-carro-mais-production.up.railway.app"
+		docs.SwaggerInfo.Schemes = []string{"https", "http"}
+	} else {
+		// Ambiente de desenvolvimento/local
+		// Se a variável SWAGGER_HOST estiver definida, usa ela
+		if swaggerHost := os.Getenv("SWAGGER_HOST"); swaggerHost != "" {
+			docs.SwaggerInfo.Host = swaggerHost
+		} else {
+			// Detecta automaticamente o host baseado na porta
+			if port == "" {
+				port = "8080"
+			}
+			docs.SwaggerInfo.Host = "localhost:" + port
+		}
+		docs.SwaggerInfo.Schemes = []string{"http"}
+	}
+
+	docs.SwaggerInfo.BasePath = "/"
 }
