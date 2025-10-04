@@ -13,9 +13,11 @@ func (pr *PagamentoRouter) RegisterRoutes(rg *gin.RouterGroup) {
 	pagamentos := rg.Group("/pagamentos")
 	{
 		// Endpoints específicos (devem vir antes dos endpoints com :id)
-		pagamentos.POST("/checkout", handlers.CreateCheckoutSessionHandler)      // POST /pagamentos/checkout - Criar sessão de checkout
-		pagamentos.POST("/webhook", handlers.ProcessWebhookHandler)              // POST /pagamentos/webhook - Processar webhook do Stripe
-		pagamentos.GET("/historicos", handlers.GetAllHistoricosPagamentoHandler) // GET /pagamentos/historicos - Listar todos os históricos
+		pagamentos.POST("/checkout", handlers.CreateCheckoutSessionHandler)                          // POST /pagamentos/checkout - Criar sessão de checkout
+		pagamentos.POST("/subscription-checkout", handlers.CreateSubscriptionCheckoutSessionHandler) // POST /pagamentos/subscription-checkout - Criar sessão de checkout para assinatura
+		pagamentos.POST("/customer-portal", handlers.CreateCustomerPortalSessionHandler)             // POST /pagamentos/customer-portal - Criar sessão do portal de cobrança
+		pagamentos.POST("/webhook", handlers.ProcessWebhookHandler)                                  // POST /pagamentos/webhook - Processar webhook do Stripe
+		pagamentos.GET("/historicos", handlers.GetAllHistoricosPagamentoHandler)                     // GET /pagamentos/historicos - Listar todos os históricos
 
 		// Endpoints CRUD com :id (devem vir por último)
 		pagamentos.GET("/historicos/:id", handlers.GetHistoricoPagamentoHandler)              // GET /pagamentos/historicos/:id - Buscar histórico por ID

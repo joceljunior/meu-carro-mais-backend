@@ -198,3 +198,26 @@ func UpdateUserPlano(id uint, planoID uint) error {
 
 	return nil
 }
+
+// GetUserPlanStatus busca o status do plano de um usuário
+func GetUserPlanStatus(id uint) (*models.Usuario, *models.HistoricoPagamento, error) {
+	// Busca o usuário com o plano
+	usuario, err := GetUserByID(id)
+	if err != nil {
+		return nil, nil, errors.New("usuário não encontrado")
+	}
+
+	// Busca o último pagamento válido do usuário
+	var historico models.HistoricoPagamento
+	err = database.DB.
+		Where("id_usuario = ? AND status = ? AND data_exclusao IS NULL", id, models.StatusPagamentoCompleted).
+		Order("data_criacao DESC").
+		First(&historico).Error
+
+	// Se não encontrar histórico de pagamento, retorna apenas o usuário
+	if err != nil {
+		return usuario, nil, nil
+	}
+
+	return usuario, &historico, nil
+}

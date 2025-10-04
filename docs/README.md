@@ -41,6 +41,16 @@ API para gerenciamento de usuários, lojas e serviços automotivos.
 - **GET /veiculos/{id_veiculo}/historico** - Lista histórico de um veículo específico
   - [Documentação detalhada](HISTORICO_VEICULOS.md)
 
+### Pagamentos
+
+- **POST /pagamentos/checkout** - Cria sessão de checkout para pagamento único
+- **POST /pagamentos/subscription-checkout** - Cria sessão de checkout para assinatura
+- **POST /pagamentos/customer-portal** - Cria sessão do portal de cobrança
+- **POST /pagamentos/webhook** - Processa webhooks do Stripe
+- **GET /pagamentos/historicos** - Lista históricos de pagamento
+- **GET /usuarios/{id_usuario}/historicos-pagamento** - Históricos de pagamento do usuário
+  - [Documentação detalhada](STRIPE_PAYMENTS.md)
+
 ## Documentação Swagger
 
 A documentação interativa da API está disponível em:

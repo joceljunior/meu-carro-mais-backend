@@ -1,0 +1,173 @@
+### Exemplos de uso da API de Pagamentos com Stripe
+
+### 1. Criar sessão de checkout para pagamento único
+POST http://localhost:8080/api/v1/pagamentos/checkout
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "tipo_plano": "monthly",
+  "success_url": "http://localhost:3000/success",
+  "cancel_url": "http://localhost:3000/cancel"
+}
+
+### 2. Criar sessão de checkout para assinatura recorrente
+POST http://localhost:8080/api/v1/pagamentos/subscription-checkout
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "lookup_key": "premium_monthly",
+  "success_url": "http://localhost:3000/success",
+  "cancel_url": "http://localhost:3000/cancel"
+}
+
+### 3. Criar sessão do portal de cobrança do cliente
+POST http://localhost:8080/api/v1/pagamentos/customer-portal
+Content-Type: application/json
+
+{
+  "session_id": "cs_test_1234567890"
+}
+
+### 4. Processar webhook do Stripe (simulado)
+POST http://localhost:8080/api/v1/pagamentos/webhook
+Content-Type: application/json
+Stripe-Signature: t=1234567890,v1=signature_hash
+
+{
+  "id": "evt_1234567890",
+  "object": "event",
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_1234567890",
+      "object": "checkout.session",
+      "amount_total": 2990,
+      "currency": "brl",
+      "customer": "cus_1234567890",
+      "customer_email": "usuario@exemplo.com",
+      "payment_status": "paid",
+      "status": "complete",
+      "url": "https://checkout.stripe.com/c/pay/cs_test_1234567890",
+      "metadata": {
+        "user_id": "1",
+        "tipo_plano": "monthly"
+      }
+    }
+  },
+  "created": 1234567890,
+  "livemode": false,
+  "pending_webhooks": 1
+}
+
+### 5. Buscar histórico de pagamento por ID
+GET http://localhost:8080/api/v1/pagamentos/historicos/1
+
+### 6. Listar todos os históricos de pagamento
+GET http://localhost:8080/api/v1/pagamentos/historicos
+
+### 7. Buscar históricos de pagamento de um usuário específico
+GET http://localhost:8080/api/v1/usuarios/1/historicos-pagamento
+
+### 8. Soft delete de histórico de pagamento
+DELETE http://localhost:8080/api/v1/pagamentos/historicos/1
+
+### 9. Restaurar histórico de pagamento
+POST http://localhost:8080/api/v1/pagamentos/historicos/1/restore
+
+### Exemplos de webhooks do Stripe para diferentes eventos:
+
+### Webhook - Assinatura criada
+POST http://localhost:8080/api/v1/pagamentos/webhook
+Content-Type: application/json
+Stripe-Signature: t=1234567890,v1=signature_hash
+
+{
+  "id": "evt_subscription_created",
+  "object": "event",
+  "type": "customer.subscription.created",
+  "data": {
+    "object": {
+      "id": "sub_1234567890",
+      "object": "subscription",
+      "customer": "cus_1234567890",
+      "status": "active",
+      "current_period_start": 1234567890,
+      "current_period_end": 1237156290
+    }
+  },
+  "created": 1234567890,
+  "livemode": false,
+  "pending_webhooks": 1
+}
+
+### Webhook - Assinatura atualizada
+POST http://localhost:8080/api/v1/pagamentos/webhook
+Content-Type: application/json
+Stripe-Signature: t=1234567890,v1=signature_hash
+
+{
+  "id": "evt_subscription_updated",
+  "object": "event",
+  "type": "customer.subscription.updated",
+  "data": {
+    "object": {
+      "id": "sub_1234567890",
+      "object": "subscription",
+      "customer": "cus_1234567890",
+      "status": "active",
+      "current_period_start": 1234567890,
+      "current_period_end": 1237156290
+    }
+  },
+  "created": 1234567890,
+  "livemode": false,
+  "pending_webhooks": 1
+}
+
+### Webhook - Assinatura cancelada
+POST http://localhost:8080/api/v1/pagamentos/webhook
+Content-Type: application/json
+Stripe-Signature: t=1234567890,v1=signature_hash
+
+{
+  "id": "evt_subscription_deleted",
+  "object": "event",
+  "type": "customer.subscription.deleted",
+  "data": {
+    "object": {
+      "id": "sub_1234567890",
+      "object": "subscription",
+      "customer": "cus_1234567890",
+      "status": "canceled",
+      "canceled_at": 1234567890
+    }
+  },
+  "created": 1234567890,
+  "livemode": false,
+  "pending_webhooks": 1
+}
+
+### Webhook - Trial prestes a acabar
+POST http://localhost:8080/api/v1/pagamentos/webhook
+Content-Type: application/json
+Stripe-Signature: t=1234567890,v1=signature_hash
+
+{
+  "id": "evt_trial_will_end",
+  "object": "event",
+  "type": "customer.subscription.trial_will_end",
+  "data": {
+    "object": {
+      "id": "sub_1234567890",
+      "object": "subscription",
+      "customer": "cus_1234567890",
+      "status": "trialing",
+      "trial_end": 1234567890
+    }
+  },
+  "created": 1234567890,
+  "livemode": false,
+  "pending_webhooks": 1
+}

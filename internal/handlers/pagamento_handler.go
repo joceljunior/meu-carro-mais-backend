@@ -45,7 +45,7 @@ func CreateCheckoutSessionHandler(c *gin.Context) {
 
 // ProcessWebhookHandler godoc
 // @Summary      Processa webhook do Stripe
-// @Description  Processa webhooks do Stripe para atualizar status de pagamentos
+// @Description  Processa webhooks do Stripe para atualizar status de pagamentos e assinaturas
 // @Tags         Pagamentos
 // @Accept       json
 // @Produce      json
@@ -64,19 +64,32 @@ func ProcessWebhookHandler(c *gin.Context) {
 		return
 	}
 
-	// Verifica a assinatura do webhook (opcional, mas recomendado)
+	// Verifica a assinatura do webhook
 	signature := c.GetHeader("Stripe-Signature")
 	if signature != "" {
-		// Aqui você pode verificar a assinatura do webhook
-		// usando o webhook secret configurado
-		// event, err := webhook.ConstructEvent(body, signature, webhookSecret)
-		// if err != nil {
-		//     c.JSON(http.StatusBadRequest, gin.H{"error": "Assinatura inválida"})
-		//     return
-		// }
+		// Verifica a assinatura do webhook usando o webhook secret configurado
+		event, err := services.ProcessWebhookWithSignature(body, signature)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Assinatura inválida: " + err.Error(),
+			})
+			return
+		}
+
+		// Processa o evento do webhook
+		resp, err := services.ProcessStripeEvent(event)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, resp)
+		return
 	}
 
-	// Parse do JSON
+	// Fallback para processamento sem verificação de assinatura (não recomendado para produção)
 	var webhookReq jsonHandlers.WebhookRequest
 	if err := json.Unmarshal(body, &webhookReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -87,6 +100,68 @@ func ProcessWebhookHandler(c *gin.Context) {
 
 	// Processa o webhook
 	resp, err := services.ProcessWebhook(webhookReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// CreateSubscriptionCheckoutSessionHandler godoc
+// @Summary      Cria sessão de checkout para assinatura
+// @Description  Cria uma sessão de checkout no Stripe para assinatura recorrente
+// @Tags         Pagamentos
+// @Accept       json
+// @Produce      json
+// @Param        subscription body json.SubscriptionCheckoutRequest true "Dados da assinatura"
+// @Success      200  {object}  json.CheckoutResponse
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /pagamentos/subscription-checkout [post]
+func CreateSubscriptionCheckoutSessionHandler(c *gin.Context) {
+	var req jsonHandlers.SubscriptionCheckoutRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Dados inválidos: " + err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.CreateSubscriptionCheckoutSession(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// CreateCustomerPortalSessionHandler godoc
+// @Summary      Cria sessão do portal de cobrança
+// @Description  Cria uma sessão do portal de cobrança do Stripe para o cliente
+// @Tags         Pagamentos
+// @Accept       json
+// @Produce      json
+// @Param        portal body json.CustomerPortalRequest true "Dados do portal"
+// @Success      200  {object}  json.CustomerPortalResponse
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /pagamentos/customer-portal [post]
+func CreateCustomerPortalSessionHandler(c *gin.Context) {
+	var req jsonHandlers.CustomerPortalRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Dados inválidos: " + err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.CreateCustomerPortalSession(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

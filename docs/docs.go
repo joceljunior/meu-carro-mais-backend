@@ -9,7 +9,16 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -2159,6 +2168,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/pagamentos/customer-portal": {
+            "post": {
+                "description": "Cria uma sessão do portal de cobrança do Stripe para o cliente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Cria sessão do portal de cobrança",
+                "parameters": [
+                    {
+                        "description": "Dados do portal",
+                        "name": "portal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomerPortalRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomerPortalResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/pagamentos/historicos": {
             "get": {
                 "description": "Retorna todos os históricos de pagamento do sistema",
@@ -2348,6 +2405,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/pagamentos/subscription-checkout": {
+            "post": {
+                "description": "Cria uma sessão de checkout no Stripe para assinatura recorrente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamentos"
+                ],
+                "summary": "Cria sessão de checkout para assinatura",
+                "parameters": [
+                    {
+                        "description": "Dados da assinatura",
+                        "name": "subscription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.SubscriptionCheckoutRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CheckoutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/pagamentos/usuarios/{id}/historicos": {
             "get": {
                 "description": "Retorna todos os históricos de pagamento de um usuário específico",
@@ -2396,7 +2501,7 @@ const docTemplate = `{
         },
         "/pagamentos/webhook": {
             "post": {
-                "description": "Processa webhooks do Stripe para atualizar status de pagamentos",
+                "description": "Processa webhooks do Stripe para atualizar status de pagamentos e assinaturas",
                 "consumes": [
                     "application/json"
                 ],
@@ -3483,6 +3588,59 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/plan-status": {
+            "get": {
+                "description": "Retorna informações sobre o plano atual do usuário e se ele é premium",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Verifica status do plano do usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status do plano do usuário",
+                        "schema": {
+                            "$ref": "#/definitions/json.UserPlanStatusResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -4789,6 +4947,28 @@ const docTemplate = `{
                 }
             }
         },
+        "json.CustomerPortalRequest": {
+            "type": "object",
+            "required": [
+                "session_id"
+            ],
+            "properties": {
+                "session_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CustomerPortalResponse": {
+            "type": "object",
+            "properties": {
+                "mensagem": {
+                    "type": "string"
+                },
+                "portal_url": {
+                    "type": "string"
+                }
+            }
+        },
         "json.FotoRequest": {
             "type": "object",
             "required": [
@@ -5431,6 +5611,61 @@ const docTemplate = `{
                 }
             }
         },
+        "json.SubscriptionCheckoutRequest": {
+            "type": "object",
+            "required": [
+                "cancel_url",
+                "id_usuario",
+                "lookup_key",
+                "success_url"
+            ],
+            "properties": {
+                "cancel_url": {
+                    "type": "string"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "lookup_key": {
+                    "type": "string"
+                },
+                "success_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.UserPlanStatusResponse": {
+            "type": "object",
+            "properties": {
+                "data_vencimento": {
+                    "type": "string"
+                },
+                "email_usuario": {
+                    "type": "string"
+                },
+                "id_plano": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "is_premium": {
+                    "type": "boolean"
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "nome_plano": {
+                    "type": "string"
+                },
+                "nome_usuario": {
+                    "type": "string"
+                },
+                "status_pagamento": {
+                    "type": "string"
+                }
+            }
+        },
         "json.UserRequest": {
             "type": "object",
             "required": [
@@ -5765,17 +6000,26 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "localhost:8080",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Meu Carro Mais API",
+	Description:      "API para gerenciamento de veículos, anúncios, lojas e serviços.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

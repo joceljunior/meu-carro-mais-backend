@@ -39,3 +39,14 @@ type WebhookRequestData struct {
 	ID             string `json:"id"`
 	IdempotencyKey string `json:"idempotency_key"`
 }
+
+type SubscriptionCheckoutRequest struct {
+	IDUsuario  uint   `json:"id_usuario" binding:"required"`
+	LookupKey  string `json:"lookup_key" binding:"required"`
+	SuccessURL string `json:"success_url" binding:"required"`
+	CancelURL  string `json:"cancel_url" binding:"required"`
+}
+
+type CustomerPortalRequest struct {
+	SessionID string `json:"session_id" binding:"required"`
+}

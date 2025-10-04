@@ -207,3 +207,36 @@ func RestoreUserHandler(c *gin.Context) {
 		"message": "Usuário restaurado com sucesso",
 	})
 }
+
+// GetUserPlanStatusHandler godoc
+// @Summary Verifica status do plano do usuário
+// @Description Retorna informações sobre o plano atual do usuário e se ele é premium
+// @Tags Usuários
+// @Accept json
+// @Produce json
+// @Param id path int true "ID do usuário"
+// @Success 200 {object} json.UserPlanStatusResponse "Status do plano do usuário"
+// @Failure 400 {object} map[string]interface{} "ID inválido"
+// @Failure 404 {object} map[string]interface{} "Usuário não encontrado"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /users/{id}/plan-status [get]
+func GetUserPlanStatusHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	resp, err := services.GetUserPlanStatus(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Usuário não encontrado",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

@@ -1,0 +1,31 @@
+### Verificar status do plano do usuário
+GET http://localhost:8080/api/users/1/plan-status
+Content-Type: application/json
+
+### Exemplo de resposta:
+# {
+#   "id_usuario": 1,
+#   "nome_usuario": "João Silva",
+#   "email_usuario": "joao@email.com",
+#   "id_plano": 2,
+#   "nome_plano": "Premium Mensal",
+#   "is_premium": true,
+#   "data_vencimento": "2024-02-15T00:00:00Z",
+#   "status_pagamento": "completed",
+#   "mensagem": "Status do plano verificado com sucesso"
+# }
+
+### Verificar status do plano de usuário gratuito
+GET http://localhost:8080/api/users/2/plan-status
+Content-Type: application/json
+
+### Exemplo de resposta para usuário gratuito:
+# {
+#   "id_usuario": 2,
+#   "nome_usuario": "Maria Santos",
+#   "email_usuario": "maria@email.com",
+#   "id_plano": 1,
+#   "nome_plano": "Gratuito",
+#   "is_premium": false,
+#   "mensagem": "Status do plano verificado com sucesso"
+# }

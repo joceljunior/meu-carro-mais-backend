@@ -19,6 +19,7 @@ func (ur *UserRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		users.GET("/:id/historico", handlers.GetHistoricosByUsuarioHandler)                   // GET /users/:id/historico - Histórico do usuário
 		users.GET("/:id/historicos-resgate", handlers.GetHistoricosResgateByUsuarioIDHandler) // GET /users/:id/historicos-resgate - Históricos de resgate do usuário
 		users.GET("/:id/avaliacoes", handlers.GetAvaliacoesByUsuarioIDHandler)                // GET /users/:id/avaliacoes - Avaliações do usuário
+		users.GET("/:id/plan-status", handlers.GetUserPlanStatusHandler)                      // GET /users/:id/plan-status - Status do plano do usuário
 
 		// Endpoints CRUD com :id (devem vir por último)
 		users.GET("/:id", handlers.GetUserHandler)              // GET /users/:id - Buscar usuário por ID

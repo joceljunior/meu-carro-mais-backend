@@ -31,6 +31,7 @@ const (
 
 // Tipos de plano
 const (
-	TipoPlanoMonthly = "monthly"
-	TipoPlanoYearly  = "yearly"
+	TipoPlanoMonthly      = "monthly"
+	TipoPlanoYearly       = "yearly"
+	TipoPlanoSubscription = "subscription"
 )

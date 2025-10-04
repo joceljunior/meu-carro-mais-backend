@@ -35,3 +35,8 @@ type WebhookResponse struct {
 	Mensagem string `json:"mensagem"`
 	Status   string `json:"status"`
 }
+
+type CustomerPortalResponse struct {
+	PortalURL string `json:"portal_url"`
+	Mensagem  string `json:"mensagem"`
+}
