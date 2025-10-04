@@ -277,6 +277,14 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration009)
 
+	// Migration 010: Criar tabelas complementares
+	m.migrations = append(m.migrations, Migration{
+		Version: "010",
+		Name:    "create_complementary_tables",
+		Up:      m.createComplementaryTables,
+		Down:    m.dropComplementaryTables,
+	})
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
@@ -413,14 +421,13 @@ func (m *Migrator) createInitialTables(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&models.TipoPlano{},
 		&models.CategoriaLojista{},
+		&models.CategoriaAnuncio{},
 		&models.Usuario{},
 		&models.Loja{},
 		&models.HistoricoPlanoUsuario{},
 		&models.Carteira{},
 		&models.LogCarteira{},
 		&models.Anuncio{},
-		&models.CategoriaServico{},
-		&models.Servico{},
 		&models.Veiculo{},
 		&models.HistoricoVeiculo{},
 	)
@@ -431,16 +438,51 @@ func (m *Migrator) dropInitialTables(db *gorm.DB) error {
 	tables := []interface{}{
 		&models.HistoricoVeiculo{},
 		&models.Veiculo{},
-		&models.Servico{},
-		&models.CategoriaServico{},
 		&models.Anuncio{},
 		&models.LogCarteira{},
 		&models.Carteira{},
 		&models.HistoricoPlanoUsuario{},
 		&models.Loja{},
 		&models.Usuario{},
+		&models.CategoriaAnuncio{},
 		&models.CategoriaLojista{},
 		&models.TipoPlano{},
+	}
+
+	for _, table := range tables {
+		if err := db.Migrator().DropTable(table); err != nil {
+			return fmt.Errorf("erro ao remover tabela: %v", err)
+		}
+	}
+
+	return nil
+}
+
+// createComplementaryTables cria as tabelas complementares (migration 010)
+func (m *Migrator) createComplementaryTables(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&models.CategoriaServico{},
+		&models.Produto{},
+		&models.Servico{},
+		&models.VeiculoLoja{},
+		&models.Foto{},
+		&models.Avaliacao{},
+		&models.HistoricoPagamento{},
+		&models.HistoricoResgate{},
+	)
+}
+
+// dropComplementaryTables remove as tabelas complementares
+func (m *Migrator) dropComplementaryTables(db *gorm.DB) error {
+	tables := []interface{}{
+		&models.HistoricoResgate{},
+		&models.HistoricoPagamento{},
+		&models.Avaliacao{},
+		&models.Foto{},
+		&models.VeiculoLoja{},
+		&models.Servico{},
+		&models.Produto{},
+		&models.CategoriaServico{},
 	}
 
 	for _, table := range tables {

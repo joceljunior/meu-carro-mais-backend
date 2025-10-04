@@ -946,7 +946,7 @@ definitions:
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
-host: localhost:8080
+host: meu-carro-mais-production.up.railway.app
 info:
   contact:
     email: support@swagger.io
@@ -4063,6 +4063,9 @@ paths:
       summary: Restaura veículo excluído
       tags:
       - Veículos
+schemes:
+- https
+- http
 securityDefinitions:
   BasicAuth:
     type: basic

@@ -1,4 +1,8 @@
 {
+    "schemes": [
+        "https",
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "API para gerenciamento de veículos, anúncios, lojas e serviços.",
@@ -15,7 +19,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "meu-carro-mais-production.up.railway.app",
     "basePath": "/",
     "paths": {
         "/anuncios": {

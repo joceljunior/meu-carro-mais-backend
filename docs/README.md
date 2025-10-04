@@ -55,8 +55,36 @@ API para gerenciamento de usuários, lojas e serviços automotivos.
 
 A documentação interativa da API está disponível em:
 
-- **Raiz da API** (`/`) - Swagger UI
-- **/swagger** - Swagger UI alternativo
+- **Produção**: https://meu-carro-mais-production.up.railway.app/
+- **Desenvolvimento**: http://localhost:8080/
+- **Alternativo**: `/swagger/index.html`
+
+### Configurar URL do Swagger
+
+Por padrão, o Swagger aponta para **produção**. Para mudar:
+
+**Opção 1: Variável de Ambiente**
+```bash
+# Para desenvolvimento local
+export SWAGGER_HOST=localhost:8080
+
+# Para produção (padrão)
+export SWAGGER_HOST=meu-carro-mais-production.up.railway.app
+```
+
+**Opção 2: Arquivo .env**
+```env
+SWAGGER_HOST=localhost:8080  # Para desenvolvimento
+# ou
+SWAGGER_HOST=meu-carro-mais-production.up.railway.app  # Para produção
+```
+
+**Opção 3: Railway (Produção)**
+
+No Railway, a variável `SWAGGER_HOST` já está configurada automaticamente para:
+```
+SWAGGER_HOST=meu-carro-mais-production.up.railway.app
+```
 
 ## Estrutura do Projeto
 

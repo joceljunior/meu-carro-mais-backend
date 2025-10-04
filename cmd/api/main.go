@@ -23,8 +23,9 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
+// @host      meu-carro-mais-production.up.railway.app
 // @BasePath  /
+// @schemes   https http
 
 // @securityDefinitions.basic  BasicAuth
 

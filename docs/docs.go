@@ -6015,9 +6015,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "meu-carro-mais-production.up.railway.app",
 	BasePath:         "/",
-	Schemes:          []string{},
+	Schemes:          []string{"https", "http"},
 	Title:            "Meu Carro Mais API",
 	Description:      "API para gerenciamento de veículos, anúncios, lojas e serviços.",
 	InfoInstanceName: "swagger",
