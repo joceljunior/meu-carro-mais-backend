@@ -308,6 +308,20 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration011)
 
+	// Migration 012: Corrigir estrutura da tabela anuncios
+	migration012 := m.NewMigration("012", "fix_anuncios_table_structure").
+		AddColumnSQL("anuncios", "data_cadastro", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP").
+		AddColumnSQL("anuncios", "data_atualizacao", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP").
+		AddColumnSQL("anuncios", "data_exclusao", "TIMESTAMP").
+		AddColumnSQL("anuncios", "id_produto", "INTEGER").
+		AddColumnSQL("anuncios", "id_servico", "INTEGER").
+		AddColumnSQL("anuncios", "id_veiculo", "INTEGER").
+		AddColumnSQL("anuncios", "tipo_anuncio", "VARCHAR(20) NOT NULL DEFAULT ''").
+		AddIndexSQL("anuncios", "idx_anuncio_data_exclusao", "data_exclusao").
+		AddIndexSQL("anuncios", "idx_anuncio_tipo", "tipo_anuncio").
+		Build()
+	m.migrations = append(m.migrations, migration012)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

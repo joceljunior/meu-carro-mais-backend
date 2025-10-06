@@ -67,6 +67,34 @@ func (s *Seeder) Run() error {
 		return fmt.Errorf("erro ao executar seed carteira: %v", err)
 	}
 
+	if err := s.seedUsuarioComAnuncioDestaque(); err != nil {
+		return fmt.Errorf("erro ao executar seed usuario com anuncio destaque: %v", err)
+	}
+
+	if err := s.seedProdutos(); err != nil {
+		return fmt.Errorf("erro ao executar seed produtos: %v", err)
+	}
+
+	if err := s.seedVeiculos(); err != nil {
+		return fmt.Errorf("erro ao executar seed veiculos: %v", err)
+	}
+
+	if err := s.seedFotos(); err != nil {
+		return fmt.Errorf("erro ao executar seed fotos: %v", err)
+	}
+
+	if err := s.seedAvaliacoes(); err != nil {
+		return fmt.Errorf("erro ao executar seed avaliacoes: %v", err)
+	}
+
+	if err := s.seedHistoricoPagamentos(); err != nil {
+		return fmt.Errorf("erro ao executar seed historico pagamentos: %v", err)
+	}
+
+	if err := s.seedHistoricoResgates(); err != nil {
+		return fmt.Errorf("erro ao executar seed historico resgates: %v", err)
+	}
+
 	log.Println("✅ Seeds executados com sucesso!")
 	return nil
 }
@@ -520,6 +548,625 @@ func (s *Seeder) seedCarteira() error {
 		} else {
 			log.Printf("⏭️ Carteira já existe para usuario ID: %d", carteira.UsuarioID)
 		}
+	}
+
+	return nil
+}
+
+// seedUsuarioComAnuncioDestaque cria um usuário específico com um anúncio destaque vinculado
+func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
+	log.Println("📝 Criando usuário com anúncio destaque...")
+
+	// Busca o plano premium (ID = 3)
+	var planoPremium models.TipoPlano
+	if err := s.db.Where("nome = ?", "Premium").First(&planoPremium).Error; err != nil {
+		return fmt.Errorf("erro ao buscar plano premium: %v", err)
+	}
+
+	// Busca categoria carros
+	var categoriaCarros models.CategoriaAnuncio
+	if err := s.db.Where("nome = ?", "Carros").First(&categoriaCarros).Error; err != nil {
+		return fmt.Errorf("erro ao buscar categoria carros: %v", err)
+	}
+
+	// Busca uma loja para vincular o anúncio
+	var loja models.Loja
+	if err := s.db.First(&loja).Error; err != nil {
+		return fmt.Errorf("erro ao buscar loja: %v", err)
+	}
+
+	// Cria o usuário com anúncio destaque
+	usuarioComAnuncio := models.Usuario{
+		Nome:     "Ana Silva Premium",
+		Email:    "ana.premium@email.com",
+		Senha:    "senha123",
+		CPF:      "99988877766",
+		Imagem:   "https://via.placeholder.com/150",
+		Telefone: "(11) 99999-1111",
+		Endereco: "Av. Faria Lima, 2000 - São Paulo/SP",
+		Ativo:    true,
+		IDPlano:  planoPremium.ID,
+	}
+
+	// Verifica se o usuário já existe
+	var existingUsuario models.Usuario
+	if err := s.db.Where("email = ?", usuarioComAnuncio.Email).First(&existingUsuario).Error; err != nil {
+		// Se não existe, cria o usuário
+		if err := s.db.Create(&usuarioComAnuncio).Error; err != nil {
+			return fmt.Errorf("erro ao criar usuario %s: %v", usuarioComAnuncio.Email, err)
+		}
+		log.Printf("✅ Usuario criado: %s (%s)", usuarioComAnuncio.Nome, usuarioComAnuncio.Email)
+	} else {
+		usuarioComAnuncio = existingUsuario
+		log.Printf("⏭️ Usuario já existe: %s (%s)", usuarioComAnuncio.Nome, usuarioComAnuncio.Email)
+	}
+
+	// Cria o anúncio destaque vinculado ao usuário
+	anuncioDestaque := models.Anuncio{
+		Titulo:      "BMW X5 2023 - Anúncio Premium",
+		Descricao:   "BMW X5 xDrive40i 3.0 Turbo, automático, teto solar, bancos de couro, sistema de som premium, único dono, revisões na concessionária",
+		Preco:       450000.00,
+		Imagem:      "https://via.placeholder.com/400x300?text=BMW+X5+2023",
+		Destaque:    true,
+		IDLoja:      loja.ID,
+		IDCategoria: categoriaCarros.ID,
+		TipoAnuncio: "veiculo",
+	}
+
+	// Verifica se o anúncio já existe
+	var existingAnuncio models.Anuncio
+	if err := s.db.Where("titulo = ? AND id_loja = ?", anuncioDestaque.Titulo, anuncioDestaque.IDLoja).First(&existingAnuncio).Error; err != nil {
+		// Se não existe, cria o anúncio
+		if err := s.db.Create(&anuncioDestaque).Error; err != nil {
+			return fmt.Errorf("erro ao criar anuncio %s: %v", anuncioDestaque.Titulo, err)
+		}
+		log.Printf("✅ Anuncio destaque criado: %s", anuncioDestaque.Titulo)
+	} else {
+		log.Printf("⏭️ Anuncio já existe: %s", anuncioDestaque.Titulo)
+	}
+
+	// Cria uma carteira para o usuário com saldo premium
+	carteira := models.Carteira{
+		UsuarioID: usuarioComAnuncio.ID,
+		Saldo:     5000.00, // Saldo maior para usuário premium
+	}
+
+	var existingCarteira models.Carteira
+	if err := s.db.Where("usuario_id = ?", carteira.UsuarioID).First(&existingCarteira).Error; err != nil {
+		// Se não existe, cria a carteira
+		if err := s.db.Create(&carteira).Error; err != nil {
+			return fmt.Errorf("erro ao criar carteira para usuario %d: %v", carteira.UsuarioID, err)
+		}
+		log.Printf("✅ Carteira premium criada para usuario ID: %d", carteira.UsuarioID)
+	} else {
+		log.Printf("⏭️ Carteira já existe para usuario ID: %d", carteira.UsuarioID)
+	}
+
+	log.Printf("🎯 Cenário criado: Usuário %s (ID: %d) com anúncio destaque '%s' (ID: %d)",
+		usuarioComAnuncio.Nome, usuarioComAnuncio.ID, anuncioDestaque.Titulo, anuncioDestaque.ID)
+
+	return nil
+}
+
+// seedProdutos popula a tabela produtos
+func (s *Seeder) seedProdutos() error {
+	log.Println("📝 Populando tabela produtos...")
+
+	// Busca algumas lojas
+	var lojas []models.Loja
+	if err := s.db.Limit(5).Find(&lojas).Error; err != nil {
+		return fmt.Errorf("erro ao buscar lojas: %v", err)
+	}
+
+	if len(lojas) == 0 {
+		log.Println("⚠️ Nenhuma loja encontrada, pulando seed de produtos")
+		return nil
+	}
+
+	produtos := []models.Produto{
+		{
+			Nome:      "Óleo Motor 5W30",
+			Descricao: "Óleo sintético para motor, 5W30, 4L",
+			Preco:     89.90,
+			Imagem:    "https://via.placeholder.com/300x200?text=Oleo+Motor",
+			Estoque:   50,
+			Ativo:     true,
+			IDLoja:    lojas[0].ID,
+		},
+		{
+			Nome:      "Filtro de Óleo",
+			Descricao: "Filtro de óleo original, compatível com diversos modelos",
+			Preco:     25.50,
+			Imagem:    "https://via.placeholder.com/300x200?text=Filtro+Oleo",
+			Estoque:   100,
+			Ativo:     true,
+			IDLoja:    lojas[0].ID,
+		},
+		{
+			Nome:      "Pastilhas de Freio",
+			Descricao: "Pastilhas de freio cerâmicas, alta performance",
+			Preco:     180.00,
+			Imagem:    "https://via.placeholder.com/300x200?text=Pastilhas+Freio",
+			Estoque:   30,
+			Ativo:     true,
+			IDLoja:    lojas[1].ID,
+		},
+		{
+			Nome:      "Bateria 60Ah",
+			Descricao: "Bateria automotiva 60Ah, 12V, livre de manutenção",
+			Preco:     350.00,
+			Imagem:    "https://via.placeholder.com/300x200?text=Bateria+60Ah",
+			Estoque:   15,
+			Ativo:     true,
+			IDLoja:    lojas[1].ID,
+		},
+		{
+			Nome:      "Pneu Aro 15",
+			Descricao: "Pneu 185/65 R15, banda de rodagem econômica",
+			Preco:     280.00,
+			Imagem:    "https://via.placeholder.com/300x200?text=Pneu+Aro+15",
+			Estoque:   20,
+			Ativo:     true,
+			IDLoja:    lojas[2].ID,
+		},
+		{
+			Nome:      "Amortecedor Dianteiro",
+			Descricao: "Amortecedor dianteiro, original de fábrica",
+			Preco:     450.00,
+			Imagem:    "https://via.placeholder.com/300x200?text=Amortecedor",
+			Estoque:   10,
+			Ativo:     true,
+			IDLoja:    lojas[2].ID,
+		},
+		{
+			Nome:      "Correia Dentada",
+			Descricao: "Correia dentada de alta qualidade, kit completo",
+			Preco:     120.00,
+			Imagem:    "https://via.placeholder.com/300x200?text=Correia+Dentada",
+			Estoque:   25,
+			Ativo:     true,
+			IDLoja:    lojas[3].ID,
+		},
+		{
+			Nome:      "Lâmpada H7",
+			Descricao: "Lâmpada halógena H7, 55W, luz branca",
+			Preco:     15.90,
+			Imagem:    "https://via.placeholder.com/300x200?text=Lampada+H7",
+			Estoque:   200,
+			Ativo:     true,
+			IDLoja:    lojas[3].ID,
+		},
+	}
+
+	for _, produto := range produtos {
+		var existing models.Produto
+		if err := s.db.Where("nome = ? AND id_loja = ?", produto.Nome, produto.IDLoja).First(&existing).Error; err != nil {
+			// Se não existe, cria
+			if err := s.db.Create(&produto).Error; err != nil {
+				return fmt.Errorf("erro ao criar produto %s: %v", produto.Nome, err)
+			}
+			log.Printf("✅ Produto criado: %s", produto.Nome)
+		} else {
+			log.Printf("⏭️ Produto já existe: %s", produto.Nome)
+		}
+	}
+
+	return nil
+}
+
+// seedVeiculos popula a tabela veiculos
+func (s *Seeder) seedVeiculos() error {
+	log.Println("📝 Populando tabela veiculos...")
+
+	// Busca alguns usuários
+	var usuarios []models.Usuario
+	if err := s.db.Limit(5).Find(&usuarios).Error; err != nil {
+		return fmt.Errorf("erro ao buscar usuarios: %v", err)
+	}
+
+	if len(usuarios) == 0 {
+		log.Println("⚠️ Nenhum usuário encontrado, pulando seed de veículos")
+		return nil
+	}
+
+	veiculos := []models.Veiculo{
+		{
+			Modelo:    "Honda Civic",
+			Ano:       2020,
+			Cor:       "Prata",
+			Placa:     "ABC-1234",
+			IDUsuario: usuarios[0].ID,
+			Ativo:     true,
+		},
+		{
+			Modelo:    "Toyota Corolla",
+			Ano:       2019,
+			Cor:       "Branco",
+			Placa:     "DEF-5678",
+			IDUsuario: usuarios[1].ID,
+			Ativo:     true,
+		},
+		{
+			Modelo:    "Volkswagen Golf",
+			Ano:       2021,
+			Cor:       "Preto",
+			Placa:     "GHI-9012",
+			IDUsuario: usuarios[2].ID,
+			Ativo:     true,
+		},
+		{
+			Modelo:    "Ford Focus",
+			Ano:       2018,
+			Cor:       "Azul",
+			Placa:     "JKL-3456",
+			IDUsuario: usuarios[3].ID,
+			Ativo:     true,
+		},
+		{
+			Modelo:    "Chevrolet Onix",
+			Ano:       2022,
+			Cor:       "Vermelho",
+			Placa:     "MNO-7890",
+			IDUsuario: usuarios[0].ID,
+			Ativo:     true,
+		},
+		{
+			Modelo:    "Fiat Argo",
+			Ano:       2020,
+			Cor:       "Cinza",
+			Placa:     "PQR-1357",
+			IDUsuario: usuarios[1].ID,
+			Ativo:     true,
+		},
+	}
+
+	for _, veiculo := range veiculos {
+		var existing models.Veiculo
+		if err := s.db.Where("placa = ?", veiculo.Placa).First(&existing).Error; err != nil {
+			// Se não existe, cria
+			if err := s.db.Create(&veiculo).Error; err != nil {
+				return fmt.Errorf("erro ao criar veiculo %s: %v", veiculo.Placa, err)
+			}
+			log.Printf("✅ Veiculo criado: %s %d (%s)", veiculo.Modelo, veiculo.Ano, veiculo.Placa)
+		} else {
+			log.Printf("⏭️ Veiculo já existe: %s %d (%s)", veiculo.Modelo, veiculo.Ano, veiculo.Placa)
+		}
+	}
+
+	return nil
+}
+
+// seedFotos popula a tabela fotos
+func (s *Seeder) seedFotos() error {
+	log.Println("📝 Populando tabela fotos...")
+
+	// Busca alguns veículos
+	var veiculos []models.Veiculo
+	if err := s.db.Limit(3).Find(&veiculos).Error; err != nil {
+		return fmt.Errorf("erro ao buscar veiculos: %v", err)
+	}
+
+	// Busca alguns produtos
+	var produtos []models.Produto
+	if err := s.db.Limit(3).Find(&produtos).Error; err != nil {
+		return fmt.Errorf("erro ao buscar produtos: %v", err)
+	}
+
+	// Busca algumas lojas
+	var lojas []models.Loja
+	if err := s.db.Limit(3).Find(&lojas).Error; err != nil {
+		return fmt.Errorf("erro ao buscar lojas: %v", err)
+	}
+
+	fotos := []models.Foto{}
+
+	// Fotos de veículos
+	for i, veiculo := range veiculos {
+		fotos = append(fotos, models.Foto{
+			IDVeiculo:    &veiculo.ID,
+			TipoEntidade: "veiculo",
+			URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d", veiculo.Modelo, veiculo.Ano),
+			NomeArquivo:  fmt.Sprintf("veiculo_%d_principal.jpg", veiculo.ID),
+			Tamanho:      2048000, // 2MB
+			TipoMime:     "image/jpeg",
+			Principal:    true,
+			Ordem:        1,
+		})
+
+		if i < 2 { // Adiciona foto adicional para os primeiros 2 veículos
+			fotos = append(fotos, models.Foto{
+				IDVeiculo:    &veiculo.ID,
+				TipoEntidade: "veiculo",
+				URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d+Interior", veiculo.Modelo, veiculo.Ano),
+				NomeArquivo:  fmt.Sprintf("veiculo_%d_interior.jpg", veiculo.ID),
+				Tamanho:      1856000, // 1.8MB
+				TipoMime:     "image/jpeg",
+				Principal:    false,
+				Ordem:        2,
+			})
+		}
+	}
+
+	// Fotos de produtos
+	for i, produto := range produtos {
+		fotos = append(fotos, models.Foto{
+			IDProduto:    &produto.ID,
+			TipoEntidade: "produto",
+			URL:          fmt.Sprintf("https://via.placeholder.com/400x400?text=%s", produto.Nome),
+			NomeArquivo:  fmt.Sprintf("produto_%d.jpg", produto.ID),
+			Tamanho:      1024000, // 1MB
+			TipoMime:     "image/jpeg",
+			Principal:    true,
+			Ordem:        1,
+		})
+
+		if i == 0 { // Adiciona foto adicional para o primeiro produto
+			fotos = append(fotos, models.Foto{
+				IDProduto:    &produto.ID,
+				TipoEntidade: "produto",
+				URL:          fmt.Sprintf("https://via.placeholder.com/400x400?text=%s+Detalhe", produto.Nome),
+				NomeArquivo:  fmt.Sprintf("produto_%d_detalhe.jpg", produto.ID),
+				Tamanho:      896000, // 896KB
+				TipoMime:     "image/jpeg",
+				Principal:    false,
+				Ordem:        2,
+			})
+		}
+	}
+
+	// Fotos de lojas
+	for _, loja := range lojas {
+		fotos = append(fotos, models.Foto{
+			IDLoja:       &loja.ID,
+			TipoEntidade: "loja",
+			URL:          fmt.Sprintf("https://via.placeholder.com/600x400?text=%s", loja.Nome),
+			NomeArquivo:  fmt.Sprintf("loja_%d_fachada.jpg", loja.ID),
+			Tamanho:      1536000, // 1.5MB
+			TipoMime:     "image/jpeg",
+			Principal:    true,
+			Ordem:        1,
+		})
+	}
+
+	for _, foto := range fotos {
+		var existing models.Foto
+		if err := s.db.Where("url = ?", foto.URL).First(&existing).Error; err != nil {
+			// Se não existe, cria
+			if err := s.db.Create(&foto).Error; err != nil {
+				return fmt.Errorf("erro ao criar foto: %v", err)
+			}
+			log.Printf("✅ Foto criada: %s", foto.NomeArquivo)
+		} else {
+			log.Printf("⏭️ Foto já existe: %s", foto.NomeArquivo)
+		}
+	}
+
+	return nil
+}
+
+// seedAvaliacoes popula a tabela avaliacoes
+func (s *Seeder) seedAvaliacoes() error {
+	log.Println("📝 Populando tabela avaliacoes...")
+
+	// Busca alguns usuários
+	var usuarios []models.Usuario
+	if err := s.db.Limit(4).Find(&usuarios).Error; err != nil {
+		return fmt.Errorf("erro ao buscar usuarios: %v", err)
+	}
+
+	// Busca algumas lojas
+	var lojas []models.Loja
+	if err := s.db.Limit(4).Find(&lojas).Error; err != nil {
+		return fmt.Errorf("erro ao buscar lojas: %v", err)
+	}
+
+	if len(usuarios) == 0 || len(lojas) == 0 {
+		log.Println("⚠️ Usuários ou lojas não encontrados, pulando seed de avaliações")
+		return nil
+	}
+
+	avaliacoes := []models.Avaliacao{
+		{
+			IDUsuario:  usuarios[0].ID,
+			IDLoja:     lojas[0].ID,
+			Nota:       5,
+			Comentario: "Excelente atendimento! Serviço de qualidade e preço justo. Recomendo!",
+		},
+		{
+			IDUsuario:  usuarios[1].ID,
+			IDLoja:     lojas[0].ID,
+			Nota:       4,
+			Comentario: "Muito bom serviço, apenas demorou um pouco mais que o esperado.",
+		},
+		{
+			IDUsuario:  usuarios[2].ID,
+			IDLoja:     lojas[1].ID,
+			Nota:       5,
+			Comentario: "Profissionais qualificados e equipamentos modernos. Super recomendo!",
+		},
+		{
+			IDUsuario:  usuarios[3].ID,
+			IDLoja:     lojas[1].ID,
+			Nota:       3,
+			Comentario: "Serviço ok, mas poderia melhorar na comunicação com o cliente.",
+		},
+		{
+			IDUsuario:  usuarios[0].ID,
+			IDLoja:     lojas[2].ID,
+			Nota:       4,
+			Comentario: "Boa qualidade dos produtos e preços competitivos.",
+		},
+		{
+			IDUsuario:  usuarios[1].ID,
+			IDLoja:     lojas[2].ID,
+			Nota:       5,
+			Comentario: "Atendimento excepcional! Encontraram exatamente o que eu precisava.",
+		},
+		{
+			IDUsuario:  usuarios[2].ID,
+			IDLoja:     lojas[3].ID,
+			Nota:       4,
+			Comentario: "Loja bem organizada e funcionários atenciosos.",
+		},
+		{
+			IDUsuario:  usuarios[3].ID,
+			IDLoja:     lojas[3].ID,
+			Nota:       2,
+			Comentario: "Demorou muito para ser atendido e o produto não estava como descrito.",
+		},
+	}
+
+	for _, avaliacao := range avaliacoes {
+		var existing models.Avaliacao
+		if err := s.db.Where("id_usuario = ? AND id_loja = ?", avaliacao.IDUsuario, avaliacao.IDLoja).First(&existing).Error; err != nil {
+			// Se não existe, cria
+			if err := s.db.Create(&avaliacao).Error; err != nil {
+				return fmt.Errorf("erro ao criar avaliacao: %v", err)
+			}
+			log.Printf("✅ Avaliação criada: %d estrelas para loja ID %d", avaliacao.Nota, avaliacao.IDLoja)
+		} else {
+			log.Printf("⏭️ Avaliação já existe para usuário %d e loja %d", avaliacao.IDUsuario, avaliacao.IDLoja)
+		}
+	}
+
+	return nil
+}
+
+// seedHistoricoPagamentos popula a tabela historico_pagamentos
+func (s *Seeder) seedHistoricoPagamentos() error {
+	log.Println("📝 Populando tabela historico_pagamentos...")
+
+	// Busca alguns usuários
+	var usuarios []models.Usuario
+	if err := s.db.Limit(3).Find(&usuarios).Error; err != nil {
+		return fmt.Errorf("erro ao buscar usuarios: %v", err)
+	}
+
+	if len(usuarios) == 0 {
+		log.Println("⚠️ Nenhum usuário encontrado, pulando seed de histórico de pagamentos")
+		return nil
+	}
+
+	historicos := []models.HistoricoPagamento{
+		{
+			Valor:           150.00,
+			StripeSessionID: "cs_test_session_001",
+			StripePaymentID: "pi_test_payment_001",
+			Status:          "completed",
+			TipoPlano:       "monthly",
+			Moeda:           "BRL",
+			IDUsuario:       usuarios[0].ID,
+		},
+		{
+			Valor:           89.90,
+			StripeSessionID: "cs_test_session_002",
+			StripePaymentID: "pi_test_payment_002",
+			Status:          "completed",
+			TipoPlano:       "monthly",
+			Moeda:           "BRL",
+			IDUsuario:       usuarios[1].ID,
+		},
+		{
+			Valor:           350.00,
+			StripeSessionID: "cs_test_session_003",
+			StripePaymentID: "pi_test_payment_003",
+			Status:          "pending",
+			TipoPlano:       "yearly",
+			Moeda:           "BRL",
+			IDUsuario:       usuarios[2].ID,
+		},
+		{
+			Valor:           25.50,
+			StripeSessionID: "cs_test_session_004",
+			StripePaymentID: "pi_test_payment_004",
+			Status:          "completed",
+			TipoPlano:       "monthly",
+			Moeda:           "BRL",
+			IDUsuario:       usuarios[0].ID,
+		},
+		{
+			Valor:           500.00,
+			StripeSessionID: "cs_test_session_005",
+			StripePaymentID: "pi_test_payment_005",
+			Status:          "completed",
+			TipoPlano:       "yearly",
+			Moeda:           "BRL",
+			IDUsuario:       usuarios[1].ID,
+		},
+	}
+
+	for _, historico := range historicos {
+		if err := s.db.Create(&historico).Error; err != nil {
+			return fmt.Errorf("erro ao criar historico de pagamento: %v", err)
+		}
+		log.Printf("✅ Histórico de pagamento criado: R$ %.2f - %s", historico.Valor, historico.Status)
+	}
+
+	return nil
+}
+
+// seedHistoricoResgates popula a tabela historico_resgates
+func (s *Seeder) seedHistoricoResgates() error {
+	log.Println("📝 Populando tabela historico_resgates...")
+
+	// Busca alguns usuários
+	var usuarios []models.Usuario
+	if err := s.db.Limit(3).Find(&usuarios).Error; err != nil {
+		return fmt.Errorf("erro ao buscar usuarios: %v", err)
+	}
+
+	if len(usuarios) == 0 {
+		log.Println("⚠️ Nenhum usuário encontrado, pulando seed de histórico de resgates")
+		return nil
+	}
+
+	// Busca algumas lojas para os resgates
+	var lojas []models.Loja
+	if err := s.db.Limit(2).Find(&lojas).Error; err != nil {
+		return fmt.Errorf("erro ao buscar lojas: %v", err)
+	}
+
+	if len(lojas) == 0 {
+		log.Println("⚠️ Nenhuma loja encontrada, pulando seed de histórico de resgates")
+		return nil
+	}
+
+	resgates := []models.HistoricoResgate{
+		{
+			Valor:       100.00,
+			TipoResgate: "produto",
+			Status:      "confirmado",
+			IDUsuario:   usuarios[0].ID,
+			IDLoja:      lojas[0].ID,
+		},
+		{
+			Valor:       250.00,
+			TipoResgate: "servico",
+			Status:      "pendente",
+			IDUsuario:   usuarios[1].ID,
+			IDLoja:      lojas[1].ID,
+		},
+		{
+			Valor:       50.00,
+			TipoResgate: "produto",
+			Status:      "confirmado",
+			IDUsuario:   usuarios[2].ID,
+			IDLoja:      lojas[0].ID,
+		},
+		{
+			Valor:       300.00,
+			TipoResgate: "veiculo",
+			Status:      "pendente",
+			IDUsuario:   usuarios[0].ID,
+			IDLoja:      lojas[1].ID,
+		},
+	}
+
+	for _, resgate := range resgates {
+		if err := s.db.Create(&resgate).Error; err != nil {
+			return fmt.Errorf("erro ao criar historico de resgate: %v", err)
+		}
+		log.Printf("✅ Histórico de resgate criado: R$ %.2f - %s", resgate.Valor, resgate.Status)
 	}
 
 	return nil
