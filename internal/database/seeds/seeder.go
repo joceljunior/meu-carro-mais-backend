@@ -55,6 +55,10 @@ func (s *Seeder) Run() error {
 		return fmt.Errorf("erro ao executar seed loja: %v", err)
 	}
 
+	if err := s.vincularUsuariosLojas(); err != nil {
+		return fmt.Errorf("erro ao vincular usuarios às lojas: %v", err)
+	}
+
 	if err := s.seedAnuncio(); err != nil {
 		return fmt.Errorf("erro ao executar seed anuncio: %v", err)
 	}
@@ -393,6 +397,64 @@ func (s *Seeder) seedLoja() error {
 			log.Printf("✅ Loja criada: %s", loja.Nome)
 		} else {
 			log.Printf("⏭️ Loja já existe: %s", loja.Nome)
+		}
+	}
+
+	return nil
+}
+
+// vincularUsuariosLojas vincula usuários às lojas
+func (s *Seeder) vincularUsuariosLojas() error {
+	log.Println("📝 Vinculando usuários às lojas...")
+
+	// Busca todos os usuários
+	var usuarios []models.Usuario
+	if err := s.db.Find(&usuarios).Error; err != nil {
+		return fmt.Errorf("erro ao buscar usuarios: %v", err)
+	}
+
+	if len(usuarios) == 0 {
+		log.Println("⚠️ Nenhum usuário encontrado, pulando vinculação")
+		return nil
+	}
+
+	// Busca todas as lojas
+	var lojas []models.Loja
+	if err := s.db.Find(&lojas).Error; err != nil {
+		return fmt.Errorf("erro ao buscar lojas: %v", err)
+	}
+
+	if len(lojas) == 0 {
+		log.Println("⚠️ Nenhuma loja encontrada, pulando vinculação")
+		return nil
+	}
+
+	// Define vinculações específicas
+	vinculacoes := map[string]string{
+		"joao@email.com":        "12.345.678/0001-90", // João -> Auto Center São Paulo
+		"maria@email.com":       "98.765.432/0001-10", // Maria -> Oficina do João
+		"pedro@email.com":       "11.222.333/0001-44", // Pedro -> Carros Premium
+		"carlos@email.com":      "22.333.444/0001-55", // Carlos -> Auto Center Porto Alegre Norte
+		"ana.premium@email.com": "33.444.555/0001-66", // Ana -> Oficina Porto Alegre Centro
+	}
+
+	// Cria um mapa de lojas por CNPJ para facilitar a busca
+	lojaPorCNPJ := make(map[string]models.Loja)
+	for _, loja := range lojas {
+		lojaPorCNPJ[loja.CNPJ] = loja
+	}
+
+	// Vincula usuários às lojas
+	for _, usuario := range usuarios {
+		if cnpjLoja, existe := vinculacoes[usuario.Email]; existe {
+			if loja, lojaExiste := lojaPorCNPJ[cnpjLoja]; lojaExiste {
+				// Atualiza o IDLoja do usuário
+				usuario.IDLoja = &loja.ID
+				if err := s.db.Save(&usuario).Error; err != nil {
+					return fmt.Errorf("erro ao vincular usuario %s à loja %s: %v", usuario.Email, loja.Nome, err)
+				}
+				log.Printf("✅ Usuário %s vinculado à loja %s", usuario.Nome, loja.Nome)
+			}
 		}
 	}
 
