@@ -647,6 +647,588 @@ const docTemplate = `{
                 }
             }
         },
+        "/carteiras": {
+            "get": {
+                "description": "Retorna uma lista com todas as carteiras",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Lista todas as carteiras",
+                "responses": {
+                    "200": {
+                        "description": "Lista de carteiras",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteirasResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria uma nova carteira para um usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Criação de carteira",
+                "parameters": [
+                    {
+                        "description": "Dados da carteira",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Carteira criada com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/carteiras/range": {
+            "get": {
+                "description": "Retorna carteiras com saldo dentro de um range específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Busca carteiras por range de saldo",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "example": 100,
+                        "description": "Saldo mínimo",
+                        "name": "saldo_min",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "example": 2000,
+                        "description": "Saldo máximo",
+                        "name": "saldo_max",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Carteiras encontradas",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteirasResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/carteiras/saldo-maior": {
+            "get": {
+                "description": "Retorna carteiras com saldo maior que um valor específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Busca carteiras com saldo maior",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "example": 1000,
+                        "description": "Valor mínimo de saldo",
+                        "name": "valor",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Carteiras encontradas",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteirasResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetro inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/carteiras/usuario/{usuario_id}": {
+            "get": {
+                "description": "Retorna a carteira de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Busca carteira por usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "usuario_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Carteira encontrada",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraComUsuarioResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Carteira não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/carteiras/{id}": {
+            "get": {
+                "description": "Retorna os dados de uma carteira específica pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Busca carteira por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da carteira",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Carteira encontrada",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraComUsuarioResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Carteira não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de uma carteira existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Atualiza carteira",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da carteira",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados da carteira",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Carteira atualizada com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Carteira não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove uma carteira do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Exclui carteira",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da carteira",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Carteira excluída com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Carteira não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/carteiras/{id}/adicionar": {
+            "post": {
+                "description": "Adiciona um valor ao saldo atual da carteira",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Adiciona saldo à carteira",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da carteira",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Valor a ser adicionado",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraOperacaoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Saldo adicionado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraOperacaoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Carteira não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/carteiras/{id}/saldo": {
+            "put": {
+                "description": "Atualiza apenas o saldo de uma carteira existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Atualiza saldo da carteira",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da carteira",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Novo saldo da carteira",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraSaldoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Saldo atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Carteira não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/carteiras/{id}/subtrair": {
+            "post": {
+                "description": "Subtrai um valor do saldo atual da carteira",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carteiras"
+                ],
+                "summary": "Subtrai saldo da carteira",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da carteira",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Valor a ser subtraído",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraOperacaoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Saldo subtraído com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CarteiraOperacaoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Carteira não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/fotos": {
             "get": {
                 "description": "Retorna todas as fotos ativas do sistema",
@@ -4828,6 +5410,181 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "json.CarteiraComUsuarioResponse": {
+            "type": "object",
+            "properties": {
+                "data_atualizacao": {
+                    "type": "string",
+                    "example": "2023-10-07T13:30:00Z"
+                },
+                "data_criacao": {
+                    "type": "string",
+                    "example": "2023-10-07T13:30:00Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "mensagem": {
+                    "type": "string",
+                    "example": "Carteira encontrada com sucesso"
+                },
+                "saldo": {
+                    "type": "number",
+                    "example": 1000
+                },
+                "usuario": {
+                    "type": "object",
+                    "properties": {
+                        "email": {
+                            "type": "string",
+                            "example": "joao@email.com"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "nome": {
+                            "type": "string",
+                            "example": "João Silva"
+                        }
+                    }
+                },
+                "usuario_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "json.CarteiraOperacaoRequest": {
+            "type": "object",
+            "required": [
+                "valor"
+            ],
+            "properties": {
+                "valor": {
+                    "type": "number",
+                    "minimum": 0.01,
+                    "example": 100
+                }
+            }
+        },
+        "json.CarteiraOperacaoResponse": {
+            "type": "object",
+            "properties": {
+                "data_atualizacao": {
+                    "type": "string",
+                    "example": "2023-10-07T13:30:00Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "mensagem": {
+                    "type": "string",
+                    "example": "Saldo adicionado com sucesso"
+                },
+                "saldo_anterior": {
+                    "type": "number",
+                    "example": 1000
+                },
+                "saldo_atual": {
+                    "type": "number",
+                    "example": 1100
+                },
+                "tipo_operacao": {
+                    "type": "string",
+                    "example": "adicao"
+                },
+                "usuario_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "valor_operacao": {
+                    "type": "number",
+                    "example": 100
+                }
+            }
+        },
+        "json.CarteiraRequest": {
+            "type": "object",
+            "required": [
+                "saldo",
+                "usuario_id"
+            ],
+            "properties": {
+                "saldo": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 1000
+                },
+                "usuario_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "json.CarteiraResponse": {
+            "type": "object",
+            "properties": {
+                "data_atualizacao": {
+                    "type": "string",
+                    "example": "2023-10-07T13:30:00Z"
+                },
+                "data_criacao": {
+                    "type": "string",
+                    "example": "2023-10-07T13:30:00Z"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "mensagem": {
+                    "type": "string",
+                    "example": "Carteira criada com sucesso"
+                },
+                "saldo": {
+                    "type": "number",
+                    "example": 1000
+                },
+                "usuario_id": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "json.CarteiraSaldoRequest": {
+            "type": "object",
+            "required": [
+                "saldo"
+            ],
+            "properties": {
+                "saldo": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 1500
+                }
+            }
+        },
+        "json.CarteirasResponse": {
+            "type": "object",
+            "properties": {
+                "carteiras": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CarteiraComUsuarioResponse"
+                    }
+                },
+                "mensagem": {
+                    "type": "string",
+                    "example": "Carteiras listadas com sucesso"
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 5
                 }
             }
         },

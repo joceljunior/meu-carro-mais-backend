@@ -524,29 +524,41 @@ func (s *Seeder) seedServico() error {
 func (s *Seeder) seedCarteira() error {
 	log.Println("📝 Populando tabela carteira...")
 
-	// Busca primeiro usuário
-	var usuario models.Usuario
-	if err := s.db.First(&usuario).Error; err != nil {
-		return fmt.Errorf("erro ao buscar usuario: %v", err)
+	// Busca todos os usuários
+	var usuarios []models.Usuario
+	if err := s.db.Find(&usuarios).Error; err != nil {
+		return fmt.Errorf("erro ao buscar usuarios: %v", err)
 	}
 
-	carteiras := []models.Carteira{
-		{
+	if len(usuarios) == 0 {
+		log.Println("⚠️ Nenhum usuário encontrado, pulando seed de carteiras")
+		return nil
+	}
+
+	// Saldos variados para diferentes usuários
+	saldos := []float64{1000.00, 1500.00, 800.00, 2000.00, 1200.00, 3000.00}
+
+	for i, usuario := range usuarios {
+		// Usa saldo baseado no índice, ou um saldo padrão se não houver saldo específico
+		saldo := 1000.00
+		if i < len(saldos) {
+			saldo = saldos[i]
+		}
+
+		carteira := models.Carteira{
 			UsuarioID: usuario.ID,
-			Saldo:     1000.00,
-		},
-	}
+			Saldo:     saldo,
+		}
 
-	for _, carteira := range carteiras {
 		var existing models.Carteira
 		if err := s.db.Where("usuario_id = ?", carteira.UsuarioID).First(&existing).Error; err != nil {
 			// Se não existe, cria
 			if err := s.db.Create(&carteira).Error; err != nil {
 				return fmt.Errorf("erro ao criar carteira para usuario %d: %v", carteira.UsuarioID, err)
 			}
-			log.Printf("✅ Carteira criada para usuario ID: %d", carteira.UsuarioID)
+			log.Printf("✅ Carteira criada para usuario %s (ID: %d) com saldo R$ %.2f", usuario.Nome, carteira.UsuarioID, saldo)
 		} else {
-			log.Printf("⏭️ Carteira já existe para usuario ID: %d", carteira.UsuarioID)
+			log.Printf("⏭️ Carteira já existe para usuario %s (ID: %d)", usuario.Nome, carteira.UsuarioID)
 		}
 	}
 
@@ -637,9 +649,9 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		if err := s.db.Create(&carteira).Error; err != nil {
 			return fmt.Errorf("erro ao criar carteira para usuario %d: %v", carteira.UsuarioID, err)
 		}
-		log.Printf("✅ Carteira premium criada para usuario ID: %d", carteira.UsuarioID)
+		log.Printf("✅ Carteira premium criada para usuario %s (ID: %d) com saldo R$ %.2f", usuarioComAnuncio.Nome, carteira.UsuarioID, carteira.Saldo)
 	} else {
-		log.Printf("⏭️ Carteira já existe para usuario ID: %d", carteira.UsuarioID)
+		log.Printf("⏭️ Carteira já existe para usuario %s (ID: %d)", usuarioComAnuncio.Nome, carteira.UsuarioID)
 	}
 
 	log.Printf("🎯 Cenário criado: Usuário %s (ID: %d) com anúncio destaque '%s' (ID: %d)",

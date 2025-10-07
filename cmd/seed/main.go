@@ -32,12 +32,12 @@ func main() {
 	case "run":
 		runCmd.Parse(os.Args[2:])
 		fmt.Println("🌱 Iniciando execução dos seeds...")
-		
+
 		seeder := seeds.NewSeeder()
 		if err := seeder.Run(); err != nil {
 			log.Fatalf("Erro ao executar seeds: %v", err)
 		}
-		
+
 		fmt.Println("✅ Seeds executados com sucesso!")
 
 	case "help":
@@ -59,14 +59,21 @@ func main() {
 		fmt.Println("  - Tipos de Plano (Gratuito, Básico, Premium, Enterprise)")
 		fmt.Println("  - Categorias de Lojista (Concessionária, Oficina, etc.)")
 		fmt.Println("  - Categorias de Anúncio (Carros, Motos, etc.)")
-		fmt.Println("  - Usuários de exemplo (João, Maria, Pedro)")
+		fmt.Println("  - Categorias de Serviço (Manutenção, Revisão, etc.)")
+		fmt.Println("  - Usuários de exemplo (João, Maria, Pedro, Carlos, Ana Premium)")
 		fmt.Println("  - Lojas de exemplo (Auto Center, Oficina do João, etc.)")
-		fmt.Println("  - Anúncios de exemplo (Honda Civic, Toyota Corolla, etc.)")
-		fmt.Println("  - Carteiras de exemplo")
+		fmt.Println("  - Anúncios de exemplo (Honda Civic, Toyota Corolla, BMW X5, etc.)")
+		fmt.Println("  - Serviços de exemplo (Troca de Óleo, Alinhamento, etc.)")
+		fmt.Println("  - Produtos de exemplo (Óleo Motor, Filtros, Pastilhas, etc.)")
+		fmt.Println("  - Veículos de exemplo (Honda Civic, Toyota Corolla, etc.)")
+		fmt.Println("  - Fotos de exemplo para veículos, produtos e lojas")
+		fmt.Println("  - Avaliações de exemplo")
+		fmt.Println("  - Carteiras com saldos variados para todos os usuários")
+		fmt.Println("  - Histórico de pagamentos e resgates")
 
 	default:
 		fmt.Printf("Comando '%s' não reconhecido\n", os.Args[1])
 		fmt.Println("Comandos disponíveis: run, help")
 		os.Exit(1)
 	}
-} 
+}

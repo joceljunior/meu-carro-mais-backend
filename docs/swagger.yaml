@@ -165,6 +165,131 @@ definitions:
       total:
         type: integer
     type: object
+  json.CarteiraComUsuarioResponse:
+    properties:
+      data_atualizacao:
+        example: "2023-10-07T13:30:00Z"
+        type: string
+      data_criacao:
+        example: "2023-10-07T13:30:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      mensagem:
+        example: Carteira encontrada com sucesso
+        type: string
+      saldo:
+        example: 1000
+        type: number
+      usuario:
+        properties:
+          email:
+            example: joao@email.com
+            type: string
+          id:
+            example: 1
+            type: integer
+          nome:
+            example: João Silva
+            type: string
+        type: object
+      usuario_id:
+        example: 1
+        type: integer
+    type: object
+  json.CarteiraOperacaoRequest:
+    properties:
+      valor:
+        example: 100
+        minimum: 0.01
+        type: number
+    required:
+    - valor
+    type: object
+  json.CarteiraOperacaoResponse:
+    properties:
+      data_atualizacao:
+        example: "2023-10-07T13:30:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      mensagem:
+        example: Saldo adicionado com sucesso
+        type: string
+      saldo_anterior:
+        example: 1000
+        type: number
+      saldo_atual:
+        example: 1100
+        type: number
+      tipo_operacao:
+        example: adicao
+        type: string
+      usuario_id:
+        example: 1
+        type: integer
+      valor_operacao:
+        example: 100
+        type: number
+    type: object
+  json.CarteiraRequest:
+    properties:
+      saldo:
+        example: 1000
+        minimum: 0
+        type: number
+      usuario_id:
+        example: 1
+        type: integer
+    required:
+    - saldo
+    - usuario_id
+    type: object
+  json.CarteiraResponse:
+    properties:
+      data_atualizacao:
+        example: "2023-10-07T13:30:00Z"
+        type: string
+      data_criacao:
+        example: "2023-10-07T13:30:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      mensagem:
+        example: Carteira criada com sucesso
+        type: string
+      saldo:
+        example: 1000
+        type: number
+      usuario_id:
+        example: 1
+        type: integer
+    type: object
+  json.CarteiraSaldoRequest:
+    properties:
+      saldo:
+        example: 1500
+        minimum: 0
+        type: number
+    required:
+    - saldo
+    type: object
+  json.CarteirasResponse:
+    properties:
+      carteiras:
+        items:
+          $ref: '#/definitions/json.CarteiraComUsuarioResponse'
+        type: array
+      mensagem:
+        example: Carteiras listadas com sucesso
+        type: string
+      total:
+        example: 5
+        type: integer
+    type: object
   json.CategoriaAnuncioResponse:
     properties:
       id:
@@ -1385,6 +1510,402 @@ paths:
       summary: Restaura avaliação
       tags:
       - Avaliações
+  /carteiras:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todas as carteiras
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de carteiras
+          schema:
+            $ref: '#/definitions/json.CarteirasResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todas as carteiras
+      tags:
+      - Carteiras
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova carteira para um usuário
+      parameters:
+      - description: Dados da carteira
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CarteiraRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Carteira criada com sucesso
+          schema:
+            $ref: '#/definitions/json.CarteiraResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação de carteira
+      tags:
+      - Carteiras
+  /carteiras/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove uma carteira do sistema
+      parameters:
+      - description: ID da carteira
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Carteira excluída com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Carteira não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui carteira
+      tags:
+      - Carteiras
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de uma carteira específica pelo ID
+      parameters:
+      - description: ID da carteira
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Carteira encontrada
+          schema:
+            $ref: '#/definitions/json.CarteiraComUsuarioResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Carteira não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca carteira por ID
+      tags:
+      - Carteiras
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma carteira existente
+      parameters:
+      - description: ID da carteira
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados da carteira
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CarteiraRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Carteira atualizada com sucesso
+          schema:
+            $ref: '#/definitions/json.CarteiraResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Carteira não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza carteira
+      tags:
+      - Carteiras
+  /carteiras/{id}/adicionar:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona um valor ao saldo atual da carteira
+      parameters:
+      - description: ID da carteira
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Valor a ser adicionado
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CarteiraOperacaoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Saldo adicionado com sucesso
+          schema:
+            $ref: '#/definitions/json.CarteiraOperacaoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Carteira não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Adiciona saldo à carteira
+      tags:
+      - Carteiras
+  /carteiras/{id}/saldo:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza apenas o saldo de uma carteira existente
+      parameters:
+      - description: ID da carteira
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Novo saldo da carteira
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CarteiraSaldoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Saldo atualizado com sucesso
+          schema:
+            $ref: '#/definitions/json.CarteiraResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Carteira não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza saldo da carteira
+      tags:
+      - Carteiras
+  /carteiras/{id}/subtrair:
+    post:
+      consumes:
+      - application/json
+      description: Subtrai um valor do saldo atual da carteira
+      parameters:
+      - description: ID da carteira
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Valor a ser subtraído
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CarteiraOperacaoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Saldo subtraído com sucesso
+          schema:
+            $ref: '#/definitions/json.CarteiraOperacaoResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Carteira não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Subtrai saldo da carteira
+      tags:
+      - Carteiras
+  /carteiras/range:
+    get:
+      consumes:
+      - application/json
+      description: Retorna carteiras com saldo dentro de um range específico
+      parameters:
+      - description: Saldo mínimo
+        example: 100
+        in: query
+        name: saldo_min
+        required: true
+        type: number
+      - description: Saldo máximo
+        example: 2000
+        in: query
+        name: saldo_max
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Carteiras encontradas
+          schema:
+            $ref: '#/definitions/json.CarteirasResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca carteiras por range de saldo
+      tags:
+      - Carteiras
+  /carteiras/saldo-maior:
+    get:
+      consumes:
+      - application/json
+      description: Retorna carteiras com saldo maior que um valor específico
+      parameters:
+      - description: Valor mínimo de saldo
+        example: 1000
+        in: query
+        name: valor
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Carteiras encontradas
+          schema:
+            $ref: '#/definitions/json.CarteirasResponse'
+        "400":
+          description: Parâmetro inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca carteiras com saldo maior
+      tags:
+      - Carteiras
+  /carteiras/usuario/{usuario_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna a carteira de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: usuario_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Carteira encontrada
+          schema:
+            $ref: '#/definitions/json.CarteiraComUsuarioResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Carteira não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca carteira por usuário
+      tags:
+      - Carteiras
   /fotos:
     get:
       consumes:

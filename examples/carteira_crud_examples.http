@@ -1,0 +1,134 @@
+### Carteira CRUD Examples
+### Base URL: http://localhost:8080
+
+### 1. Criar nova carteira
+POST /carteiras
+Content-Type: application/json
+
+{
+  "usuario_id": 1,
+  "saldo": 1000.00
+}
+
+### 2. Listar todas as carteiras
+GET /carteiras
+
+### 3. Buscar carteira por ID
+GET /carteiras/1
+
+### 4. Buscar carteira por usuário
+GET /carteiras/usuario/1
+
+### 5. Atualizar carteira completa
+PUT /carteiras/1
+Content-Type: application/json
+
+{
+  "usuario_id": 1,
+  "saldo": 1500.00
+}
+
+### 6. Atualizar apenas o saldo da carteira
+PUT /carteiras/1/saldo
+Content-Type: application/json
+
+{
+  "saldo": 2000.00
+}
+
+### 7. Adicionar saldo à carteira
+POST /carteiras/1/adicionar
+Content-Type: application/json
+
+{
+  "valor": 100.00
+}
+
+### 8. Subtrair saldo da carteira
+POST /carteiras/1/subtrair
+Content-Type: application/json
+
+{
+  "valor": 50.00
+}
+
+### 9. Buscar carteiras por range de saldo
+GET /carteiras/range?saldo_min=500&saldo_max=2000
+
+### 10. Buscar carteiras com saldo maior que um valor
+GET /carteiras/saldo-maior?valor=1000
+
+### 11. Excluir carteira
+DELETE /carteiras/1
+
+### 12. Exemplos de operações com diferentes usuários
+
+### Criar carteira para usuário 2
+POST /carteiras
+Content-Type: application/json
+
+{
+  "usuario_id": 2,
+  "saldo": 500.00
+}
+
+### Criar carteira para usuário 3
+POST /carteiras
+Content-Type: application/json
+
+{
+  "usuario_id": 3,
+  "saldo": 2500.00
+}
+
+### 13. Exemplos de operações de saldo
+
+### Adicionar R$ 200,00 à carteira do usuário 1
+POST /carteiras/1/adicionar
+Content-Type: application/json
+
+{
+  "valor": 200.00
+}
+
+### Subtrair R$ 75,00 da carteira do usuário 2
+POST /carteiras/2/subtrair
+Content-Type: application/json
+
+{
+  "valor": 75.00
+}
+
+### 14. Exemplos de consultas avançadas
+
+### Buscar carteiras com saldo entre R$ 1000 e R$ 3000
+GET /carteiras/range?saldo_min=1000&saldo_max=3000
+
+### Buscar carteiras com saldo maior que R$ 2000
+GET /carteiras/saldo-maior?valor=2000
+
+### 15. Exemplo de erro - tentar subtrair mais do que o saldo disponível
+POST /carteiras/1/subtrair
+Content-Type: application/json
+
+{
+  "valor": 5000.00
+}
+
+### 16. Exemplo de erro - tentar criar carteira para usuário inexistente
+POST /carteiras
+Content-Type: application/json
+
+{
+  "usuario_id": 999,
+  "saldo": 1000.00
+}
+
+### 17. Exemplo de erro - tentar criar segunda carteira para o mesmo usuário
+POST /carteiras
+Content-Type: application/json
+
+{
+  "usuario_id": 1,
+  "saldo": 500.00
+}
