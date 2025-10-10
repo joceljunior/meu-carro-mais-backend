@@ -95,12 +95,14 @@ func calcularDistancia(lat1, lng1, lat2, lng2 float64) float64 {
 // CreateLoja cria uma nova loja
 func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 	loja := models.Loja{
-		Nome:        req.Nome,
-		CNPJ:        req.CNPJ,
-		Imagem:      req.Imagem,
-		Latitude:    req.Latitude,
-		Longitude:   req.Longitude,
-		IDCategoria: req.IDCategoria,
+		Nome:           req.Nome,
+		CNPJ:           req.CNPJ,
+		Imagem:         req.Imagem,
+		Latitude:       req.Latitude,
+		Longitude:      req.Longitude,
+		Rating:         req.Rating,
+		IsMeuCarroMais: req.IsMeuCarroMais,
+		IDCategoria:    req.IDCategoria,
 	}
 
 	err := database.DB.Create(&loja).Error
@@ -153,6 +155,8 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.Imagem = req.Imagem
 	loja.Latitude = req.Latitude
 	loja.Longitude = req.Longitude
+	loja.Rating = req.Rating
+	loja.IsMeuCarroMais = req.IsMeuCarroMais
 	loja.IDCategoria = req.IDCategoria
 
 	err = database.DB.Save(&loja).Error

@@ -15,14 +15,16 @@ func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, er
 	var lojasResponse []json.LojaResponse
 	for _, loja := range lojas {
 		lojaResp := json.LojaResponse{
-			ID:          loja.ID,
-			Nome:        loja.Nome,
-			CNPJ:        loja.CNPJ,
-			Imagem:      loja.Imagem,
-			Latitude:    loja.Latitude,
-			Longitude:   loja.Longitude,
-			IDCategoria: loja.IDCategoria,
-			Categoria:   loja.Categoria.Nome,
+			ID:             loja.ID,
+			Nome:           loja.Nome,
+			CNPJ:           loja.CNPJ,
+			Imagem:         loja.Imagem,
+			Latitude:       loja.Latitude,
+			Longitude:      loja.Longitude,
+			Rating:         loja.Rating,
+			IsMeuCarroMais: loja.IsMeuCarroMais,
+			IDCategoria:    loja.IDCategoria,
+			Categoria:      loja.Categoria.Nome,
 		}
 		lojasResponse = append(lojasResponse, lojaResp)
 	}
@@ -65,14 +67,16 @@ func CreateLoja(req json.LojaRequest) (*json.LojaResponse, error) {
 	}
 
 	response := &json.LojaResponse{
-		ID:          loja.ID,
-		Nome:        loja.Nome,
-		CNPJ:        loja.CNPJ,
-		Imagem:      loja.Imagem,
-		Latitude:    loja.Latitude,
-		Longitude:   loja.Longitude,
-		IDCategoria: loja.IDCategoria,
-		Categoria:   loja.Categoria.Nome,
+		ID:             loja.ID,
+		Nome:           loja.Nome,
+		CNPJ:           loja.CNPJ,
+		Imagem:         loja.Imagem,
+		Latitude:       loja.Latitude,
+		Longitude:      loja.Longitude,
+		Rating:         loja.Rating,
+		IsMeuCarroMais: loja.IsMeuCarroMais,
+		IDCategoria:    loja.IDCategoria,
+		Categoria:      loja.Categoria.Nome,
 	}
 
 	return response, nil
@@ -86,14 +90,16 @@ func GetLojaByID(id uint) (*json.LojaResponse, error) {
 	}
 
 	response := &json.LojaResponse{
-		ID:          loja.ID,
-		Nome:        loja.Nome,
-		CNPJ:        loja.CNPJ,
-		Imagem:      loja.Imagem,
-		Latitude:    loja.Latitude,
-		Longitude:   loja.Longitude,
-		IDCategoria: loja.IDCategoria,
-		Categoria:   loja.Categoria.Nome,
+		ID:             loja.ID,
+		Nome:           loja.Nome,
+		CNPJ:           loja.CNPJ,
+		Imagem:         loja.Imagem,
+		Latitude:       loja.Latitude,
+		Longitude:      loja.Longitude,
+		Rating:         loja.Rating,
+		IsMeuCarroMais: loja.IsMeuCarroMais,
+		IDCategoria:    loja.IDCategoria,
+		Categoria:      loja.Categoria.Nome,
 	}
 
 	return response, nil
@@ -109,14 +115,16 @@ func GetAllLojas() ([]json.LojaResponse, error) {
 	var responses []json.LojaResponse
 	for _, loja := range lojas {
 		response := json.LojaResponse{
-			ID:          loja.ID,
-			Nome:        loja.Nome,
-			CNPJ:        loja.CNPJ,
-			Imagem:      loja.Imagem,
-			Latitude:    loja.Latitude,
-			Longitude:   loja.Longitude,
-			IDCategoria: loja.IDCategoria,
-			Categoria:   loja.Categoria.Nome,
+			ID:             loja.ID,
+			Nome:           loja.Nome,
+			CNPJ:           loja.CNPJ,
+			Imagem:         loja.Imagem,
+			Latitude:       loja.Latitude,
+			Longitude:      loja.Longitude,
+			Rating:         loja.Rating,
+			IsMeuCarroMais: loja.IsMeuCarroMais,
+			IDCategoria:    loja.IDCategoria,
+			Categoria:      loja.Categoria.Nome,
 		}
 		responses = append(responses, response)
 	}
@@ -132,14 +140,16 @@ func UpdateLoja(id uint, req json.LojaRequest) (*json.LojaResponse, error) {
 	}
 
 	response := &json.LojaResponse{
-		ID:          loja.ID,
-		Nome:        loja.Nome,
-		CNPJ:        loja.CNPJ,
-		Imagem:      loja.Imagem,
-		Latitude:    loja.Latitude,
-		Longitude:   loja.Longitude,
-		IDCategoria: loja.IDCategoria,
-		Categoria:   loja.Categoria.Nome,
+		ID:             loja.ID,
+		Nome:           loja.Nome,
+		CNPJ:           loja.CNPJ,
+		Imagem:         loja.Imagem,
+		Latitude:       loja.Latitude,
+		Longitude:      loja.Longitude,
+		Rating:         loja.Rating,
+		IsMeuCarroMais: loja.IsMeuCarroMais,
+		IDCategoria:    loja.IDCategoria,
+		Categoria:      loja.Categoria.Nome,
 	}
 
 	return response, nil

@@ -322,6 +322,15 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration012)
 
+	// Migration 013: Adicionar campos rating e isMeuCarroMais à tabela lojas
+	migration013 := m.NewMigration("013", "add_rating_and_premium_to_lojas").
+		AddColumnSQL("lojas", "rating", "INTEGER DEFAULT 5").
+		AddColumnSQL("lojas", "is_meu_carro_mais", "BOOLEAN DEFAULT FALSE").
+		AddIndexSQL("lojas", "idx_loja_rating", "rating").
+		AddIndexSQL("lojas", "idx_loja_premium", "is_meu_carro_mais").
+		Build()
+	m.migrations = append(m.migrations, migration013)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

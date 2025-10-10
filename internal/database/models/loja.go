@@ -9,6 +9,8 @@ type Loja struct {
 	Imagem          string     `gorm:"size:255"`
 	Latitude        float64    `gorm:"type:decimal(10,8)"`
 	Longitude       float64    `gorm:"type:decimal(11,8)"`
+	Rating          int        `gorm:"default:5"`
+	IsMeuCarroMais  bool       `gorm:"default:false"`
 	DataCadastro    time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`
 	DataExclusao    *time.Time `gorm:"index"`

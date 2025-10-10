@@ -1,6 +1,6 @@
 ### Exemplos de CRUD de Anúncios
 
-### 1. Criar anúncio
+### 1. Criar anúncio comum (sem destaque)
 POST http://localhost:8080/anuncios
 Content-Type: application/json
 
@@ -9,9 +9,40 @@ Content-Type: application/json
   "descricao": "Troca de óleo do motor com filtro incluído",
   "preco": 89.90,
   "imagem": "https://example.com/troca-oleo.jpg",
+  "destaque": false,
+  "id_loja": 1,
+  "id_categoria": 1,
+  "tipo_anuncio": "servico"
+}
+
+### 1.1. Criar anúncio destaque (removerá destaque de outros anúncios da mesma loja)
+POST http://localhost:8080/anuncios
+Content-Type: application/json
+
+{
+  "titulo": "BMW X5 2023 - Premium",
+  "descricao": "BMW X5 xDrive40i 3.0 Turbo, automático, teto solar, bancos de couro",
+  "preco": 450000.00,
+  "imagem": "https://example.com/bmw-x5.jpg",
   "destaque": true,
   "id_loja": 1,
-  "id_categoria": 1
+  "id_categoria": 1,
+  "tipo_anuncio": "veiculo"
+}
+
+### 1.2. Criar outro anúncio destaque na mesma loja (removerá destaque do anterior)
+POST http://localhost:8080/anuncios
+Content-Type: application/json
+
+{
+  "titulo": "Mercedes C200 2022",
+  "descricao": "Mercedes-Benz C200 CGI, automático, ar condicionado, direção elétrica",
+  "preco": 180000.00,
+  "imagem": "https://example.com/mercedes-c200.jpg",
+  "destaque": true,
+  "id_loja": 1,
+  "id_categoria": 1,
+  "tipo_anuncio": "veiculo"
 }
 
 ### 2. Listar todos os anúncios
@@ -20,7 +51,7 @@ GET http://localhost:8080/anuncios
 ### 3. Buscar anúncio por ID
 GET http://localhost:8080/anuncios/1
 
-### 4. Atualizar anúncio
+### 4. Atualizar anúncio para destaque (removerá destaque de outros anúncios da mesma loja)
 PUT http://localhost:8080/anuncios/1
 Content-Type: application/json
 
@@ -31,8 +62,12 @@ Content-Type: application/json
   "imagem": "https://example.com/troca-oleo-premium.jpg",
   "destaque": true,
   "id_loja": 1,
-  "id_categoria": 1
+  "id_categoria": 1,
+  "tipo_anuncio": "servico"
 }
+
+### 4.1. Verificar que apenas um anúncio por loja pode ser destaque
+GET http://localhost:8080/anuncios
 
 ### 5. Soft delete anúncio (inativar)
 DELETE http://localhost:8080/anuncios/1

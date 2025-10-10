@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
@@ -49,6 +50,16 @@ func GetCategoriasAnuncio() ([]models.CategoriaAnuncio, error) {
 
 // CreateAnuncio cria um novo anúncio
 func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
+	// Se o anúncio será criado como destaque, remove o destaque de outros anúncios da mesma loja
+	if req.Destaque {
+		err := database.DB.Model(&models.Anuncio{}).
+			Where("id_loja = ? AND destaque = ? AND data_exclusao IS NULL", req.IDLoja, true).
+			Update("destaque", false).Error
+		if err != nil {
+			return nil, fmt.Errorf("erro ao remover destaque de outros anúncios: %v", err)
+		}
+	}
+
 	anuncio := models.Anuncio{
 		Titulo:      req.Titulo,
 		Descricao:   req.Descricao,
@@ -57,6 +68,10 @@ func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
 		Destaque:    req.Destaque,
 		IDLoja:      req.IDLoja,
 		IDCategoria: req.IDCategoria,
+		IDProduto:   req.IDProduto,
+		IDServico:   req.IDServico,
+		IDVeiculo:   req.IDVeiculo,
+		TipoAnuncio: req.TipoAnuncio,
 	}
 
 	err := database.DB.Create(&anuncio).Error
@@ -107,6 +122,16 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 		return nil, errors.New("anúncio não encontrado")
 	}
 
+	// Se o anúncio será atualizado como destaque, remove o destaque de outros anúncios da mesma loja
+	if req.Destaque && !anuncio.Destaque {
+		err := database.DB.Model(&models.Anuncio{}).
+			Where("id_loja = ? AND destaque = ? AND data_exclusao IS NULL AND id != ?", req.IDLoja, true, id).
+			Update("destaque", false).Error
+		if err != nil {
+			return nil, fmt.Errorf("erro ao remover destaque de outros anúncios: %v", err)
+		}
+	}
+
 	// Atualiza os campos
 	anuncio.Titulo = req.Titulo
 	anuncio.Descricao = req.Descricao
@@ -115,6 +140,10 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 	anuncio.Destaque = req.Destaque
 	anuncio.IDLoja = req.IDLoja
 	anuncio.IDCategoria = req.IDCategoria
+	anuncio.IDProduto = req.IDProduto
+	anuncio.IDServico = req.IDServico
+	anuncio.IDVeiculo = req.IDVeiculo
+	anuncio.TipoAnuncio = req.TipoAnuncio
 
 	err = database.DB.Save(&anuncio).Error
 	if err != nil {

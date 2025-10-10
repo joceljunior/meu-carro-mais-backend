@@ -1,6 +1,6 @@
 ### Exemplos de CRUD de Lojas
 
-### 1. Criar loja
+### 1. Criar loja básica (sem rating e premium)
 POST http://localhost:8080/lojas
 Content-Type: application/json
 
@@ -13,13 +13,28 @@ Content-Type: application/json
   "id_categoria": 1
 }
 
+### 1.1. Criar loja premium com rating
+POST http://localhost:8080/lojas
+Content-Type: application/json
+
+{
+  "nome": "Carros Premium",
+  "cnpj": "11.222.333/0001-44",
+  "imagem": "https://example.com/carros-premium.jpg",
+  "latitude": -23.5520,
+  "longitude": -46.6310,
+  "rating": 5,
+  "is_meu_carro_mais": true,
+  "id_categoria": 1
+}
+
 ### 2. Listar todas as lojas
 GET http://localhost:8080/lojas
 
 ### 3. Buscar loja por ID
 GET http://localhost:8080/lojas/1
 
-### 4. Atualizar loja
+### 4. Atualizar loja (incluindo rating e status premium)
 PUT http://localhost:8080/lojas/1
 Content-Type: application/json
 
@@ -29,6 +44,8 @@ Content-Type: application/json
   "imagem": "https://example.com/auto-center-centro.jpg",
   "latitude": -23.5505,
   "longitude": -46.6333,
+  "rating": 4,
+  "is_meu_carro_mais": true,
   "id_categoria": 1
 }
 

@@ -2078,7 +2078,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Cria uma nova loja com todos os dados fornecidos",
+                "description": "Cria uma nova loja com todos os dados fornecidos, incluindo rating e status premium",
                 "consumes": [
                     "application/json"
                 ],
@@ -2091,7 +2091,7 @@ const docTemplate = `{
                 "summary": "Criação da loja completa",
                 "parameters": [
                     {
-                        "description": "Dados completos da loja",
+                        "description": "Dados completos da loja (rating e is_meu_carro_mais são opcionais)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2260,7 +2260,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Atualiza os dados de uma loja existente",
+                "description": "Atualiza os dados de uma loja existente, incluindo rating e status premium",
                 "consumes": [
                     "application/json"
                 ],
@@ -2280,7 +2280,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Dados atualizados da loja",
+                        "description": "Dados atualizados da loja (rating e is_meu_carro_mais são opcionais)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -6134,6 +6134,9 @@ const docTemplate = `{
                 "imagem": {
                     "type": "string"
                 },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
                 "latitude": {
                     "type": "number"
                 },
@@ -6142,6 +6145,9 @@ const docTemplate = `{
                 },
                 "nome": {
                     "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
                 }
             }
         },
@@ -6167,6 +6173,9 @@ const docTemplate = `{
                 "imagem": {
                     "type": "string"
                 },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
                 "latitude": {
                     "type": "number"
                 },
@@ -6175,6 +6184,9 @@ const docTemplate = `{
                 },
                 "nome": {
                     "type": "string"
+                },
+                "rating": {
+                    "type": "integer"
                 }
             }
         },
