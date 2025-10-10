@@ -9,11 +9,12 @@ type LoginResponse struct {
 }
 
 type AnuncioDestaqueResponse struct {
-	ID        uint    `json:"id"`
-	Titulo    string  `json:"titulo"`
-	Descricao string  `json:"descricao"`
-	Preco     float64 `json:"preco"`
-	Imagem    string  `json:"imagem"`
+	ID          uint    `json:"id"`
+	Titulo      string  `json:"titulo"`
+	Descricao   string  `json:"descricao"`
+	Preco       float64 `json:"preco"`
+	Imagem      string  `json:"imagem"`
+	TipoAnuncio string  `json:"tipo_anuncio"`
 }
 type LojaUsuarioResponse struct {
 	Id                      uint   `json:"id"`

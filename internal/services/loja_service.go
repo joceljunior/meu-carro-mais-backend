@@ -2,8 +2,32 @@ package services
 
 import (
 	"meu-carro-mais/internal/database/datasource"
+	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
 )
+
+// getAnuncioDestaqueFromLoja extrai o anúncio destaque de uma loja
+func getAnuncioDestaqueFromLoja(loja models.Loja) *json.AnuncioDestaqueResponse {
+	if len(loja.Anuncios) == 0 {
+		return nil
+	}
+
+	// Busca o primeiro anúncio destaque (deve haver apenas um por loja)
+	for _, anuncio := range loja.Anuncios {
+		if anuncio.Destaque {
+			return &json.AnuncioDestaqueResponse{
+				ID:          anuncio.ID,
+				Titulo:      anuncio.Titulo,
+				Descricao:   anuncio.Descricao,
+				Preco:       anuncio.Preco,
+				Imagem:      anuncio.Imagem,
+				TipoAnuncio: anuncio.TipoAnuncio,
+			}
+		}
+	}
+
+	return nil
+}
 
 // GetLojasByProximidade busca lojas ordenadas por proximidade do usuário
 func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, error) {
@@ -15,16 +39,17 @@ func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, er
 	var lojasResponse []json.LojaResponse
 	for _, loja := range lojas {
 		lojaResp := json.LojaResponse{
-			ID:             loja.ID,
-			Nome:           loja.Nome,
-			CNPJ:           loja.CNPJ,
-			Imagem:         loja.Imagem,
-			Latitude:       loja.Latitude,
-			Longitude:      loja.Longitude,
-			Rating:         loja.Rating,
-			IsMeuCarroMais: loja.IsMeuCarroMais,
-			IDCategoria:    loja.IDCategoria,
-			Categoria:      loja.Categoria.Nome,
+			ID:              loja.ID,
+			Nome:            loja.Nome,
+			CNPJ:            loja.CNPJ,
+			Imagem:          loja.Imagem,
+			Latitude:        loja.Latitude,
+			Longitude:       loja.Longitude,
+			Rating:          loja.Rating,
+			IsMeuCarroMais:  loja.IsMeuCarroMais,
+			IDCategoria:     loja.IDCategoria,
+			Categoria:       loja.Categoria.Nome,
+			AnuncioDestaque: getAnuncioDestaqueFromLoja(loja),
 		}
 		lojasResponse = append(lojasResponse, lojaResp)
 	}
@@ -67,16 +92,17 @@ func CreateLoja(req json.LojaRequest) (*json.LojaResponse, error) {
 	}
 
 	response := &json.LojaResponse{
-		ID:             loja.ID,
-		Nome:           loja.Nome,
-		CNPJ:           loja.CNPJ,
-		Imagem:         loja.Imagem,
-		Latitude:       loja.Latitude,
-		Longitude:      loja.Longitude,
-		Rating:         loja.Rating,
-		IsMeuCarroMais: loja.IsMeuCarroMais,
-		IDCategoria:    loja.IDCategoria,
-		Categoria:      loja.Categoria.Nome,
+		ID:              loja.ID,
+		Nome:            loja.Nome,
+		CNPJ:            loja.CNPJ,
+		Imagem:          loja.Imagem,
+		Latitude:        loja.Latitude,
+		Longitude:       loja.Longitude,
+		Rating:          loja.Rating,
+		IsMeuCarroMais:  loja.IsMeuCarroMais,
+		IDCategoria:     loja.IDCategoria,
+		Categoria:       loja.Categoria.Nome,
+		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
 	}
 
 	return response, nil
@@ -90,16 +116,17 @@ func GetLojaByID(id uint) (*json.LojaResponse, error) {
 	}
 
 	response := &json.LojaResponse{
-		ID:             loja.ID,
-		Nome:           loja.Nome,
-		CNPJ:           loja.CNPJ,
-		Imagem:         loja.Imagem,
-		Latitude:       loja.Latitude,
-		Longitude:      loja.Longitude,
-		Rating:         loja.Rating,
-		IsMeuCarroMais: loja.IsMeuCarroMais,
-		IDCategoria:    loja.IDCategoria,
-		Categoria:      loja.Categoria.Nome,
+		ID:              loja.ID,
+		Nome:            loja.Nome,
+		CNPJ:            loja.CNPJ,
+		Imagem:          loja.Imagem,
+		Latitude:        loja.Latitude,
+		Longitude:       loja.Longitude,
+		Rating:          loja.Rating,
+		IsMeuCarroMais:  loja.IsMeuCarroMais,
+		IDCategoria:     loja.IDCategoria,
+		Categoria:       loja.Categoria.Nome,
+		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
 	}
 
 	return response, nil
@@ -115,16 +142,17 @@ func GetAllLojas() ([]json.LojaResponse, error) {
 	var responses []json.LojaResponse
 	for _, loja := range lojas {
 		response := json.LojaResponse{
-			ID:             loja.ID,
-			Nome:           loja.Nome,
-			CNPJ:           loja.CNPJ,
-			Imagem:         loja.Imagem,
-			Latitude:       loja.Latitude,
-			Longitude:      loja.Longitude,
-			Rating:         loja.Rating,
-			IsMeuCarroMais: loja.IsMeuCarroMais,
-			IDCategoria:    loja.IDCategoria,
-			Categoria:      loja.Categoria.Nome,
+			ID:              loja.ID,
+			Nome:            loja.Nome,
+			CNPJ:            loja.CNPJ,
+			Imagem:          loja.Imagem,
+			Latitude:        loja.Latitude,
+			Longitude:       loja.Longitude,
+			Rating:          loja.Rating,
+			IsMeuCarroMais:  loja.IsMeuCarroMais,
+			IDCategoria:     loja.IDCategoria,
+			Categoria:       loja.Categoria.Nome,
+			AnuncioDestaque: getAnuncioDestaqueFromLoja(loja),
 		}
 		responses = append(responses, response)
 	}
@@ -140,16 +168,17 @@ func UpdateLoja(id uint, req json.LojaRequest) (*json.LojaResponse, error) {
 	}
 
 	response := &json.LojaResponse{
-		ID:             loja.ID,
-		Nome:           loja.Nome,
-		CNPJ:           loja.CNPJ,
-		Imagem:         loja.Imagem,
-		Latitude:       loja.Latitude,
-		Longitude:      loja.Longitude,
-		Rating:         loja.Rating,
-		IsMeuCarroMais: loja.IsMeuCarroMais,
-		IDCategoria:    loja.IDCategoria,
-		Categoria:      loja.Categoria.Nome,
+		ID:              loja.ID,
+		Nome:            loja.Nome,
+		CNPJ:            loja.CNPJ,
+		Imagem:          loja.Imagem,
+		Latitude:        loja.Latitude,
+		Longitude:       loja.Longitude,
+		Rating:          loja.Rating,
+		IsMeuCarroMais:  loja.IsMeuCarroMais,
+		IDCategoria:     loja.IDCategoria,
+		Categoria:       loja.Categoria.Nome,
+		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
 	}
 
 	return response, nil

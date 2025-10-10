@@ -23,8 +23,8 @@ func GetLojasByLocations(latitude string, longitude string) ([]models.Loja, erro
 func GetLojasByProximidade(userLat, userLng float64) ([]models.Loja, error) {
 	var lojas []models.Loja
 
-	// Busca todas as lojas com suas categorias (apenas não excluídas)
-	err := database.DB.Preload("Categoria").Where("data_exclusao IS NULL").Find(&lojas).Error
+	// Busca todas as lojas com suas categorias e anúncios destaque (apenas não excluídas)
+	err := database.DB.Preload("Categoria").Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).Where("data_exclusao IS NULL").Find(&lojas).Error
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +119,7 @@ func GetLojaByID(id uint) (*models.Loja, error) {
 	var loja models.Loja
 	err := database.DB.
 		Preload("Categoria").
+		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&loja).Error
 	if err != nil {
@@ -132,6 +133,7 @@ func GetAllLojas() ([]models.Loja, error) {
 	var lojas []models.Loja
 	err := database.DB.
 		Preload("Categoria").
+		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&lojas).Error

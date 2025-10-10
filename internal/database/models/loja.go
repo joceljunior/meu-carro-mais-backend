@@ -16,4 +16,5 @@ type Loja struct {
 	DataExclusao    *time.Time `gorm:"index"`
 	IDCategoria     uint
 	Categoria       CategoriaLojista `gorm:"foreignKey:IDCategoria"`
+	Anuncios        []Anuncio        `gorm:"foreignKey:IDLoja"`
 }
