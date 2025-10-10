@@ -347,8 +347,8 @@ func DeleteCarteiraHandler(c *gin.Context) {
 // @Tags         Carteiras
 // @Accept       json
 // @Produce      json
-// @Param        saldo_min query number true "Saldo mínimo" example(100)
-// @Param        saldo_max query number true "Saldo máximo" example(2000)
+// @Param        saldo_min query integer true "Saldo mínimo (moedas do app)" example(100)
+// @Param        saldo_max query integer true "Saldo máximo (moedas do app)" example(2000)
 // @Success      200 {object} json.CarteirasResponse "Carteiras encontradas"
 // @Failure      400 {object} map[string]interface{} "Parâmetros inválidos"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
@@ -364,18 +364,18 @@ func GetCarteirasBySaldoRangeHandler(c *gin.Context) {
 		return
 	}
 
-	saldoMin, err := strconv.ParseFloat(saldoMinStr, 64)
+	saldoMin, err := strconv.Atoi(saldoMinStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Saldo mínimo inválido",
+			"error": "Saldo mínimo inválido (deve ser um número inteiro)",
 		})
 		return
 	}
 
-	saldoMax, err := strconv.ParseFloat(saldoMaxStr, 64)
+	saldoMax, err := strconv.Atoi(saldoMaxStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Saldo máximo inválido",
+			"error": "Saldo máximo inválido (deve ser um número inteiro)",
 		})
 		return
 	}
@@ -397,7 +397,7 @@ func GetCarteirasBySaldoRangeHandler(c *gin.Context) {
 // @Tags         Carteiras
 // @Accept       json
 // @Produce      json
-// @Param        valor query number true "Valor mínimo de saldo" example(1000)
+// @Param        valor query integer true "Valor mínimo de saldo (moedas do app)" example(1000)
 // @Success      200 {object} json.CarteirasResponse "Carteiras encontradas"
 // @Failure      400 {object} map[string]interface{} "Parâmetro inválido"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
@@ -412,10 +412,10 @@ func GetCarteirasComSaldoMaiorHandler(c *gin.Context) {
 		return
 	}
 
-	valor, err := strconv.ParseFloat(valorStr, 64)
+	valor, err := strconv.Atoi(valorStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Valor inválido",
+			"error": "Valor inválido (deve ser um número inteiro)",
 		})
 		return
 	}
