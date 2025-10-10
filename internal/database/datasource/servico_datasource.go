@@ -48,7 +48,6 @@ func GetServicosByProximidade(latitude, longitude float64) ([]json.ServicoRespon
 				Longitude:   servico.Loja.Longitude,
 				IDCategoria: servico.Loja.IDCategoria,
 				Categoria:   servico.Loja.Categoria.Nome,
-				Distancia:   distancia,
 			},
 		}
 

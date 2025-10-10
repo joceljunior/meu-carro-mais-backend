@@ -19,8 +19,14 @@ func GetLojasByLocations(latitude string, longitude string) ([]models.Loja, erro
 	return lojas, nil
 }
 
+// LojaComDistancia representa uma loja com sua distância calculada
+type LojaComDistancia struct {
+	models.Loja
+	Distancia float64
+}
+
 // GetLojasByProximidade busca lojas ordenadas por proximidade do usuário
-func GetLojasByProximidade(userLat, userLng float64) ([]models.Loja, error) {
+func GetLojasByProximidade(userLat, userLng float64) ([]LojaComDistancia, error) {
 	var lojas []models.Loja
 
 	// Busca todas as lojas com suas categorias e anúncios destaque (apenas não excluídas)
@@ -30,16 +36,11 @@ func GetLojasByProximidade(userLat, userLng float64) ([]models.Loja, error) {
 	}
 
 	// Calcula a distância para cada loja e ordena
-	type lojaComDistancia struct {
-		Loja      models.Loja
-		Distancia float64
-	}
-
-	var lojasComDistancia []lojaComDistancia
+	var lojasComDistancia []LojaComDistancia
 
 	for _, loja := range lojas {
 		distancia := calcularDistancia(userLat, userLng, loja.Latitude, loja.Longitude)
-		lojasComDistancia = append(lojasComDistancia, lojaComDistancia{
+		lojasComDistancia = append(lojasComDistancia, LojaComDistancia{
 			Loja:      loja,
 			Distancia: distancia,
 		})
@@ -50,13 +51,7 @@ func GetLojasByProximidade(userLat, userLng float64) ([]models.Loja, error) {
 		return lojasComDistancia[i].Distancia < lojasComDistancia[j].Distancia
 	})
 
-	// Converte de volta para slice de lojas
-	var lojasOrdenadas []models.Loja
-	for _, lcd := range lojasComDistancia {
-		lojasOrdenadas = append(lojasOrdenadas, lcd.Loja)
-	}
-
-	return lojasOrdenadas, nil
+	return lojasComDistancia, nil
 }
 
 // GetCategoriasLojista retorna todas as categorias de lojista

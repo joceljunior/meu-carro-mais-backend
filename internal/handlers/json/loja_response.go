@@ -11,7 +11,6 @@ type LojaResponse struct {
 	IsMeuCarroMais  bool                     `json:"is_meu_carro_mais"`
 	IDCategoria     uint                     `json:"id_categoria"`
 	Categoria       string                   `json:"categoria"`
-	Distancia       float64                  `json:"distancia,omitempty"` // Distância em km
 	AnuncioDestaque *AnuncioDestaqueResponse `json:"anuncio_destaque,omitempty"`
 }
 

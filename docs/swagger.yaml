@@ -10,6 +10,8 @@ definitions:
         type: string
       preco:
         type: number
+      tipo_anuncio:
+        type: string
       titulo:
         type: string
     type: object
@@ -180,8 +182,9 @@ definitions:
         example: Carteira encontrada com sucesso
         type: string
       saldo:
+        description: Moedas do app (valores inteiros)
         example: 1000
-        type: number
+        type: integer
       usuario:
         properties:
           email:
@@ -201,9 +204,10 @@ definitions:
   json.CarteiraOperacaoRequest:
     properties:
       valor:
+        description: Moedas do app (valores inteiros)
         example: 100
-        minimum: 0.01
-        type: number
+        minimum: 1
+        type: integer
     required:
     - valor
     type: object
@@ -219,11 +223,13 @@ definitions:
         example: Saldo adicionado com sucesso
         type: string
       saldo_anterior:
+        description: Moedas do app (valores inteiros)
         example: 1000
-        type: number
+        type: integer
       saldo_atual:
+        description: Moedas do app (valores inteiros)
         example: 1100
-        type: number
+        type: integer
       tipo_operacao:
         example: adicao
         type: string
@@ -231,15 +237,17 @@ definitions:
         example: 1
         type: integer
       valor_operacao:
+        description: Moedas do app (valores inteiros)
         example: 100
-        type: number
+        type: integer
     type: object
   json.CarteiraRequest:
     properties:
       saldo:
+        description: Moedas do app (valores inteiros)
         example: 1000
         minimum: 0
-        type: number
+        type: integer
       usuario_id:
         example: 1
         type: integer
@@ -262,8 +270,9 @@ definitions:
         example: Carteira criada com sucesso
         type: string
       saldo:
+        description: Moedas do app (valores inteiros)
         example: 1000
-        type: number
+        type: integer
       usuario_id:
         example: 1
         type: integer
@@ -271,9 +280,10 @@ definitions:
   json.CarteiraSaldoRequest:
     properties:
       saldo:
+        description: Moedas do app (valores inteiros)
         example: 1500
         minimum: 0
-        type: number
+        type: integer
     required:
     - saldo
     type: object
@@ -664,13 +674,12 @@ definitions:
     type: object
   json.LojaResponse:
     properties:
+      anuncio_destaque:
+        $ref: '#/definitions/json.AnuncioDestaqueResponse'
       categoria:
         type: string
       cnpj:
         type: string
-      distancia:
-        description: Distância em km
-        type: number
       id:
         type: integer
       id_categoria:
@@ -694,6 +703,8 @@ definitions:
         $ref: '#/definitions/json.AnuncioDestaqueResponse'
       id:
         type: integer
+      logo:
+        type: string
       nome:
         type: string
     type: object
@@ -905,6 +916,8 @@ definitions:
         type: string
       latitude:
         type: number
+      loja:
+        $ref: '#/definitions/json.LojaUsuarioResponse'
       longitude:
         type: number
       mensagem:
@@ -1814,18 +1827,18 @@ paths:
       - application/json
       description: Retorna carteiras com saldo dentro de um range específico
       parameters:
-      - description: Saldo mínimo
+      - description: Saldo mínimo (moedas do app)
         example: 100
         in: query
         name: saldo_min
         required: true
-        type: number
-      - description: Saldo máximo
+        type: integer
+      - description: Saldo máximo (moedas do app)
         example: 2000
         in: query
         name: saldo_max
         required: true
-        type: number
+        type: integer
       produces:
       - application/json
       responses:
@@ -1852,12 +1865,12 @@ paths:
       - application/json
       description: Retorna carteiras com saldo maior que um valor específico
       parameters:
-      - description: Valor mínimo de saldo
+      - description: Valor mínimo de saldo (moedas do app)
         example: 1000
         in: query
         name: valor
         required: true
-        type: number
+        type: integer
       produces:
       - application/json
       responses:

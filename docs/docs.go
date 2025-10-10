@@ -738,17 +738,17 @@ const docTemplate = `{
                 "summary": "Busca carteiras por range de saldo",
                 "parameters": [
                     {
-                        "type": "number",
+                        "type": "integer",
                         "example": 100,
-                        "description": "Saldo mínimo",
+                        "description": "Saldo mínimo (moedas do app)",
                         "name": "saldo_min",
                         "in": "query",
                         "required": true
                     },
                     {
-                        "type": "number",
+                        "type": "integer",
                         "example": 2000,
-                        "description": "Saldo máximo",
+                        "description": "Saldo máximo (moedas do app)",
                         "name": "saldo_max",
                         "in": "query",
                         "required": true
@@ -793,9 +793,9 @@ const docTemplate = `{
                 "summary": "Busca carteiras com saldo maior",
                 "parameters": [
                     {
-                        "type": "number",
+                        "type": "integer",
                         "example": 1000,
-                        "description": "Valor mínimo de saldo",
+                        "description": "Valor mínimo de saldo (moedas do app)",
                         "name": "valor",
                         "in": "query",
                         "required": true
@@ -5181,6 +5181,9 @@ const docTemplate = `{
                 "preco": {
                     "type": "number"
                 },
+                "tipo_anuncio": {
+                    "type": "string"
+                },
                 "titulo": {
                     "type": "string"
                 }
@@ -5433,7 +5436,8 @@ const docTemplate = `{
                     "example": "Carteira encontrada com sucesso"
                 },
                 "saldo": {
-                    "type": "number",
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
                     "example": 1000
                 },
                 "usuario": {
@@ -5466,8 +5470,9 @@ const docTemplate = `{
             ],
             "properties": {
                 "valor": {
-                    "type": "number",
-                    "minimum": 0.01,
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
+                    "minimum": 1,
                     "example": 100
                 }
             }
@@ -5488,11 +5493,13 @@ const docTemplate = `{
                     "example": "Saldo adicionado com sucesso"
                 },
                 "saldo_anterior": {
-                    "type": "number",
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
                     "example": 1000
                 },
                 "saldo_atual": {
-                    "type": "number",
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
                     "example": 1100
                 },
                 "tipo_operacao": {
@@ -5504,7 +5511,8 @@ const docTemplate = `{
                     "example": 1
                 },
                 "valor_operacao": {
-                    "type": "number",
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
                     "example": 100
                 }
             }
@@ -5517,7 +5525,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "saldo": {
-                    "type": "number",
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
                     "minimum": 0,
                     "example": 1000
                 },
@@ -5547,7 +5556,8 @@ const docTemplate = `{
                     "example": "Carteira criada com sucesso"
                 },
                 "saldo": {
-                    "type": "number",
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
                     "example": 1000
                 },
                 "usuario_id": {
@@ -5563,7 +5573,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "saldo": {
-                    "type": "number",
+                    "description": "Moedas do app (valores inteiros)",
+                    "type": "integer",
                     "minimum": 0,
                     "example": 1500
                 }
@@ -6154,15 +6165,14 @@ const docTemplate = `{
         "json.LojaResponse": {
             "type": "object",
             "properties": {
+                "anuncio_destaque": {
+                    "$ref": "#/definitions/json.AnuncioDestaqueResponse"
+                },
                 "categoria": {
                     "type": "string"
                 },
                 "cnpj": {
                     "type": "string"
-                },
-                "distancia": {
-                    "description": "Distância em km",
-                    "type": "number"
                 },
                 "id": {
                     "type": "integer"
@@ -6198,6 +6208,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "logo": {
+                    "type": "string"
                 },
                 "nome": {
                     "type": "string"
@@ -6512,6 +6525,9 @@ const docTemplate = `{
                 },
                 "latitude": {
                     "type": "number"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaUsuarioResponse"
                 },
                 "longitude": {
                     "type": "number"

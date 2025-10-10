@@ -31,25 +31,25 @@ func getAnuncioDestaqueFromLoja(loja models.Loja) *json.AnuncioDestaqueResponse 
 
 // GetLojasByProximidade busca lojas ordenadas por proximidade do usuário
 func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, error) {
-	lojas, err := datasource.GetLojasByProximidade(latitude, longitude)
+	lojasComDistancia, err := datasource.GetLojasByProximidade(latitude, longitude)
 	if err != nil {
 		return nil, err
 	}
 
 	var lojasResponse []json.LojaResponse
-	for _, loja := range lojas {
+	for _, lojaComDist := range lojasComDistancia {
 		lojaResp := json.LojaResponse{
-			ID:              loja.ID,
-			Nome:            loja.Nome,
-			CNPJ:            loja.CNPJ,
-			Imagem:          loja.Imagem,
-			Latitude:        loja.Latitude,
-			Longitude:       loja.Longitude,
-			Rating:          loja.Rating,
-			IsMeuCarroMais:  loja.IsMeuCarroMais,
-			IDCategoria:     loja.IDCategoria,
-			Categoria:       loja.Categoria.Nome,
-			AnuncioDestaque: getAnuncioDestaqueFromLoja(loja),
+			ID:              lojaComDist.ID,
+			Nome:            lojaComDist.Nome,
+			CNPJ:            lojaComDist.CNPJ,
+			Imagem:          lojaComDist.Imagem,
+			Latitude:        lojaComDist.Latitude,
+			Longitude:       lojaComDist.Longitude,
+			Rating:          lojaComDist.Rating,
+			IsMeuCarroMais:  lojaComDist.IsMeuCarroMais,
+			IDCategoria:     lojaComDist.IDCategoria,
+			Categoria:       lojaComDist.Categoria.Nome,
+			AnuncioDestaque: getAnuncioDestaqueFromLoja(lojaComDist.Loja),
 		}
 		lojasResponse = append(lojasResponse, lojaResp)
 	}
