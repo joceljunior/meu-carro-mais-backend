@@ -39,6 +39,15 @@ func GetUserByID(id uint) (*json.UserResponse, error) {
 		return nil, err
 	}
 
+	var lojaResponse *json.LojaUsuarioResponse
+	if user.Loja.ID != 0 {
+		lojaResponse = &json.LojaUsuarioResponse{
+			Id:   user.Loja.ID,
+			Nome: user.Loja.Nome,
+			Logo: user.Loja.Imagem,
+		}
+	}
+
 	response := &json.UserResponse{
 		ID:             user.ID,
 		Nome:           user.Nome,
@@ -54,6 +63,7 @@ func GetUserByID(id uint) (*json.UserResponse, error) {
 		Longitude:      user.Longitude,
 		IDPlano:        user.IDPlano,
 		IDLoja:         user.IDLoja,
+		Loja:           lojaResponse,
 		Mensagem:       "Usuário encontrado com sucesso",
 	}
 
@@ -69,6 +79,15 @@ func GetAllUsers() ([]json.UserResponse, error) {
 
 	var responses []json.UserResponse
 	for _, user := range users {
+		var lojaResponse *json.LojaUsuarioResponse
+		if user.Loja.ID != 0 {
+			lojaResponse = &json.LojaUsuarioResponse{
+				Id:   user.Loja.ID,
+				Nome: user.Loja.Nome,
+				Logo: user.Loja.Imagem,
+			}
+		}
+
 		response := json.UserResponse{
 			ID:             user.ID,
 			Nome:           user.Nome,
@@ -84,6 +103,7 @@ func GetAllUsers() ([]json.UserResponse, error) {
 			Longitude:      user.Longitude,
 			IDPlano:        user.IDPlano,
 			IDLoja:         user.IDLoja,
+			Loja:           lojaResponse,
 		}
 		responses = append(responses, response)
 	}
@@ -96,6 +116,15 @@ func UpdateUser(id uint, req json.UserRequest) (*json.UserResponse, error) {
 	user, err := datasource.UpdateUser(id, req)
 	if err != nil {
 		return nil, err
+	}
+
+	var lojaResponse *json.LojaUsuarioResponse
+	if user.Loja.ID != 0 {
+		lojaResponse = &json.LojaUsuarioResponse{
+			Id:   user.Loja.ID,
+			Nome: user.Loja.Nome,
+			Logo: user.Loja.Imagem,
+		}
 	}
 
 	response := &json.UserResponse{
@@ -113,6 +142,7 @@ func UpdateUser(id uint, req json.UserRequest) (*json.UserResponse, error) {
 		Longitude:      user.Longitude,
 		IDPlano:        user.IDPlano,
 		IDLoja:         user.IDLoja,
+		Loja:           lojaResponse,
 		Mensagem:       "Usuário atualizado com sucesso",
 	}
 

@@ -18,5 +18,6 @@ type AnuncioDestaqueResponse struct {
 type LojaUsuarioResponse struct {
 	Id                      uint   `json:"id"`
 	Nome                    string `json:"nome"`
+	Logo                    string `json:"logo,omitempty"`
 	AnuncioDestaqueResponse `json:"anuncio_destaque,omitempty"`
 }

@@ -38,6 +38,7 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		LojaUsuarioResponse: json.LojaUsuarioResponse{
 			Id:                      user.Loja.ID,
 			Nome:                    user.Loja.Nome,
+			Logo:                    user.Loja.Imagem,
 			AnuncioDestaqueResponse: anuncioResp,
 		},
 	}
