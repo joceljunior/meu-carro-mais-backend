@@ -107,7 +107,7 @@ func UpdateCarteira(id uint, req json.CarteiraRequest) (*models.Carteira, error)
 }
 
 // UpdateCarteiraSaldo atualiza apenas o saldo de uma carteira
-func UpdateCarteiraSaldo(id uint, novoSaldo float64) (*models.Carteira, error) {
+func UpdateCarteiraSaldo(id uint, novoSaldo int) (*models.Carteira, error) {
 	// Verifica se a carteira existe
 	_, err := GetCarteiraByID(id)
 	if err != nil {
@@ -127,7 +127,7 @@ func UpdateCarteiraSaldo(id uint, novoSaldo float64) (*models.Carteira, error) {
 }
 
 // AdicionarSaldo adiciona valor ao saldo da carteira
-func AdicionarSaldo(id uint, valor float64) (*models.Carteira, error) {
+func AdicionarSaldo(id uint, valor int) (*models.Carteira, error) {
 	// Verifica se a carteira existe
 	carteira, err := GetCarteiraByID(id)
 	if err != nil {
@@ -140,7 +140,7 @@ func AdicionarSaldo(id uint, valor float64) (*models.Carteira, error) {
 }
 
 // SubtrairSaldo subtrai valor do saldo da carteira
-func SubtrairSaldo(id uint, valor float64) (*models.Carteira, error) {
+func SubtrairSaldo(id uint, valor int) (*models.Carteira, error) {
 	// Verifica se a carteira existe
 	carteira, err := GetCarteiraByID(id)
 	if err != nil {
@@ -175,7 +175,7 @@ func DeleteCarteira(id uint) error {
 }
 
 // GetCarteirasBySaldoRange busca carteiras com saldo dentro de um range
-func GetCarteirasBySaldoRange(saldoMin, saldoMax float64) ([]models.Carteira, error) {
+func GetCarteirasBySaldoRange(saldoMin, saldoMax int) ([]models.Carteira, error) {
 	var carteiras []models.Carteira
 	err := database.DB.
 		Preload("Usuario").
@@ -189,7 +189,7 @@ func GetCarteirasBySaldoRange(saldoMin, saldoMax float64) ([]models.Carteira, er
 }
 
 // GetCarteirasComSaldoMaior busca carteiras com saldo maior que um valor
-func GetCarteirasComSaldoMaior(valor float64) ([]models.Carteira, error) {
+func GetCarteirasComSaldoMaior(valor int) ([]models.Carteira, error) {
 	var carteiras []models.Carteira
 	err := database.DB.
 		Preload("Usuario").

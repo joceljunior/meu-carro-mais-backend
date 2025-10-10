@@ -5,7 +5,7 @@ import "time"
 type Carteira struct {
 	ID              uint `gorm:"primaryKey"`
 	UsuarioID       uint
-	Saldo           float64
+	Saldo           int       `gorm:"type:integer"` // Moedas do app (valores inteiros)
 	DataCriacao     time.Time `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time `gorm:"autoUpdateTime"`
 

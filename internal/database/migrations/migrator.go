@@ -331,6 +331,19 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration013)
 
+	// Migration 014: Alterar campo saldo da carteira de decimal para int (moedas do app)
+	migration014 := m.NewMigration("014", "change_carteira_saldo_to_int").
+		ExecuteSQL(`
+			-- Altera o campo saldo de DECIMAL para INTEGER
+			-- Converte valores existentes para inteiros (arredonda para baixo)
+			ALTER TABLE carteiras ALTER COLUMN saldo TYPE INTEGER USING FLOOR(saldo);
+		`, `
+			-- Rollback: Converte de volta para DECIMAL
+			ALTER TABLE carteiras ALTER COLUMN saldo TYPE DECIMAL(10,2);
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration014)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

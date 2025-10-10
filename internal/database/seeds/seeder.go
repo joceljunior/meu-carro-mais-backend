@@ -611,12 +611,12 @@ func (s *Seeder) seedCarteira() error {
 		return nil
 	}
 
-	// Saldos variados para diferentes usuários
-	saldos := []float64{1000.00, 1500.00, 800.00, 2000.00, 1200.00, 3000.00}
+	// Saldos variados para diferentes usuários (moedas do app - valores inteiros)
+	saldos := []int{1000, 1500, 800, 2000, 1200, 3000}
 
 	for i, usuario := range usuarios {
 		// Usa saldo baseado no índice, ou um saldo padrão se não houver saldo específico
-		saldo := 1000.00
+		saldo := 1000
 		if i < len(saldos) {
 			saldo = saldos[i]
 		}
@@ -632,7 +632,7 @@ func (s *Seeder) seedCarteira() error {
 			if err := s.db.Create(&carteira).Error; err != nil {
 				return fmt.Errorf("erro ao criar carteira para usuario %d: %v", carteira.UsuarioID, err)
 			}
-			log.Printf("✅ Carteira criada para usuario %s (ID: %d) com saldo R$ %.2f", usuario.Nome, carteira.UsuarioID, saldo)
+			log.Printf("✅ Carteira criada para usuario %s (ID: %d) com saldo %d moedas", usuario.Nome, carteira.UsuarioID, saldo)
 		} else {
 			log.Printf("⏭️ Carteira já existe para usuario %s (ID: %d)", usuario.Nome, carteira.UsuarioID)
 		}
@@ -713,10 +713,10 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		log.Printf("⏭️ Anuncio já existe: %s", anuncioDestaque.Titulo)
 	}
 
-	// Cria uma carteira para o usuário com saldo premium
+	// Cria uma carteira para o usuário com saldo premium (moedas do app)
 	carteira := models.Carteira{
 		UsuarioID: usuarioComAnuncio.ID,
-		Saldo:     5000.00, // Saldo maior para usuário premium
+		Saldo:     5000, // Saldo maior para usuário premium (moedas do app)
 	}
 
 	var existingCarteira models.Carteira
@@ -725,7 +725,7 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		if err := s.db.Create(&carteira).Error; err != nil {
 			return fmt.Errorf("erro ao criar carteira para usuario %d: %v", carteira.UsuarioID, err)
 		}
-		log.Printf("✅ Carteira premium criada para usuario %s (ID: %d) com saldo R$ %.2f", usuarioComAnuncio.Nome, carteira.UsuarioID, carteira.Saldo)
+		log.Printf("✅ Carteira premium criada para usuario %s (ID: %d) com saldo %d moedas", usuarioComAnuncio.Nome, carteira.UsuarioID, carteira.Saldo)
 	} else {
 		log.Printf("⏭️ Carteira já existe para usuario %s (ID: %d)", usuarioComAnuncio.Nome, carteira.UsuarioID)
 	}

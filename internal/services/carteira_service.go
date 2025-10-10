@@ -214,7 +214,7 @@ func DeleteCarteira(id uint) error {
 }
 
 // GetCarteirasBySaldoRange busca carteiras com saldo dentro de um range
-func GetCarteirasBySaldoRange(saldoMin, saldoMax float64) (*json.CarteirasResponse, error) {
+func GetCarteirasBySaldoRange(saldoMin, saldoMax int) (*json.CarteirasResponse, error) {
 	carteiras, err := datasource.GetCarteirasBySaldoRange(saldoMin, saldoMax)
 	if err != nil {
 		return nil, err
@@ -248,7 +248,7 @@ func GetCarteirasBySaldoRange(saldoMin, saldoMax float64) (*json.CarteirasRespon
 }
 
 // GetCarteirasComSaldoMaior busca carteiras com saldo maior que um valor
-func GetCarteirasComSaldoMaior(valor float64) (*json.CarteirasResponse, error) {
+func GetCarteirasComSaldoMaior(valor int) (*json.CarteirasResponse, error) {
 	carteiras, err := datasource.GetCarteirasComSaldoMaior(valor)
 	if err != nil {
 		return nil, err
