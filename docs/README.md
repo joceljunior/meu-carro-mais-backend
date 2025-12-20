@@ -61,6 +61,23 @@ API para gerenciamento de usuários, lojas e serviços automotivos.
 - **GET /logs/acao/{tipo}** - Lista logs por tipo de ação
   - [Documentação detalhada](LOGS.md)
 
+### Uploads
+
+- **POST /uploads** - Cria um novo upload (imagem ou documento)
+- **GET /uploads** - Lista todos os uploads
+- **GET /uploads/{id}** - Busca upload por ID
+- **GET /usuarios/{id_usuario}/uploads** - Lista uploads de um usuário
+- **GET /veiculos/{id}/uploads** - Lista uploads de um veículo
+- **GET /produtos/{id}/uploads** - Lista uploads de um produto
+- **GET /servicos/{id}/uploads** - Lista uploads de um serviço
+- **GET /lojas/{id}/uploads** - Lista uploads de uma loja
+- **GET /uploads/principal/{tipo}/{id}** - Busca upload principal de uma entidade
+- **PUT /uploads/{id}** - Atualiza upload
+- **PUT /uploads/{id}/principal** - Define upload como principal (apenas imagens)
+- **DELETE /uploads/{id}** - Remove upload (soft delete)
+- **POST /uploads/{id}/restore** - Restaura upload excluído
+  - [Documentação detalhada](UPLOADS.md)
+
 ### Pagamentos
 
 - **POST /pagamentos/checkout** - Cria sessão de checkout para pagamento único

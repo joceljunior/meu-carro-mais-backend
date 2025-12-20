@@ -1335,415 +1335,6 @@
                 }
             }
         },
-        "/fotos": {
-            "get": {
-                "description": "Retorna todas as fotos ativas do sistema",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Lista todas as fotos",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotosResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Cria uma nova foto no sistema",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Cria uma nova foto",
-                "parameters": [
-                    {
-                        "description": "Dados da foto",
-                        "name": "foto",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/json.FotoRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/fotos/principal/{tipo}/{id}": {
-            "get": {
-                "description": "Retorna a foto principal de uma entidade específica",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Busca foto principal de uma entidade",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Tipo da entidade (veiculo, veiculo_loja, produto, servico, loja)",
-                        "name": "tipo",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "ID da entidade",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Parâmetros inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Foto não encontrada",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/fotos/{id}": {
-            "get": {
-                "description": "Retorna uma foto específica pelo ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Busca foto por ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID da foto",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Foto não encontrada",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Atualiza os dados de uma foto existente",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Atualiza foto",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID da foto",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Dados atualizados da foto",
-                        "name": "foto",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/json.FotoRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Foto não encontrada",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Realiza soft delete de uma foto, marcando-a como excluída",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Remove foto (soft delete)",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID da foto",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Foto removida com sucesso",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "ID inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Foto não encontrada",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/fotos/{id}/principal": {
-            "put": {
-                "description": "Define uma foto como principal da entidade",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Define foto como principal",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID da foto",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Foto definida como principal com sucesso",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "ID inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Foto não encontrada",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/fotos/{id}/restore": {
-            "post": {
-                "description": "Restaura uma foto que foi soft deleted",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Restaura foto",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID da foto",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Foto restaurada com sucesso",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "ID inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Foto não encontrada",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/historicos-resgate": {
             "get": {
                 "description": "Retorna todos os históricos de resgate ativos do sistema",
@@ -2920,52 +2511,6 @@
                 }
             }
         },
-        "/lojas/{id}/fotos": {
-            "get": {
-                "description": "Retorna todas as fotos de uma loja específica",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Lista fotos de uma loja",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID da loja",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotosResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de loja inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/lojas/{id}/historicos-resgate": {
             "get": {
                 "description": "Retorna todos os históricos de resgate de uma loja específica",
@@ -3097,6 +2642,52 @@
                     },
                     "404": {
                         "description": "Loja não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/uploads": {
+            "get": {
+                "description": "Retorna todos os uploads de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Lista uploads de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -3826,52 +3417,6 @@
                 }
             }
         },
-        "/produtos/{id}/fotos": {
-            "get": {
-                "description": "Retorna todas as fotos de um produto específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Lista fotos de um produto",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do produto",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotosResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de produto inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/produtos/{id}/restore": {
             "post": {
                 "description": "Restaura um produto que foi soft deleted",
@@ -3911,6 +3456,52 @@
                     },
                     "404": {
                         "description": "Produto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/produtos/{id}/uploads": {
+            "get": {
+                "description": "Retorna todos os uploads de um produto específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Lista uploads de um produto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do produto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de produto inválido",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -4538,52 +4129,6 @@
                 }
             }
         },
-        "/servicos/{id}/fotos": {
-            "get": {
-                "description": "Retorna todas as fotos de um serviço específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Lista fotos de um serviço",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do serviço",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotosResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de serviço inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/servicos/{id}/restore": {
             "post": {
                 "description": "Restaura um serviço que foi soft deleted",
@@ -4623,6 +4168,476 @@
                     },
                     "404": {
                         "description": "Serviço não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/servicos/{id}/uploads": {
+            "get": {
+                "description": "Retorna todos os uploads de um serviço específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Lista uploads de um serviço",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do serviço",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de serviço inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/uploads": {
+            "get": {
+                "description": "Retorna todos os uploads ativos do sistema. Pode filtrar por tipo usando query parameter 'tipo' (Imagem ou Documento)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Lista todos os uploads",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filtrar por tipo: Imagem ou Documento",
+                        "name": "tipo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Tipo inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo upload (imagem ou documento) no sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Cria um novo upload",
+                "parameters": [
+                    {
+                        "description": "Dados do upload",
+                        "name": "upload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/uploads/principal/{tipo}/{id}": {
+            "get": {
+                "description": "Retorna o upload principal (imagem) de uma entidade específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Busca upload principal de uma entidade",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tipo da entidade (usuario, veiculo, veiculo_loja, produto, servico, loja)",
+                        "name": "tipo",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID da entidade",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Upload não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/uploads/{id}": {
+            "get": {
+                "description": "Retorna um upload específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Busca upload por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do upload",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Upload não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um upload existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Atualiza upload",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do upload",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do upload",
+                        "name": "upload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Upload não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de um upload, marcando-o como excluído",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Remove upload (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do upload",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Upload removido com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Upload não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/uploads/{id}/principal": {
+            "put": {
+                "description": "Define um upload como principal da entidade (apenas para imagens)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Define upload como principal",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do upload",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Upload definido como principal com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou upload não é imagem",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Upload não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/uploads/{id}/restore": {
+            "post": {
+                "description": "Restaura um upload que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Restaura upload",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do upload",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Upload restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Upload não encontrado",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -5081,6 +5096,52 @@
                 }
             }
         },
+        "/usuarios/{id_usuario}/uploads": {
+            "get": {
+                "description": "Retorna todos os uploads de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Lista uploads de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id_usuario",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/usuarios/{id_usuario}/veiculos": {
             "get": {
                 "description": "Retorna todos os veículos ativos de um usuário específico",
@@ -5496,52 +5557,6 @@
                 }
             }
         },
-        "/veiculos-loja/{id}/fotos": {
-            "get": {
-                "description": "Retorna todas as fotos de um veículo de loja específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Lista fotos de um veículo de loja",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do veículo de loja",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotosResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de veículo de loja inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/veiculos-loja/{id}/restore": {
             "post": {
                 "description": "Restaura um veículo de loja que foi soft deleted",
@@ -5581,6 +5596,52 @@
                     },
                     "404": {
                         "description": "Veículo de loja não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos-loja/{id}/uploads": {
+            "get": {
+                "description": "Retorna todos os uploads de um veículo de loja específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Lista uploads de um veículo de loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo de loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de veículo de loja inválido",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -5761,52 +5822,6 @@
                 }
             }
         },
-        "/veiculos/{id}/fotos": {
-            "get": {
-                "description": "Retorna todas as fotos de um veículo específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Fotos"
-                ],
-                "summary": "Lista fotos de um veículo",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do veículo",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.FotosResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de veículo inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/veiculos/{id}/historico": {
             "get": {
                 "description": "Retorna o histórico completo de um veículo específico",
@@ -5892,6 +5907,52 @@
                     },
                     "404": {
                         "description": "Veículo não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/veiculos/{id}/uploads": {
+            "get": {
+                "description": "Retorna todos os uploads de um veículo específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Uploads"
+                ],
+                "summary": "Lista uploads de um veículo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.UploadsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de veículo inválido",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -6477,146 +6538,6 @@
                 },
                 "portal_url": {
                     "type": "string"
-                }
-            }
-        },
-        "json.FotoRequest": {
-            "type": "object",
-            "required": [
-                "nome_arquivo",
-                "tamanho",
-                "tipo_entidade",
-                "tipo_mime",
-                "url"
-            ],
-            "properties": {
-                "id_loja": {
-                    "type": "integer"
-                },
-                "id_produto": {
-                    "type": "integer"
-                },
-                "id_servico": {
-                    "type": "integer"
-                },
-                "id_veiculo": {
-                    "type": "integer"
-                },
-                "id_veiculo_loja": {
-                    "type": "integer"
-                },
-                "nome_arquivo": {
-                    "type": "string"
-                },
-                "ordem": {
-                    "type": "integer"
-                },
-                "principal": {
-                    "type": "boolean"
-                },
-                "tamanho": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "tipo_entidade": {
-                    "type": "string",
-                    "enum": [
-                        "veiculo",
-                        "veiculo_loja",
-                        "produto",
-                        "servico",
-                        "loja"
-                    ]
-                },
-                "tipo_mime": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.FotoResponse": {
-            "type": "object",
-            "properties": {
-                "data_atualizacao": {
-                    "type": "string"
-                },
-                "data_upload": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "id_loja": {
-                    "type": "integer"
-                },
-                "id_produto": {
-                    "type": "integer"
-                },
-                "id_servico": {
-                    "type": "integer"
-                },
-                "id_veiculo": {
-                    "type": "integer"
-                },
-                "id_veiculo_loja": {
-                    "type": "integer"
-                },
-                "loja": {
-                    "$ref": "#/definitions/json.LojaResponse"
-                },
-                "nome_arquivo": {
-                    "type": "string"
-                },
-                "ordem": {
-                    "type": "integer"
-                },
-                "principal": {
-                    "type": "boolean"
-                },
-                "produto": {
-                    "$ref": "#/definitions/json.ProdutoResponse"
-                },
-                "servico": {
-                    "$ref": "#/definitions/json.ServicoResponse"
-                },
-                "tamanho": {
-                    "type": "integer"
-                },
-                "tipo_entidade": {
-                    "type": "string"
-                },
-                "tipo_mime": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                },
-                "veiculo": {
-                    "description": "Dados relacionados (opcionais)",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/json.VeiculoResponse"
-                        }
-                    ]
-                },
-                "veiculo_loja": {
-                    "$ref": "#/definitions/json.VeiculoLojaResponse"
-                }
-            }
-        },
-        "json.FotosResponse": {
-            "type": "object",
-            "properties": {
-                "fotos": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.FotoResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
                 }
             }
         },
@@ -7307,6 +7228,171 @@
                 },
                 "success_url": {
                     "type": "string"
+                }
+            }
+        },
+        "json.UploadRequest": {
+            "type": "object",
+            "required": [
+                "nome_arquivo",
+                "tamanho",
+                "tipo",
+                "tipo_entidade",
+                "tipo_mime",
+                "url"
+            ],
+            "properties": {
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "id_veiculo_loja": {
+                    "type": "integer"
+                },
+                "nome_arquivo": {
+                    "type": "string"
+                },
+                "ordem": {
+                    "type": "integer"
+                },
+                "principal": {
+                    "description": "Apenas para imagens",
+                    "type": "boolean"
+                },
+                "tamanho": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "tipo": {
+                    "description": "\"Imagem\" ou \"Documento\"",
+                    "type": "string",
+                    "enum": [
+                        "Imagem",
+                        "Documento"
+                    ]
+                },
+                "tipo_entidade": {
+                    "type": "string",
+                    "enum": [
+                        "usuario",
+                        "veiculo",
+                        "veiculo_loja",
+                        "produto",
+                        "servico",
+                        "loja"
+                    ]
+                },
+                "tipo_mime": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.UploadResponse": {
+            "type": "object",
+            "properties": {
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_upload": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "id_veiculo_loja": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "nome_arquivo": {
+                    "type": "string"
+                },
+                "ordem": {
+                    "type": "integer"
+                },
+                "principal": {
+                    "description": "Apenas para imagens",
+                    "type": "boolean"
+                },
+                "produto": {
+                    "$ref": "#/definitions/json.ProdutoResponse"
+                },
+                "servico": {
+                    "$ref": "#/definitions/json.ServicoResponse"
+                },
+                "tamanho": {
+                    "type": "integer"
+                },
+                "tipo": {
+                    "description": "\"Imagem\" ou \"Documento\"",
+                    "type": "string"
+                },
+                "tipo_entidade": {
+                    "type": "string"
+                },
+                "tipo_mime": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "usuario": {
+                    "description": "Dados relacionados (opcionais)",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.UserResponse"
+                        }
+                    ]
+                },
+                "veiculo": {
+                    "$ref": "#/definitions/json.VeiculoResponse"
+                },
+                "veiculo_loja": {
+                    "$ref": "#/definitions/json.VeiculoLojaResponse"
+                }
+            }
+        },
+        "json.UploadsResponse": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                },
+                "uploads": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.UploadResponse"
+                    }
                 }
             }
         },

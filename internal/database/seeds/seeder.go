@@ -83,8 +83,8 @@ func (s *Seeder) Run() error {
 		return fmt.Errorf("erro ao executar seed veiculos: %v", err)
 	}
 
-	if err := s.seedFotos(); err != nil {
-		return fmt.Errorf("erro ao executar seed fotos: %v", err)
+	if err := s.seedUploads(); err != nil {
+		return fmt.Errorf("erro ao executar seed uploads: %v", err)
 	}
 
 	if err := s.seedAvaliacoes(); err != nil {
@@ -924,9 +924,9 @@ func (s *Seeder) seedVeiculos() error {
 	return nil
 }
 
-// seedFotos popula a tabela fotos
-func (s *Seeder) seedFotos() error {
-	log.Println("📝 Populando tabela fotos...")
+// seedUploads popula a tabela uploads
+func (s *Seeder) seedUploads() error {
+	log.Println("📝 Populando tabela uploads...")
 
 	// Busca alguns veículos
 	var veiculos []models.Veiculo
@@ -946,13 +946,14 @@ func (s *Seeder) seedFotos() error {
 		return fmt.Errorf("erro ao buscar lojas: %v", err)
 	}
 
-	fotos := []models.Foto{}
+	uploads := []models.Upload{}
 
-	// Fotos de veículos
+	// Uploads de imagens de veículos
 	for i, veiculo := range veiculos {
-		fotos = append(fotos, models.Foto{
+		uploads = append(uploads, models.Upload{
 			IDVeiculo:    &veiculo.ID,
 			TipoEntidade: "veiculo",
+			Tipo:         "Imagem",
 			URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d", veiculo.Modelo, veiculo.Ano),
 			NomeArquivo:  fmt.Sprintf("veiculo_%d_principal.jpg", veiculo.ID),
 			Tamanho:      2048000, // 2MB
@@ -961,10 +962,11 @@ func (s *Seeder) seedFotos() error {
 			Ordem:        1,
 		})
 
-		if i < 2 { // Adiciona foto adicional para os primeiros 2 veículos
-			fotos = append(fotos, models.Foto{
+		if i < 2 { // Adiciona upload adicional para os primeiros 2 veículos
+			uploads = append(uploads, models.Upload{
 				IDVeiculo:    &veiculo.ID,
 				TipoEntidade: "veiculo",
+				Tipo:         "Imagem",
 				URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d+Interior", veiculo.Modelo, veiculo.Ano),
 				NomeArquivo:  fmt.Sprintf("veiculo_%d_interior.jpg", veiculo.ID),
 				Tamanho:      1856000, // 1.8MB
@@ -975,11 +977,12 @@ func (s *Seeder) seedFotos() error {
 		}
 	}
 
-	// Fotos de produtos
+	// Uploads de imagens de produtos
 	for i, produto := range produtos {
-		fotos = append(fotos, models.Foto{
+		uploads = append(uploads, models.Upload{
 			IDProduto:    &produto.ID,
 			TipoEntidade: "produto",
+			Tipo:         "Imagem",
 			URL:          fmt.Sprintf("https://via.placeholder.com/400x400?text=%s", produto.Nome),
 			NomeArquivo:  fmt.Sprintf("produto_%d.jpg", produto.ID),
 			Tamanho:      1024000, // 1MB
@@ -988,10 +991,11 @@ func (s *Seeder) seedFotos() error {
 			Ordem:        1,
 		})
 
-		if i == 0 { // Adiciona foto adicional para o primeiro produto
-			fotos = append(fotos, models.Foto{
+		if i == 0 { // Adiciona upload adicional para o primeiro produto
+			uploads = append(uploads, models.Upload{
 				IDProduto:    &produto.ID,
 				TipoEntidade: "produto",
+				Tipo:         "Imagem",
 				URL:          fmt.Sprintf("https://via.placeholder.com/400x400?text=%s+Detalhe", produto.Nome),
 				NomeArquivo:  fmt.Sprintf("produto_%d_detalhe.jpg", produto.ID),
 				Tamanho:      896000, // 896KB
@@ -1002,11 +1006,12 @@ func (s *Seeder) seedFotos() error {
 		}
 	}
 
-	// Fotos de lojas
+	// Uploads de imagens de lojas
 	for _, loja := range lojas {
-		fotos = append(fotos, models.Foto{
+		uploads = append(uploads, models.Upload{
 			IDLoja:       &loja.ID,
 			TipoEntidade: "loja",
+			Tipo:         "Imagem",
 			URL:          fmt.Sprintf("https://via.placeholder.com/600x400?text=%s", loja.Nome),
 			NomeArquivo:  fmt.Sprintf("loja_%d_fachada.jpg", loja.ID),
 			Tamanho:      1536000, // 1.5MB
@@ -1016,16 +1021,16 @@ func (s *Seeder) seedFotos() error {
 		})
 	}
 
-	for _, foto := range fotos {
-		var existing models.Foto
-		if err := s.db.Where("url = ?", foto.URL).First(&existing).Error; err != nil {
+	for _, upload := range uploads {
+		var existing models.Upload
+		if err := s.db.Where("url = ?", upload.URL).First(&existing).Error; err != nil {
 			// Se não existe, cria
-			if err := s.db.Create(&foto).Error; err != nil {
-				return fmt.Errorf("erro ao criar foto: %v", err)
+			if err := s.db.Create(&upload).Error; err != nil {
+				return fmt.Errorf("erro ao criar upload: %v", err)
 			}
-			log.Printf("✅ Foto criada: %s", foto.NomeArquivo)
+			log.Printf("✅ Upload criado: %s", upload.NomeArquivo)
 		} else {
-			log.Printf("⏭️ Foto já existe: %s", foto.NomeArquivo)
+			log.Printf("⏭️ Upload já existe: %s", upload.NomeArquivo)
 		}
 	}
 

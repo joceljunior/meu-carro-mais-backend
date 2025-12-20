@@ -1,0 +1,156 @@
+### Exemplos de uso da API de Uploads
+
+### 1. Criar upload de imagem de veículo
+POST http://localhost:8080/uploads
+Content-Type: application/json
+
+{
+  "id_veiculo": 1,
+  "tipo_entidade": "veiculo",
+  "tipo": "Imagem",
+  "url": "https://example.com/uploads/veiculo1_principal.jpg",
+  "nome_arquivo": "veiculo1_principal.jpg",
+  "tamanho": 1024000,
+  "tipo_mime": "image/jpeg",
+  "principal": true,
+  "ordem": 1
+}
+
+### 2. Criar upload de documento de veículo
+POST http://localhost:8080/uploads
+Content-Type: application/json
+
+{
+  "id_veiculo": 1,
+  "tipo_entidade": "veiculo",
+  "tipo": "Documento",
+  "url": "https://example.com/uploads/crlv.pdf",
+  "nome_arquivo": "crlv.pdf",
+  "tamanho": 2048000,
+  "tipo_mime": "application/pdf"
+}
+
+### 3. Criar upload de imagem de usuário
+POST http://localhost:8080/uploads
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "tipo_entidade": "usuario",
+  "tipo": "Imagem",
+  "url": "https://example.com/uploads/foto_perfil.jpg",
+  "nome_arquivo": "foto_perfil.jpg",
+  "tamanho": 512000,
+  "tipo_mime": "image/jpeg",
+  "principal": true,
+  "ordem": 1
+}
+
+### 4. Criar upload de imagem de produto
+POST http://localhost:8080/uploads
+Content-Type: application/json
+
+{
+  "id_produto": 1,
+  "tipo_entidade": "produto",
+  "tipo": "Imagem",
+  "url": "https://example.com/uploads/produto1_principal.jpg",
+  "nome_arquivo": "produto1_principal.jpg",
+  "tamanho": 1024000,
+  "tipo_mime": "image/jpeg",
+  "principal": true,
+  "ordem": 1
+}
+
+### 5. Criar upload de imagem de serviço
+POST http://localhost:8080/uploads
+Content-Type: application/json
+
+{
+  "id_servico": 1,
+  "tipo_entidade": "servico",
+  "tipo": "Imagem",
+  "url": "https://example.com/uploads/servico1_principal.jpg",
+  "nome_arquivo": "servico1_principal.jpg",
+  "tamanho": 1024000,
+  "tipo_mime": "image/jpeg",
+  "principal": true,
+  "ordem": 1
+}
+
+### 6. Criar upload de imagem de loja
+POST http://localhost:8080/uploads
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "tipo_entidade": "loja",
+  "tipo": "Imagem",
+  "url": "https://example.com/uploads/loja1_principal.jpg",
+  "nome_arquivo": "loja1_principal.jpg",
+  "tamanho": 1024000,
+  "tipo_mime": "image/jpeg",
+  "principal": true,
+  "ordem": 1
+}
+
+### 7. Listar todos os uploads
+GET http://localhost:8080/uploads
+
+### 8. Listar apenas imagens
+GET http://localhost:8080/uploads?tipo=Imagem
+
+### 9. Listar apenas documentos
+GET http://localhost:8080/uploads?tipo=Documento
+
+### 10. Buscar upload por ID
+GET http://localhost:8080/uploads/1
+
+### 11. Buscar upload principal de uma entidade
+GET http://localhost:8080/uploads/principal/usuario/1
+GET http://localhost:8080/uploads/principal/veiculo/1
+GET http://localhost:8080/uploads/principal/veiculo_loja/1
+GET http://localhost:8080/uploads/principal/produto/1
+GET http://localhost:8080/uploads/principal/servico/1
+GET http://localhost:8080/uploads/principal/loja/1
+
+### 12. Listar uploads de um usuário
+GET http://localhost:8080/usuarios/1/uploads
+
+### 13. Listar uploads de um veículo
+GET http://localhost:8080/veiculos/1/uploads
+
+### 14. Listar uploads de um produto
+GET http://localhost:8080/produtos/1/uploads
+
+### 15. Listar uploads de um serviço
+GET http://localhost:8080/servicos/1/uploads
+
+### 16. Listar uploads de uma loja
+GET http://localhost:8080/lojas/1/uploads
+
+### 17. Atualizar upload
+PUT http://localhost:8080/uploads/1
+Content-Type: application/json
+
+{
+  "id_veiculo": 1,
+  "tipo_entidade": "veiculo",
+  "tipo": "Imagem",
+  "url": "https://example.com/uploads/veiculo1_atualizada.jpg",
+  "nome_arquivo": "veiculo1_atualizada.jpg",
+  "tamanho": 2048000,
+  "tipo_mime": "image/jpeg",
+  "principal": false,
+  "ordem": 2
+}
+
+### 18. Definir upload como principal (apenas imagens)
+PUT http://localhost:8080/uploads/1/principal
+
+### 19. Soft delete de upload
+DELETE http://localhost:8080/uploads/1
+
+### 20. Restaurar upload
+POST http://localhost:8080/uploads/1/restore
+

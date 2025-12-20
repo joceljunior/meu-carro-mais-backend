@@ -66,7 +66,7 @@ func main() {
 		fmt.Println("  - Serviços de exemplo (Troca de Óleo, Alinhamento, etc.)")
 		fmt.Println("  - Produtos de exemplo (Óleo Motor, Filtros, Pastilhas, etc.)")
 		fmt.Println("  - Veículos de exemplo (Honda Civic, Toyota Corolla, etc.)")
-		fmt.Println("  - Fotos de exemplo para veículos, produtos e lojas")
+		fmt.Println("  - Uploads de exemplo (imagens e documentos) para veículos, produtos e lojas")
 		fmt.Println("  - Avaliações de exemplo")
 		fmt.Println("  - Carteiras com saldos variados para todos os usuários")
 		fmt.Println("  - Histórico de pagamentos e resgates")

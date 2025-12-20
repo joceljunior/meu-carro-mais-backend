@@ -58,7 +58,7 @@ func NewRouter() *gin.Engine {
 		&ProdutoRouter{},
 		&HistoricoResgateRouter{},
 		&AvaliacaoRouter{},
-		&FotoRouter{},
+		&UploadRouter{},
 		&PagamentoRouter{},
 		&CarteiraRouter{},
 		&RegistroInteresseRouter{},

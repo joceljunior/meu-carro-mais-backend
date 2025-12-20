@@ -390,100 +390,6 @@ definitions:
       portal_url:
         type: string
     type: object
-  json.FotoRequest:
-    properties:
-      id_loja:
-        type: integer
-      id_produto:
-        type: integer
-      id_servico:
-        type: integer
-      id_veiculo:
-        type: integer
-      id_veiculo_loja:
-        type: integer
-      nome_arquivo:
-        type: string
-      ordem:
-        type: integer
-      principal:
-        type: boolean
-      tamanho:
-        minimum: 1
-        type: integer
-      tipo_entidade:
-        enum:
-        - veiculo
-        - veiculo_loja
-        - produto
-        - servico
-        - loja
-        type: string
-      tipo_mime:
-        type: string
-      url:
-        type: string
-    required:
-    - nome_arquivo
-    - tamanho
-    - tipo_entidade
-    - tipo_mime
-    - url
-    type: object
-  json.FotoResponse:
-    properties:
-      data_atualizacao:
-        type: string
-      data_upload:
-        type: string
-      id:
-        type: integer
-      id_loja:
-        type: integer
-      id_produto:
-        type: integer
-      id_servico:
-        type: integer
-      id_veiculo:
-        type: integer
-      id_veiculo_loja:
-        type: integer
-      loja:
-        $ref: '#/definitions/json.LojaResponse'
-      nome_arquivo:
-        type: string
-      ordem:
-        type: integer
-      principal:
-        type: boolean
-      produto:
-        $ref: '#/definitions/json.ProdutoResponse'
-      servico:
-        $ref: '#/definitions/json.ServicoResponse'
-      tamanho:
-        type: integer
-      tipo_entidade:
-        type: string
-      tipo_mime:
-        type: string
-      url:
-        type: string
-      veiculo:
-        allOf:
-        - $ref: '#/definitions/json.VeiculoResponse'
-        description: Dados relacionados (opcionais)
-      veiculo_loja:
-        $ref: '#/definitions/json.VeiculoLojaResponse'
-    type: object
-  json.FotosResponse:
-    properties:
-      fotos:
-        items:
-          $ref: '#/definitions/json.FotoResponse'
-        type: array
-      total:
-        type: integer
-    type: object
   json.HistoricoPagamentoResponse:
     properties:
       data_atualizacao:
@@ -942,6 +848,119 @@ definitions:
     - id_usuario
     - lookup_key
     - success_url
+    type: object
+  json.UploadRequest:
+    properties:
+      id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_usuario:
+        type: integer
+      id_veiculo:
+        type: integer
+      id_veiculo_loja:
+        type: integer
+      nome_arquivo:
+        type: string
+      ordem:
+        type: integer
+      principal:
+        description: Apenas para imagens
+        type: boolean
+      tamanho:
+        minimum: 1
+        type: integer
+      tipo:
+        description: '"Imagem" ou "Documento"'
+        enum:
+        - Imagem
+        - Documento
+        type: string
+      tipo_entidade:
+        enum:
+        - usuario
+        - veiculo
+        - veiculo_loja
+        - produto
+        - servico
+        - loja
+        type: string
+      tipo_mime:
+        type: string
+      url:
+        type: string
+    required:
+    - nome_arquivo
+    - tamanho
+    - tipo
+    - tipo_entidade
+    - tipo_mime
+    - url
+    type: object
+  json.UploadResponse:
+    properties:
+      data_atualizacao:
+        type: string
+      data_upload:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_usuario:
+        type: integer
+      id_veiculo:
+        type: integer
+      id_veiculo_loja:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      nome_arquivo:
+        type: string
+      ordem:
+        type: integer
+      principal:
+        description: Apenas para imagens
+        type: boolean
+      produto:
+        $ref: '#/definitions/json.ProdutoResponse'
+      servico:
+        $ref: '#/definitions/json.ServicoResponse'
+      tamanho:
+        type: integer
+      tipo:
+        description: '"Imagem" ou "Documento"'
+        type: string
+      tipo_entidade:
+        type: string
+      tipo_mime:
+        type: string
+      url:
+        type: string
+      usuario:
+        allOf:
+        - $ref: '#/definitions/json.UserResponse'
+        description: Dados relacionados (opcionais)
+      veiculo:
+        $ref: '#/definitions/json.VeiculoResponse'
+      veiculo_loja:
+        $ref: '#/definitions/json.VeiculoLojaResponse'
+    type: object
+  json.UploadsResponse:
+    properties:
+      total:
+        type: integer
+      uploads:
+        items:
+          $ref: '#/definitions/json.UploadResponse'
+        type: array
     type: object
   json.UserPlanStatusResponse:
     properties:
@@ -2103,285 +2122,6 @@ paths:
       summary: Busca carteira por usuário
       tags:
       - Carteiras
-  /fotos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as fotos ativas do sistema
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotosResponse'
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista todas as fotos
-      tags:
-      - Fotos
-    post:
-      consumes:
-      - application/json
-      description: Cria uma nova foto no sistema
-      parameters:
-      - description: Dados da foto
-        in: body
-        name: foto
-        required: true
-        schema:
-          $ref: '#/definitions/json.FotoRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/json.FotoResponse'
-        "400":
-          description: Dados inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Cria uma nova foto
-      tags:
-      - Fotos
-  /fotos/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Realiza soft delete de uma foto, marcando-a como excluída
-      parameters:
-      - description: ID da foto
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Foto removida com sucesso
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: ID inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Foto não encontrada
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Remove foto (soft delete)
-      tags:
-      - Fotos
-    get:
-      consumes:
-      - application/json
-      description: Retorna uma foto específica pelo ID
-      parameters:
-      - description: ID da foto
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotoResponse'
-        "400":
-          description: ID inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Foto não encontrada
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Busca foto por ID
-      tags:
-      - Fotos
-    put:
-      consumes:
-      - application/json
-      description: Atualiza os dados de uma foto existente
-      parameters:
-      - description: ID da foto
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Dados atualizados da foto
-        in: body
-        name: foto
-        required: true
-        schema:
-          $ref: '#/definitions/json.FotoRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotoResponse'
-        "400":
-          description: Dados inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Foto não encontrada
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Atualiza foto
-      tags:
-      - Fotos
-  /fotos/{id}/principal:
-    put:
-      consumes:
-      - application/json
-      description: Define uma foto como principal da entidade
-      parameters:
-      - description: ID da foto
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Foto definida como principal com sucesso
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: ID inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Foto não encontrada
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Define foto como principal
-      tags:
-      - Fotos
-  /fotos/{id}/restore:
-    post:
-      consumes:
-      - application/json
-      description: Restaura uma foto que foi soft deleted
-      parameters:
-      - description: ID da foto
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Foto restaurada com sucesso
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: ID inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Foto não encontrada
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Restaura foto
-      tags:
-      - Fotos
-  /fotos/principal/{tipo}/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Retorna a foto principal de uma entidade específica
-      parameters:
-      - description: Tipo da entidade (veiculo, veiculo_loja, produto, servico, loja)
-        in: path
-        name: tipo
-        required: true
-        type: string
-      - description: ID da entidade
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotoResponse'
-        "400":
-          description: Parâmetros inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Foto não encontrada
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Busca foto principal de uma entidade
-      tags:
-      - Fotos
   /historicos-resgate:
     get:
       consumes:
@@ -3127,37 +2867,6 @@ paths:
       summary: Estatísticas de avaliações de uma loja
       tags:
       - Avaliações
-  /lojas/{id}/fotos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as fotos de uma loja específica
-      parameters:
-      - description: ID da loja
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotosResponse'
-        "400":
-          description: ID de loja inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista fotos de uma loja
-      tags:
-      - Fotos
   /lojas/{id}/historicos-resgate:
     get:
       consumes:
@@ -3257,6 +2966,37 @@ paths:
       summary: Restaura loja excluída
       tags:
       - Lojas
+  /lojas/{id}/uploads:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os uploads de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadsResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista uploads de uma loja
+      tags:
+      - Uploads
   /lojas/{id}/veiculos:
     get:
       consumes:
@@ -3797,37 +3537,6 @@ paths:
       summary: Atualiza produto
       tags:
       - Produtos
-  /produtos/{id}/fotos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as fotos de um produto específico
-      parameters:
-      - description: ID do produto
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotosResponse'
-        "400":
-          description: ID de produto inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista fotos de um produto
-      tags:
-      - Fotos
   /produtos/{id}/restore:
     post:
       consumes:
@@ -3865,6 +3574,37 @@ paths:
       summary: Restaura produto
       tags:
       - Produtos
+  /produtos/{id}/uploads:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os uploads de um produto específico
+      parameters:
+      - description: ID do produto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadsResponse'
+        "400":
+          description: ID de produto inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista uploads de um produto
+      tags:
+      - Uploads
   /registro-interesse:
     get:
       consumes:
@@ -4228,37 +3968,6 @@ paths:
       summary: Atualiza serviço
       tags:
       - Serviços
-  /servicos/{id}/fotos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as fotos de um serviço específico
-      parameters:
-      - description: ID do serviço
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotosResponse'
-        "400":
-          description: ID de serviço inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista fotos de um serviço
-      tags:
-      - Fotos
   /servicos/{id}/restore:
     post:
       consumes:
@@ -4296,6 +4005,37 @@ paths:
       summary: Restaura serviço excluído
       tags:
       - Serviços
+  /servicos/{id}/uploads:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os uploads de um serviço específico
+      parameters:
+      - description: ID do serviço
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadsResponse'
+        "400":
+          description: ID de serviço inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista uploads de um serviço
+      tags:
+      - Uploads
   /servicos/categorias:
     get:
       consumes:
@@ -4350,6 +4090,297 @@ paths:
       summary: Lista serviços por proximidade
       tags:
       - Serviços
+  /uploads:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os uploads ativos do sistema. Pode filtrar por tipo
+        usando query parameter 'tipo' (Imagem ou Documento)
+      parameters:
+      - description: 'Filtrar por tipo: Imagem ou Documento'
+        in: query
+        name: tipo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadsResponse'
+        "400":
+          description: Tipo inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os uploads
+      tags:
+      - Uploads
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo upload (imagem ou documento) no sistema
+      parameters:
+      - description: Dados do upload
+        in: body
+        name: upload
+        required: true
+        schema:
+          $ref: '#/definitions/json.UploadRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.UploadResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria um novo upload
+      tags:
+      - Uploads
+  /uploads/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de um upload, marcando-o como excluído
+      parameters:
+      - description: ID do upload
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Upload removido com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Upload não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove upload (soft delete)
+      tags:
+      - Uploads
+    get:
+      consumes:
+      - application/json
+      description: Retorna um upload específico pelo ID
+      parameters:
+      - description: ID do upload
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Upload não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca upload por ID
+      tags:
+      - Uploads
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um upload existente
+      parameters:
+      - description: ID do upload
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do upload
+        in: body
+        name: upload
+        required: true
+        schema:
+          $ref: '#/definitions/json.UploadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Upload não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza upload
+      tags:
+      - Uploads
+  /uploads/{id}/principal:
+    put:
+      consumes:
+      - application/json
+      description: Define um upload como principal da entidade (apenas para imagens)
+      parameters:
+      - description: ID do upload
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Upload definido como principal com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido ou upload não é imagem
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Upload não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Define upload como principal
+      tags:
+      - Uploads
+  /uploads/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um upload que foi soft deleted
+      parameters:
+      - description: ID do upload
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Upload restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Upload não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura upload
+      tags:
+      - Uploads
+  /uploads/principal/{tipo}/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna o upload principal (imagem) de uma entidade específica
+      parameters:
+      - description: Tipo da entidade (usuario, veiculo, veiculo_loja, produto, servico,
+          loja)
+        in: path
+        name: tipo
+        required: true
+        type: string
+      - description: ID da entidade
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Upload não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca upload principal de uma entidade
+      tags:
+      - Uploads
   /users:
     get:
       consumes:
@@ -4652,6 +4683,37 @@ paths:
       summary: Lista histórico de todos os veículos de um usuário
       tags:
       - Veículos
+  /usuarios/{id_usuario}/uploads:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os uploads de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id_usuario
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadsResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista uploads de um usuário
+      tags:
+      - Uploads
   /usuarios/{id_usuario}/veiculos:
     get:
       consumes:
@@ -4934,37 +4996,6 @@ paths:
       summary: Atualiza veículo de loja
       tags:
       - Veículos de Loja
-  /veiculos-loja/{id}/fotos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as fotos de um veículo de loja específico
-      parameters:
-      - description: ID do veículo de loja
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotosResponse'
-        "400":
-          description: ID de veículo de loja inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista fotos de um veículo de loja
-      tags:
-      - Fotos
   /veiculos-loja/{id}/restore:
     post:
       consumes:
@@ -5002,6 +5033,37 @@ paths:
       summary: Restaura veículo de loja excluído
       tags:
       - Veículos de Loja
+  /veiculos-loja/{id}/uploads:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os uploads de um veículo de loja específico
+      parameters:
+      - description: ID do veículo de loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadsResponse'
+        "400":
+          description: ID de veículo de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista uploads de um veículo de loja
+      tags:
+      - Uploads
   /veiculos/{id}:
     delete:
       consumes:
@@ -5116,37 +5178,6 @@ paths:
       summary: Atualiza veículo
       tags:
       - Veículos
-  /veiculos/{id}/fotos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as fotos de um veículo específico
-      parameters:
-      - description: ID do veículo
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.FotosResponse'
-        "400":
-          description: ID de veículo inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista fotos de um veículo
-      tags:
-      - Fotos
   /veiculos/{id}/historico:
     get:
       consumes:
@@ -5215,6 +5246,37 @@ paths:
       summary: Restaura veículo excluído
       tags:
       - Veículos
+  /veiculos/{id}/uploads:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os uploads de um veículo específico
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.UploadsResponse'
+        "400":
+          description: ID de veículo inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista uploads de um veículo
+      tags:
+      - Uploads
 schemes:
 - https
 - http

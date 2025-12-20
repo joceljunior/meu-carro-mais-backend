@@ -405,6 +405,47 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration016)
 
+	// Migration 017: Renomear tabela fotos para uploads e adicionar campos
+	migration017 := m.NewMigration("017", "rename_fotos_to_uploads").
+		ExecuteSQL(`
+			-- Renomeia a tabela
+			ALTER TABLE IF EXISTS fotos RENAME TO uploads;
+			
+			-- Adiciona campo id_usuario se não existir
+			ALTER TABLE uploads ADD COLUMN IF NOT EXISTS id_usuario INTEGER;
+			
+			-- Adiciona campo tipo se não existir
+			ALTER TABLE uploads ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL DEFAULT 'Imagem';
+			
+			-- Adiciona foreign key para usuario
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_upload_usuario'
+				) THEN
+					ALTER TABLE uploads ADD CONSTRAINT fk_upload_usuario 
+					FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+			
+			-- Adiciona índices
+			CREATE INDEX IF NOT EXISTS idx_upload_id_usuario ON uploads(id_usuario);
+			CREATE INDEX IF NOT EXISTS idx_upload_tipo ON uploads(tipo);
+			
+			-- Atualiza tipo_entidade para incluir 'usuario' se necessário
+			-- (não precisa fazer nada, apenas documentar que agora suporta)
+		`, `
+			-- Rollback: renomeia de volta para fotos e remove campos
+			ALTER TABLE IF EXISTS uploads RENAME TO fotos;
+			ALTER TABLE IF EXISTS fotos DROP COLUMN IF EXISTS id_usuario;
+			ALTER TABLE IF EXISTS fotos DROP COLUMN IF EXISTS tipo;
+			DROP INDEX IF EXISTS idx_upload_id_usuario;
+			DROP INDEX IF EXISTS idx_upload_tipo;
+			ALTER TABLE IF EXISTS fotos DROP CONSTRAINT IF EXISTS fk_upload_usuario;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration017)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
@@ -585,7 +626,7 @@ func (m *Migrator) createComplementaryTables(db *gorm.DB) error {
 		&models.Produto{},
 		&models.Servico{},
 		&models.VeiculoLoja{},
-		&models.Foto{},
+		&models.Upload{},
 		&models.Avaliacao{},
 		&models.HistoricoPagamento{},
 		&models.HistoricoResgate{},
@@ -598,7 +639,7 @@ func (m *Migrator) dropComplementaryTables(db *gorm.DB) error {
 		&models.HistoricoResgate{},
 		&models.HistoricoPagamento{},
 		&models.Avaliacao{},
-		&models.Foto{},
+		&models.Upload{},
 		&models.VeiculoLoja{},
 		&models.Servico{},
 		&models.Produto{},
