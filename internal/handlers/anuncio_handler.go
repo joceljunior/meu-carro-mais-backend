@@ -259,27 +259,6 @@ func RestoreAnuncioHandler(c *gin.Context) {
 	})
 }
 
-// GetCategoriasAnuncioHandler godoc
-// @Summary      Lista categorias de anúncio
-// @Description  Retorna todas as categorias de anúncio disponíveis
-// @Tags         Anúncios
-// @Accept       json
-// @Produce      json
-// @Success      200  {object}  json.CategoriasAnuncioResponse
-// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
-// @Router       /anuncios/categorias [get]
-func GetCategoriasAnuncioHandler(c *gin.Context) {
-	resp, err := services.GetCategoriasAnuncio()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, resp)
-}
-
 // GetAnunciosByLojaIDHandler godoc
 // @Summary      Lista anúncios de uma loja
 // @Description  Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data

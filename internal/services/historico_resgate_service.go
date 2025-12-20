@@ -78,14 +78,13 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 	// Adiciona dados do serviço se existir
 	if historico.Servico != nil {
 		servicoResp := &json.ServicoResponse{
-			ID:          historico.Servico.ID,
-			Titulo:      historico.Servico.Titulo,
-			Descricao:   historico.Servico.Descricao,
-			Preco:       historico.Servico.Preco,
-			Imagem:      historico.Servico.Imagem,
-			Destaque:    historico.Servico.Destaque,
-			IDCategoria: historico.Servico.IDCategoria,
-			Categoria:   historico.Servico.Categoria.Nome,
+			ID:        historico.Servico.ID,
+			Titulo:    historico.Servico.Titulo,
+			Descricao: historico.Servico.Descricao,
+			Preco:     historico.Servico.Preco,
+			Imagem:    historico.Servico.Imagem,
+			Destaque:  historico.Servico.Destaque,
+			Categoria: historico.Servico.Categoria,
 		}
 		response.Servico = servicoResp
 	}
@@ -174,14 +173,13 @@ func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*json.HistoricoRe
 	// Adiciona dados do serviço se existir
 	if historico.Servico != nil {
 		servicoResp := &json.ServicoResponse{
-			ID:          historico.Servico.ID,
-			Titulo:      historico.Servico.Titulo,
-			Descricao:   historico.Servico.Descricao,
-			Preco:       historico.Servico.Preco,
-			Imagem:      historico.Servico.Imagem,
-			Destaque:    historico.Servico.Destaque,
-			IDCategoria: historico.Servico.IDCategoria,
-			Categoria:   historico.Servico.Categoria.Nome,
+			ID:        historico.Servico.ID,
+			Titulo:    historico.Servico.Titulo,
+			Descricao: historico.Servico.Descricao,
+			Preco:     historico.Servico.Preco,
+			Imagem:    historico.Servico.Imagem,
+			Destaque:  historico.Servico.Destaque,
+			Categoria: historico.Servico.Categoria,
 		}
 		response.Servico = servicoResp
 	}
@@ -270,14 +268,13 @@ func GetHistoricoResgateByID(id uint) (*json.HistoricoResgateResponse, error) {
 	// Adiciona dados do serviço se existir
 	if historico.Servico != nil {
 		servicoResp := &json.ServicoResponse{
-			ID:          historico.Servico.ID,
-			Titulo:      historico.Servico.Titulo,
-			Descricao:   historico.Servico.Descricao,
-			Preco:       historico.Servico.Preco,
-			Imagem:      historico.Servico.Imagem,
-			Destaque:    historico.Servico.Destaque,
-			IDCategoria: historico.Servico.IDCategoria,
-			Categoria:   historico.Servico.Categoria.Nome,
+			ID:        historico.Servico.ID,
+			Titulo:    historico.Servico.Titulo,
+			Descricao: historico.Servico.Descricao,
+			Preco:     historico.Servico.Preco,
+			Imagem:    historico.Servico.Imagem,
+			Destaque:  historico.Servico.Destaque,
+			Categoria: historico.Servico.Categoria,
 		}
 		response.Servico = servicoResp
 	}
@@ -368,14 +365,13 @@ func GetAllHistoricosResgate() ([]json.HistoricoResgateResponse, error) {
 		// Adiciona dados do serviço se existir
 		if historico.Servico != nil {
 			servicoResp := &json.ServicoResponse{
-				ID:          historico.Servico.ID,
-				Titulo:      historico.Servico.Titulo,
-				Descricao:   historico.Servico.Descricao,
-				Preco:       historico.Servico.Preco,
-				Imagem:      historico.Servico.Imagem,
-				Destaque:    historico.Servico.Destaque,
-				IDCategoria: historico.Servico.IDCategoria,
-				Categoria:   historico.Servico.Categoria.Nome,
+				ID:        historico.Servico.ID,
+				Titulo:    historico.Servico.Titulo,
+				Descricao: historico.Servico.Descricao,
+				Preco:     historico.Servico.Preco,
+				Imagem:    historico.Servico.Imagem,
+				Destaque:  historico.Servico.Destaque,
+				Categoria: historico.Servico.Categoria,
 			}
 			response.Servico = servicoResp
 		}
@@ -469,14 +465,13 @@ func GetHistoricosResgateByUsuarioID(idUsuario uint) (*json.HistoricosResgateRes
 		// Adiciona dados do serviço se existir
 		if historico.Servico != nil {
 			servicoResp := &json.ServicoResponse{
-				ID:          historico.Servico.ID,
-				Titulo:      historico.Servico.Titulo,
-				Descricao:   historico.Servico.Descricao,
-				Preco:       historico.Servico.Preco,
-				Imagem:      historico.Servico.Imagem,
-				Destaque:    historico.Servico.Destaque,
-				IDCategoria: historico.Servico.IDCategoria,
-				Categoria:   historico.Servico.Categoria.Nome,
+				ID:        historico.Servico.ID,
+				Titulo:    historico.Servico.Titulo,
+				Descricao: historico.Servico.Descricao,
+				Preco:     historico.Servico.Preco,
+				Imagem:    historico.Servico.Imagem,
+				Destaque:  historico.Servico.Destaque,
+				Categoria: historico.Servico.Categoria,
 			}
 			historicoResp.Servico = servicoResp
 		}
@@ -575,14 +570,13 @@ func GetHistoricosResgateByLojaID(idLoja uint) (*json.HistoricosResgateResponse,
 		// Adiciona dados do serviço se existir
 		if historico.Servico != nil {
 			servicoResp := &json.ServicoResponse{
-				ID:          historico.Servico.ID,
-				Titulo:      historico.Servico.Titulo,
-				Descricao:   historico.Servico.Descricao,
-				Preco:       historico.Servico.Preco,
-				Imagem:      historico.Servico.Imagem,
-				Destaque:    historico.Servico.Destaque,
-				IDCategoria: historico.Servico.IDCategoria,
-				Categoria:   historico.Servico.Categoria.Nome,
+				ID:        historico.Servico.ID,
+				Titulo:    historico.Servico.Titulo,
+				Descricao: historico.Servico.Descricao,
+				Preco:     historico.Servico.Preco,
+				Imagem:    historico.Servico.Imagem,
+				Destaque:  historico.Servico.Destaque,
+				Categoria: historico.Servico.Categoria,
 			}
 			historicoResp.Servico = servicoResp
 		}
@@ -679,14 +673,13 @@ func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*json.Hi
 	// Adiciona dados do serviço se existir
 	if historico.Servico != nil {
 		servicoResp := &json.ServicoResponse{
-			ID:          historico.Servico.ID,
-			Titulo:      historico.Servico.Titulo,
-			Descricao:   historico.Servico.Descricao,
-			Preco:       historico.Servico.Preco,
-			Imagem:      historico.Servico.Imagem,
-			Destaque:    historico.Servico.Destaque,
-			IDCategoria: historico.Servico.IDCategoria,
-			Categoria:   historico.Servico.Categoria.Nome,
+			ID:        historico.Servico.ID,
+			Titulo:    historico.Servico.Titulo,
+			Descricao: historico.Servico.Descricao,
+			Preco:     historico.Servico.Preco,
+			Imagem:    historico.Servico.Imagem,
+			Destaque:  historico.Servico.Destaque,
+			Categoria: historico.Servico.Categoria,
 		}
 		response.Servico = servicoResp
 	}

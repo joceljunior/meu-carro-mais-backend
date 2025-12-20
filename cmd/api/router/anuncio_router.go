@@ -20,7 +20,6 @@ func (ar *AnuncioRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		anuncios.POST("/:id/restore", handlers.RestoreAnuncioHandler) // POST /anuncios/:id/restore - Restaurar anúncio
 
 		// Endpoints específicos (devem vir antes dos endpoints com :id)
-		anuncios.GET("/categorias", handlers.GetCategoriasAnuncioHandler)     // GET /anuncios/categorias - Listar categorias
 		anuncios.GET("/loja/:loja_id", handlers.GetAnunciosByLojaIDHandler) // GET /anuncios/loja/:loja_id - Listar anúncios por loja
 
 		// Endpoints com :id (devem vir por último)

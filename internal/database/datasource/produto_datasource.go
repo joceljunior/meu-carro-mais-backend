@@ -16,6 +16,7 @@ func CreateProduto(req json.ProdutoRequest) (*models.Produto, error) {
 		Preco:     req.Preco,
 		Imagem:    req.Imagem,
 		Estoque:   req.Estoque,
+		Categoria: req.Categoria,
 		Ativo:     true,
 		IDLoja:    req.IDLoja,
 	}
@@ -86,6 +87,7 @@ func UpdateProduto(id uint, req json.ProdutoRequest) (*models.Produto, error) {
 	produto.Preco = req.Preco
 	produto.Imagem = req.Imagem
 	produto.Estoque = req.Estoque
+	produto.Categoria = req.Categoria
 	produto.IDLoja = req.IDLoja
 
 	err = database.DB.Save(&produto).Error

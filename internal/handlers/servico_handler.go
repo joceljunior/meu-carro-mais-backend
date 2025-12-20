@@ -259,23 +259,3 @@ func RestoreServicoHandler(c *gin.Context) {
 	})
 }
 
-// GetCategoriasServicoHandler godoc
-// @Summary      Lista categorias de serviço
-// @Description  Retorna todas as categorias de serviço disponíveis
-// @Tags         Serviços
-// @Accept       json
-// @Produce      json
-// @Success      200  {object}  json.CategoriasServicoResponse
-// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
-// @Router       /servicos/categorias [get]
-func GetCategoriasServicoHandler(c *gin.Context) {
-	resp, err := services.GetCategoriasServico()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, resp)
-}

@@ -103,36 +103,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/anuncios/categorias": {
-            "get": {
-                "description": "Retorna todas as categorias de anúncio disponíveis",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Lista categorias de anúncio",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.CategoriasAnuncioResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/anuncios/loja/{loja_id}": {
             "get": {
                 "description": "Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data",
@@ -3885,36 +3855,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/servicos/categorias": {
-            "get": {
-                "description": "Retorna todas as categorias de serviço disponíveis",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Serviços"
-                ],
-                "summary": "Lista categorias de serviço",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.CategoriasServicoResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/servicos/proximidade": {
             "get": {
                 "description": "Retorna lista de serviços ordenados por proximidade do usuário",
@@ -5998,22 +5938,22 @@ const docTemplate = `{
         "json.AnuncioRequest": {
             "type": "object",
             "required": [
+                "categoria",
                 "descricao",
-                "id_categoria",
                 "id_loja",
                 "preco",
                 "tipo_anuncio",
                 "titulo"
             ],
             "properties": {
+                "categoria": {
+                    "type": "string"
+                },
                 "descricao": {
                     "type": "string"
                 },
                 "destaque": {
                     "type": "boolean"
-                },
-                "id_categoria": {
-                    "type": "integer"
                 },
                 "id_loja": {
                     "type": "integer"
@@ -6060,9 +6000,6 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "id_categoria": {
                     "type": "integer"
                 },
                 "id_loja": {
@@ -6405,17 +6342,6 @@ const docTemplate = `{
                 }
             }
         },
-        "json.CategoriaAnuncioResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "nome": {
-                    "type": "string"
-                }
-            }
-        },
         "json.CategoriaLojistaResponse": {
             "type": "object",
             "properties": {
@@ -6427,31 +6353,6 @@ const docTemplate = `{
                 }
             }
         },
-        "json.CategoriaServicoResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "nome": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.CategoriasAnuncioResponse": {
-            "type": "object",
-            "properties": {
-                "categorias": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.CategoriaAnuncioResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "json.CategoriasLojistaResponse": {
             "type": "object",
             "properties": {
@@ -6459,20 +6360,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/json.CategoriaLojistaResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.CategoriasServicoResponse": {
-            "type": "object",
-            "properties": {
-                "categorias": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.CategoriaServicoResponse"
                     }
                 },
                 "total": {
@@ -6977,11 +6864,15 @@ const docTemplate = `{
         "json.ProdutoRequest": {
             "type": "object",
             "required": [
+                "categoria",
                 "id_loja",
                 "nome",
                 "preco"
             ],
             "properties": {
+                "categoria": {
+                    "type": "string"
+                },
                 "descricao": {
                     "type": "string"
                 },
@@ -7009,6 +6900,9 @@ const docTemplate = `{
             "properties": {
                 "ativo": {
                     "type": "boolean"
+                },
+                "categoria": {
+                    "type": "string"
                 },
                 "data_cadastro": {
                     "type": "string"
@@ -7130,21 +7024,21 @@ const docTemplate = `{
         "json.ServicoRequest": {
             "type": "object",
             "required": [
+                "categoria",
                 "descricao",
-                "id_categoria",
                 "id_loja",
                 "preco",
                 "titulo"
             ],
             "properties": {
+                "categoria": {
+                    "type": "string"
+                },
                 "descricao": {
                     "type": "string"
                 },
                 "destaque": {
                     "type": "boolean"
-                },
-                "id_categoria": {
-                    "type": "integer"
                 },
                 "id_loja": {
                     "type": "integer"
@@ -7177,9 +7071,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "id": {
-                    "type": "integer"
-                },
-                "id_categoria": {
                     "type": "integer"
                 },
                 "imagem": {
@@ -7610,8 +7501,16 @@ const docTemplate = `{
                 "modelo": {
                     "type": "string"
                 },
+                "observacoes": {
+                    "type": "string",
+                    "example": "Veículo em ótimo estado"
+                },
                 "placa": {
                     "type": "string"
+                },
+                "quilometragem": {
+                    "type": "integer",
+                    "example": 50000
                 }
             }
         },
@@ -7639,8 +7538,14 @@ const docTemplate = `{
                 "modelo": {
                     "type": "string"
                 },
+                "observacoes": {
+                    "type": "string"
+                },
                 "placa": {
                     "type": "string"
+                },
+                "quilometragem": {
+                    "type": "integer"
                 }
             }
         },

@@ -15,14 +15,16 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	var veiculosResponse []json.VeiculoResponse
 	for _, veiculo := range veiculos {
 		veiculoResp := json.VeiculoResponse{
-			ID:           veiculo.ID,
-			Modelo:       veiculo.Modelo,
-			Ano:          veiculo.Ano,
-			Cor:          veiculo.Cor,
-			Placa:        veiculo.Placa,
-			IDUsuario:    veiculo.IDUsuario,
-			DataCadastro: veiculo.DataCadastro,
-			Ativo:        veiculo.Ativo,
+			ID:            veiculo.ID,
+			Modelo:        veiculo.Modelo,
+			Ano:           veiculo.Ano,
+			Cor:           veiculo.Cor,
+			Placa:         veiculo.Placa,
+			Quilometragem: veiculo.Quilometragem,
+			Observacoes:   veiculo.Observacoes,
+			IDUsuario:     veiculo.IDUsuario,
+			DataCadastro:  veiculo.DataCadastro,
+			Ativo:         veiculo.Ativo,
 		}
 		veiculosResponse = append(veiculosResponse, veiculoResp)
 	}
@@ -99,14 +101,16 @@ func CreateVeiculo(req json.VeiculoRequest) (*json.VeiculoResponse, error) {
 	}
 
 	response := &json.VeiculoResponse{
-		ID:           veiculo.ID,
-		Modelo:       veiculo.Modelo,
-		Ano:          veiculo.Ano,
-		Cor:          veiculo.Cor,
-		Placa:        veiculo.Placa,
-		IDUsuario:    veiculo.IDUsuario,
-		DataCadastro: veiculo.DataCadastro,
-		Ativo:        veiculo.Ativo,
+		ID:            veiculo.ID,
+		Modelo:        veiculo.Modelo,
+		Ano:           veiculo.Ano,
+		Cor:           veiculo.Cor,
+		Placa:         veiculo.Placa,
+		Quilometragem: veiculo.Quilometragem,
+		Observacoes:   veiculo.Observacoes,
+		IDUsuario:     veiculo.IDUsuario,
+		DataCadastro:  veiculo.DataCadastro,
+		Ativo:         veiculo.Ativo,
 	}
 
 	return response, nil
@@ -120,14 +124,16 @@ func GetVeiculoByID(id uint) (*json.VeiculoResponse, error) {
 	}
 
 	response := &json.VeiculoResponse{
-		ID:           veiculo.ID,
-		Modelo:       veiculo.Modelo,
-		Ano:          veiculo.Ano,
-		Cor:          veiculo.Cor,
-		Placa:        veiculo.Placa,
-		IDUsuario:    veiculo.IDUsuario,
-		DataCadastro: veiculo.DataCadastro,
-		Ativo:        veiculo.Ativo,
+		ID:            veiculo.ID,
+		Modelo:        veiculo.Modelo,
+		Ano:           veiculo.Ano,
+		Cor:           veiculo.Cor,
+		Placa:         veiculo.Placa,
+		Quilometragem: veiculo.Quilometragem,
+		Observacoes:   veiculo.Observacoes,
+		IDUsuario:     veiculo.IDUsuario,
+		DataCadastro:  veiculo.DataCadastro,
+		Ativo:         veiculo.Ativo,
 	}
 
 	return response, nil
@@ -143,14 +149,16 @@ func GetAllVeiculos() ([]json.VeiculoResponse, error) {
 	var responses []json.VeiculoResponse
 	for _, veiculo := range veiculos {
 		response := json.VeiculoResponse{
-			ID:           veiculo.ID,
-			Modelo:       veiculo.Modelo,
-			Ano:          veiculo.Ano,
-			Cor:          veiculo.Cor,
-			Placa:        veiculo.Placa,
-			IDUsuario:    veiculo.IDUsuario,
-			DataCadastro: veiculo.DataCadastro,
-			Ativo:        veiculo.Ativo,
+			ID:            veiculo.ID,
+			Modelo:        veiculo.Modelo,
+			Ano:           veiculo.Ano,
+			Cor:           veiculo.Cor,
+			Placa:         veiculo.Placa,
+			Quilometragem: veiculo.Quilometragem,
+			Observacoes:   veiculo.Observacoes,
+			IDUsuario:     veiculo.IDUsuario,
+			DataCadastro:  veiculo.DataCadastro,
+			Ativo:         veiculo.Ativo,
 		}
 		responses = append(responses, response)
 	}
@@ -166,14 +174,16 @@ func UpdateVeiculo(id uint, req json.VeiculoRequest) (*json.VeiculoResponse, err
 	}
 
 	response := &json.VeiculoResponse{
-		ID:           veiculo.ID,
-		Modelo:       veiculo.Modelo,
-		Ano:          veiculo.Ano,
-		Cor:          veiculo.Cor,
-		Placa:        veiculo.Placa,
-		IDUsuario:    veiculo.IDUsuario,
-		DataCadastro: veiculo.DataCadastro,
-		Ativo:        veiculo.Ativo,
+		ID:            veiculo.ID,
+		Modelo:        veiculo.Modelo,
+		Ano:           veiculo.Ano,
+		Cor:           veiculo.Cor,
+		Placa:         veiculo.Placa,
+		Quilometragem: veiculo.Quilometragem,
+		Observacoes:   veiculo.Observacoes,
+		IDUsuario:     veiculo.IDUsuario,
+		DataCadastro:  veiculo.DataCadastro,
+		Ativo:         veiculo.Ativo,
 	}
 
 	return response, nil

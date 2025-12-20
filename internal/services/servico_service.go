@@ -19,29 +19,6 @@ func GetServicosByProximidade(latitude, longitude float64) (*json.ServicosRespon
 	return response, nil
 }
 
-func GetCategoriasServico() (*json.CategoriasServicoResponse, error) {
-	categorias, err := datasource.GetCategoriasServico()
-	if err != nil {
-		return nil, err
-	}
-
-	var categoriasResponse []json.CategoriaServicoResponse
-	for _, categoria := range categorias {
-		categoriaResp := json.CategoriaServicoResponse{
-			ID:   categoria.ID,
-			Nome: categoria.Nome,
-		}
-		categoriasResponse = append(categoriasResponse, categoriaResp)
-	}
-
-	response := &json.CategoriasServicoResponse{
-		Categorias: categoriasResponse,
-		Total:      len(categoriasResponse),
-	}
-
-	return response, nil
-}
-
 // CreateServico cria um novo serviço
 func CreateServico(req json.ServicoRequest) (*json.ServicoResponse, error) {
 	servico, err := datasource.CreateServico(req)
@@ -50,14 +27,13 @@ func CreateServico(req json.ServicoRequest) (*json.ServicoResponse, error) {
 	}
 
 	response := &json.ServicoResponse{
-		ID:          servico.ID,
-		Titulo:      servico.Titulo,
-		Descricao:   servico.Descricao,
-		Preco:       servico.Preco,
-		Imagem:      servico.Imagem,
-		Destaque:    servico.Destaque,
-		Categoria:   servico.Categoria.Nome,
-		IDCategoria: servico.IDCategoria,
+		ID:        servico.ID,
+		Titulo:    servico.Titulo,
+		Descricao: servico.Descricao,
+		Preco:     servico.Preco,
+		Imagem:    servico.Imagem,
+		Destaque:  servico.Destaque,
+		Categoria: servico.Categoria,
 		Loja: json.LojaResponse{
 			ID:          servico.Loja.ID,
 			Nome:        servico.Loja.Nome,
@@ -81,14 +57,13 @@ func GetServicoByID(id uint) (*json.ServicoResponse, error) {
 	}
 
 	response := &json.ServicoResponse{
-		ID:          servico.ID,
-		Titulo:      servico.Titulo,
-		Descricao:   servico.Descricao,
-		Preco:       servico.Preco,
-		Imagem:      servico.Imagem,
-		Destaque:    servico.Destaque,
-		Categoria:   servico.Categoria.Nome,
-		IDCategoria: servico.IDCategoria,
+		ID:        servico.ID,
+		Titulo:    servico.Titulo,
+		Descricao: servico.Descricao,
+		Preco:     servico.Preco,
+		Imagem:    servico.Imagem,
+		Destaque:  servico.Destaque,
+		Categoria: servico.Categoria,
 		Loja: json.LojaResponse{
 			ID:          servico.Loja.ID,
 			Nome:        servico.Loja.Nome,
@@ -114,14 +89,13 @@ func GetAllServicos() ([]json.ServicoResponse, error) {
 	var responses []json.ServicoResponse
 	for _, servico := range servicos {
 		response := json.ServicoResponse{
-			ID:          servico.ID,
-			Titulo:      servico.Titulo,
-			Descricao:   servico.Descricao,
-			Preco:       servico.Preco,
-			Imagem:      servico.Imagem,
-			Destaque:    servico.Destaque,
-			Categoria:   servico.Categoria.Nome,
-			IDCategoria: servico.IDCategoria,
+			ID:        servico.ID,
+			Titulo:    servico.Titulo,
+			Descricao: servico.Descricao,
+			Preco:     servico.Preco,
+			Imagem:    servico.Imagem,
+			Destaque:  servico.Destaque,
+			Categoria: servico.Categoria,
 			Loja: json.LojaResponse{
 				ID:          servico.Loja.ID,
 				Nome:        servico.Loja.Nome,
@@ -147,14 +121,13 @@ func UpdateServico(id uint, req json.ServicoRequest) (*json.ServicoResponse, err
 	}
 
 	response := &json.ServicoResponse{
-		ID:          servico.ID,
-		Titulo:      servico.Titulo,
-		Descricao:   servico.Descricao,
-		Preco:       servico.Preco,
-		Imagem:      servico.Imagem,
-		Destaque:    servico.Destaque,
-		Categoria:   servico.Categoria.Nome,
-		IDCategoria: servico.IDCategoria,
+		ID:        servico.ID,
+		Titulo:    servico.Titulo,
+		Descricao: servico.Descricao,
+		Preco:     servico.Preco,
+		Imagem:    servico.Imagem,
+		Destaque:  servico.Destaque,
+		Categoria: servico.Categoria,
 		Loja: json.LojaResponse{
 			ID:          servico.Loja.ID,
 			Nome:        servico.Loja.Nome,

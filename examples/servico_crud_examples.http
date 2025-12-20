@@ -10,8 +10,8 @@ Content-Type: application/json
   "preco": 89.90,
   "imagem": "https://example.com/troca-oleo.jpg",
   "destaque": true,
-  "id_loja": 1,
-  "id_categoria": 1
+  "categoria": "Manutenção",
+  "id_loja": 1
 }
 
 ### 2. Listar todos os serviços
@@ -30,8 +30,8 @@ Content-Type: application/json
   "preco": 129.90,
   "imagem": "https://example.com/troca-oleo-premium.jpg",
   "destaque": true,
-  "id_loja": 1,
-  "id_categoria": 1
+  "categoria": "Manutenção",
+  "id_loja": 1
 }
 
 ### 5. Soft delete serviço (inativar)
@@ -46,5 +46,30 @@ GET http://localhost:8080/servicos/1
 ### 8. Listar serviços por proximidade (endpoint existente)
 GET http://localhost:8080/servicos/proximidade?latitude=-23.5505&longitude=-46.6333
 
-### 9. Listar categorias de serviço (endpoint existente)
-GET http://localhost:8080/servicos/categorias
+### 9. Criar serviço de alinhamento
+POST http://localhost:8080/servicos
+Content-Type: application/json
+
+{
+  "titulo": "Alinhamento e Balanceamento",
+  "descricao": "Alinhamento e balanceamento das 4 rodas",
+  "preco": 120.00,
+  "imagem": "https://example.com/alinhamento.jpg",
+  "destaque": false,
+  "categoria": "Alinhamento",
+  "id_loja": 1
+}
+
+### 10. Criar serviço de revisão
+POST http://localhost:8080/servicos
+Content-Type: application/json
+
+{
+  "titulo": "Revisão Completa",
+  "descricao": "Revisão completa de 20.000km incluindo troca de filtros e fluidos",
+  "preco": 450.00,
+  "imagem": "https://example.com/revisao.jpg",
+  "destaque": true,
+  "categoria": "Revisão",
+  "id_loja": 1
+}

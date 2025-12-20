@@ -10,12 +10,12 @@ Content-Type: application/json
   "preco": 89.90,
   "imagem": "https://example.com/troca-oleo.jpg",
   "destaque": false,
+  "categoria": "Serviços",
   "id_loja": 1,
-  "id_categoria": 1,
   "tipo_anuncio": "servico"
 }
 
-### 1.1. Criar anúncio destaque (removerá destaque de outros anúncios da mesma loja)
+### 1.1. Criar anúncio destaque de veículo
 POST http://localhost:8080/anuncios
 Content-Type: application/json
 
@@ -25,24 +25,39 @@ Content-Type: application/json
   "preco": 450000.00,
   "imagem": "https://example.com/bmw-x5.jpg",
   "destaque": true,
+  "categoria": "Carros",
   "id_loja": 1,
-  "id_categoria": 1,
   "tipo_anuncio": "veiculo"
 }
 
-### 1.2. Criar outro anúncio destaque na mesma loja (removerá destaque do anterior)
+### 1.2. Criar anúncio de moto
 POST http://localhost:8080/anuncios
 Content-Type: application/json
 
 {
-  "titulo": "Mercedes C200 2022",
-  "descricao": "Mercedes-Benz C200 CGI, automático, ar condicionado, direção elétrica",
-  "preco": 180000.00,
-  "imagem": "https://example.com/mercedes-c200.jpg",
-  "destaque": true,
+  "titulo": "Honda CB 500F 2022",
+  "descricao": "Honda CB 500F, baixa quilometragem, revisões em dia",
+  "preco": 32000.00,
+  "imagem": "https://example.com/honda-cb500.jpg",
+  "destaque": false,
+  "categoria": "Motos",
   "id_loja": 1,
-  "id_categoria": 1,
   "tipo_anuncio": "veiculo"
+}
+
+### 1.3. Criar anúncio de peças
+POST http://localhost:8080/anuncios
+Content-Type: application/json
+
+{
+  "titulo": "Kit Pastilhas de Freio Premium",
+  "descricao": "Kit completo de pastilhas de freio cerâmicas para veículos de passeio",
+  "preco": 250.00,
+  "imagem": "https://example.com/pastilhas.jpg",
+  "destaque": false,
+  "categoria": "Peças",
+  "id_loja": 1,
+  "tipo_anuncio": "produto"
 }
 
 ### 2. Listar todos os anúncios
@@ -51,7 +66,7 @@ GET http://localhost:8080/anuncios
 ### 3. Buscar anúncio por ID
 GET http://localhost:8080/anuncios/1
 
-### 4. Atualizar anúncio para destaque (removerá destaque de outros anúncios da mesma loja)
+### 4. Atualizar anúncio para destaque
 PUT http://localhost:8080/anuncios/1
 Content-Type: application/json
 
@@ -61,22 +76,27 @@ Content-Type: application/json
   "preco": 129.90,
   "imagem": "https://example.com/troca-oleo-premium.jpg",
   "destaque": true,
+  "categoria": "Serviços",
   "id_loja": 1,
-  "id_categoria": 1,
   "tipo_anuncio": "servico"
 }
 
-### 4.1. Verificar que apenas um anúncio por loja pode ser destaque
-GET http://localhost:8080/anuncios
+### 5. Listar anúncios de uma loja
+GET http://localhost:8080/anuncios/loja/1
 
-### 5. Soft delete anúncio (inativar)
+### 6. Soft delete anúncio (inativar)
 DELETE http://localhost:8080/anuncios/1
 
-### 6. Restaurar anúncio excluído
+### 7. Restaurar anúncio excluído
 POST http://localhost:8080/anuncios/1/restore
 
-### 7. Verificar se anúncio foi restaurado
+### 8. Verificar se anúncio foi restaurado
 GET http://localhost:8080/anuncios/1
 
-### 8. Listar categorias de anúncio (endpoint existente)
-GET http://localhost:8080/anuncios/categorias
+### 9. Resgatar anúncio (criar histórico de resgate)
+POST http://localhost:8080/anuncios/1/resgatar
+Content-Type: application/json
+
+{
+  "id_usuario": 1
+}

@@ -20,6 +20,7 @@ func CreateProduto(req json.ProdutoRequest) (*json.ProdutoResponse, error) {
 		Imagem:       produto.Imagem,
 		Estoque:      produto.Estoque,
 		Ativo:        produto.Ativo,
+		Categoria:    produto.Categoria,
 		IDLoja:       produto.IDLoja,
 		DataCadastro: produto.DataCadastro,
 		Loja: json.LojaResponse{
@@ -52,6 +53,7 @@ func GetProdutoByID(id uint) (*json.ProdutoResponse, error) {
 		Imagem:       produto.Imagem,
 		Estoque:      produto.Estoque,
 		Ativo:        produto.Ativo,
+		Categoria:    produto.Categoria,
 		IDLoja:       produto.IDLoja,
 		DataCadastro: produto.DataCadastro,
 		Loja: json.LojaResponse{
@@ -86,6 +88,7 @@ func GetAllProdutos() ([]json.ProdutoResponse, error) {
 			Imagem:       produto.Imagem,
 			Estoque:      produto.Estoque,
 			Ativo:        produto.Ativo,
+			Categoria:    produto.Categoria,
 			IDLoja:       produto.IDLoja,
 			DataCadastro: produto.DataCadastro,
 			Loja: json.LojaResponse{
@@ -122,6 +125,7 @@ func GetProdutosByLojaID(idLoja uint) (*json.ProdutosResponse, error) {
 			Imagem:       produto.Imagem,
 			Estoque:      produto.Estoque,
 			Ativo:        produto.Ativo,
+			Categoria:    produto.Categoria,
 			IDLoja:       produto.IDLoja,
 			DataCadastro: produto.DataCadastro,
 			Loja: json.LojaResponse{
@@ -161,6 +165,7 @@ func UpdateProduto(id uint, req json.ProdutoRequest) (*json.ProdutoResponse, err
 		Imagem:       produto.Imagem,
 		Estoque:      produto.Estoque,
 		Ativo:        produto.Ativo,
+		Categoria:    produto.Categoria,
 		IDLoja:       produto.IDLoja,
 		DataCadastro: produto.DataCadastro,
 		Loja: json.LojaResponse{

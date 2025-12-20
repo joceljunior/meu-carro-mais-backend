@@ -13,7 +13,6 @@ func GetServicosByProximidade(latitude, longitude float64) ([]json.ServicoRespon
 	var servicos []models.Servico
 
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
@@ -30,15 +29,14 @@ func GetServicosByProximidade(latitude, longitude float64) ([]json.ServicoRespon
 		distancia := calcularDistancia(latitude, longitude, servico.Loja.Latitude, servico.Loja.Longitude)
 
 		servicoResp := json.ServicoResponse{
-			ID:          servico.ID,
-			Titulo:      servico.Titulo,
-			Descricao:   servico.Descricao,
-			Preco:       servico.Preco,
-			Imagem:      servico.Imagem,
-			Destaque:    servico.Destaque,
-			Distancia:   distancia,
-			Categoria:   servico.Categoria.Nome,
-			IDCategoria: servico.IDCategoria,
+			ID:        servico.ID,
+			Titulo:    servico.Titulo,
+			Descricao: servico.Descricao,
+			Preco:     servico.Preco,
+			Imagem:    servico.Imagem,
+			Destaque:  servico.Destaque,
+			Distancia: distancia,
+			Categoria: servico.Categoria,
 			Loja: json.LojaResponse{
 				ID:          servico.Loja.ID,
 				Nome:        servico.Loja.Nome,
@@ -66,28 +64,16 @@ func GetServicosByProximidade(latitude, longitude float64) ([]json.ServicoRespon
 	return servicosResponse, nil
 }
 
-// GetCategoriasServico retorna todas as categorias de serviço
-func GetCategoriasServico() ([]models.CategoriaServico, error) {
-	var categorias []models.CategoriaServico
-
-	err := database.DB.Find(&categorias).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return categorias, nil
-}
-
 // CreateServico cria um novo serviço
 func CreateServico(req json.ServicoRequest) (*models.Servico, error) {
 	servico := models.Servico{
-		Titulo:      req.Titulo,
-		Descricao:   req.Descricao,
-		Preco:       req.Preco,
-		Imagem:      req.Imagem,
-		Destaque:    req.Destaque,
-		IDLoja:      req.IDLoja,
-		IDCategoria: req.IDCategoria,
+		Titulo:    req.Titulo,
+		Descricao: req.Descricao,
+		Preco:     req.Preco,
+		Imagem:    req.Imagem,
+		Destaque:  req.Destaque,
+		Categoria: req.Categoria,
+		IDLoja:    req.IDLoja,
 	}
 
 	err := database.DB.Create(&servico).Error
@@ -103,7 +89,6 @@ func CreateServico(req json.ServicoRequest) (*models.Servico, error) {
 func GetServicoByID(id uint) (*models.Servico, error) {
 	var servico models.Servico
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
@@ -118,7 +103,6 @@ func GetServicoByID(id uint) (*models.Servico, error) {
 func GetAllServicos() ([]models.Servico, error) {
 	var servicos []models.Servico
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
@@ -144,8 +128,8 @@ func UpdateServico(id uint, req json.ServicoRequest) (*models.Servico, error) {
 	servico.Preco = req.Preco
 	servico.Imagem = req.Imagem
 	servico.Destaque = req.Destaque
+	servico.Categoria = req.Categoria
 	servico.IDLoja = req.IDLoja
-	servico.IDCategoria = req.IDCategoria
 
 	err = database.DB.Save(&servico).Error
 	if err != nil {

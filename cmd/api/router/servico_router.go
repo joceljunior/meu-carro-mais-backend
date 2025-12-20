@@ -21,6 +21,5 @@ func (sr *ServicoRouter) RegisterRoutes(rg *gin.RouterGroup) {
 
 		// Endpoints específicos
 		servicos.GET("/proximidade", handlers.GetServicosByProximidadeHandler) // GET /servicos/proximidade - Listar por proximidade
-		servicos.GET("/categorias", handlers.GetCategoriasServicoHandler)      // GET /servicos/categorias - Listar categorias
 	}
 }

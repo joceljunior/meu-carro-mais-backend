@@ -8,6 +8,8 @@ type Veiculo struct {
 	Ano             int        `gorm:"not null"`
 	Cor             string     `gorm:"size:100;not null"`
 	Placa           string     `gorm:"size:10;unique;not null"`
+	Quilometragem   *int       `gorm:"default:null"`
+	Observacoes     *string    `gorm:"type:text"`
 	IDUsuario       uint       `gorm:"not null"`
 	DataCadastro    time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`

@@ -10,6 +10,7 @@ type ProdutoResponse struct {
 	Imagem       string       `json:"imagem"`
 	Estoque      int          `json:"estoque"`
 	Ativo        bool         `json:"ativo"`
+	Categoria    string       `json:"categoria"`
 	IDLoja       uint         `json:"id_loja"`
 	DataCadastro time.Time    `json:"data_cadastro"`
 	Loja         LojaResponse `json:"loja,omitempty"`

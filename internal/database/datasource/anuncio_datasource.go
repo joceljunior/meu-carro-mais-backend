@@ -23,7 +23,6 @@ func GetAnuncios() ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
@@ -34,18 +33,6 @@ func GetAnuncios() ([]models.Anuncio, error) {
 	}
 
 	return anuncios, nil
-}
-
-// GetCategoriasAnuncio retorna todas as categorias de anúncio
-func GetCategoriasAnuncio() ([]models.CategoriaAnuncio, error) {
-	var categorias []models.CategoriaAnuncio
-
-	err := database.DB.Find(&categorias).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return categorias, nil
 }
 
 // CreateAnuncio cria um novo anúncio
@@ -66,8 +53,8 @@ func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
 		Preco:       req.Preco,
 		Imagem:      req.Imagem,
 		Destaque:    req.Destaque,
+		Categoria:   req.Categoria,
 		IDLoja:      req.IDLoja,
-		IDCategoria: req.IDCategoria,
 		IDProduto:   req.IDProduto,
 		IDServico:   req.IDServico,
 		IDVeiculo:   req.IDVeiculo,
@@ -87,7 +74,6 @@ func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
 func GetAnuncioByID(id uint) (*models.Anuncio, error) {
 	var anuncio models.Anuncio
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
@@ -102,7 +88,6 @@ func GetAnuncioByID(id uint) (*models.Anuncio, error) {
 func GetAllAnuncios() ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
@@ -118,7 +103,6 @@ func GetAllAnuncios() ([]models.Anuncio, error) {
 func GetAnunciosByLojaID(lojaID uint) ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Loja").
 		Preload("Loja.Categoria").
 		Where("id_loja = ? AND data_exclusao IS NULL", lojaID).
@@ -154,8 +138,8 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 	anuncio.Preco = req.Preco
 	anuncio.Imagem = req.Imagem
 	anuncio.Destaque = req.Destaque
+	anuncio.Categoria = req.Categoria
 	anuncio.IDLoja = req.IDLoja
-	anuncio.IDCategoria = req.IDCategoria
 	anuncio.IDProduto = req.IDProduto
 	anuncio.IDServico = req.IDServico
 	anuncio.IDVeiculo = req.IDVeiculo

@@ -1,84 +1,155 @@
-# Endpoint de Categorias de Serviço
+# Categorias de Serviço e Produto
 
-## Listagem de Categorias
+## Visão Geral
 
-### GET /servicos/categorias
+As categorias de serviços e produtos são gerenciadas através de um campo de texto simples (`categoria`) diretamente nas tabelas de `servicos` e `produtos`. Isso simplifica a estrutura do banco de dados e torna o sistema mais flexível.
 
-Retorna todas as categorias de serviço disponíveis no sistema.
+## Estrutura
 
-#### Request
+### Serviço
 
-**Método**: GET  
-**URL**: `/servicos/categorias`  
-**Headers**: Nenhum obrigatório  
-**Parâmetros**: Nenhum  
+O modelo `Servico` possui um campo `categoria` do tipo string:
 
-#### Response
-
-**Status: 200 OK**
-
-```json
-{
-  "categorias": [
-    {
-      "id": 1,
-      "nome": "Troca de Óleo"
-    },
-    {
-      "id": 2,
-      "nome": "Alinhamento"
-    },
-    {
-      "id": 3,
-      "nome": "Balanceamento"
-    },
-    {
-      "id": 4,
-      "nome": "Freios"
-    },
-    {
-      "id": 5,
-      "nome": "Suspensão"
-    }
-  ],
-  "total": 5
+```go
+type Servico struct {
+    ID        uint   `gorm:"primaryKey"`
+    Titulo    string `gorm:"size:255"`
+    Descricao string `gorm:"size:255"`
+    Preco     float64
+    Imagem    string
+    Destaque  bool
+    Categoria string `gorm:"size:100"` // Categoria como string fixa
+    IDLoja    uint
+    // ... outros campos
 }
 ```
 
-#### Erros
+### Produto
 
-**Status: 500 Internal Server Error**
-```json
-{
-  "error": "Erro interno do servidor"
+O modelo `Produto` também possui um campo `categoria` do tipo string:
+
+```go
+type Produto struct {
+    ID        uint   `gorm:"primaryKey"`
+    Nome      string `gorm:"size:255;not null"`
+    Descricao string `gorm:"size:500"`
+    Preco     float64
+    Imagem    string
+    Estoque   int
+    Categoria string `gorm:"size:100"` // Categoria como string fixa
+    IDLoja    uint
+    // ... outros campos
 }
 ```
 
-#### Estrutura da Resposta
+## Categorias Sugeridas
 
-- **categorias**: Array com todas as categorias disponíveis
-  - **id**: Identificador único da categoria
-  - **nome**: Nome da categoria
-- **total**: Número total de categorias
+### Para Serviços
 
-#### Observações
+- Manutenção
+- Revisão
+- Troca de Óleo
+- Alinhamento
+- Balanceamento
+- Ajuste de Freios
+- Suspensão
+- Elétrica
+- Ar Condicionado
+- Funilaria
 
-- Este endpoint não requer autenticação
-- Retorna todas as categorias ativas do sistema
-- As categorias são ordenadas por ID (ordem de criação)
-- Útil para preencher dropdowns e formulários de filtro
-- Pode ser usado em conjunto com o endpoint de serviços por proximidade
+### Para Produtos
 
-#### Exemplo de Uso
+- Óleos e Lubrificantes
+- Filtros
+- Freios
+- Pneus
+- Suspensão
+- Elétrica
+- Iluminação
+- Motor
+- Acessórios
+- Limpeza
 
-```bash
-curl -X GET "http://localhost:8080/servicos/categorias" \
-  -H "Content-Type: application/json"
+## Exemplos de Uso
+
+### Criando um Serviço
+
+```http
+POST /servicos
+Content-Type: application/json
+
+{
+  "titulo": "Troca de Óleo",
+  "descricao": "Troca completa de óleo do motor com filtro",
+  "preco": 89.90,
+  "imagem": "https://example.com/troca-oleo.jpg",
+  "destaque": true,
+  "categoria": "Manutenção",
+  "id_loja": 1
+}
 ```
 
-#### Casos de Uso
+### Criando um Produto
 
-1. **Formulários de cadastro**: Para selecionar a categoria ao criar um serviço
-2. **Filtros de busca**: Para filtrar serviços por categoria
-3. **Navegação**: Para mostrar categorias disponíveis no menu
-4. **Relatórios**: Para agrupar serviços por categoria
+```http
+POST /produtos
+Content-Type: application/json
+
+{
+  "nome": "Óleo de Motor 5W30",
+  "descricao": "Óleo sintético para motor, 1 litro",
+  "preco": 45.90,
+  "imagem": "https://exemplo.com/oleo-motor.jpg",
+  "estoque": 50,
+  "categoria": "Óleos e Lubrificantes",
+  "id_loja": 1
+}
+```
+
+## Response de Serviço
+
+```json
+{
+  "id": 1,
+  "titulo": "Troca de Óleo",
+  "descricao": "Troca completa de óleo do motor com filtro",
+  "preco": 89.90,
+  "imagem": "https://example.com/troca-oleo.jpg",
+  "destaque": true,
+  "categoria": "Manutenção",
+  "loja": {
+    "id": 1,
+    "nome": "Auto Center São Paulo",
+    // ... outros campos
+  }
+}
+```
+
+## Response de Produto
+
+```json
+{
+  "id": 1,
+  "nome": "Óleo de Motor 5W30",
+  "descricao": "Óleo sintético para motor, 1 litro",
+  "preco": 45.90,
+  "imagem": "https://exemplo.com/oleo-motor.jpg",
+  "estoque": 50,
+  "ativo": true,
+  "categoria": "Óleos e Lubrificantes",
+  "id_loja": 1,
+  "data_cadastro": "2024-01-15T10:30:00Z",
+  "loja": {
+    "id": 1,
+    "nome": "Auto Center São Paulo",
+    // ... outros campos
+  }
+}
+```
+
+## Observações
+
+1. O campo `categoria` é opcional e pode ser deixado vazio
+2. A categoria é uma string livre, permitindo flexibilidade na nomenclatura
+3. Recomenda-se manter consistência nas nomenclaturas usadas
+4. Para filtrar por categoria, use consultas SQL/GORM com `WHERE categoria = ?`

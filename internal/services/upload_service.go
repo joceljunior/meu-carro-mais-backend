@@ -89,14 +89,13 @@ func convertUploadToResponse(upload *models.Upload) *json.UploadResponse {
 	// Adiciona dados do serviço se existir
 	if upload.Servico != nil {
 		servicoResp := &json.ServicoResponse{
-			ID:          upload.Servico.ID,
-			Titulo:      upload.Servico.Titulo,
-			Descricao:   upload.Servico.Descricao,
-			Preco:       upload.Servico.Preco,
-			Imagem:      upload.Servico.Imagem,
-			Destaque:    upload.Servico.Destaque,
-			IDCategoria: upload.Servico.IDCategoria,
-			Categoria:   upload.Servico.Categoria.Nome,
+			ID:        upload.Servico.ID,
+			Titulo:    upload.Servico.Titulo,
+			Descricao: upload.Servico.Descricao,
+			Preco:     upload.Servico.Preco,
+			Imagem:    upload.Servico.Imagem,
+			Destaque:  upload.Servico.Destaque,
+			Categoria: upload.Servico.Categoria,
 		}
 		response.Servico = servicoResp
 	}

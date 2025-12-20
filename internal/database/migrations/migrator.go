@@ -446,6 +446,54 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration017)
 
+	// Migration 018: Simplificar categorias - usar string fixa em vez de tabela
+	migration018 := m.NewMigration("018", "simplify_categories_to_string").
+		ExecuteSQL(`
+			-- Adiciona campo categoria às tabelas produto, servico e anuncio
+			ALTER TABLE produtos ADD COLUMN IF NOT EXISTS categoria VARCHAR(100);
+			ALTER TABLE servicos ADD COLUMN IF NOT EXISTS categoria VARCHAR(100);
+			ALTER TABLE anuncios ADD COLUMN IF NOT EXISTS categoria VARCHAR(100);
+			
+			-- Migra dados existentes de servicos (se houver relação com categoria_servicos)
+			UPDATE servicos s 
+			SET categoria = (SELECT nome FROM categoria_servicos WHERE id = s.id_categoria)
+			WHERE s.id_categoria IS NOT NULL AND EXISTS (SELECT 1 FROM categoria_servicos WHERE id = s.id_categoria);
+			
+			-- Migra dados existentes de anuncios (se houver relação com categoria_anuncios)
+			UPDATE anuncios a 
+			SET categoria = (SELECT nome FROM categoria_anuncios WHERE id = a.id_categoria)
+			WHERE a.id_categoria IS NOT NULL AND EXISTS (SELECT 1 FROM categoria_anuncios WHERE id = a.id_categoria);
+			
+			-- Remove a coluna id_categoria da tabela servicos
+			ALTER TABLE servicos DROP CONSTRAINT IF EXISTS fk_servicos_categoria;
+			ALTER TABLE servicos DROP COLUMN IF EXISTS id_categoria;
+			
+			-- Remove a coluna id_categoria da tabela anuncios
+			ALTER TABLE anuncios DROP CONSTRAINT IF EXISTS fk_anuncios_categoria;
+			ALTER TABLE anuncios DROP COLUMN IF EXISTS id_categoria;
+			
+			-- Remove as tabelas de categorias
+			DROP TABLE IF EXISTS categoria_servicos CASCADE;
+			DROP TABLE IF EXISTS categoria_anuncios CASCADE;
+		`, `
+			-- Rollback: recria a estrutura anterior
+			CREATE TABLE IF NOT EXISTS categoria_servicos (
+				id SERIAL PRIMARY KEY,
+				nome VARCHAR(255)
+			);
+			CREATE TABLE IF NOT EXISTS categoria_anuncios (
+				id SERIAL PRIMARY KEY,
+				nome VARCHAR(255)
+			);
+			ALTER TABLE servicos ADD COLUMN IF NOT EXISTS id_categoria INTEGER;
+			ALTER TABLE anuncios ADD COLUMN IF NOT EXISTS id_categoria INTEGER;
+			ALTER TABLE produtos DROP COLUMN IF EXISTS categoria;
+			ALTER TABLE servicos DROP COLUMN IF EXISTS categoria;
+			ALTER TABLE anuncios DROP COLUMN IF EXISTS categoria;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration018)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
@@ -582,7 +630,6 @@ func (m *Migrator) createInitialTables(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&models.TipoPlano{},
 		&models.CategoriaLojista{},
-		&models.CategoriaAnuncio{},
 		&models.Usuario{},
 		&models.Loja{},
 		&models.HistoricoPlanoUsuario{},
@@ -605,7 +652,6 @@ func (m *Migrator) dropInitialTables(db *gorm.DB) error {
 		&models.HistoricoPlanoUsuario{},
 		&models.Loja{},
 		&models.Usuario{},
-		&models.CategoriaAnuncio{},
 		&models.CategoriaLojista{},
 		&models.TipoPlano{},
 	}
@@ -622,7 +668,6 @@ func (m *Migrator) dropInitialTables(db *gorm.DB) error {
 // createComplementaryTables cria as tabelas complementares (migration 010)
 func (m *Migrator) createComplementaryTables(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&models.CategoriaServico{},
 		&models.Produto{},
 		&models.Servico{},
 		&models.VeiculoLoja{},
@@ -643,7 +688,6 @@ func (m *Migrator) dropComplementaryTables(db *gorm.DB) error {
 		&models.VeiculoLoja{},
 		&models.Servico{},
 		&models.Produto{},
-		&models.CategoriaServico{},
 	}
 
 	for _, table := range tables {

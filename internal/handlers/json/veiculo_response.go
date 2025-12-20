@@ -3,14 +3,16 @@ package json
 import "time"
 
 type VeiculoResponse struct {
-	ID           uint      `json:"id"`
-	Modelo       string    `json:"modelo"`
-	Ano          int       `json:"ano"`
-	Cor          string    `json:"cor"`
-	Placa        string    `json:"placa"`
-	IDUsuario    uint      `json:"id_usuario"`
-	DataCadastro time.Time `json:"data_cadastro"`
-	Ativo        bool      `json:"ativo"`
+	ID            uint      `json:"id"`
+	Modelo        string    `json:"modelo"`
+	Ano           int       `json:"ano"`
+	Cor           string    `json:"cor"`
+	Placa         string    `json:"placa"`
+	Quilometragem *int      `json:"quilometragem,omitempty"`
+	Observacoes   *string   `json:"observacoes,omitempty"`
+	IDUsuario     uint      `json:"id_usuario"`
+	DataCadastro  time.Time `json:"data_cadastro"`
+	Ativo         bool      `json:"ativo"`
 }
 
 type VeiculosResponse struct {

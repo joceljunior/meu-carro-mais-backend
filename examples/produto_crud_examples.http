@@ -10,6 +10,7 @@ Content-Type: application/json
   "preco": 45.90,
   "imagem": "https://exemplo.com/oleo-motor.jpg",
   "estoque": 50,
+  "categoria": "Óleos e Lubrificantes",
   "id_loja": 1
 }
 
@@ -29,6 +30,7 @@ Content-Type: application/json
   "preco": 52.90,
   "imagem": "https://exemplo.com/oleo-motor-premium.jpg",
   "estoque": 30,
+  "categoria": "Óleos e Lubrificantes",
   "id_loja": 1
 }
 
@@ -41,7 +43,7 @@ POST http://localhost:8080/produtos/1/restore
 ### 7. Listar produtos de uma loja específica
 GET http://localhost:8080/lojas/1/produtos
 
-### 8. Criar outro produto para teste
+### 8. Criar produto de filtro
 POST http://localhost:8080/produtos
 Content-Type: application/json
 
@@ -51,10 +53,11 @@ Content-Type: application/json
   "preco": 25.50,
   "imagem": "https://exemplo.com/filtro-ar.jpg",
   "estoque": 100,
+  "categoria": "Filtros",
   "id_loja": 1
 }
 
-### 9. Criar produto para outra loja
+### 9. Criar produto de pneu
 POST http://localhost:8080/produtos
 Content-Type: application/json
 
@@ -64,5 +67,34 @@ Content-Type: application/json
   "preco": 320.00,
   "imagem": "https://exemplo.com/pneu.jpg",
   "estoque": 20,
+  "categoria": "Pneus",
   "id_loja": 2
+}
+
+### 10. Criar produto de freio
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "nome": "Pastilha de Freio Dianteira",
+  "descricao": "Pastilha de freio cerâmica, alto desempenho",
+  "preco": 189.90,
+  "imagem": "https://exemplo.com/pastilha-freio.jpg",
+  "estoque": 40,
+  "categoria": "Freios",
+  "id_loja": 1
+}
+
+### 11. Criar produto de iluminação
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "nome": "Lâmpada LED H7",
+  "descricao": "Lâmpada LED H7 6000K, par",
+  "preco": 89.90,
+  "imagem": "https://exemplo.com/lampada-led.jpg",
+  "estoque": 60,
+  "categoria": "Iluminação",
+  "id_loja": 1
 }

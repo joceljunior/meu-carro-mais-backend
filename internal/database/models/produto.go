@@ -10,6 +10,7 @@ type Produto struct {
 	Imagem          string     `gorm:"size:255"`
 	Estoque         int        `gorm:"default:0"`
 	Ativo           bool       `gorm:"default:true"`
+	Categoria       string     `gorm:"size:100"`
 	IDLoja          uint       `gorm:"not null"`
 	DataCadastro    time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`

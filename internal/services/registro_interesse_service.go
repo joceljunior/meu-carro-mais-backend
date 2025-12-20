@@ -26,17 +26,14 @@ func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*json.RegistroI
 	// Se o anúncio foi carregado, adiciona ao response
 	if registroInteresse.Anuncio.ID != 0 {
 		anuncioResp := &json.AnuncioResponse{
-			ID:          registroInteresse.Anuncio.ID,
-			Titulo:      registroInteresse.Anuncio.Titulo,
-			Descricao:   registroInteresse.Anuncio.Descricao,
-			Preco:       registroInteresse.Anuncio.Preco,
-			Imagem:      registroInteresse.Anuncio.Imagem,
-			Destaque:    registroInteresse.Anuncio.Destaque,
-			IDLoja:      registroInteresse.Anuncio.IDLoja,
-			IDCategoria: registroInteresse.Anuncio.IDCategoria,
-		}
-		if registroInteresse.Anuncio.Categoria.ID != 0 {
-			anuncioResp.Categoria = registroInteresse.Anuncio.Categoria.Nome
+			ID:        registroInteresse.Anuncio.ID,
+			Titulo:    registroInteresse.Anuncio.Titulo,
+			Descricao: registroInteresse.Anuncio.Descricao,
+			Preco:     registroInteresse.Anuncio.Preco,
+			Imagem:    registroInteresse.Anuncio.Imagem,
+			Destaque:  registroInteresse.Anuncio.Destaque,
+			Categoria: registroInteresse.Anuncio.Categoria,
+			IDLoja:    registroInteresse.Anuncio.IDLoja,
 		}
 		if registroInteresse.Anuncio.Loja.ID != 0 {
 			anuncioResp.Loja = json.LojaResponse{
@@ -47,9 +44,7 @@ func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*json.RegistroI
 				Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 				Longitude:   registroInteresse.Anuncio.Loja.Longitude,
 				IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-			}
-			if registroInteresse.Anuncio.Loja.Categoria.ID != 0 {
-				anuncioResp.Loja.Categoria = registroInteresse.Anuncio.Loja.Categoria.Nome
+				Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
 			}
 		}
 		response.Anuncio = anuncioResp
@@ -79,17 +74,14 @@ func GetRegistroInteresseByID(id uint) (*json.RegistroInteresseResponse, error) 
 	// Se o anúncio foi carregado, adiciona ao response
 	if registroInteresse.Anuncio.ID != 0 {
 		anuncioResp := &json.AnuncioResponse{
-			ID:          registroInteresse.Anuncio.ID,
-			Titulo:      registroInteresse.Anuncio.Titulo,
-			Descricao:   registroInteresse.Anuncio.Descricao,
-			Preco:       registroInteresse.Anuncio.Preco,
-			Imagem:      registroInteresse.Anuncio.Imagem,
-			Destaque:    registroInteresse.Anuncio.Destaque,
-			IDLoja:      registroInteresse.Anuncio.IDLoja,
-			IDCategoria: registroInteresse.Anuncio.IDCategoria,
-		}
-		if registroInteresse.Anuncio.Categoria.ID != 0 {
-			anuncioResp.Categoria = registroInteresse.Anuncio.Categoria.Nome
+			ID:        registroInteresse.Anuncio.ID,
+			Titulo:    registroInteresse.Anuncio.Titulo,
+			Descricao: registroInteresse.Anuncio.Descricao,
+			Preco:     registroInteresse.Anuncio.Preco,
+			Imagem:    registroInteresse.Anuncio.Imagem,
+			Destaque:  registroInteresse.Anuncio.Destaque,
+			Categoria: registroInteresse.Anuncio.Categoria,
+			IDLoja:    registroInteresse.Anuncio.IDLoja,
 		}
 		if registroInteresse.Anuncio.Loja.ID != 0 {
 			anuncioResp.Loja = json.LojaResponse{
@@ -100,9 +92,7 @@ func GetRegistroInteresseByID(id uint) (*json.RegistroInteresseResponse, error) 
 				Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 				Longitude:   registroInteresse.Anuncio.Loja.Longitude,
 				IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-			}
-			if registroInteresse.Anuncio.Loja.Categoria.ID != 0 {
-				anuncioResp.Loja.Categoria = registroInteresse.Anuncio.Loja.Categoria.Nome
+				Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
 			}
 		}
 		response.Anuncio = anuncioResp
@@ -134,17 +124,14 @@ func GetAllRegistroInteresses() ([]json.RegistroInteresseResponse, error) {
 		// Se o anúncio foi carregado, adiciona ao response
 		if registroInteresse.Anuncio.ID != 0 {
 			anuncioResp := &json.AnuncioResponse{
-				ID:          registroInteresse.Anuncio.ID,
-				Titulo:      registroInteresse.Anuncio.Titulo,
-				Descricao:   registroInteresse.Anuncio.Descricao,
-				Preco:       registroInteresse.Anuncio.Preco,
-				Imagem:      registroInteresse.Anuncio.Imagem,
-				Destaque:    registroInteresse.Anuncio.Destaque,
-				IDLoja:      registroInteresse.Anuncio.IDLoja,
-				IDCategoria: registroInteresse.Anuncio.IDCategoria,
-			}
-			if registroInteresse.Anuncio.Categoria.ID != 0 {
-				anuncioResp.Categoria = registroInteresse.Anuncio.Categoria.Nome
+				ID:        registroInteresse.Anuncio.ID,
+				Titulo:    registroInteresse.Anuncio.Titulo,
+				Descricao: registroInteresse.Anuncio.Descricao,
+				Preco:     registroInteresse.Anuncio.Preco,
+				Imagem:    registroInteresse.Anuncio.Imagem,
+				Destaque:  registroInteresse.Anuncio.Destaque,
+				Categoria: registroInteresse.Anuncio.Categoria,
+				IDLoja:    registroInteresse.Anuncio.IDLoja,
 			}
 			if registroInteresse.Anuncio.Loja.ID != 0 {
 				anuncioResp.Loja = json.LojaResponse{
@@ -155,9 +142,7 @@ func GetAllRegistroInteresses() ([]json.RegistroInteresseResponse, error) {
 					Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 					Longitude:   registroInteresse.Anuncio.Loja.Longitude,
 					IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-				}
-				if registroInteresse.Anuncio.Loja.Categoria.ID != 0 {
-					anuncioResp.Loja.Categoria = registroInteresse.Anuncio.Loja.Categoria.Nome
+					Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
 				}
 			}
 			response.Anuncio = anuncioResp
@@ -192,17 +177,14 @@ func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]json.RegistroInteresseR
 		// Se o anúncio foi carregado, adiciona ao response
 		if registroInteresse.Anuncio.ID != 0 {
 			anuncioResp := &json.AnuncioResponse{
-				ID:          registroInteresse.Anuncio.ID,
-				Titulo:      registroInteresse.Anuncio.Titulo,
-				Descricao:   registroInteresse.Anuncio.Descricao,
-				Preco:       registroInteresse.Anuncio.Preco,
-				Imagem:      registroInteresse.Anuncio.Imagem,
-				Destaque:    registroInteresse.Anuncio.Destaque,
-				IDLoja:      registroInteresse.Anuncio.IDLoja,
-				IDCategoria: registroInteresse.Anuncio.IDCategoria,
-			}
-			if registroInteresse.Anuncio.Categoria.ID != 0 {
-				anuncioResp.Categoria = registroInteresse.Anuncio.Categoria.Nome
+				ID:        registroInteresse.Anuncio.ID,
+				Titulo:    registroInteresse.Anuncio.Titulo,
+				Descricao: registroInteresse.Anuncio.Descricao,
+				Preco:     registroInteresse.Anuncio.Preco,
+				Imagem:    registroInteresse.Anuncio.Imagem,
+				Destaque:  registroInteresse.Anuncio.Destaque,
+				Categoria: registroInteresse.Anuncio.Categoria,
+				IDLoja:    registroInteresse.Anuncio.IDLoja,
 			}
 			if registroInteresse.Anuncio.Loja.ID != 0 {
 				anuncioResp.Loja = json.LojaResponse{
@@ -213,9 +195,7 @@ func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]json.RegistroInteresseR
 					Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 					Longitude:   registroInteresse.Anuncio.Loja.Longitude,
 					IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-				}
-				if registroInteresse.Anuncio.Loja.Categoria.ID != 0 {
-					anuncioResp.Loja.Categoria = registroInteresse.Anuncio.Loja.Categoria.Nome
+					Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
 				}
 			}
 			response.Anuncio = anuncioResp
@@ -236,4 +216,3 @@ func SoftDeleteRegistroInteresse(id uint) error {
 func RestoreRegistroInteresse(id uint) error {
 	return datasource.RestoreRegistroInteresse(id)
 }
-

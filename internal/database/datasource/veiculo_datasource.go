@@ -80,12 +80,14 @@ func GetHistoricosByUsuario(idUsuario uint) ([]models.HistoricoVeiculo, error) {
 // CreateVeiculo cria um novo veículo
 func CreateVeiculo(req json.VeiculoRequest) (*models.Veiculo, error) {
 	veiculo := models.Veiculo{
-		Modelo:    req.Modelo,
-		Ano:       req.Ano,
-		Cor:       req.Cor,
-		Placa:     req.Placa,
-		IDUsuario: req.IDUsuario,
-		Ativo:     true,
+		Modelo:        req.Modelo,
+		Ano:           req.Ano,
+		Cor:           req.Cor,
+		Placa:         req.Placa,
+		Quilometragem: req.Quilometragem,
+		Observacoes:   req.Observacoes,
+		IDUsuario:     req.IDUsuario,
+		Ativo:         true,
 	}
 
 	err := database.DB.Create(&veiculo).Error
@@ -124,6 +126,8 @@ func UpdateVeiculo(id uint, req json.VeiculoRequest) (*models.Veiculo, error) {
 	veiculo.Ano = req.Ano
 	veiculo.Cor = req.Cor
 	veiculo.Placa = req.Placa
+	veiculo.Quilometragem = req.Quilometragem
+	veiculo.Observacoes = req.Observacoes
 	veiculo.IDUsuario = req.IDUsuario
 
 	err = database.DB.Save(&veiculo).Error

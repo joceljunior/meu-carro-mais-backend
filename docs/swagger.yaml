@@ -17,12 +17,12 @@ definitions:
     type: object
   json.AnuncioRequest:
     properties:
+      categoria:
+        type: string
       descricao:
         type: string
       destaque:
         type: boolean
-      id_categoria:
-        type: integer
       id_loja:
         type: integer
       id_produto:
@@ -45,8 +45,8 @@ definitions:
       titulo:
         type: string
     required:
+    - categoria
     - descricao
-    - id_categoria
     - id_loja
     - preco
     - tipo_anuncio
@@ -61,8 +61,6 @@ definitions:
       destaque:
         type: boolean
       id:
-        type: integer
-      id_categoria:
         type: integer
       id_loja:
         type: integer
@@ -300,13 +298,6 @@ definitions:
         example: 5
         type: integer
     type: object
-  json.CategoriaAnuncioResponse:
-    properties:
-      id:
-        type: integer
-      nome:
-        type: string
-    type: object
   json.CategoriaLojistaResponse:
     properties:
       id:
@@ -314,36 +305,11 @@ definitions:
       nome:
         type: string
     type: object
-  json.CategoriaServicoResponse:
-    properties:
-      id:
-        type: integer
-      nome:
-        type: string
-    type: object
-  json.CategoriasAnuncioResponse:
-    properties:
-      categorias:
-        items:
-          $ref: '#/definitions/json.CategoriaAnuncioResponse'
-        type: array
-      total:
-        type: integer
-    type: object
   json.CategoriasLojistaResponse:
     properties:
       categorias:
         items:
           $ref: '#/definitions/json.CategoriaLojistaResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.CategoriasServicoResponse:
-    properties:
-      categorias:
-        items:
-          $ref: '#/definitions/json.CategoriaServicoResponse'
         type: array
       total:
         type: integer
@@ -675,6 +641,8 @@ definitions:
     type: object
   json.ProdutoRequest:
     properties:
+      categoria:
+        type: string
       descricao:
         type: string
       estoque:
@@ -690,6 +658,7 @@ definitions:
         minimum: 0
         type: number
     required:
+    - categoria
     - id_loja
     - nome
     - preco
@@ -698,6 +667,8 @@ definitions:
     properties:
       ativo:
         type: boolean
+      categoria:
+        type: string
       data_cadastro:
         type: string
       descricao:
@@ -779,12 +750,12 @@ definitions:
     type: object
   json.ServicoRequest:
     properties:
+      categoria:
+        type: string
       descricao:
         type: string
       destaque:
         type: boolean
-      id_categoria:
-        type: integer
       id_loja:
         type: integer
       imagem:
@@ -795,8 +766,8 @@ definitions:
       titulo:
         type: string
     required:
+    - categoria
     - descricao
-    - id_categoria
     - id_loja
     - preco
     - titulo
@@ -812,8 +783,6 @@ definitions:
       distancia:
         type: number
       id:
-        type: integer
-      id_categoria:
         type: integer
       imagem:
         type: string
@@ -1101,8 +1070,14 @@ definitions:
         type: integer
       modelo:
         type: string
+      observacoes:
+        example: Veículo em ótimo estado
+        type: string
       placa:
         type: string
+      quilometragem:
+        example: 50000
+        type: integer
     required:
     - ano
     - cor
@@ -1126,8 +1101,12 @@ definitions:
         type: integer
       modelo:
         type: string
+      observacoes:
+        type: string
       placa:
         type: string
+      quilometragem:
+        type: integer
     type: object
   json.VeiculosLojaResponse:
     properties:
@@ -1471,26 +1450,6 @@ paths:
             additionalProperties: true
             type: object
       summary: Restaura anúncio excluído
-      tags:
-      - Anúncios
-  /anuncios/categorias:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as categorias de anúncio disponíveis
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.CategoriasAnuncioResponse'
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista categorias de anúncio
       tags:
       - Anúncios
   /anuncios/loja/{loja_id}:
@@ -4036,26 +3995,6 @@ paths:
       summary: Lista uploads de um serviço
       tags:
       - Uploads
-  /servicos/categorias:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todas as categorias de serviço disponíveis
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.CategoriasServicoResponse'
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista categorias de serviço
-      tags:
-      - Serviços
   /servicos/proximidade:
     get:
       consumes:

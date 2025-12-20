@@ -6,5 +6,6 @@ type ProdutoRequest struct {
 	Preco     float64 `json:"preco" binding:"required,min=0"`
 	Imagem    string  `json:"imagem,omitempty"`
 	Estoque   int     `json:"estoque" binding:"min=0"`
+	Categoria string  `json:"categoria" binding:"required"`
 	IDLoja    uint    `json:"id_loja" binding:"required"`
 }

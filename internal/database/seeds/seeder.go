@@ -35,14 +35,6 @@ func (s *Seeder) Run() error {
 		return fmt.Errorf("erro ao executar seed categoria_lojista: %v", err)
 	}
 
-	if err := s.seedCategoriaAnuncio(); err != nil {
-		return fmt.Errorf("erro ao executar seed categoria_anuncio: %v", err)
-	}
-
-	if err := s.seedCategoriaServico(); err != nil {
-		return fmt.Errorf("erro ao executar seed categoria_servico: %v", err)
-	}
-
 	if err := s.seedUsuario(); err != nil {
 		return fmt.Errorf("erro ao executar seed usuario: %v", err)
 	}
@@ -153,64 +145,6 @@ func (s *Seeder) seedCategoriaLojista() error {
 			log.Printf("✅ CategoriaLojista criada: %s", categoria.Nome)
 		} else {
 			log.Printf("⏭️ CategoriaLojista já existe: %s", categoria.Nome)
-		}
-	}
-
-	return nil
-}
-
-// seedCategoriaAnuncio popula a tabela categoria_anuncio
-func (s *Seeder) seedCategoriaAnuncio() error {
-	log.Println("📝 Populando tabela categoria_anuncio...")
-
-	categorias := []models.CategoriaAnuncio{
-		{Nome: "Carros"},
-		{Nome: "Motos"},
-		{Nome: "Caminhões"},
-		{Nome: "Peças"},
-		{Nome: "Serviços"},
-		{Nome: "Acessórios"},
-	}
-
-	for _, categoria := range categorias {
-		var existing models.CategoriaAnuncio
-		if err := s.db.Where("nome = ?", categoria.Nome).First(&existing).Error; err != nil {
-			// Se não existe, cria
-			if err := s.db.Create(&categoria).Error; err != nil {
-				return fmt.Errorf("erro ao criar categoria_anuncio %s: %v", categoria.Nome, err)
-			}
-			log.Printf("✅ CategoriaAnuncio criada: %s", categoria.Nome)
-		} else {
-			log.Printf("⏭️ CategoriaAnuncio já existe: %s", categoria.Nome)
-		}
-	}
-
-	return nil
-}
-
-// seedCategoriaServico popula a tabela categoria_servico
-func (s *Seeder) seedCategoriaServico() error {
-	log.Println("📝 Populando tabela categoria_servico...")
-
-	categorias := []models.CategoriaServico{
-		{Nome: "Manutenção"},
-		{Nome: "Revisão"},
-		{Nome: "Troca de Óleo"},
-		{Nome: "Alinhamento"},
-		{Nome: "Balanceamento"},
-		{Nome: "Ajuste de Freios"},
-	}
-
-	for _, categoria := range categorias {
-		var existing models.CategoriaServico
-		if err := s.db.Where("nome = ?", categoria.Nome).First(&existing).Error; err != nil {
-			// Se não existe, cria
-			if err := s.db.Create(&categoria).Error; err != nil {
-				return fmt.Errorf("erro ao criar categoria_servico %s: %v", categoria.Nome, err)
-			}
-			log.Printf("✅ CategoriaServico criada: %s", categoria.Nome)
-		} else {
-			log.Printf("⏭️ CategoriaServico já existe: %s", categoria.Nome)
 		}
 	}
 
@@ -479,12 +413,6 @@ func (s *Seeder) vincularUsuariosLojas() error {
 func (s *Seeder) seedAnuncio() error {
 	log.Println("📝 Populando tabela anuncio...")
 
-	// Busca categoria carros
-	var categoriaCarros models.CategoriaAnuncio
-	if err := s.db.Where("nome = ?", "Carros").First(&categoriaCarros).Error; err != nil {
-		return fmt.Errorf("erro ao buscar categoria carros: %v", err)
-	}
-
 	// Busca primeira loja
 	var loja models.Loja
 	if err := s.db.First(&loja).Error; err != nil {
@@ -498,8 +426,9 @@ func (s *Seeder) seedAnuncio() error {
 			Preco:       85000.00,
 			Imagem:      "https://via.placeholder.com/400x300",
 			Destaque:    true,
+			Categoria:   "Carros",
+			TipoAnuncio: "veiculo",
 			IDLoja:      loja.ID,
-			IDCategoria: categoriaCarros.ID,
 		},
 		{
 			Titulo:      "Toyota Corolla 2019",
@@ -507,8 +436,9 @@ func (s *Seeder) seedAnuncio() error {
 			Preco:       75000.00,
 			Imagem:      "https://via.placeholder.com/400x300",
 			Destaque:    false,
+			Categoria:   "Carros",
+			TipoAnuncio: "veiculo",
 			IDLoja:      loja.ID,
-			IDCategoria: categoriaCarros.ID,
 		},
 		{
 			Titulo:      "Volkswagen Golf GTI",
@@ -516,8 +446,29 @@ func (s *Seeder) seedAnuncio() error {
 			Preco:       95000.00,
 			Imagem:      "https://via.placeholder.com/400x300",
 			Destaque:    true,
+			Categoria:   "Carros",
+			TipoAnuncio: "veiculo",
 			IDLoja:      loja.ID,
-			IDCategoria: categoriaCarros.ID,
+		},
+		{
+			Titulo:      "Honda CB 500",
+			Descricao:   "Honda CB 500F 2021, baixa quilometragem, revisões em dia",
+			Preco:       32000.00,
+			Imagem:      "https://via.placeholder.com/400x300",
+			Destaque:    false,
+			Categoria:   "Motos",
+			TipoAnuncio: "veiculo",
+			IDLoja:      loja.ID,
+		},
+		{
+			Titulo:      "Kit Pastilhas de Freio Premium",
+			Descricao:   "Kit completo de pastilhas de freio cerâmicas para veículos de passeio",
+			Preco:       250.00,
+			Imagem:      "https://via.placeholder.com/400x300",
+			Destaque:    false,
+			Categoria:   "Peças",
+			TipoAnuncio: "produto",
+			IDLoja:      loja.ID,
 		},
 	}
 
@@ -547,36 +498,46 @@ func (s *Seeder) seedServico() error {
 		return fmt.Errorf("erro ao buscar loja: %v", err)
 	}
 
-	// Busca primeira categoria de serviço
-	var categoriaServico models.CategoriaServico
-	if err := s.db.First(&categoriaServico).Error; err != nil {
-		return fmt.Errorf("erro ao buscar categoria de serviço: %v", err)
-	}
-
 	servicos := []models.Servico{
 		{
-			Titulo:      "Troca de Óleo",
-			Descricao:   "Troca de óleo, filtro e óleo de filtro",
-			Preco:       150.00,
-			Imagem:      "https://via.placeholder.com/200x150",
-			IDLoja:      loja.ID,
-			IDCategoria: categoriaServico.ID,
+			Titulo:    "Troca de Óleo",
+			Descricao: "Troca de óleo, filtro e óleo de filtro",
+			Preco:     150.00,
+			Imagem:    "https://via.placeholder.com/200x150",
+			Categoria: "Manutenção",
+			IDLoja:    loja.ID,
 		},
 		{
-			Titulo:      "Alinhamento",
-			Descricao:   "Ajuste de direção, suspensão e direção",
-			Preco:       250.00,
-			Imagem:      "https://via.placeholder.com/200x150",
-			IDLoja:      loja.ID,
-			IDCategoria: categoriaServico.ID,
+			Titulo:    "Alinhamento",
+			Descricao: "Ajuste de direção, suspensão e direção",
+			Preco:     250.00,
+			Imagem:    "https://via.placeholder.com/200x150",
+			Categoria: "Alinhamento",
+			IDLoja:    loja.ID,
 		},
 		{
-			Titulo:      "Revisão Completa",
-			Descricao:   "Revisão completa do motor, freios, suspensão e direção",
-			Preco:       500.00,
-			Imagem:      "https://via.placeholder.com/200x150",
-			IDLoja:      loja.ID,
-			IDCategoria: categoriaServico.ID,
+			Titulo:    "Revisão Completa",
+			Descricao: "Revisão completa do motor, freios, suspensão e direção",
+			Preco:     500.00,
+			Imagem:    "https://via.placeholder.com/200x150",
+			Categoria: "Revisão",
+			IDLoja:    loja.ID,
+		},
+		{
+			Titulo:    "Balanceamento de Rodas",
+			Descricao: "Balanceamento completo das 4 rodas",
+			Preco:     80.00,
+			Imagem:    "https://via.placeholder.com/200x150",
+			Categoria: "Balanceamento",
+			IDLoja:    loja.ID,
+		},
+		{
+			Titulo:    "Troca de Pastilhas de Freio",
+			Descricao: "Troca de pastilhas de freio dianteiras ou traseiras",
+			Preco:     200.00,
+			Imagem:    "https://via.placeholder.com/200x150",
+			Categoria: "Ajuste de Freios",
+			IDLoja:    loja.ID,
 		},
 	}
 
@@ -651,12 +612,6 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		return fmt.Errorf("erro ao buscar plano premium: %v", err)
 	}
 
-	// Busca categoria carros
-	var categoriaCarros models.CategoriaAnuncio
-	if err := s.db.Where("nome = ?", "Carros").First(&categoriaCarros).Error; err != nil {
-		return fmt.Errorf("erro ao buscar categoria carros: %v", err)
-	}
-
 	// Busca uma loja para vincular o anúncio
 	var loja models.Loja
 	if err := s.db.First(&loja).Error; err != nil {
@@ -696,8 +651,8 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		Preco:       450000.00,
 		Imagem:      "https://via.placeholder.com/400x300?text=BMW+X5+2023",
 		Destaque:    true,
+		Categoria:   "Carros",
 		IDLoja:      loja.ID,
-		IDCategoria: categoriaCarros.ID,
 		TipoAnuncio: "veiculo",
 	}
 
@@ -758,6 +713,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     89.90,
 			Imagem:    "https://via.placeholder.com/300x200?text=Oleo+Motor",
 			Estoque:   50,
+			Categoria: "Óleos e Lubrificantes",
 			Ativo:     true,
 			IDLoja:    lojas[0].ID,
 		},
@@ -767,6 +723,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     25.50,
 			Imagem:    "https://via.placeholder.com/300x200?text=Filtro+Oleo",
 			Estoque:   100,
+			Categoria: "Filtros",
 			Ativo:     true,
 			IDLoja:    lojas[0].ID,
 		},
@@ -776,6 +733,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     180.00,
 			Imagem:    "https://via.placeholder.com/300x200?text=Pastilhas+Freio",
 			Estoque:   30,
+			Categoria: "Freios",
 			Ativo:     true,
 			IDLoja:    lojas[1].ID,
 		},
@@ -785,6 +743,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     350.00,
 			Imagem:    "https://via.placeholder.com/300x200?text=Bateria+60Ah",
 			Estoque:   15,
+			Categoria: "Elétrica",
 			Ativo:     true,
 			IDLoja:    lojas[1].ID,
 		},
@@ -794,6 +753,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     280.00,
 			Imagem:    "https://via.placeholder.com/300x200?text=Pneu+Aro+15",
 			Estoque:   20,
+			Categoria: "Pneus",
 			Ativo:     true,
 			IDLoja:    lojas[2].ID,
 		},
@@ -803,6 +763,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     450.00,
 			Imagem:    "https://via.placeholder.com/300x200?text=Amortecedor",
 			Estoque:   10,
+			Categoria: "Suspensão",
 			Ativo:     true,
 			IDLoja:    lojas[2].ID,
 		},
@@ -812,6 +773,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     120.00,
 			Imagem:    "https://via.placeholder.com/300x200?text=Correia+Dentada",
 			Estoque:   25,
+			Categoria: "Motor",
 			Ativo:     true,
 			IDLoja:    lojas[3].ID,
 		},
@@ -821,6 +783,7 @@ func (s *Seeder) seedProdutos() error {
 			Preco:     15.90,
 			Imagem:    "https://via.placeholder.com/300x200?text=Lampada+H7",
 			Estoque:   200,
+			Categoria: "Iluminação",
 			Ativo:     true,
 			IDLoja:    lojas[3].ID,
 		},
