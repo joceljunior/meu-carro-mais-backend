@@ -1,0 +1,90 @@
+### ============================================
+### Exemplos de CRUD de Descontos
+### ============================================
+### Uma loja só pode ter um desconto ativo por vez.
+### Para criar um novo desconto, é necessário cancelar o atual primeiro.
+### ============================================
+
+### 1. Criar um novo desconto para uma loja
+### IMPORTANTE: Uma loja só pode ter um desconto ativo por vez!
+POST http://localhost:8080/descontos
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "porcentagem": 10.5,
+  "data_validade": "2025-12-31T23:59:59Z"
+}
+
+### 2. Listar todos os descontos
+GET http://localhost:8080/descontos
+
+### 3. Listar apenas descontos ativos (não expirados)
+GET http://localhost:8080/descontos/ativos
+
+### 4. Buscar desconto por ID
+GET http://localhost:8080/descontos/1
+
+### 5. Buscar histórico de descontos de uma loja (todos, ativos e inativos)
+GET http://localhost:8080/lojas/1/descontos
+
+### 6. Buscar desconto ativo de uma loja
+GET http://localhost:8080/lojas/1/desconto-ativo
+
+### 7. Cancelar desconto por ID
+### Isso desativa o desconto (não exclui)
+POST http://localhost:8080/descontos/1/cancelar
+
+### 8. Cancelar desconto ativo de uma loja
+### Isso desativa o desconto ativo atual da loja
+POST http://localhost:8080/lojas/1/desconto-ativo/cancelar
+
+### 9. Soft delete de desconto (marca como excluído)
+DELETE http://localhost:8080/descontos/1
+
+### 10. Restaurar desconto que foi soft deleted
+POST http://localhost:8080/descontos/1/restore
+
+### ============================================
+### Fluxo completo de exemplo:
+### ============================================
+
+### Passo 1: Criar desconto de 15% para loja 1
+POST http://localhost:8080/descontos
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "porcentagem": 15.00,
+  "data_validade": "2025-06-30T23:59:59Z"
+}
+
+### Passo 2: Verificar o desconto ativo da loja 1
+GET http://localhost:8080/lojas/1/desconto-ativo
+
+### Passo 3: Tentar criar outro desconto (vai falhar - já tem desconto ativo)
+POST http://localhost:8080/descontos
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "porcentagem": 20.00,
+  "data_validade": "2025-12-31T23:59:59Z"
+}
+
+### Passo 4: Cancelar o desconto atual
+POST http://localhost:8080/lojas/1/desconto-ativo/cancelar
+
+### Passo 5: Agora criar novo desconto de 20%
+POST http://localhost:8080/descontos
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "porcentagem": 20.00,
+  "data_validade": "2025-12-31T23:59:59Z"
+}
+
+### Passo 6: Ver histórico completo de descontos da loja
+GET http://localhost:8080/lojas/1/descontos
+

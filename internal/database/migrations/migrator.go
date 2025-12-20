@@ -494,6 +494,31 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration018)
 
+	// Migration 019: Criar tabela de descontos para lojas
+	migration019 := m.NewMigration("019", "create_descontos_table").
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS descontos (
+				id SERIAL PRIMARY KEY,
+				id_loja INTEGER NOT NULL,
+				porcentagem DECIMAL(5,2) NOT NULL,
+				ativo BOOLEAN DEFAULT TRUE,
+				data_validade TIMESTAMP NOT NULL,
+				data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_exclusao TIMESTAMP,
+				CONSTRAINT fk_desconto_loja FOREIGN KEY (id_loja) REFERENCES lojas(id) ON DELETE CASCADE
+			)
+		`, `
+			DROP TABLE IF EXISTS descontos CASCADE
+		`).
+		AddIndexSQL("descontos", "idx_desconto_id_loja", "id_loja").
+		AddIndexSQL("descontos", "idx_desconto_ativo", "ativo").
+		AddIndexSQL("descontos", "idx_desconto_data_exclusao", "data_exclusao").
+		AddIndexSQL("descontos", "idx_desconto_data_validade", "data_validade").
+		AddIndexSQL("descontos", "idx_desconto_loja_ativo", "id_loja, ativo").
+		Build()
+	m.migrations = append(m.migrations, migration019)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
