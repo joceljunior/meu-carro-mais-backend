@@ -368,6 +368,43 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration015)
 
+	// Migration 016: Criar tabela de logs
+	migration016 := m.NewMigration("016", "create_logs_table").
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS logs (
+				id SERIAL PRIMARY KEY,
+				id_usuario INTEGER,
+				tipo_acao VARCHAR(50) NOT NULL,
+				entidade VARCHAR(50) NOT NULL,
+				id_entidade INTEGER,
+				descricao VARCHAR(500),
+				dados_antigos JSONB,
+				dados_novos JSONB,
+				ip VARCHAR(45),
+				user_agent VARCHAR(500),
+				metodo_http VARCHAR(10),
+				endpoint VARCHAR(255),
+				status_http INTEGER DEFAULT 200,
+				data_acao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_exclusao TIMESTAMP,
+				CONSTRAINT fk_log_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE SET NULL
+			)
+		`, `
+			DROP TABLE IF EXISTS logs CASCADE
+		`).
+		AddIndexSQL("logs", "idx_log_id_usuario", "id_usuario").
+		AddIndexSQL("logs", "idx_log_tipo_acao", "tipo_acao").
+		AddIndexSQL("logs", "idx_log_entidade", "entidade").
+		AddIndexSQL("logs", "idx_log_id_entidade", "id_entidade").
+		AddIndexSQL("logs", "idx_log_data_acao", "data_acao").
+		AddIndexSQL("logs", "idx_log_data_exclusao", "data_exclusao").
+		AddIndexSQL("logs", "idx_log_usuario_entidade", "id_usuario, entidade").
+		AddIndexSQL("logs", "idx_log_entidade_acao", "entidade, tipo_acao").
+		Build()
+	m.migrations = append(m.migrations, migration016)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

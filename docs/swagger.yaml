@@ -627,6 +627,43 @@ definitions:
       total:
         type: integer
     type: object
+  json.LogResponse:
+    properties:
+      dados_antigos: {}
+      dados_novos: {}
+      data_acao:
+        type: string
+      data_atualizacao:
+        type: string
+      data_cadastro:
+        type: string
+      descricao:
+        type: string
+      endpoint:
+        type: string
+      entidade:
+        type: string
+      id:
+        type: integer
+      id_entidade:
+        type: integer
+      id_usuario:
+        type: integer
+      ip:
+        type: string
+      metodo_http:
+        type: string
+      status_http:
+        type: integer
+      tipo_acao:
+        type: string
+      user_agent:
+        type: string
+      usuario:
+        allOf:
+        - $ref: '#/definitions/json.UserResponse'
+        description: Dados relacionados
+    type: object
   json.LoginRequest:
     properties:
       email:
@@ -646,6 +683,19 @@ definitions:
         type: string
       nome_plano:
         type: string
+    type: object
+  json.LogsResponse:
+    properties:
+      limit:
+        type: integer
+      logs:
+        items:
+          $ref: '#/definitions/json.LogResponse'
+        type: array
+      offset:
+        type: integer
+      total:
+        type: integer
     type: object
   json.LojaRequest:
     properties:
@@ -2650,6 +2700,170 @@ paths:
       summary: Login/Criação do usuário
       tags:
       - Autenticação
+  /logs:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os logs do sistema com paginação
+      parameters:
+      - description: 'Limite de resultados (padrão: 50)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Offset para paginação (padrão: 0)'
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.LogsResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os logs
+      tags:
+      - Logs
+  /logs/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna um log específico pelo ID
+      parameters:
+      - description: ID do log
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.LogResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Log não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca log por ID
+      tags:
+      - Logs
+  /logs/acao/{tipo}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os logs de um tipo de ação específico
+      parameters:
+      - description: Tipo de ação (criar, atualizar, deletar, resgatar, etc.)
+        in: path
+        name: tipo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/json.LogResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista logs por tipo de ação
+      tags:
+      - Logs
+  /logs/entidade/{entidade}/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os logs de uma entidade específica
+      parameters:
+      - description: Nome da entidade (anuncio, produto, servico, etc.)
+        in: path
+        name: entidade
+        required: true
+        type: string
+      - description: ID da entidade
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/json.LogResponse'
+            type: array
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista logs de uma entidade
+      tags:
+      - Logs
+  /logs/usuario/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os logs de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/json.LogResponse'
+            type: array
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista logs de um usuário
+      tags:
+      - Logs
   /lojas:
     get:
       consumes:

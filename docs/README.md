@@ -52,6 +52,15 @@ API para gerenciamento de usuários, lojas e serviços automotivos.
 - **PUT /historicos-resgate/{id}/status** - Atualiza status do resgate
   - [Documentação detalhada](HISTORICO_RESGATE.md)
 
+### Logs
+
+- **GET /logs** - Lista todos os logs do sistema (com paginação)
+- **GET /logs/{id}** - Busca log por ID
+- **GET /logs/usuario/{id}** - Lista logs de um usuário
+- **GET /logs/entidade/{entidade}/{id}** - Lista logs de uma entidade
+- **GET /logs/acao/{tipo}** - Lista logs por tipo de ação
+  - [Documentação detalhada](LOGS.md)
+
 ### Pagamentos
 
 - **POST /pagamentos/checkout** - Cria sessão de checkout para pagamento único

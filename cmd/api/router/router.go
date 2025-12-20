@@ -62,6 +62,7 @@ func NewRouter() *gin.Engine {
 		&PagamentoRouter{},
 		&CarteiraRouter{},
 		&RegistroInteresseRouter{},
+		&LogRouter{},
 	}
 
 	for _, rt := range routers {

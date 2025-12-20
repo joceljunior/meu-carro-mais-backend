@@ -60,6 +60,11 @@ func CreateAnuncioHandler(c *gin.Context) {
 		return
 	}
 
+	// Registra log da criação
+	idAnuncio := uint(resp.ID)
+	LogAction(c, "criar", "anuncio", &idAnuncio, 
+		"Anúncio criado: "+resp.Titulo, nil, resp)
+
 	c.JSON(http.StatusCreated, resp)
 }
 
@@ -149,6 +154,9 @@ func UpdateAnuncioHandler(c *gin.Context) {
 		return
 	}
 
+	// Busca dados antigos para o log
+	anuncioAntigo, _ := services.GetAnuncioByID(uint(id))
+
 	resp, err := services.UpdateAnuncio(uint(id), req)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -156,6 +164,11 @@ func UpdateAnuncioHandler(c *gin.Context) {
 		})
 		return
 	}
+
+	// Registra log da atualização
+	idAnuncio := uint(id)
+	LogAction(c, "atualizar", "anuncio", &idAnuncio,
+		"Anúncio atualizado: "+resp.Titulo, anuncioAntigo, resp)
 
 	c.JSON(http.StatusOK, resp)
 }
@@ -182,6 +195,9 @@ func SoftDeleteAnuncioHandler(c *gin.Context) {
 		return
 	}
 
+	// Busca dados antes de deletar para o log
+	anuncioAntigo, _ := services.GetAnuncioByID(uint(id))
+
 	err = services.SoftDeleteAnuncio(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -189,6 +205,11 @@ func SoftDeleteAnuncioHandler(c *gin.Context) {
 		})
 		return
 	}
+
+	// Registra log da exclusão
+	idAnuncio := uint(id)
+	LogAction(c, "deletar", "anuncio", &idAnuncio,
+		"Anúncio excluído (soft delete)", anuncioAntigo, nil)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Anúncio excluído com sucesso",
@@ -224,6 +245,14 @@ func RestoreAnuncioHandler(c *gin.Context) {
 		})
 		return
 	}
+
+	// Busca dados restaurados para o log
+	anuncioRestaurado, _ := services.GetAnuncioByID(uint(id))
+
+	// Registra log da restauração
+	idAnuncio := uint(id)
+	LogAction(c, "restaurar", "anuncio", &idAnuncio,
+		"Anúncio restaurado", nil, anuncioRestaurado)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Anúncio restaurado com sucesso",
@@ -290,6 +319,14 @@ func ResgatarAnuncioHandler(c *gin.Context) {
 		})
 		return
 	}
+
+	// Registra log do resgate
+	idHistorico := uint(resp.ID)
+	idAnuncio := uint(anuncioID)
+	LogAction(c, "resgatar", "anuncio", &idAnuncio,
+		"Anúncio resgatado - histórico de resgate criado", nil, resp)
+	LogAction(c, "criar", "historico_resgate", &idHistorico,
+		"Histórico de resgate criado para anúncio", nil, resp)
 
 	c.JSON(http.StatusCreated, resp)
 }

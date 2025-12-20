@@ -320,6 +320,12 @@ func AprovarResgateHandler(c *gin.Context) {
 
 	// Retorna o histórico atualizado
 	historicoAtualizado, _ := services.GetHistoricoResgateByID(uint(id))
+	
+	// Registra log da aprovação
+	idHistorico := uint(id)
+	LogAction(c, "aprovar", "historico_resgate", &idHistorico,
+		"Resgate aprovado pela loja", historico, historicoAtualizado)
+
 	c.JSON(http.StatusOK, historicoAtualizado)
 }
 
@@ -371,6 +377,12 @@ func RejeitarResgateHandler(c *gin.Context) {
 
 	// Retorna o histórico atualizado
 	historicoAtualizado, _ := services.GetHistoricoResgateByID(uint(id))
+	
+	// Registra log da rejeição
+	idHistorico := uint(id)
+	LogAction(c, "rejeitar", "historico_resgate", &idHistorico,
+		"Resgate rejeitado pela loja", historico, historicoAtualizado)
+
 	c.JSON(http.StatusOK, historicoAtualizado)
 }
 

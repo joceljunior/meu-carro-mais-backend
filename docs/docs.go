@@ -2213,6 +2213,250 @@ const docTemplate = `{
                 }
             }
         },
+        "/logs": {
+            "get": {
+                "description": "Retorna todos os logs do sistema com paginação",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Lista todos os logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limite de resultados (padrão: 50)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset para paginação (padrão: 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.LogsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/logs/acao/{tipo}": {
+            "get": {
+                "description": "Retorna todos os logs de um tipo de ação específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Lista logs por tipo de ação",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tipo de ação (criar, atualizar, deletar, resgatar, etc.)",
+                        "name": "tipo",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.LogResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/logs/entidade/{entidade}/{id}": {
+            "get": {
+                "description": "Retorna todos os logs de uma entidade específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Lista logs de uma entidade",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Nome da entidade (anuncio, produto, servico, etc.)",
+                        "name": "entidade",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID da entidade",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.LogResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/logs/usuario/{id}": {
+            "get": {
+                "description": "Retorna todos os logs de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Lista logs de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.LogResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/logs/{id}": {
+            "get": {
+                "description": "Retorna um log específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Logs"
+                ],
+                "summary": "Busca log por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do log",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.LogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Log não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/lojas": {
             "get": {
                 "description": "Retorna uma lista com todas as lojas ativas",
@@ -6550,6 +6794,63 @@ const docTemplate = `{
                 }
             }
         },
+        "json.LogResponse": {
+            "type": "object",
+            "properties": {
+                "dados_antigos": {},
+                "dados_novos": {},
+                "data_acao": {
+                    "type": "string"
+                },
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "entidade": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_entidade": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "metodo_http": {
+                    "type": "string"
+                },
+                "status_http": {
+                    "type": "integer"
+                },
+                "tipo_acao": {
+                    "type": "string"
+                },
+                "user_agent": {
+                    "type": "string"
+                },
+                "usuario": {
+                    "description": "Dados relacionados",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.UserResponse"
+                        }
+                    ]
+                }
+            }
+        },
         "json.LoginRequest": {
             "type": "object",
             "properties": {
@@ -6578,6 +6879,26 @@ const docTemplate = `{
                 },
                 "nome_plano": {
                     "type": "string"
+                }
+            }
+        },
+        "json.LogsResponse": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.LogResponse"
+                    }
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

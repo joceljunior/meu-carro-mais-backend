@@ -39,6 +39,14 @@ func CreateRegistroInteresseHandler(c *gin.Context) {
 		return
 	}
 
+	// Registra log do registro de interesse
+	idRegistro := uint(resp.ID)
+	idAnuncio := uint(req.IDAnuncio)
+	LogAction(c, "criar", "registro_interesse", &idRegistro,
+		"Registro de interesse criado para anúncio", nil, resp)
+	LogAction(c, "registrar_interesse", "anuncio", &idAnuncio,
+		"Interesse registrado no anúncio por "+resp.Nome, nil, resp)
+
 	c.JSON(http.StatusCreated, resp)
 }
 
