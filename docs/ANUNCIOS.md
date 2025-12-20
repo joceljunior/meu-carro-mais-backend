@@ -124,10 +124,117 @@ curl -X GET "http://localhost:8080/anuncios" \
 
 Este endpoint pode ser expandido no futuro para incluir:
 - Filtro por categoria de anúncio
-- Filtro por loja
 - Filtro por faixa de preço
 - Filtro por localização (proximidade)
 - Ordenação por preço, destaque, data, etc.
+
+---
+
+## Anúncios por Loja
+
+### GET /anuncios/loja/{loja_id}
+
+Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque (primeiro) e data de cadastro (mais recente primeiro).
+
+#### Request
+
+**Método**: GET  
+**URL**: `/anuncios/loja/{loja_id}`  
+**Headers**: Nenhum obrigatório  
+**Parâmetros de Path**: 
+- `loja_id` (obrigatório): ID da loja
+
+#### Response
+
+**Status: 200 OK**
+
+```json
+{
+  "anuncios": [
+    {
+      "id": 5,
+      "titulo": "Troca de Óleo Completa",
+      "descricao": "Troca de óleo com filtro incluído",
+      "preco": 89.90,
+      "imagem": "https://exemplo.com/troca-oleo.jpg",
+      "destaque": true,
+      "id_loja": 1,
+      "id_categoria": 1,
+      "categoria": "Manutenção Preventiva",
+      "loja": {
+        "id": 1,
+        "nome": "Oficina São Paulo",
+        "cnpj": "12.345.678/0001-90",
+        "imagem": "https://exemplo.com/oficina.jpg",
+        "latitude": -23.5505,
+        "longitude": -46.6333,
+        "id_categoria": 1,
+        "categoria": "Oficina Mecânica"
+      }
+    },
+    {
+      "id": 8,
+      "titulo": "Alinhamento e Balanceamento",
+      "descricao": "Alinhamento e balanceamento das 4 rodas",
+      "preco": 120.00,
+      "imagem": "https://exemplo.com/alinhamento.jpg",
+      "destaque": false,
+      "id_loja": 1,
+      "id_categoria": 2,
+      "categoria": "Suspensão",
+      "loja": {
+        "id": 1,
+        "nome": "Oficina São Paulo",
+        "cnpj": "12.345.678/0001-90",
+        "imagem": "https://exemplo.com/oficina.jpg",
+        "latitude": -23.5505,
+        "longitude": -46.6333,
+        "id_categoria": 1,
+        "categoria": "Oficina Mecânica"
+      }
+    }
+  ],
+  "total": 2
+}
+```
+
+#### Erros
+
+**Status: 400 Bad Request** - ID de loja inválido
+```json
+{
+  "error": "ID de loja inválido"
+}
+```
+
+**Status: 500 Internal Server Error**
+```json
+{
+  "error": "Erro interno do servidor"
+}
+```
+
+#### Observações
+
+- Retorna apenas anúncios ativos (não excluídos)
+- Anúncios em destaque aparecem primeiro
+- Depois são ordenados por data de cadastro (mais recente primeiro)
+- Inclui informações completas da loja e categoria
+- Útil para exibir todos os anúncios de uma loja específica
+
+#### Exemplo de Uso
+
+```bash
+curl -X GET "http://localhost:8080/anuncios/loja/1" \
+  -H "Content-Type: application/json"
+```
+
+#### Casos de Uso
+
+1. **Vitrine da loja**: Para mostrar todos os anúncios de uma loja específica
+2. **Perfil da loja**: Para exibir produtos/serviços oferecidos pela loja
+3. **Filtro por loja**: Para permitir que usuários vejam apenas anúncios de uma loja
+4. **Dashboard da loja**: Para lojistas visualizarem seus próprios anúncios
 
 ---
 

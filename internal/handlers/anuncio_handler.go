@@ -280,6 +280,38 @@ func GetCategoriasAnuncioHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// GetAnunciosByLojaIDHandler godoc
+// @Summary      Lista anúncios de uma loja
+// @Description  Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data
+// @Tags         Anúncios
+// @Accept       json
+// @Produce      json
+// @Param        loja_id path int true "ID da loja"
+// @Success      200  {object}  json.AnunciosResponse
+// @Failure      400  {object}  map[string]interface{} "ID de loja inválido"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /anuncios/loja/{loja_id} [get]
+func GetAnunciosByLojaIDHandler(c *gin.Context) {
+	lojaIDStr := c.Param("loja_id")
+	lojaID, err := strconv.ParseUint(lojaIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID de loja inválido",
+		})
+		return
+	}
+
+	resp, err := services.GetAnunciosByLojaID(uint(lojaID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
 // ResgatarAnuncioHandler godoc
 // @Summary      Resgata um anúncio
 // @Description  Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio

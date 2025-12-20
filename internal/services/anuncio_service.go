@@ -170,6 +170,47 @@ func GetAllAnuncios() ([]json.AnuncioResponse, error) {
 	return responses, nil
 }
 
+// GetAnunciosByLojaID retorna todos os anúncios de uma loja específica
+func GetAnunciosByLojaID(lojaID uint) (*json.AnunciosResponse, error) {
+	anuncios, err := datasource.GetAnunciosByLojaID(lojaID)
+	if err != nil {
+		return nil, err
+	}
+
+	var anunciosResponse []json.AnuncioResponse
+	for _, anuncio := range anuncios {
+		anuncioResp := json.AnuncioResponse{
+			ID:          anuncio.ID,
+			Titulo:      anuncio.Titulo,
+			Descricao:   anuncio.Descricao,
+			Preco:       anuncio.Preco,
+			Imagem:      anuncio.Imagem,
+			Destaque:    anuncio.Destaque,
+			IDLoja:      anuncio.IDLoja,
+			IDCategoria: anuncio.IDCategoria,
+			Categoria:   anuncio.Categoria.Nome,
+			Loja: json.LojaResponse{
+				ID:          anuncio.Loja.ID,
+				Nome:        anuncio.Loja.Nome,
+				CNPJ:        anuncio.Loja.CNPJ,
+				Imagem:      anuncio.Loja.Imagem,
+				Latitude:    anuncio.Loja.Latitude,
+				Longitude:   anuncio.Loja.Longitude,
+				IDCategoria: anuncio.Loja.IDCategoria,
+				Categoria:   anuncio.Loja.Categoria.Nome,
+			},
+		}
+		anunciosResponse = append(anunciosResponse, anuncioResp)
+	}
+
+	response := &json.AnunciosResponse{
+		Anuncios: anunciosResponse,
+		Total:    len(anunciosResponse),
+	}
+
+	return response, nil
+}
+
 // UpdateAnuncio atualiza um anúncio existente
 func UpdateAnuncio(id uint, req json.AnuncioRequest) (*json.AnuncioResponse, error) {
 	anuncio, err := datasource.UpdateAnuncio(id, req)

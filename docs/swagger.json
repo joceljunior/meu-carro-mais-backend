@@ -131,6 +131,52 @@
                 }
             }
         },
+        "/anuncios/loja/{loja_id}": {
+            "get": {
+                "description": "Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Lista anúncios de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "loja_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnunciosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/anuncios/{id}": {
             "get": {
                 "description": "Retorna os dados de um anúncio específico pelo ID",

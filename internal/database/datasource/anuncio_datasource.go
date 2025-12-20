@@ -114,6 +114,22 @@ func GetAllAnuncios() ([]models.Anuncio, error) {
 	return anuncios, nil
 }
 
+// GetAnunciosByLojaID retorna todos os anúncios de uma loja específica
+func GetAnunciosByLojaID(lojaID uint) ([]models.Anuncio, error) {
+	var anuncios []models.Anuncio
+	err := database.DB.
+		Preload("Categoria").
+		Preload("Loja").
+		Preload("Loja.Categoria").
+		Where("id_loja = ? AND data_exclusao IS NULL", lojaID).
+		Order("destaque DESC, data_cadastro DESC").
+		Find(&anuncios).Error
+	if err != nil {
+		return nil, err
+	}
+	return anuncios, nil
+}
+
 // UpdateAnuncio atualiza um anúncio existente
 func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 	// Verifica se o anúncio existe e não foi excluído
