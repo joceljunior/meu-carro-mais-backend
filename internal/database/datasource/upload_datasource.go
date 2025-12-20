@@ -110,7 +110,6 @@ func GetUploadByID(id uint) (*models.Upload, error) {
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&upload).Error
 	if err != nil {
@@ -129,7 +128,6 @@ func GetAllUploads() ([]models.Upload, error) {
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Order("data_upload DESC").
 		Find(&uploads).Error
@@ -149,7 +147,6 @@ func GetAllUploadsByTipo(tipo string) ([]models.Upload, error) {
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("tipo = ? AND data_exclusao IS NULL", tipo).
 		Order("data_upload DESC").
 		Find(&uploads).Error
@@ -234,7 +231,6 @@ func GetUploadsByLojaID(idLoja uint) ([]models.Upload, error) {
 	var uploads []models.Upload
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
 		Order("tipo ASC, principal DESC, ordem ASC, data_upload ASC").
 		Find(&uploads).Error
@@ -280,7 +276,6 @@ func GetUploadPrincipalByEntidade(tipoEntidade string, idEntidade uint) (*models
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where(whereClause, args...).
 		First(&upload).Error
 	if err != nil {

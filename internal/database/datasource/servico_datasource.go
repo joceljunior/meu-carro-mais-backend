@@ -14,7 +14,6 @@ func GetServicosByProximidade(latitude, longitude float64) ([]json.ServicoRespon
 
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Find(&servicos).Error
 
@@ -90,7 +89,6 @@ func GetServicoByID(id uint) (*models.Servico, error) {
 	var servico models.Servico
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&servico).Error
 	if err != nil {
@@ -104,7 +102,6 @@ func GetAllServicos() ([]models.Servico, error) {
 	var servicos []models.Servico
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&servicos).Error

@@ -1,5 +1,34 @@
 basePath: /
 definitions:
+  json.AdministrativoRequest:
+    properties:
+      cpf:
+        type: string
+      data_nascimento:
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      imagem:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      nome:
+        type: string
+      senha:
+        minLength: 6
+        type: string
+      telefone:
+        type: string
+    required:
+    - cpf
+    - email
+    - nome
+    - senha
+    type: object
   json.AnuncioDestaqueResponse:
     properties:
       descricao:
@@ -95,6 +124,26 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  json.AprovacaoResponse:
+    properties:
+      bonificacao_executivo:
+        description: Moedas bonificadas ao executivo (se aprovado)
+        type: integer
+      id:
+        type: integer
+      mensagem:
+        type: string
+      motivo:
+        type: string
+      status:
+        type: string
+    type: object
+  json.AprovarCustomerRequest:
+    properties:
+      motivo:
+        description: Motivo opcional da aprovação
+        type: string
     type: object
   json.AvaliacaoEstatisticasResponse:
     properties:
@@ -356,6 +405,130 @@ definitions:
       portal_url:
         type: string
     type: object
+  json.CustomerRequest:
+    properties:
+      cpf:
+        type: string
+      data_nascimento:
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      id_executivo:
+        description: ID do executivo que está criando o customer (opcional)
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      nome:
+        type: string
+      senha:
+        minLength: 6
+        type: string
+      telefone:
+        type: string
+    required:
+    - cpf
+    - email
+    - nome
+    - senha
+    type: object
+  json.CustomerResponse:
+    properties:
+      ativo:
+        type: boolean
+      cpf:
+        type: string
+      data_cadastro:
+        type: string
+      data_nascimento:
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      executivo:
+        $ref: '#/definitions/json.ExecutivoInfo'
+      id:
+        type: integer
+      id_executivo:
+        type: integer
+      id_loja:
+        type: integer
+      id_plano:
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        type: number
+      loja:
+        $ref: '#/definitions/json.LojaUsuarioResponse'
+      longitude:
+        type: number
+      mensagem:
+        type: string
+      nome:
+        type: string
+      status:
+        type: string
+      telefone:
+        type: string
+      tipo:
+        type: string
+    type: object
+  json.CustomersListResponse:
+    properties:
+      customers:
+        items:
+          $ref: '#/definitions/json.CustomerResponse'
+        type: array
+      mensagem:
+        type: string
+      total:
+        type: integer
+    type: object
+  json.ExecutivoInfo:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
+  json.ExecutivoRequest:
+    properties:
+      cpf:
+        type: string
+      data_nascimento:
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      imagem:
+        type: string
+      latitude:
+        type: number
+      longitude:
+        type: number
+      nome:
+        type: string
+      senha:
+        minLength: 6
+        type: string
+      telefone:
+        type: string
+    required:
+    - cpf
+    - email
+    - nome
+    - senha
+    type: object
   json.HistoricoPagamentoResponse:
     properties:
       data_atualizacao:
@@ -555,6 +728,10 @@ definitions:
         type: string
       nome_plano:
         type: string
+      status:
+        type: string
+      tipo:
+        type: string
     type: object
   json.LogsResponse:
     properties:
@@ -743,6 +920,14 @@ definitions:
         type: string
       telefone:
         type: string
+    type: object
+  json.RejeitarCustomerRequest:
+    properties:
+      motivo:
+        description: Motivo obrigatório da rejeição
+        type: string
+    required:
+    - motivo
     type: object
   json.ResgatarAnuncioRequest:
     properties:
@@ -1016,7 +1201,11 @@ definitions:
         type: string
       nome:
         type: string
+      status:
+        type: string
       telefone:
+        type: string
+      tipo:
         type: string
     type: object
   json.VeiculoLojaRequest:
@@ -4627,6 +4816,236 @@ paths:
       summary: Restaura usuário excluído
       tags:
       - Usuários
+  /users/administrativo:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo usuário do tipo administrativo com todos os poderes
+        do sistema
+      parameters:
+      - description: Dados do usuário administrativo
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.AdministrativoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Usuário administrativo criado com sucesso
+          schema:
+            $ref: '#/definitions/json.CustomerResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criar usuário administrativo
+      tags:
+      - Administrativo
+  /users/customer:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo usuário do tipo customer. O customer começa com status
+        pendente e precisa ser aprovado por um administrativo. Opcionalmente pode
+        ser vinculado a um executivo.
+      parameters:
+      - description: Dados do customer
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Customer criado com sucesso (pendente aprovação)
+          schema:
+            $ref: '#/definitions/json.CustomerResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criar usuário customer
+      tags:
+      - Customers
+  /users/customers:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os customers (usuários que podem criar
+        lojas/produtos)
+      parameters:
+      - description: 'Filtrar por status: pendente, aprovado, rejeitado'
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de customers
+          schema:
+            $ref: '#/definitions/json.CustomersListResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os customers
+      tags:
+      - Administrativo
+  /users/customers/{id}/aprovar:
+    post:
+      consumes:
+      - application/json
+      description: Aprova um customer pendente. Se o customer foi criado por um executivo,
+        o executivo recebe bonificação em moedas
+      parameters:
+      - description: ID do customer
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados da aprovação (motivo opcional)
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/json.AprovarCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Customer aprovado com sucesso
+          schema:
+            $ref: '#/definitions/json.AprovacaoResponse'
+        "400":
+          description: ID inválido ou customer não está pendente
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Customer não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Aprova um customer
+      tags:
+      - Administrativo
+  /users/customers/{id}/rejeitar:
+    post:
+      consumes:
+      - application/json
+      description: Rejeita um customer pendente com motivo obrigatório
+      parameters:
+      - description: ID do customer
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados da rejeição (motivo obrigatório)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.RejeitarCustomerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Customer rejeitado
+          schema:
+            $ref: '#/definitions/json.AprovacaoResponse'
+        "400":
+          description: ID inválido, motivo não informado ou customer não está pendente
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Customer não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Rejeita um customer
+      tags:
+      - Administrativo
+  /users/customers/pendentes:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os customers aguardando aprovação
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de customers pendentes
+          schema:
+            $ref: '#/definitions/json.CustomersListResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista customers pendentes
+      tags:
+      - Administrativo
+  /users/executivo:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo usuário do tipo executivo, que pode criar customers
+        e receber bonificação quando aprovados
+      parameters:
+      - description: Dados do usuário executivo
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.ExecutivoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Usuário executivo criado com sucesso
+          schema:
+            $ref: '#/definitions/json.CustomerResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criar usuário executivo
+      tags:
+      - Administrativo
   /usuarios/{id_usuario}/historico:
     get:
       consumes:

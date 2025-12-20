@@ -4,6 +4,8 @@ type LoginResponse struct {
 	ID                  uint   `json:"id"`
 	Nome                string `json:"nome"`
 	Email               string `json:"email"`
+	Tipo                string `json:"tipo"`
+	Status              string `json:"status"`
 	NomePlano           string `json:"nome_plano,omitempty"`
 	LojaUsuarioResponse `json:"loja,omitempty"`
 }

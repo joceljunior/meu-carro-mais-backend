@@ -112,7 +112,6 @@ func GetHistoricoResgateByID(id uint) (*models.HistoricoResgate, error) {
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&historico).Error
 	if err != nil {
@@ -130,7 +129,6 @@ func GetAllHistoricosResgate() ([]models.HistoricoResgate, error) {
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Order("data_resgate DESC").
 		Find(&historicos).Error
@@ -149,7 +147,6 @@ func GetHistoricosResgateByUsuarioID(idUsuario uint) ([]models.HistoricoResgate,
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
 		Order("data_resgate DESC").
 		Find(&historicos).Error
@@ -168,7 +165,6 @@ func GetHistoricosResgateByLojaID(idLoja uint) ([]models.HistoricoResgate, error
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
 		Order("data_resgate DESC").
 		Find(&historicos).Error

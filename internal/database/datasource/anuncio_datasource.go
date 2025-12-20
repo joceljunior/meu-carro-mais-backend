@@ -24,7 +24,6 @@ func GetAnuncios() ([]models.Anuncio, error) {
 
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Find(&anuncios).Error
 
@@ -75,7 +74,6 @@ func GetAnuncioByID(id uint) (*models.Anuncio, error) {
 	var anuncio models.Anuncio
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&anuncio).Error
 	if err != nil {
@@ -89,7 +87,6 @@ func GetAllAnuncios() ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&anuncios).Error
@@ -104,7 +101,6 @@ func GetAnunciosByLojaID(lojaID uint) ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id_loja = ? AND data_exclusao IS NULL", lojaID).
 		Order("destaque DESC, data_cadastro DESC").
 		Find(&anuncios).Error

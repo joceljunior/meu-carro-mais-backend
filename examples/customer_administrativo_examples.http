@@ -1,0 +1,147 @@
+### =====================================================
+### ENDPOINTS ADMINISTRATIVO - Criação de Usuários Especiais
+### =====================================================
+
+### Criar usuário ADMINISTRATIVO (dono do sistema)
+POST http://localhost:8080/api/users/administrativo
+Content-Type: application/json
+
+{
+  "nome": "Admin Master",
+  "email": "admin@meucarro.com",
+  "senha": "admin123",
+  "cpf": "111.111.111-11",
+  "telefone": "(11) 99999-0000",
+  "endereco": "Rua do Admin, 1"
+}
+
+### Criar usuário EXECUTIVO (pode criar customers)
+POST http://localhost:8080/api/users/executivo
+Content-Type: application/json
+
+{
+  "nome": "Executivo Vendas",
+  "email": "executivo@meucarro.com",
+  "senha": "exec123",
+  "cpf": "222.222.222-22",
+  "telefone": "(11) 99999-1111",
+  "endereco": "Rua do Executivo, 2"
+}
+
+### =====================================================
+### ENDPOINTS CUSTOMER - Criação e Gerenciamento
+### =====================================================
+
+### Criar CUSTOMER sem executivo (pendente aprovação)
+POST http://localhost:8080/api/users/customer
+Content-Type: application/json
+
+{
+  "nome": "Loja do João",
+  "email": "loja@joao.com",
+  "senha": "loja123",
+  "cpf": "333.333.333-33",
+  "telefone": "(11) 99999-2222",
+  "endereco": "Rua da Loja, 100"
+}
+
+### Criar CUSTOMER vinculado a um EXECUTIVO (pendente aprovação)
+### Quando aprovado, o executivo recebe 100 moedas de bonificação
+POST http://localhost:8080/api/users/customer
+Content-Type: application/json
+
+{
+  "nome": "Auto Peças Maria",
+  "email": "maria@autopecas.com",
+  "senha": "maria123",
+  "cpf": "444.444.444-44",
+  "telefone": "(11) 99999-3333",
+  "endereco": "Av. das Peças, 200",
+  "id_executivo": 2
+}
+
+### =====================================================
+### LISTAGEM DE CUSTOMERS
+### =====================================================
+
+### Listar TODOS os customers
+GET http://localhost:8080/api/users/customers
+
+### Listar customers PENDENTES
+GET http://localhost:8080/api/users/customers/pendentes
+
+### Listar customers filtrados por status (pendente, aprovado, rejeitado)
+GET http://localhost:8080/api/users/customers?status=pendente
+
+### Listar customers aprovados
+GET http://localhost:8080/api/users/customers?status=aprovado
+
+### Listar customers rejeitados
+GET http://localhost:8080/api/users/customers?status=rejeitado
+
+### =====================================================
+### APROVAÇÃO E REJEIÇÃO DE CUSTOMERS
+### =====================================================
+
+### APROVAR customer (ID = 3)
+### Se o customer tem executivo vinculado, o executivo recebe 100 moedas
+POST http://localhost:8080/api/users/customers/3/aprovar
+Content-Type: application/json
+
+{
+  "motivo": "Documentação verificada e aprovada"
+}
+
+### APROVAR customer sem motivo (opcional)
+POST http://localhost:8080/api/users/customers/3/aprovar
+Content-Type: application/json
+
+{}
+
+### REJEITAR customer (ID = 4) - motivo obrigatório
+POST http://localhost:8080/api/users/customers/4/rejeitar
+Content-Type: application/json
+
+{
+  "motivo": "Documentação inválida ou incompleta"
+}
+
+### =====================================================
+### TESTE: Customer NÃO pode fazer login no mobile
+### =====================================================
+
+### Tentar login com email de customer (deve retornar erro)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "loja@joao.com",
+  "senha": "loja123"
+}
+# Esperado: Erro "usuários do tipo customer não podem fazer login no aplicativo mobile"
+
+### =====================================================
+### USUÁRIO MOBILE (comportamento padrão)
+### =====================================================
+
+### Criar usuário MOBILE (padrão do sistema)
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "nome": "João Mobile",
+  "email": "joao.mobile@email.com",
+  "senha": "joao123",
+  "cpf": "555.555.555-55",
+  "telefone": "(11) 99999-4444"
+}
+
+### Login com usuário mobile (deve funcionar)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "joao.mobile@email.com",
+  "senha": "joao123"
+}
+

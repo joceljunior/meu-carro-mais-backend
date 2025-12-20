@@ -11,17 +11,36 @@ type UserRouter struct{}
 func (ur *UserRouter) RegisterRoutes(rg *gin.RouterGroup) {
 	users := rg.Group("/users")
 	{
-		users.POST("", handlers.CreateUserHandler) // POST /users - Criar usuário
+		users.POST("", handlers.CreateUserHandler) // POST /users - Criar usuário (mobile)
 		users.GET("", handlers.GetAllUsersHandler) // GET /users - Listar todos os usuários
 
-		// Endpoints específicos (devem vir antes dos endpoints com :id)
+		// =====================================================
+		// ENDPOINTS ADMINISTRATIVO (criar usuários especiais)
+		// =====================================================
+		users.POST("/administrativo", handlers.CreateAdministrativoHandler) // POST /users/administrativo - Criar usuário administrativo
+		users.POST("/executivo", handlers.CreateExecutivoHandler)           // POST /users/executivo - Criar usuário executivo
+
+		// =====================================================
+		// ENDPOINTS CUSTOMER
+		// =====================================================
+		users.POST("/customer", handlers.CreateCustomerHandler)                // POST /users/customer - Criar customer (pendente aprovação)
+		users.GET("/customers", handlers.GetAllCustomersHandler)               // GET /users/customers - Listar todos customers (com filtro por status)
+		users.GET("/customers/pendentes", handlers.GetCustomersPendentesHandler) // GET /users/customers/pendentes - Listar customers pendentes
+		users.POST("/customers/:id/aprovar", handlers.AprovarCustomerHandler)  // POST /users/customers/:id/aprovar - Aprovar customer
+		users.POST("/customers/:id/rejeitar", handlers.RejeitarCustomerHandler) // POST /users/customers/:id/rejeitar - Rejeitar customer
+
+		// =====================================================
+		// ENDPOINTS ESPECÍFICOS DO USUÁRIO (devem vir antes dos endpoints com :id)
+		// =====================================================
 		users.GET("/:id/veiculos", handlers.GetVeiculosByUsuarioHandler)                      // GET /users/:id/veiculos - Veículos do usuário
 		users.GET("/:id/historico", handlers.GetHistoricosByUsuarioHandler)                   // GET /users/:id/historico - Histórico do usuário
 		users.GET("/:id/historicos-resgate", handlers.GetHistoricosResgateByUsuarioIDHandler) // GET /users/:id/historicos-resgate - Históricos de resgate do usuário
 		users.GET("/:id/avaliacoes", handlers.GetAvaliacoesByUsuarioIDHandler)                // GET /users/:id/avaliacoes - Avaliações do usuário
 		users.GET("/:id/plan-status", handlers.GetUserPlanStatusHandler)                      // GET /users/:id/plan-status - Status do plano do usuário
 
-		// Endpoints CRUD com :id (devem vir por último)
+		// =====================================================
+		// ENDPOINTS CRUD COM :id (devem vir por último)
+		// =====================================================
 		users.GET("/:id", handlers.GetUserHandler)              // GET /users/:id - Buscar usuário por ID
 		users.PUT("/:id", handlers.UpdateUserHandler)           // PUT /users/:id - Atualizar usuário
 		users.DELETE("/:id", handlers.SoftDeleteUserHandler)    // DELETE /users/:id - Soft delete usuário

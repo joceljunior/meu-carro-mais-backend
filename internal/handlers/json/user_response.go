@@ -17,6 +17,8 @@ type UserResponse struct {
 	Longitude      *float64             `json:"longitude,omitempty"`
 	IDPlano        uint                 `json:"id_plano"`
 	IDLoja         *uint                `json:"id_loja,omitempty"`
+	Tipo           string               `json:"tipo"`
+	Status         string               `json:"status"`
 	Loja           *LojaUsuarioResponse `json:"loja,omitempty"`
 	Mensagem       string               `json:"mensagem,omitempty"`
 }

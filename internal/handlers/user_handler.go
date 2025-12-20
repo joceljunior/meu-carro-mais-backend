@@ -240,3 +240,241 @@ func GetUserPlanStatusHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+// =====================================================
+// ENDPOINTS ADMINISTRATIVO
+// =====================================================
+
+// CreateAdministrativoHandler godoc
+// @Summary      Criar usuário administrativo
+// @Description  Cria um novo usuário do tipo administrativo com todos os poderes do sistema
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        request body json.AdministrativoRequest true "Dados do usuário administrativo"
+// @Success      201  {object}  json.CustomerResponse "Usuário administrativo criado com sucesso"
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /users/administrativo [post]
+func CreateAdministrativoHandler(c *gin.Context) {
+	var req json.AdministrativoRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Dados inválidos",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.CreateAdministrativo(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, resp)
+}
+
+// CreateExecutivoHandler godoc
+// @Summary      Criar usuário executivo
+// @Description  Cria um novo usuário do tipo executivo, que pode criar customers e receber bonificação quando aprovados
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        request body json.ExecutivoRequest true "Dados do usuário executivo"
+// @Success      201  {object}  json.CustomerResponse "Usuário executivo criado com sucesso"
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /users/executivo [post]
+func CreateExecutivoHandler(c *gin.Context) {
+	var req json.ExecutivoRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Dados inválidos",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.CreateExecutivo(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, resp)
+}
+
+// GetAllCustomersHandler godoc
+// @Summary      Lista todos os customers
+// @Description  Retorna uma lista com todos os customers (usuários que podem criar lojas/produtos)
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        status query string false "Filtrar por status: pendente, aprovado, rejeitado"
+// @Success      200 {object} json.CustomersListResponse "Lista de customers"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/customers [get]
+func GetAllCustomersHandler(c *gin.Context) {
+	status := c.Query("status")
+
+	var resp *json.CustomersListResponse
+	var err error
+
+	if status != "" {
+		resp, err = services.GetCustomersByStatus(status)
+	} else {
+		resp, err = services.GetAllCustomers()
+	}
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// GetCustomersPendentesHandler godoc
+// @Summary      Lista customers pendentes
+// @Description  Retorna uma lista com todos os customers aguardando aprovação
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} json.CustomersListResponse "Lista de customers pendentes"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/customers/pendentes [get]
+func GetCustomersPendentesHandler(c *gin.Context) {
+	resp, err := services.GetCustomersPendentes()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// AprovarCustomerHandler godoc
+// @Summary      Aprova um customer
+// @Description  Aprova um customer pendente. Se o customer foi criado por um executivo, o executivo recebe bonificação em moedas
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do customer"
+// @Param        request body json.AprovarCustomerRequest false "Dados da aprovação (motivo opcional)"
+// @Success      200 {object} json.AprovacaoResponse "Customer aprovado com sucesso"
+// @Failure      400 {object} map[string]interface{} "ID inválido ou customer não está pendente"
+// @Failure      404 {object} map[string]interface{} "Customer não encontrado"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/customers/{id}/aprovar [post]
+func AprovarCustomerHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	var req json.AprovarCustomerRequest
+	// Ignora erro se body estiver vazio (motivo é opcional)
+	c.ShouldBindJSON(&req)
+
+	resp, err := services.AprovarCustomer(uint(id), req.Motivo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// RejeitarCustomerHandler godoc
+// @Summary      Rejeita um customer
+// @Description  Rejeita um customer pendente com motivo obrigatório
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do customer"
+// @Param        request body json.RejeitarCustomerRequest true "Dados da rejeição (motivo obrigatório)"
+// @Success      200 {object} json.AprovacaoResponse "Customer rejeitado"
+// @Failure      400 {object} map[string]interface{} "ID inválido, motivo não informado ou customer não está pendente"
+// @Failure      404 {object} map[string]interface{} "Customer não encontrado"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/customers/{id}/rejeitar [post]
+func RejeitarCustomerHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	var req json.RejeitarCustomerRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Motivo da rejeição é obrigatório",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.RejeitarCustomer(uint(id), req.Motivo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// =====================================================
+// ENDPOINTS CUSTOMER
+// =====================================================
+
+// CreateCustomerHandler godoc
+// @Summary      Criar usuário customer
+// @Description  Cria um novo usuário do tipo customer. O customer começa com status pendente e precisa ser aprovado por um administrativo. Opcionalmente pode ser vinculado a um executivo.
+// @Tags         Customers
+// @Accept       json
+// @Produce      json
+// @Param        request body json.CustomerRequest true "Dados do customer"
+// @Success      201  {object}  json.CustomerResponse "Customer criado com sucesso (pendente aprovação)"
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /users/customer [post]
+func CreateCustomerHandler(c *gin.Context) {
+	var req json.CustomerRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Dados inválidos",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.CreateCustomer(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, resp)
+}

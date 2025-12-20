@@ -40,7 +40,6 @@ func GetRegistroInteresseByID(id uint) (*models.RegistroInteresse, error) {
 	err := database.DB.
 		Preload("Anuncio").
 		Preload("Anuncio.Loja").
-		Preload("Anuncio.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&registroInteresse).Error
 	if err != nil {
@@ -55,7 +54,6 @@ func GetAllRegistroInteresses() ([]models.RegistroInteresse, error) {
 	err := database.DB.
 		Preload("Anuncio").
 		Preload("Anuncio.Loja").
-		Preload("Anuncio.Categoria").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&registrosInteresse).Error
@@ -71,7 +69,6 @@ func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]models.RegistroInteress
 	err := database.DB.
 		Preload("Anuncio").
 		Preload("Anuncio.Loja").
-		Preload("Anuncio.Categoria").
 		Where("id_anuncio = ? AND data_exclusao IS NULL", anuncioID).
 		Order("data_cadastro DESC").
 		Find(&registrosInteresse).Error

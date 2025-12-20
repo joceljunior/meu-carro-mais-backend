@@ -33,7 +33,6 @@ func GetVeiculoLojaByID(id uint) (*models.VeiculoLoja, error) {
 	var veiculo models.VeiculoLoja
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id = ? AND ativo = ? AND data_exclusao IS NULL", id, true).
 		First(&veiculo).Error
 	if err != nil {
@@ -47,7 +46,6 @@ func GetAllVeiculosLoja() ([]models.VeiculoLoja, error) {
 	var veiculos []models.VeiculoLoja
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&veiculos).Error
@@ -62,7 +60,6 @@ func GetVeiculosLojaByLojaID(idLoja uint) ([]models.VeiculoLoja, error) {
 	var veiculos []models.VeiculoLoja
 	err := database.DB.
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id_loja = ? AND ativo = ? AND data_exclusao IS NULL", idLoja, true).
 		Find(&veiculos).Error
 	if err != nil {

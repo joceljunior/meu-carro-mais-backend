@@ -50,6 +50,8 @@ func CreateNewUser(json json.UserRequest) (*models.Usuario, error) {
 		Longitude:      json.Longitude,
 		IDPlano:        1, // Plano padrão (Gratuito)
 		Ativo:          true,
+		Tipo:           models.TipoUsuarioMobile, // Tipo padrão é mobile
+		Status:         models.StatusUsuarioAprovado,
 	}
 	err := database.DB.Create(&user).Error
 	if err != nil {
@@ -58,6 +60,211 @@ func CreateNewUser(json json.UserRequest) (*models.Usuario, error) {
 
 	// Recarrega o usuário com os relacionamentos
 	return GetUserByEmailOnly(json.Email)
+}
+
+// CreateAdministrativo cria um novo usuário administrativo
+func CreateAdministrativo(req json.AdministrativoRequest) (*models.Usuario, error) {
+	user := models.Usuario{
+		Email:          req.Email,
+		Senha:          req.Senha,
+		IDLoja:         nil,
+		Nome:           req.Nome,
+		CPF:            req.CPF,
+		Imagem:         req.Imagem,
+		Telefone:       req.Telefone,
+		Endereco:       req.Endereco,
+		DataNascimento: req.DataNascimento,
+		Latitude:       req.Latitude,
+		Longitude:      req.Longitude,
+		IDPlano:        1,
+		Ativo:          true,
+		Tipo:           models.TipoUsuarioAdministrativo,
+		Status:         models.StatusUsuarioAprovado,
+	}
+	err := database.DB.Create(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByEmailOnly(req.Email)
+}
+
+// CreateExecutivo cria um novo usuário executivo
+func CreateExecutivo(req json.ExecutivoRequest) (*models.Usuario, error) {
+	user := models.Usuario{
+		Email:          req.Email,
+		Senha:          req.Senha,
+		IDLoja:         nil,
+		Nome:           req.Nome,
+		CPF:            req.CPF,
+		Imagem:         req.Imagem,
+		Telefone:       req.Telefone,
+		Endereco:       req.Endereco,
+		DataNascimento: req.DataNascimento,
+		Latitude:       req.Latitude,
+		Longitude:      req.Longitude,
+		IDPlano:        1,
+		Ativo:          true,
+		Tipo:           models.TipoUsuarioExecutivo,
+		Status:         models.StatusUsuarioAprovado,
+	}
+	err := database.DB.Create(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByEmailOnly(req.Email)
+}
+
+// CreateCustomer cria um novo usuário customer (sempre pendente)
+func CreateCustomer(req json.CustomerRequest) (*models.Usuario, error) {
+	user := models.Usuario{
+		Email:          req.Email,
+		Senha:          req.Senha,
+		IDLoja:         nil,
+		Nome:           req.Nome,
+		CPF:            req.CPF,
+		Imagem:         req.Imagem,
+		Telefone:       req.Telefone,
+		Endereco:       req.Endereco,
+		DataNascimento: req.DataNascimento,
+		Latitude:       req.Latitude,
+		Longitude:      req.Longitude,
+		IDPlano:        1,
+		Ativo:          true,
+		Tipo:           models.TipoUsuarioCustomer,
+		Status:         models.StatusUsuarioPendente, // Customer sempre começa pendente
+		IDExecutivo:    req.IDExecutivo,              // Referência ao executivo que criou (se houver)
+	}
+	err := database.DB.Create(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByID(user.ID)
+}
+
+// GetCustomersPendentes retorna todos os customers com status pendente
+func GetCustomersPendentes() ([]models.Usuario, error) {
+	var usuarios []models.Usuario
+	err := database.DB.
+		Preload("Loja").
+		Preload("Plano").
+		Preload("Executivo").
+		Where("tipo = ? AND status = ? AND data_exclusao IS NULL", models.TipoUsuarioCustomer, models.StatusUsuarioPendente).
+		Order("data_cadastro DESC").
+		Find(&usuarios).Error
+	if err != nil {
+		return nil, err
+	}
+	return usuarios, nil
+}
+
+// GetAllCustomers retorna todos os customers (independente do status)
+func GetAllCustomers() ([]models.Usuario, error) {
+	var usuarios []models.Usuario
+	err := database.DB.
+		Preload("Loja").
+		Preload("Plano").
+		Preload("Executivo").
+		Where("tipo = ? AND data_exclusao IS NULL", models.TipoUsuarioCustomer).
+		Order("data_cadastro DESC").
+		Find(&usuarios).Error
+	if err != nil {
+		return nil, err
+	}
+	return usuarios, nil
+}
+
+// GetCustomersByStatus retorna customers filtrados por status
+func GetCustomersByStatus(status models.StatusUsuario) ([]models.Usuario, error) {
+	var usuarios []models.Usuario
+	err := database.DB.
+		Preload("Loja").
+		Preload("Plano").
+		Preload("Executivo").
+		Where("tipo = ? AND status = ? AND data_exclusao IS NULL", models.TipoUsuarioCustomer, status).
+		Order("data_cadastro DESC").
+		Find(&usuarios).Error
+	if err != nil {
+		return nil, err
+	}
+	return usuarios, nil
+}
+
+// AprovarCustomer aprova um customer pendente
+func AprovarCustomer(id uint) (*models.Usuario, error) {
+	// Busca o usuário
+	usuario, err := GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("customer não encontrado")
+	}
+
+	// Verifica se é um customer
+	if usuario.Tipo != models.TipoUsuarioCustomer {
+		return nil, errors.New("usuário não é um customer")
+	}
+
+	// Verifica se está pendente
+	if usuario.Status != models.StatusUsuarioPendente {
+		return nil, errors.New("customer não está pendente")
+	}
+
+	// Atualiza o status para aprovado
+	err = database.DB.Model(&models.Usuario{}).
+		Where("id = ?", id).
+		Update("status", models.StatusUsuarioAprovado).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByID(id)
+}
+
+// RejeitarCustomer rejeita um customer pendente
+func RejeitarCustomer(id uint) (*models.Usuario, error) {
+	// Busca o usuário
+	usuario, err := GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("customer não encontrado")
+	}
+
+	// Verifica se é um customer
+	if usuario.Tipo != models.TipoUsuarioCustomer {
+		return nil, errors.New("usuário não é um customer")
+	}
+
+	// Verifica se está pendente
+	if usuario.Status != models.StatusUsuarioPendente {
+		return nil, errors.New("customer não está pendente")
+	}
+
+	// Atualiza o status para rejeitado
+	err = database.DB.Model(&models.Usuario{}).
+		Where("id = ?", id).
+		Update("status", models.StatusUsuarioRejeitado).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByID(id)
+}
+
+// GetExecutivoByCustomerID retorna o executivo que criou um customer
+func GetExecutivoByCustomerID(customerID uint) (*models.Usuario, error) {
+	// Busca o customer
+	customer, err := GetUserByID(customerID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Verifica se tem executivo vinculado
+	if customer.IDExecutivo == nil {
+		return nil, nil
+	}
+
+	// Busca o executivo
+	return GetUserByID(*customer.IDExecutivo)
 }
 
 // CreateUserFromLogin cria um novo usuário a partir dos dados do login
@@ -72,7 +279,9 @@ func CreateUserFromLogin(loginReq json.LoginRequest) (*models.Usuario, error) {
 		Nome:    "",      // Será preenchido pelo frontend se necessário
 		CPF:     tempCPF, // CPF temporário que pode ser atualizado depois
 		Imagem:  "",
-		IDPlano: 1, // Plano padrão (Gratuito)
+		IDPlano: 1,                           // Plano padrão (Gratuito)
+		Tipo:    models.TipoUsuarioMobile,    // Tipo padrão é mobile
+		Status:  models.StatusUsuarioAprovado,
 	}
 	err := database.DB.Create(&user).Error
 	if err != nil {

@@ -39,7 +39,6 @@ func GetAvaliacaoByID(id uint) (*models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&avaliacao).Error
 	if err != nil {
@@ -54,7 +53,6 @@ func GetAllAvaliacoes() ([]models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("data_exclusao IS NULL").
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -70,7 +68,6 @@ func GetAvaliacoesByLojaID(idLoja uint) ([]models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -86,7 +83,6 @@ func GetAvaliacoesByUsuarioID(idUsuario uint) ([]models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
-		Preload("Loja.Categoria").
 		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error

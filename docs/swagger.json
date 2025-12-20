@@ -4721,6 +4721,341 @@
                 }
             }
         },
+        "/users/administrativo": {
+            "post": {
+                "description": "Cria um novo usuário do tipo administrativo com todos os poderes do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Criar usuário administrativo",
+                "parameters": [
+                    {
+                        "description": "Dados do usuário administrativo",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.AdministrativoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Usuário administrativo criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/customer": {
+            "post": {
+                "description": "Cria um novo usuário do tipo customer. O customer começa com status pendente e precisa ser aprovado por um administrativo. Opcionalmente pode ser vinculado a um executivo.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Criar usuário customer",
+                "parameters": [
+                    {
+                        "description": "Dados do customer",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Customer criado com sucesso (pendente aprovação)",
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/customers": {
+            "get": {
+                "description": "Retorna uma lista com todos os customers (usuários que podem criar lojas/produtos)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Lista todos os customers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filtrar por status: pendente, aprovado, rejeitado",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de customers",
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomersListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/customers/pendentes": {
+            "get": {
+                "description": "Retorna uma lista com todos os customers aguardando aprovação",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Lista customers pendentes",
+                "responses": {
+                    "200": {
+                        "description": "Lista de customers pendentes",
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomersListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/customers/{id}/aprovar": {
+            "post": {
+                "description": "Aprova um customer pendente. Se o customer foi criado por um executivo, o executivo recebe bonificação em moedas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Aprova um customer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do customer",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados da aprovação (motivo opcional)",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/json.AprovarCustomerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer aprovado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.AprovacaoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou customer não está pendente",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Customer não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/customers/{id}/rejeitar": {
+            "post": {
+                "description": "Rejeita um customer pendente com motivo obrigatório",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Rejeita um customer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do customer",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados da rejeição (motivo obrigatório)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.RejeitarCustomerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer rejeitado",
+                        "schema": {
+                            "$ref": "#/definitions/json.AprovacaoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido, motivo não informado ou customer não está pendente",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Customer não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/executivo": {
+            "post": {
+                "description": "Cria um novo usuário do tipo executivo, que pode criar customers e receber bonificação quando aprovados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Criar usuário executivo",
+                "parameters": [
+                    {
+                        "description": "Dados do usuário executivo",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.ExecutivoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Usuário executivo criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CustomerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}": {
             "get": {
                 "description": "Retorna os dados de um usuário específico pelo ID",
@@ -5959,6 +6294,48 @@
         }
     },
     "definitions": {
+        "json.AdministrativoRequest": {
+            "type": "object",
+            "required": [
+                "cpf",
+                "email",
+                "nome",
+                "senha"
+            ],
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "senha": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "telefone": {
+                    "type": "string"
+                }
+            }
+        },
         "json.AnuncioDestaqueResponse": {
             "type": "object",
             "properties": {
@@ -6098,6 +6475,36 @@
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "json.AprovacaoResponse": {
+            "type": "object",
+            "properties": {
+                "bonificacao_executivo": {
+                    "description": "Moedas bonificadas ao executivo (se aprovado)",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "motivo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.AprovarCustomerRequest": {
+            "type": "object",
+            "properties": {
+                "motivo": {
+                    "description": "Motivo opcional da aprovação",
+                    "type": "string"
                 }
             }
         },
@@ -6477,6 +6884,190 @@
                 }
             }
         },
+        "json.CustomerRequest": {
+            "type": "object",
+            "required": [
+                "cpf",
+                "email",
+                "nome",
+                "senha"
+            ],
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
+                "id_executivo": {
+                    "description": "ID do executivo que está criando o customer (opcional)",
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "senha": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "telefone": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CustomerResponse": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
+                "cpf": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
+                "executivo": {
+                    "$ref": "#/definitions/json.ExecutivoInfo"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_executivo": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_plano": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaUsuarioResponse"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "telefone": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CustomersListResponse": {
+            "type": "object",
+            "properties": {
+                "customers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CustomerResponse"
+                    }
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.ExecutivoInfo": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.ExecutivoRequest": {
+            "type": "object",
+            "required": [
+                "cpf",
+                "email",
+                "nome",
+                "senha"
+            ],
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "senha": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "telefone": {
+                    "type": "string"
+                }
+            }
+        },
         "json.HistoricoPagamentoResponse": {
             "type": "object",
             "properties": {
@@ -6780,6 +7371,12 @@
                 },
                 "nome_plano": {
                     "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
                 }
             }
         },
@@ -7057,6 +7654,18 @@
                     "type": "string"
                 },
                 "telefone": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.RejeitarCustomerRequest": {
+            "type": "object",
+            "required": [
+                "motivo"
+            ],
+            "properties": {
+                "motivo": {
+                    "description": "Motivo obrigatório da rejeição",
                     "type": "string"
                 }
             }
@@ -7462,7 +8071,13 @@
                 "nome": {
                     "type": "string"
                 },
+                "status": {
+                    "type": "string"
+                },
                 "telefone": {
+                    "type": "string"
+                },
+                "tipo": {
                     "type": "string"
                 }
             }
