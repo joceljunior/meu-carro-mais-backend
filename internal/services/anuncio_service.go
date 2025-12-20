@@ -2,8 +2,58 @@ package services
 
 import (
 	"meu-carro-mais/internal/database/datasource"
+	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
 )
+
+// modelToAnuncioResponse converte o model de anúncio para response
+func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
+	response := json.AnuncioResponse{
+		ID:               anuncio.ID,
+		Titulo:           anuncio.Titulo,
+		Descricao:        anuncio.Descricao,
+		Preco:            anuncio.Preco,
+		Imagem:           anuncio.Imagem,
+		Destaque:         anuncio.Destaque,
+		Categoria:        anuncio.Categoria,
+		IDLoja:           anuncio.IDLoja,
+		IDProduto:        anuncio.IDProduto,
+		IDServico:        anuncio.IDServico,
+		IDVeiculo:        anuncio.IDVeiculo,
+		IDOfertaAutoMais: anuncio.IDOfertaAutoMais,
+		TipoAnuncio:      anuncio.TipoAnuncio,
+		Loja: json.LojaResponse{
+			ID:             anuncio.Loja.ID,
+			Nome:           anuncio.Loja.Nome,
+			CNPJ:           anuncio.Loja.CNPJ,
+			Imagem:         anuncio.Loja.Imagem,
+			Latitude:       anuncio.Loja.Latitude,
+			Longitude:      anuncio.Loja.Longitude,
+			Rating:         anuncio.Loja.Rating,
+			IsMeuCarroMais: anuncio.Loja.IsMeuCarroMais,
+			Categoria:      anuncio.Loja.Categoria,
+			IDUsuario:      anuncio.Loja.IDUsuario,
+		},
+	}
+
+	// Inclui a oferta Auto Mais se existir
+	if anuncio.OfertaAutoMais != nil {
+		response.OfertaAutoMais = &json.OfertaAutoMaisResponse{
+			ID:              anuncio.OfertaAutoMais.ID,
+			IDLoja:          anuncio.OfertaAutoMais.IDLoja,
+			Nome:            anuncio.OfertaAutoMais.Nome,
+			Descricao:       anuncio.OfertaAutoMais.Descricao,
+			Moedas:          anuncio.OfertaAutoMais.Moedas,
+			Porcentagem:     anuncio.OfertaAutoMais.Porcentagem,
+			Ativo:           anuncio.OfertaAutoMais.Ativo,
+			DataValidade:    anuncio.OfertaAutoMais.DataValidade,
+			DataCadastro:    anuncio.OfertaAutoMais.DataCadastro,
+			DataAtualizacao: anuncio.OfertaAutoMais.DataAtualizacao,
+		}
+	}
+
+	return response
+}
 
 // GetAnuncios retorna todos os anúncios
 func GetAnuncios() (*json.AnunciosResponse, error) {
@@ -14,27 +64,7 @@ func GetAnuncios() (*json.AnunciosResponse, error) {
 
 	var anunciosResponse []json.AnuncioResponse
 	for _, anuncio := range anuncios {
-		anuncioResp := json.AnuncioResponse{
-			ID:        anuncio.ID,
-			Titulo:    anuncio.Titulo,
-			Descricao: anuncio.Descricao,
-			Preco:     anuncio.Preco,
-			Imagem:    anuncio.Imagem,
-			Destaque:  anuncio.Destaque,
-			Categoria: anuncio.Categoria,
-			IDLoja:    anuncio.IDLoja,
-			Loja: json.LojaResponse{
-				ID:          anuncio.Loja.ID,
-				Nome:        anuncio.Loja.Nome,
-				CNPJ:        anuncio.Loja.CNPJ,
-				Imagem:      anuncio.Loja.Imagem,
-				Latitude:    anuncio.Loja.Latitude,
-				Longitude:   anuncio.Loja.Longitude,
-				Categoria: anuncio.Loja.Categoria,
-				IDUsuario: anuncio.Loja.IDUsuario,
-			},
-		}
-		anunciosResponse = append(anunciosResponse, anuncioResp)
+		anunciosResponse = append(anunciosResponse, modelToAnuncioResponse(&anuncio))
 	}
 
 	response := &json.AnunciosResponse{
@@ -52,28 +82,8 @@ func CreateAnuncio(req json.AnuncioRequest) (*json.AnuncioResponse, error) {
 		return nil, err
 	}
 
-	response := &json.AnuncioResponse{
-		ID:        anuncio.ID,
-		Titulo:    anuncio.Titulo,
-		Descricao: anuncio.Descricao,
-		Preco:     anuncio.Preco,
-		Imagem:    anuncio.Imagem,
-		Destaque:  anuncio.Destaque,
-		Categoria: anuncio.Categoria,
-		IDLoja:    anuncio.IDLoja,
-		Loja: json.LojaResponse{
-			ID:          anuncio.Loja.ID,
-			Nome:        anuncio.Loja.Nome,
-			CNPJ:        anuncio.Loja.CNPJ,
-			Imagem:      anuncio.Loja.Imagem,
-			Latitude:    anuncio.Loja.Latitude,
-			Longitude:   anuncio.Loja.Longitude,
-			Categoria: anuncio.Loja.Categoria,
-			IDUsuario: anuncio.Loja.IDUsuario,
-		},
-	}
-
-	return response, nil
+	response := modelToAnuncioResponse(anuncio)
+	return &response, nil
 }
 
 // GetAnuncioByID busca um anúncio por ID
@@ -83,28 +93,8 @@ func GetAnuncioByID(id uint) (*json.AnuncioResponse, error) {
 		return nil, err
 	}
 
-	response := &json.AnuncioResponse{
-		ID:        anuncio.ID,
-		Titulo:    anuncio.Titulo,
-		Descricao: anuncio.Descricao,
-		Preco:     anuncio.Preco,
-		Imagem:    anuncio.Imagem,
-		Destaque:  anuncio.Destaque,
-		Categoria: anuncio.Categoria,
-		IDLoja:    anuncio.IDLoja,
-		Loja: json.LojaResponse{
-			ID:          anuncio.Loja.ID,
-			Nome:        anuncio.Loja.Nome,
-			CNPJ:        anuncio.Loja.CNPJ,
-			Imagem:      anuncio.Loja.Imagem,
-			Latitude:    anuncio.Loja.Latitude,
-			Longitude:   anuncio.Loja.Longitude,
-			Categoria: anuncio.Loja.Categoria,
-			IDUsuario: anuncio.Loja.IDUsuario,
-		},
-	}
-
-	return response, nil
+	response := modelToAnuncioResponse(anuncio)
+	return &response, nil
 }
 
 // GetAllAnuncios retorna todos os anúncios ativos
@@ -116,27 +106,7 @@ func GetAllAnuncios() ([]json.AnuncioResponse, error) {
 
 	var responses []json.AnuncioResponse
 	for _, anuncio := range anuncios {
-		response := json.AnuncioResponse{
-			ID:        anuncio.ID,
-			Titulo:    anuncio.Titulo,
-			Descricao: anuncio.Descricao,
-			Preco:     anuncio.Preco,
-			Imagem:    anuncio.Imagem,
-			Destaque:  anuncio.Destaque,
-			Categoria: anuncio.Categoria,
-			IDLoja:    anuncio.IDLoja,
-			Loja: json.LojaResponse{
-				ID:          anuncio.Loja.ID,
-				Nome:        anuncio.Loja.Nome,
-				CNPJ:        anuncio.Loja.CNPJ,
-				Imagem:      anuncio.Loja.Imagem,
-				Latitude:    anuncio.Loja.Latitude,
-				Longitude:   anuncio.Loja.Longitude,
-				Categoria: anuncio.Loja.Categoria,
-				IDUsuario: anuncio.Loja.IDUsuario,
-			},
-		}
-		responses = append(responses, response)
+		responses = append(responses, modelToAnuncioResponse(&anuncio))
 	}
 
 	return responses, nil
@@ -151,27 +121,7 @@ func GetAnunciosByLojaID(lojaID uint) (*json.AnunciosResponse, error) {
 
 	var anunciosResponse []json.AnuncioResponse
 	for _, anuncio := range anuncios {
-		anuncioResp := json.AnuncioResponse{
-			ID:        anuncio.ID,
-			Titulo:    anuncio.Titulo,
-			Descricao: anuncio.Descricao,
-			Preco:     anuncio.Preco,
-			Imagem:    anuncio.Imagem,
-			Destaque:  anuncio.Destaque,
-			Categoria: anuncio.Categoria,
-			IDLoja:    anuncio.IDLoja,
-			Loja: json.LojaResponse{
-				ID:          anuncio.Loja.ID,
-				Nome:        anuncio.Loja.Nome,
-				CNPJ:        anuncio.Loja.CNPJ,
-				Imagem:      anuncio.Loja.Imagem,
-				Latitude:    anuncio.Loja.Latitude,
-				Longitude:   anuncio.Loja.Longitude,
-				Categoria: anuncio.Loja.Categoria,
-				IDUsuario: anuncio.Loja.IDUsuario,
-			},
-		}
-		anunciosResponse = append(anunciosResponse, anuncioResp)
+		anunciosResponse = append(anunciosResponse, modelToAnuncioResponse(&anuncio))
 	}
 
 	response := &json.AnunciosResponse{
@@ -189,28 +139,8 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*json.AnuncioResponse, err
 		return nil, err
 	}
 
-	response := &json.AnuncioResponse{
-		ID:        anuncio.ID,
-		Titulo:    anuncio.Titulo,
-		Descricao: anuncio.Descricao,
-		Preco:     anuncio.Preco,
-		Imagem:    anuncio.Imagem,
-		Destaque:  anuncio.Destaque,
-		Categoria: anuncio.Categoria,
-		IDLoja:    anuncio.IDLoja,
-		Loja: json.LojaResponse{
-			ID:          anuncio.Loja.ID,
-			Nome:        anuncio.Loja.Nome,
-			CNPJ:        anuncio.Loja.CNPJ,
-			Imagem:      anuncio.Loja.Imagem,
-			Latitude:    anuncio.Loja.Latitude,
-			Longitude:   anuncio.Loja.Longitude,
-			Categoria: anuncio.Loja.Categoria,
-			IDUsuario: anuncio.Loja.IDUsuario,
-		},
-	}
-
-	return response, nil
+	response := modelToAnuncioResponse(anuncio)
+	return &response, nil
 }
 
 // SoftDeleteAnuncio realiza soft delete do anúncio

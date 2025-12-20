@@ -47,17 +47,18 @@ func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
 	}
 
 	anuncio := models.Anuncio{
-		Titulo:      req.Titulo,
-		Descricao:   req.Descricao,
-		Preco:       req.Preco,
-		Imagem:      req.Imagem,
-		Destaque:    req.Destaque,
-		Categoria:   req.Categoria,
-		IDLoja:      req.IDLoja,
-		IDProduto:   req.IDProduto,
-		IDServico:   req.IDServico,
-		IDVeiculo:   req.IDVeiculo,
-		TipoAnuncio: req.TipoAnuncio,
+		Titulo:           req.Titulo,
+		Descricao:        req.Descricao,
+		Preco:            req.Preco,
+		Imagem:           req.Imagem,
+		Destaque:         req.Destaque,
+		Categoria:        req.Categoria,
+		IDLoja:           req.IDLoja,
+		IDProduto:        req.IDProduto,
+		IDServico:        req.IDServico,
+		IDVeiculo:        req.IDVeiculo,
+		IDOfertaAutoMais: req.IDOfertaAutoMais,
+		TipoAnuncio:      req.TipoAnuncio,
 	}
 
 	err := database.DB.Create(&anuncio).Error
@@ -74,6 +75,7 @@ func GetAnuncioByID(id uint) (*models.Anuncio, error) {
 	var anuncio models.Anuncio
 	err := database.DB.
 		Preload("Loja").
+		Preload("OfertaAutoMais").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&anuncio).Error
 	if err != nil {
@@ -87,6 +89,7 @@ func GetAllAnuncios() ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
 		Preload("Loja").
+		Preload("OfertaAutoMais").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&anuncios).Error
@@ -101,6 +104,7 @@ func GetAnunciosByLojaID(lojaID uint) ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
 		Preload("Loja").
+		Preload("OfertaAutoMais").
 		Where("id_loja = ? AND data_exclusao IS NULL", lojaID).
 		Order("destaque DESC, data_cadastro DESC").
 		Find(&anuncios).Error
@@ -139,6 +143,7 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 	anuncio.IDProduto = req.IDProduto
 	anuncio.IDServico = req.IDServico
 	anuncio.IDVeiculo = req.IDVeiculo
+	anuncio.IDOfertaAutoMais = req.IDOfertaAutoMais
 	anuncio.TipoAnuncio = req.TipoAnuncio
 
 	err = database.DB.Save(&anuncio).Error

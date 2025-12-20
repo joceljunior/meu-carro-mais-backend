@@ -1,0 +1,181 @@
+### ============================================
+### Exemplos de CRUD de Ofertas Auto Mais
+### ============================================
+### Ofertas Auto Mais permitem que usuários utilizem moedas do app
+### para obter descontos em anúncios.
+### O campo "moedas" é obrigatório e indica quantas moedas são necessárias.
+### ============================================
+
+### 1. Criar uma nova oferta Auto Mais para uma loja
+POST http://localhost:8080/ofertas-auto-mais
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "nome": "Desconto com Moedas - Troca de Óleo",
+  "descricao": "Use suas moedas Auto Mais e ganhe 20% de desconto na troca de óleo",
+  "moedas": 100,
+  "porcentagem": 20.00,
+  "data_validade": "2025-12-31T23:59:59Z"
+}
+
+### 2. Criar oferta Auto Mais sem data de validade (oferta permanente)
+POST http://localhost:8080/ofertas-auto-mais
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "nome": "Desconto Especial para Clientes Fiéis",
+  "descricao": "Troque 50 moedas por 10% de desconto em qualquer serviço",
+  "moedas": 50,
+  "porcentagem": 10.00
+}
+
+### 3. Listar todas as ofertas Auto Mais
+GET http://localhost:8080/ofertas-auto-mais
+
+### 4. Listar apenas ofertas Auto Mais ativas (não expiradas)
+GET http://localhost:8080/ofertas-auto-mais/ativas
+
+### 5. Buscar oferta Auto Mais por ID
+GET http://localhost:8080/ofertas-auto-mais/1
+
+### 6. Buscar todas as ofertas Auto Mais de uma loja
+GET http://localhost:8080/lojas/1/ofertas-auto-mais
+
+### 7. Buscar apenas ofertas Auto Mais ativas de uma loja
+GET http://localhost:8080/lojas/1/ofertas-auto-mais/ativas
+
+### 8. Atualizar uma oferta Auto Mais
+PUT http://localhost:8080/ofertas-auto-mais/1
+Content-Type: application/json
+
+{
+  "nome": "Super Desconto com Moedas - Troca de Óleo",
+  "descricao": "Use suas moedas Auto Mais e ganhe 25% de desconto na troca de óleo",
+  "moedas": 150,
+  "porcentagem": 25.00,
+  "data_validade": "2026-06-30T23:59:59Z"
+}
+
+### 9. Atualizar apenas alguns campos
+PUT http://localhost:8080/ofertas-auto-mais/1
+Content-Type: application/json
+
+{
+  "porcentagem": 30.00
+}
+
+### 10. Desativar uma oferta Auto Mais
+POST http://localhost:8080/ofertas-auto-mais/1/desativar
+
+### 11. Ativar uma oferta Auto Mais
+POST http://localhost:8080/ofertas-auto-mais/1/ativar
+
+### 12. Soft delete de oferta Auto Mais (marca como excluída)
+DELETE http://localhost:8080/ofertas-auto-mais/1
+
+### 13. Restaurar oferta Auto Mais que foi soft deleted
+POST http://localhost:8080/ofertas-auto-mais/1/restore
+
+### ============================================
+### Criando um anúncio com Oferta Auto Mais
+### ============================================
+
+### 14. Criar anúncio com oferta Auto Mais vinculada
+### O anúncio terá a opção de pagamento com moedas
+POST http://localhost:8080/anuncios
+Content-Type: application/json
+
+{
+  "titulo": "Troca de Óleo Sintético",
+  "descricao": "Troca de óleo sintético com filtro incluso",
+  "preco": 150.00,
+  "categoria": "Manutenção",
+  "id_loja": 1,
+  "id_servico": 1,
+  "id_oferta_auto_mais": 1,
+  "tipo_anuncio": "servico"
+}
+
+### ============================================
+### Fluxo completo de exemplo:
+### ============================================
+
+### Passo 1: Criar oferta Auto Mais de 15% por 100 moedas
+POST http://localhost:8080/ofertas-auto-mais
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "nome": "Desconto Fidelidade",
+  "descricao": "Desconto especial para clientes que acumularam moedas",
+  "moedas": 100,
+  "porcentagem": 15.00,
+  "data_validade": "2025-12-31T23:59:59Z"
+}
+
+### Passo 2: Verificar oferta criada
+GET http://localhost:8080/ofertas-auto-mais/1
+
+### Passo 3: Criar um anúncio usando essa oferta
+POST http://localhost:8080/anuncios
+Content-Type: application/json
+
+{
+  "titulo": "Revisão Completa",
+  "descricao": "Revisão completa do veículo com checklist de 50 itens",
+  "preco": 500.00,
+  "categoria": "Revisão",
+  "id_loja": 1,
+  "id_servico": 2,
+  "id_oferta_auto_mais": 1,
+  "tipo_anuncio": "servico"
+}
+
+### Passo 4: Ver o anúncio com a oferta Auto Mais vinculada
+GET http://localhost:8080/anuncios/1
+
+### Passo 5: Listar todas as ofertas ativas da loja
+GET http://localhost:8080/lojas/1/ofertas-auto-mais/ativas
+
+### ============================================
+### Diferentes tipos de ofertas:
+### ============================================
+
+### Oferta pequena: poucos pontos, pequeno desconto
+POST http://localhost:8080/ofertas-auto-mais
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "nome": "Desconto Bronze",
+  "descricao": "Desconto inicial para novos usuários",
+  "moedas": 25,
+  "porcentagem": 5.00
+}
+
+### Oferta média: pontos médios, desconto médio
+POST http://localhost:8080/ofertas-auto-mais
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "nome": "Desconto Prata",
+  "descricao": "Desconto para usuários intermediários",
+  "moedas": 75,
+  "porcentagem": 15.00
+}
+
+### Oferta grande: muitos pontos, grande desconto
+POST http://localhost:8080/ofertas-auto-mais
+Content-Type: application/json
+
+{
+  "id_loja": 1,
+  "nome": "Desconto Ouro",
+  "descricao": "Desconto máximo para clientes VIP",
+  "moedas": 200,
+  "porcentagem": 30.00
+}
+

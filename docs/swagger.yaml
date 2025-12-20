@@ -54,6 +54,9 @@ definitions:
         type: boolean
       id_loja:
         type: integer
+      id_oferta_auto_mais:
+        description: Oferta Auto Mais para pagamento com moedas do app
+        type: integer
       id_produto:
         type: integer
       id_servico:
@@ -93,6 +96,8 @@ definitions:
         type: integer
       id_loja:
         type: integer
+      id_oferta_auto_mais:
+        type: integer
       id_produto:
         type: integer
       id_servico:
@@ -103,6 +108,10 @@ definitions:
         type: string
       loja:
         $ref: '#/definitions/json.LojaResponse'
+      oferta_auto_mais:
+        allOf:
+        - $ref: '#/definitions/json.OfertaAutoMaisResponse'
+        description: Oferta Auto Mais para pagamento com moedas
       preco:
         type: number
       produto:
@@ -497,6 +506,49 @@ definitions:
       total:
         type: integer
     type: object
+  json.DescontoRequest:
+    properties:
+      data_validade:
+        type: string
+      id_loja:
+        type: integer
+      porcentagem:
+        maximum: 100
+        minimum: 0
+        type: number
+    required:
+    - data_validade
+    - id_loja
+    - porcentagem
+    type: object
+  json.DescontoResponse:
+    properties:
+      ativo:
+        type: boolean
+      data_atualizacao:
+        type: string
+      data_cadastro:
+        type: string
+      data_validade:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      porcentagem:
+        type: number
+    type: object
+  json.DescontosResponse:
+    properties:
+      descontos:
+        items:
+          $ref: '#/definitions/json.DescontoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
   json.ExecutivoInfo:
     properties:
       email:
@@ -821,6 +873,86 @@ definitions:
       lojas:
         items:
           $ref: '#/definitions/json.LojaResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.OfertaAutoMaisRequest:
+    properties:
+      data_validade:
+        type: string
+      descricao:
+        maxLength: 500
+        type: string
+      id_loja:
+        type: integer
+      moedas:
+        description: Quantidade de moedas necessárias (obrigatório)
+        minimum: 1
+        type: integer
+      nome:
+        maxLength: 255
+        type: string
+      porcentagem:
+        maximum: 100
+        minimum: 0
+        type: number
+    required:
+    - id_loja
+    - moedas
+    - nome
+    - porcentagem
+    type: object
+  json.OfertaAutoMaisResponse:
+    properties:
+      ativo:
+        type: boolean
+      data_atualizacao:
+        type: string
+      data_cadastro:
+        type: string
+      data_validade:
+        type: string
+      descricao:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      moedas:
+        type: integer
+      nome:
+        type: string
+      porcentagem:
+        type: number
+    type: object
+  json.OfertaAutoMaisUpdateRequest:
+    properties:
+      ativo:
+        type: boolean
+      data_validade:
+        type: string
+      descricao:
+        maxLength: 500
+        type: string
+      moedas:
+        minimum: 1
+        type: integer
+      nome:
+        maxLength: 255
+        type: string
+      porcentagem:
+        maximum: 100
+        minimum: 0
+        type: number
+    type: object
+  json.OfertasAutoMaisResponse:
+    properties:
+      ofertas:
+        items:
+          $ref: '#/definitions/json.OfertaAutoMaisResponse'
         type: array
       total:
         type: integer
@@ -2325,6 +2457,204 @@ paths:
       summary: Busca carteira por usuário
       tags:
       - Carteiras
+  /descontos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os descontos do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.DescontosResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os descontos
+      tags:
+      - Descontos
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo desconto para uma loja. Uma loja só pode ter um desconto
+        ativo por vez.
+      parameters:
+      - description: Dados do desconto
+        in: body
+        name: desconto
+        required: true
+        schema:
+          $ref: '#/definitions/json.DescontoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.DescontoResponse'
+        "400":
+          description: Dados inválidos ou loja já possui desconto ativo
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria um novo desconto para uma loja
+      tags:
+      - Descontos
+  /descontos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de um desconto, marcando-o como excluído
+      parameters:
+      - description: ID do desconto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Desconto removido com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Desconto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove desconto (soft delete)
+      tags:
+      - Descontos
+    get:
+      consumes:
+      - application/json
+      description: Retorna um desconto específico pelo ID
+      parameters:
+      - description: ID do desconto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.DescontoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Desconto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca desconto por ID
+      tags:
+      - Descontos
+  /descontos/{id}/cancelar:
+    post:
+      consumes:
+      - application/json
+      description: Desativa um desconto ativo pelo ID
+      parameters:
+      - description: ID do desconto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Desconto cancelado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido ou desconto já inativo
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Desconto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cancela um desconto
+      tags:
+      - Descontos
+  /descontos/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um desconto que foi soft deleted
+      parameters:
+      - description: ID do desconto
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Desconto restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Desconto não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura desconto
+      tags:
+      - Descontos
+  /descontos/ativos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os descontos ativos e não expirados do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.DescontosResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os descontos ativos
+      tags:
+      - Descontos
   /historicos-resgate:
     get:
       consumes:
@@ -3114,6 +3444,100 @@ paths:
       summary: Estatísticas de avaliações de uma loja
       tags:
       - Avaliações
+  /lojas/{id}/desconto-ativo:
+    get:
+      consumes:
+      - application/json
+      description: Retorna o desconto ativo atual de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.DescontoResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Nenhum desconto ativo encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca desconto ativo de uma loja
+      tags:
+      - Descontos
+  /lojas/{id}/desconto-ativo/cancelar:
+    post:
+      consumes:
+      - application/json
+      description: Desativa o desconto ativo atual de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Desconto cancelado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Nenhum desconto ativo encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cancela o desconto ativo de uma loja
+      tags:
+      - Descontos
+  /lojas/{id}/descontos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os descontos (ativos e inativos) de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.DescontosResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista histórico de descontos de uma loja
+      tags:
+      - Descontos
   /lojas/{id}/historicos-resgate:
     get:
       consumes:
@@ -3145,6 +3569,68 @@ paths:
       summary: Lista históricos de resgate de uma loja
       tags:
       - Histórico de Resgates
+  /lojas/{id}/ofertas-auto-mais:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as ofertas Auto Mais de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.OfertasAutoMaisResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista ofertas Auto Mais de uma loja
+      tags:
+      - Ofertas Auto Mais
+  /lojas/{id}/ofertas-auto-mais/ativas:
+    get:
+      consumes:
+      - application/json
+      description: Retorna apenas as ofertas Auto Mais ativas de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.OfertasAutoMaisResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista ofertas Auto Mais ativas de uma loja
+      tags:
+      - Ofertas Auto Mais
   /lojas/{id}/produtos:
     get:
       consumes:
@@ -3364,6 +3850,273 @@ paths:
       summary: Lista lojas por usuário
       tags:
       - Lojas
+  /ofertas-auto-mais:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as ofertas Auto Mais do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.OfertasAutoMaisResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todas as ofertas Auto Mais
+      tags:
+      - Ofertas Auto Mais
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova oferta Auto Mais. Uma loja pode ter várias ofertas
+        Auto Mais. O campo moedas é obrigatório e indica quantas moedas do app são
+        necessárias para usar essa oferta.
+      parameters:
+      - description: Dados da oferta Auto Mais
+        in: body
+        name: oferta
+        required: true
+        schema:
+          $ref: '#/definitions/json.OfertaAutoMaisRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.OfertaAutoMaisResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria uma nova oferta Auto Mais para uma loja
+      tags:
+      - Ofertas Auto Mais
+  /ofertas-auto-mais/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete de uma oferta Auto Mais, marcando-a como excluída
+      parameters:
+      - description: ID da oferta
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Oferta removida com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Oferta não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove oferta Auto Mais (soft delete)
+      tags:
+      - Ofertas Auto Mais
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma oferta Auto Mais específica pelo ID
+      parameters:
+      - description: ID da oferta
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.OfertaAutoMaisResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Oferta não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca oferta Auto Mais por ID
+      tags:
+      - Ofertas Auto Mais
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma oferta Auto Mais existente
+      parameters:
+      - description: ID da oferta
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados para atualização
+        in: body
+        name: oferta
+        required: true
+        schema:
+          $ref: '#/definitions/json.OfertaAutoMaisUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.OfertaAutoMaisResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Oferta não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza uma oferta Auto Mais
+      tags:
+      - Ofertas Auto Mais
+  /ofertas-auto-mais/{id}/ativar:
+    post:
+      consumes:
+      - application/json
+      description: Ativa uma oferta Auto Mais pelo ID
+      parameters:
+      - description: ID da oferta
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Oferta ativada com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido ou oferta já ativa
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Oferta não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Ativa uma oferta Auto Mais
+      tags:
+      - Ofertas Auto Mais
+  /ofertas-auto-mais/{id}/desativar:
+    post:
+      consumes:
+      - application/json
+      description: Desativa uma oferta Auto Mais pelo ID
+      parameters:
+      - description: ID da oferta
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Oferta desativada com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido ou oferta já inativa
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Oferta não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Desativa uma oferta Auto Mais
+      tags:
+      - Ofertas Auto Mais
+  /ofertas-auto-mais/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura uma oferta Auto Mais que foi soft deleted
+      parameters:
+      - description: ID da oferta
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Oferta restaurada com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Oferta não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura oferta Auto Mais
+      tags:
+      - Ofertas Auto Mais
+  /ofertas-auto-mais/ativas:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.OfertasAutoMaisResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todas as ofertas Auto Mais ativas
+      tags:
+      - Ofertas Auto Mais
   /pagamentos/checkout:
     post:
       consumes:

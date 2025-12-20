@@ -1307,6 +1307,297 @@ const docTemplate = `{
                 }
             }
         },
+        "/descontos": {
+            "get": {
+                "description": "Retorna todos os descontos do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Lista todos os descontos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.DescontosResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo desconto para uma loja. Uma loja só pode ter um desconto ativo por vez.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Cria um novo desconto para uma loja",
+                "parameters": [
+                    {
+                        "description": "Dados do desconto",
+                        "name": "desconto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.DescontoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.DescontoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos ou loja já possui desconto ativo",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/descontos/ativos": {
+            "get": {
+                "description": "Retorna todos os descontos ativos e não expirados do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Lista todos os descontos ativos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.DescontosResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/descontos/{id}": {
+            "get": {
+                "description": "Retorna um desconto específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Busca desconto por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do desconto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.DescontoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Desconto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de um desconto, marcando-o como excluído",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Remove desconto (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do desconto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Desconto removido com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Desconto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/descontos/{id}/cancelar": {
+            "post": {
+                "description": "Desativa um desconto ativo pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Cancela um desconto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do desconto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Desconto cancelado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou desconto já inativo",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Desconto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/descontos/{id}/restore": {
+            "post": {
+                "description": "Restaura um desconto que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Restaura desconto",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do desconto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Desconto restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Desconto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/historicos-resgate": {
             "get": {
                 "description": "Retorna todos os históricos de resgate ativos do sistema",
@@ -2593,6 +2884,145 @@ const docTemplate = `{
                 }
             }
         },
+        "/lojas/{id}/desconto-ativo": {
+            "get": {
+                "description": "Retorna o desconto ativo atual de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Busca desconto ativo de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.DescontoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Nenhum desconto ativo encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/desconto-ativo/cancelar": {
+            "post": {
+                "description": "Desativa o desconto ativo atual de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Cancela o desconto ativo de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Desconto cancelado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Nenhum desconto ativo encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/descontos": {
+            "get": {
+                "description": "Retorna todos os descontos (ativos e inativos) de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Descontos"
+                ],
+                "summary": "Lista histórico de descontos de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.DescontosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/lojas/{id}/historicos-resgate": {
             "get": {
                 "description": "Retorna todos os históricos de resgate de uma loja específica",
@@ -2620,6 +3050,98 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/ofertas-auto-mais": {
+            "get": {
+                "description": "Retorna todas as ofertas Auto Mais de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Lista ofertas Auto Mais de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertasAutoMaisResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/ofertas-auto-mais/ativas": {
+            "get": {
+                "description": "Retorna apenas as ofertas Auto Mais ativas de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Lista ofertas Auto Mais ativas de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertasAutoMaisResponse"
                         }
                     },
                     "400": {
@@ -2823,6 +3345,397 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas-auto-mais": {
+            "get": {
+                "description": "Retorna todas as ofertas Auto Mais do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Lista todas as ofertas Auto Mais",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertasAutoMaisResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria uma nova oferta Auto Mais. Uma loja pode ter várias ofertas Auto Mais. O campo moedas é obrigatório e indica quantas moedas do app são necessárias para usar essa oferta.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Cria uma nova oferta Auto Mais para uma loja",
+                "parameters": [
+                    {
+                        "description": "Dados da oferta Auto Mais",
+                        "name": "oferta",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertaAutoMaisRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertaAutoMaisResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas-auto-mais/ativas": {
+            "get": {
+                "description": "Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Lista todas as ofertas Auto Mais ativas",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertasAutoMaisResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas-auto-mais/{id}": {
+            "get": {
+                "description": "Retorna uma oferta Auto Mais específica pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Busca oferta Auto Mais por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da oferta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertaAutoMaisResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Oferta não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de uma oferta Auto Mais existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Atualiza uma oferta Auto Mais",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da oferta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados para atualização",
+                        "name": "oferta",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertaAutoMaisUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertaAutoMaisResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Oferta não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete de uma oferta Auto Mais, marcando-a como excluída",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Remove oferta Auto Mais (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da oferta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Oferta removida com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Oferta não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas-auto-mais/{id}/ativar": {
+            "post": {
+                "description": "Ativa uma oferta Auto Mais pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Ativa uma oferta Auto Mais",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da oferta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Oferta ativada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou oferta já ativa",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Oferta não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas-auto-mais/{id}/desativar": {
+            "post": {
+                "description": "Desativa uma oferta Auto Mais pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Desativa uma oferta Auto Mais",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da oferta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Oferta desativada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou oferta já inativa",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Oferta não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/ofertas-auto-mais/{id}/restore": {
+            "post": {
+                "description": "Restaura uma oferta Auto Mais que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Restaura oferta Auto Mais",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da oferta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Oferta restaurada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Oferta não encontrada",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -6660,6 +7573,10 @@ const docTemplate = `{
                 "id_loja": {
                     "type": "integer"
                 },
+                "id_oferta_auto_mais": {
+                    "description": "Oferta Auto Mais para pagamento com moedas do app",
+                    "type": "integer"
+                },
                 "id_produto": {
                     "type": "integer"
                 },
@@ -6707,6 +7624,9 @@ const docTemplate = `{
                 "id_loja": {
                     "type": "integer"
                 },
+                "id_oferta_auto_mais": {
+                    "type": "integer"
+                },
                 "id_produto": {
                     "type": "integer"
                 },
@@ -6721,6 +7641,14 @@ const docTemplate = `{
                 },
                 "loja": {
                     "$ref": "#/definitions/json.LojaResponse"
+                },
+                "oferta_auto_mais": {
+                    "description": "Oferta Auto Mais para pagamento com moedas",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.OfertaAutoMaisResponse"
+                        }
+                    ]
                 },
                 "preco": {
                     "type": "number"
@@ -7299,6 +8227,70 @@ const docTemplate = `{
                 }
             }
         },
+        "json.DescontoRequest": {
+            "type": "object",
+            "required": [
+                "data_validade",
+                "id_loja",
+                "porcentagem"
+            ],
+            "properties": {
+                "data_validade": {
+                    "type": "string"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "porcentagem": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                }
+            }
+        },
+        "json.DescontoResponse": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "data_validade": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "porcentagem": {
+                    "type": "number"
+                }
+            }
+        },
+        "json.DescontosResponse": {
+            "type": "object",
+            "properties": {
+                "descontos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.DescontoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "json.ExecutivoInfo": {
             "type": "object",
             "properties": {
@@ -7789,6 +8781,121 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/json.LojaResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.OfertaAutoMaisRequest": {
+            "type": "object",
+            "required": [
+                "id_loja",
+                "moedas",
+                "nome",
+                "porcentagem"
+            ],
+            "properties": {
+                "data_validade": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "moedas": {
+                    "description": "Quantidade de moedas necessárias (obrigatório)",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "nome": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "porcentagem": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                }
+            }
+        },
+        "json.OfertaAutoMaisResponse": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "data_validade": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "moedas": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "porcentagem": {
+                    "type": "number"
+                }
+            }
+        },
+        "json.OfertaAutoMaisUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
+                "data_validade": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "moedas": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "nome": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "porcentagem": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                }
+            }
+        },
+        "json.OfertasAutoMaisResponse": {
+            "type": "object",
+            "properties": {
+                "ofertas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.OfertaAutoMaisResponse"
                     }
                 },
                 "total": {

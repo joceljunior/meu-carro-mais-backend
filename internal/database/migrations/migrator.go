@@ -519,6 +519,75 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration019)
 
+	// Migration 020: Criar tabela de ofertas Auto Mais
+	migration020 := m.NewMigration("020", "create_ofertas_auto_mais_table").
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS oferta_auto_mais (
+				id SERIAL PRIMARY KEY,
+				id_loja INTEGER NOT NULL,
+				nome VARCHAR(255) NOT NULL,
+				descricao VARCHAR(500),
+				moedas INTEGER NOT NULL,
+				porcentagem DECIMAL(5,2) NOT NULL,
+				ativo BOOLEAN DEFAULT TRUE,
+				data_validade TIMESTAMP,
+				data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_exclusao TIMESTAMP,
+				CONSTRAINT fk_oferta_auto_mais_loja FOREIGN KEY (id_loja) REFERENCES lojas(id) ON DELETE CASCADE
+			)
+		`, `
+			DROP TABLE IF EXISTS oferta_auto_mais CASCADE
+		`).
+		AddIndexSQL("oferta_auto_mais", "idx_oferta_auto_mais_id_loja", "id_loja").
+		AddIndexSQL("oferta_auto_mais", "idx_oferta_auto_mais_ativo", "ativo").
+		AddIndexSQL("oferta_auto_mais", "idx_oferta_auto_mais_data_exclusao", "data_exclusao").
+		AddIndexSQL("oferta_auto_mais", "idx_oferta_auto_mais_data_validade", "data_validade").
+		AddIndexSQL("oferta_auto_mais", "idx_oferta_auto_mais_loja_ativo", "id_loja, ativo").
+		Build()
+	m.migrations = append(m.migrations, migration020)
+
+	// Migration 021: Adicionar campo id_oferta_auto_mais à tabela anuncios
+	migration021 := m.NewMigration("021", "add_oferta_auto_mais_to_anuncios").
+		AddColumnSQL("anuncios", "id_oferta_auto_mais", "INTEGER").
+		ExecuteSQL(`
+			ALTER TABLE anuncios ADD CONSTRAINT fk_anuncio_oferta_auto_mais 
+			FOREIGN KEY (id_oferta_auto_mais) REFERENCES oferta_auto_mais(id) ON DELETE SET NULL
+		`, `
+			ALTER TABLE anuncios DROP CONSTRAINT IF EXISTS fk_anuncio_oferta_auto_mais
+		`).
+		AddIndexSQL("anuncios", "idx_anuncio_oferta_auto_mais", "id_oferta_auto_mais").
+		Build()
+	m.migrations = append(m.migrations, migration021)
+
+	// Migration 022: Adicionar campos de tipo de usuário e atualizar todos para mobile
+	migration022 := m.NewMigration("022", "add_user_type_fields_and_update_to_mobile").
+		// Adiciona novos campos
+		AddColumnSQL("usuarios", "tipo", "VARCHAR(20) DEFAULT 'mobile'").
+		AddColumnSQL("usuarios", "status", "VARCHAR(20) DEFAULT 'aprovado'").
+		AddColumnSQL("usuarios", "id_executivo", "INTEGER").
+		AddColumnSQL("usuarios", "solicitacao_executivo", "VARCHAR(20) DEFAULT ''").
+		AddColumnSQL("usuarios", "data_solicitacao_executivo", "TIMESTAMP").
+		AddColumnSQL("usuarios", "motivo_solicitacao_executivo", "VARCHAR(500)").
+		// Adiciona índices
+		AddIndexSQL("usuarios", "idx_usuario_tipo", "tipo").
+		AddIndexSQL("usuarios", "idx_usuario_status", "status").
+		AddIndexSQL("usuarios", "idx_usuario_id_executivo", "id_executivo").
+		AddIndexSQL("usuarios", "idx_usuario_solicitacao_executivo", "solicitacao_executivo").
+		// Atualiza TODOS os usuários existentes para tipo mobile e status aprovado
+		ExecuteSQL(`
+			UPDATE usuarios 
+			SET tipo = 'mobile', 
+				status = 'aprovado',
+				solicitacao_executivo = ''
+			WHERE tipo IS NULL OR tipo = ''
+		`, `
+			-- Rollback: não faz nada, pois não podemos saber o tipo original
+			SELECT 'Rollback não implementado para atualização de tipo' as message
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration022)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
