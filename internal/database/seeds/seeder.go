@@ -250,16 +250,21 @@ func (s *Seeder) updateUsuarioCarlos() error {
 func (s *Seeder) seedLoja() error {
 	log.Println("📝 Populando tabela loja...")
 
-	// Busca categoria concessionária
-	var categoriaConcessionaria models.CategoriaLojista
-	if err := s.db.Where("nome = ?", "Concessionária").First(&categoriaConcessionaria).Error; err != nil {
-		return fmt.Errorf("erro ao buscar categoria concessionária: %v", err)
+	// Busca usuários para vincular às lojas
+	var usuarios []models.Usuario
+	if err := s.db.Limit(7).Find(&usuarios).Error; err != nil {
+		return fmt.Errorf("erro ao buscar usuarios: %v", err)
 	}
 
-	// Busca categoria oficina
-	var categoriaOficina models.CategoriaLojista
-	if err := s.db.Where("nome = ?", "Oficina Mecânica").First(&categoriaOficina).Error; err != nil {
-		return fmt.Errorf("erro ao buscar categoria oficina: %v", err)
+	// Se não tiver usuários suficientes, usa o primeiro para todos
+	getUsuarioID := func(index int) uint {
+		if len(usuarios) == 0 {
+			return 1
+		}
+		if index >= len(usuarios) {
+			return usuarios[0].ID
+		}
+		return usuarios[index].ID
 	}
 
 	lojas := []models.Loja{
@@ -271,7 +276,8 @@ func (s *Seeder) seedLoja() error {
 			Longitude:      -46.6333,
 			Rating:         5,
 			IsMeuCarroMais: true,
-			IDCategoria:    categoriaConcessionaria.ID,
+			Categoria:      "Concessionária",
+			IDUsuario:      getUsuarioID(0),
 		},
 		{
 			Nome:           "Oficina do João",
@@ -281,7 +287,8 @@ func (s *Seeder) seedLoja() error {
 			Longitude:      -46.6388,
 			Rating:         4,
 			IsMeuCarroMais: false,
-			IDCategoria:    categoriaOficina.ID,
+			Categoria:      "Oficina Mecânica",
+			IDUsuario:      getUsuarioID(1),
 		},
 		{
 			Nome:           "Carros Premium",
@@ -291,7 +298,8 @@ func (s *Seeder) seedLoja() error {
 			Longitude:      -46.6310,
 			Rating:         5,
 			IsMeuCarroMais: true,
-			IDCategoria:    categoriaConcessionaria.ID,
+			Categoria:      "Concessionária",
+			IDUsuario:      getUsuarioID(2),
 		},
 		{
 			Nome:           "Auto Center Porto Alegre Norte",
@@ -301,7 +309,8 @@ func (s *Seeder) seedLoja() error {
 			Longitude:      -51.11168643659632,
 			Rating:         4,
 			IsMeuCarroMais: false,
-			IDCategoria:    categoriaConcessionaria.ID,
+			Categoria:      "Concessionária",
+			IDUsuario:      getUsuarioID(3),
 		},
 		{
 			Nome:           "Oficina Porto Alegre Centro",
@@ -311,7 +320,8 @@ func (s *Seeder) seedLoja() error {
 			Longitude:      -51.12161634814089,
 			Rating:         3,
 			IsMeuCarroMais: false,
-			IDCategoria:    categoriaOficina.ID,
+			Categoria:      "Oficina Mecânica",
+			IDUsuario:      getUsuarioID(4),
 		},
 		{
 			Nome:           "Loja de Peças Porto Alegre",
@@ -321,7 +331,8 @@ func (s *Seeder) seedLoja() error {
 			Longitude:      -51.20306428600608,
 			Rating:         4,
 			IsMeuCarroMais: false,
-			IDCategoria:    categoriaOficina.ID,
+			Categoria:      "Loja de Peças",
+			IDUsuario:      getUsuarioID(5),
 		},
 		{
 			Nome:           "Concessionária Porto Alegre Sul",
@@ -331,7 +342,8 @@ func (s *Seeder) seedLoja() error {
 			Longitude:      -51.22406353079101,
 			Rating:         5,
 			IsMeuCarroMais: true,
-			IDCategoria:    categoriaConcessionaria.ID,
+			Categoria:      "Concessionária",
+			IDUsuario:      getUsuarioID(6),
 		},
 	}
 

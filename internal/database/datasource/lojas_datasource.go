@@ -29,8 +29,8 @@ type LojaComDistancia struct {
 func GetLojasByProximidade(userLat, userLng float64) ([]LojaComDistancia, error) {
 	var lojas []models.Loja
 
-	// Busca todas as lojas com suas categorias e anúncios destaque (apenas não excluídas)
-	err := database.DB.Preload("Categoria").Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).Where("data_exclusao IS NULL").Find(&lojas).Error
+	// Busca todas as lojas com anúncios destaque (apenas não excluídas)
+	err := database.DB.Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).Where("data_exclusao IS NULL").Find(&lojas).Error
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,8 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 		Longitude:      req.Longitude,
 		Rating:         req.Rating,
 		IsMeuCarroMais: req.IsMeuCarroMais,
-		IDCategoria:    req.IDCategoria,
+		Categoria:      req.Categoria,
+		IDUsuario:      req.IDUsuario,
 	}
 
 	err := database.DB.Create(&loja).Error
@@ -113,7 +114,6 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 func GetLojaByID(id uint) (*models.Loja, error) {
 	var loja models.Loja
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&loja).Error
@@ -127,7 +127,6 @@ func GetLojaByID(id uint) (*models.Loja, error) {
 func GetAllLojas() ([]models.Loja, error) {
 	var lojas []models.Loja
 	err := database.DB.
-		Preload("Categoria").
 		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
@@ -154,7 +153,8 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.Longitude = req.Longitude
 	loja.Rating = req.Rating
 	loja.IsMeuCarroMais = req.IsMeuCarroMais
-	loja.IDCategoria = req.IDCategoria
+	loja.Categoria = req.Categoria
+	loja.IDUsuario = req.IDUsuario
 
 	err = database.DB.Save(&loja).Error
 	if err != nil {
@@ -202,4 +202,18 @@ func RestoreLoja(id uint) error {
 	}
 
 	return nil
+}
+
+// GetLojasByUsuarioID retorna todas as lojas de um usuário específico
+func GetLojasByUsuarioID(idUsuario uint) ([]models.Loja, error) {
+	var lojas []models.Loja
+	err := database.DB.
+		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
+		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
+		Order("data_cadastro DESC").
+		Find(&lojas).Error
+	if err != nil {
+		return nil, err
+	}
+	return lojas, nil
 }

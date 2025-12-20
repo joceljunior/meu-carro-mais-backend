@@ -298,3 +298,35 @@ func GetCategoriasLojistaHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+// GetLojasByUsuarioIDHandler godoc
+// @Summary      Lista lojas por usuário
+// @Description  Retorna todas as lojas de um usuário específico
+// @Tags         Lojas
+// @Accept       json
+// @Produce      json
+// @Param        id_usuario path int true "ID do usuário"
+// @Success      200 {array} json.LojaResponse "Lista de lojas do usuário"
+// @Failure      400 {object} map[string]interface{} "ID inválido"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /lojas/usuario/{id_usuario} [get]
+func GetLojasByUsuarioIDHandler(c *gin.Context) {
+	idStr := c.Param("id_usuario")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID do usuário inválido",
+		})
+		return
+	}
+
+	resp, err := services.GetLojasByUsuarioID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

@@ -43,8 +43,8 @@ func CreateAvaliacao(req json.AvaliacaoRequest) (*json.AvaliacaoResponse, error)
 			Imagem:      avaliacao.Loja.Imagem,
 			Latitude:    avaliacao.Loja.Latitude,
 			Longitude:   avaliacao.Loja.Longitude,
-			IDCategoria: avaliacao.Loja.IDCategoria,
-			Categoria:   avaliacao.Loja.Categoria.Nome,
+			Categoria: avaliacao.Loja.Categoria,
+			IDUsuario: avaliacao.Loja.IDUsuario,
 		},
 	}
 
@@ -89,8 +89,8 @@ func GetAvaliacaoByID(id uint) (*json.AvaliacaoResponse, error) {
 			Imagem:      avaliacao.Loja.Imagem,
 			Latitude:    avaliacao.Loja.Latitude,
 			Longitude:   avaliacao.Loja.Longitude,
-			IDCategoria: avaliacao.Loja.IDCategoria,
-			Categoria:   avaliacao.Loja.Categoria.Nome,
+			Categoria: avaliacao.Loja.Categoria,
+			IDUsuario: avaliacao.Loja.IDUsuario,
 		},
 	}
 
@@ -137,8 +137,8 @@ func GetAllAvaliacoes() ([]json.AvaliacaoResponse, error) {
 				Imagem:      avaliacao.Loja.Imagem,
 				Latitude:    avaliacao.Loja.Latitude,
 				Longitude:   avaliacao.Loja.Longitude,
-				IDCategoria: avaliacao.Loja.IDCategoria,
-				Categoria:   avaliacao.Loja.Categoria.Nome,
+				Categoria: avaliacao.Loja.Categoria,
+				IDUsuario: avaliacao.Loja.IDUsuario,
 			},
 		}
 		responses = append(responses, response)
@@ -189,8 +189,8 @@ func GetAvaliacoesByLojaID(idLoja uint) (*json.AvaliacoesResponse, error) {
 				Imagem:      avaliacao.Loja.Imagem,
 				Latitude:    avaliacao.Loja.Latitude,
 				Longitude:   avaliacao.Loja.Longitude,
-				IDCategoria: avaliacao.Loja.IDCategoria,
-				Categoria:   avaliacao.Loja.Categoria.Nome,
+				Categoria: avaliacao.Loja.Categoria,
+				IDUsuario: avaliacao.Loja.IDUsuario,
 			},
 		}
 		avaliacoesResponse = append(avaliacoesResponse, avaliacaoResp)
@@ -251,8 +251,8 @@ func GetAvaliacoesByUsuarioID(idUsuario uint) (*json.AvaliacoesResponse, error) 
 				Imagem:      avaliacao.Loja.Imagem,
 				Latitude:    avaliacao.Loja.Latitude,
 				Longitude:   avaliacao.Loja.Longitude,
-				IDCategoria: avaliacao.Loja.IDCategoria,
-				Categoria:   avaliacao.Loja.Categoria.Nome,
+				Categoria: avaliacao.Loja.Categoria,
+				IDUsuario: avaliacao.Loja.IDUsuario,
 			},
 		}
 		avaliacoesResponse = append(avaliacoesResponse, avaliacaoResp)
@@ -309,8 +309,8 @@ func UpdateAvaliacao(id uint, req json.AvaliacaoRequest) (*json.AvaliacaoRespons
 			Imagem:      avaliacao.Loja.Imagem,
 			Latitude:    avaliacao.Loja.Latitude,
 			Longitude:   avaliacao.Loja.Longitude,
-			IDCategoria: avaliacao.Loja.IDCategoria,
-			Categoria:   avaliacao.Loja.Categoria.Nome,
+			Categoria: avaliacao.Loja.Categoria,
+			IDUsuario: avaliacao.Loja.IDUsuario,
 		},
 	}
 

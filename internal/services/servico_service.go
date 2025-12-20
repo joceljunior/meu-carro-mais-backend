@@ -41,8 +41,8 @@ func CreateServico(req json.ServicoRequest) (*json.ServicoResponse, error) {
 			Imagem:      servico.Loja.Imagem,
 			Latitude:    servico.Loja.Latitude,
 			Longitude:   servico.Loja.Longitude,
-			IDCategoria: servico.Loja.IDCategoria,
-			Categoria:   servico.Loja.Categoria.Nome,
+			Categoria: servico.Loja.Categoria,
+			IDUsuario: servico.Loja.IDUsuario,
 		},
 	}
 
@@ -71,8 +71,8 @@ func GetServicoByID(id uint) (*json.ServicoResponse, error) {
 			Imagem:      servico.Loja.Imagem,
 			Latitude:    servico.Loja.Latitude,
 			Longitude:   servico.Loja.Longitude,
-			IDCategoria: servico.Loja.IDCategoria,
-			Categoria:   servico.Loja.Categoria.Nome,
+			Categoria: servico.Loja.Categoria,
+			IDUsuario: servico.Loja.IDUsuario,
 		},
 	}
 
@@ -103,8 +103,8 @@ func GetAllServicos() ([]json.ServicoResponse, error) {
 				Imagem:      servico.Loja.Imagem,
 				Latitude:    servico.Loja.Latitude,
 				Longitude:   servico.Loja.Longitude,
-				IDCategoria: servico.Loja.IDCategoria,
-				Categoria:   servico.Loja.Categoria.Nome,
+				Categoria: servico.Loja.Categoria,
+				IDUsuario: servico.Loja.IDUsuario,
 			},
 		}
 		responses = append(responses, response)
@@ -135,8 +135,8 @@ func UpdateServico(id uint, req json.ServicoRequest) (*json.ServicoResponse, err
 			Imagem:      servico.Loja.Imagem,
 			Latitude:    servico.Loja.Latitude,
 			Longitude:   servico.Loja.Longitude,
-			IDCategoria: servico.Loja.IDCategoria,
-			Categoria:   servico.Loja.Categoria.Nome,
+			Categoria: servico.Loja.Categoria,
+			IDUsuario: servico.Loja.IDUsuario,
 		},
 	}
 

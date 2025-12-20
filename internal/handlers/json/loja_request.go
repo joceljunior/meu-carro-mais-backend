@@ -8,5 +8,6 @@ type LojaRequest struct {
 	Longitude      float64 `json:"longitude" binding:"required"`
 	Rating         int     `json:"rating,omitempty"`
 	IsMeuCarroMais bool    `json:"is_meu_carro_mais,omitempty"`
-	IDCategoria    uint    `json:"id_categoria" binding:"required"`
+	Categoria      string  `json:"categoria" binding:"required"`
+	IDUsuario      uint    `json:"id_usuario" binding:"required"`
 }

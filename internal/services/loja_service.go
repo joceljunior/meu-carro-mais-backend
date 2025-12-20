@@ -47,8 +47,8 @@ func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, er
 			Longitude:       lojaComDist.Longitude,
 			Rating:          lojaComDist.Rating,
 			IsMeuCarroMais:  lojaComDist.IsMeuCarroMais,
-			IDCategoria:     lojaComDist.IDCategoria,
-			Categoria:       lojaComDist.Categoria.Nome,
+			Categoria:       lojaComDist.Categoria,
+			IDUsuario:       lojaComDist.IDUsuario,
 			AnuncioDestaque: getAnuncioDestaqueFromLoja(lojaComDist.Loja),
 		}
 		lojasResponse = append(lojasResponse, lojaResp)
@@ -100,8 +100,8 @@ func CreateLoja(req json.LojaRequest) (*json.LojaResponse, error) {
 		Longitude:       loja.Longitude,
 		Rating:          loja.Rating,
 		IsMeuCarroMais:  loja.IsMeuCarroMais,
-		IDCategoria:     loja.IDCategoria,
-		Categoria:       loja.Categoria.Nome,
+		Categoria:       loja.Categoria,
+		IDUsuario:       loja.IDUsuario,
 		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
 	}
 
@@ -124,8 +124,8 @@ func GetLojaByID(id uint) (*json.LojaResponse, error) {
 		Longitude:       loja.Longitude,
 		Rating:          loja.Rating,
 		IsMeuCarroMais:  loja.IsMeuCarroMais,
-		IDCategoria:     loja.IDCategoria,
-		Categoria:       loja.Categoria.Nome,
+		Categoria:       loja.Categoria,
+		IDUsuario:       loja.IDUsuario,
 		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
 	}
 
@@ -150,8 +150,8 @@ func GetAllLojas() ([]json.LojaResponse, error) {
 			Longitude:       loja.Longitude,
 			Rating:          loja.Rating,
 			IsMeuCarroMais:  loja.IsMeuCarroMais,
-			IDCategoria:     loja.IDCategoria,
-			Categoria:       loja.Categoria.Nome,
+			Categoria:       loja.Categoria,
+			IDUsuario:       loja.IDUsuario,
 			AnuncioDestaque: getAnuncioDestaqueFromLoja(loja),
 		}
 		responses = append(responses, response)
@@ -176,8 +176,8 @@ func UpdateLoja(id uint, req json.LojaRequest) (*json.LojaResponse, error) {
 		Longitude:       loja.Longitude,
 		Rating:          loja.Rating,
 		IsMeuCarroMais:  loja.IsMeuCarroMais,
-		IDCategoria:     loja.IDCategoria,
-		Categoria:       loja.Categoria.Nome,
+		Categoria:       loja.Categoria,
+		IDUsuario:       loja.IDUsuario,
 		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
 	}
 
@@ -192,4 +192,32 @@ func SoftDeleteLoja(id uint) error {
 // RestoreLoja restaura uma loja que foi soft deleted
 func RestoreLoja(id uint) error {
 	return datasource.RestoreLoja(id)
+}
+
+// GetLojasByUsuarioID retorna todas as lojas de um usuário
+func GetLojasByUsuarioID(idUsuario uint) ([]json.LojaResponse, error) {
+	lojas, err := datasource.GetLojasByUsuarioID(idUsuario)
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []json.LojaResponse
+	for _, loja := range lojas {
+		response := json.LojaResponse{
+			ID:              loja.ID,
+			Nome:            loja.Nome,
+			CNPJ:            loja.CNPJ,
+			Imagem:          loja.Imagem,
+			Latitude:        loja.Latitude,
+			Longitude:       loja.Longitude,
+			Rating:          loja.Rating,
+			IsMeuCarroMais:  loja.IsMeuCarroMais,
+			Categoria:       loja.Categoria,
+			IDUsuario:       loja.IDUsuario,
+			AnuncioDestaque: getAnuncioDestaqueFromLoja(loja),
+		}
+		responses = append(responses, response)
+	}
+
+	return responses, nil
 }

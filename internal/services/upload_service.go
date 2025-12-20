@@ -109,8 +109,8 @@ func convertUploadToResponse(upload *models.Upload) *json.UploadResponse {
 			Imagem:      upload.Loja.Imagem,
 			Latitude:    upload.Loja.Latitude,
 			Longitude:   upload.Loja.Longitude,
-			IDCategoria: upload.Loja.IDCategoria,
-			Categoria:   upload.Loja.Categoria.Nome,
+			Categoria: upload.Loja.Categoria,
+			IDUsuario: upload.Loja.IDUsuario,
 		}
 		response.Loja = lojaResp
 	}

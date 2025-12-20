@@ -30,8 +30,8 @@ func CreateProduto(req json.ProdutoRequest) (*json.ProdutoResponse, error) {
 			Imagem:      produto.Loja.Imagem,
 			Latitude:    produto.Loja.Latitude,
 			Longitude:   produto.Loja.Longitude,
-			IDCategoria: produto.Loja.IDCategoria,
-			Categoria:   produto.Loja.Categoria.Nome,
+			Categoria: produto.Loja.Categoria,
+			IDUsuario: produto.Loja.IDUsuario,
 		},
 	}
 
@@ -63,8 +63,8 @@ func GetProdutoByID(id uint) (*json.ProdutoResponse, error) {
 			Imagem:      produto.Loja.Imagem,
 			Latitude:    produto.Loja.Latitude,
 			Longitude:   produto.Loja.Longitude,
-			IDCategoria: produto.Loja.IDCategoria,
-			Categoria:   produto.Loja.Categoria.Nome,
+			Categoria: produto.Loja.Categoria,
+			IDUsuario: produto.Loja.IDUsuario,
 		},
 	}
 
@@ -98,8 +98,8 @@ func GetAllProdutos() ([]json.ProdutoResponse, error) {
 				Imagem:      produto.Loja.Imagem,
 				Latitude:    produto.Loja.Latitude,
 				Longitude:   produto.Loja.Longitude,
-				IDCategoria: produto.Loja.IDCategoria,
-				Categoria:   produto.Loja.Categoria.Nome,
+				Categoria: produto.Loja.Categoria,
+				IDUsuario: produto.Loja.IDUsuario,
 			},
 		}
 		responses = append(responses, response)
@@ -135,8 +135,8 @@ func GetProdutosByLojaID(idLoja uint) (*json.ProdutosResponse, error) {
 				Imagem:      produto.Loja.Imagem,
 				Latitude:    produto.Loja.Latitude,
 				Longitude:   produto.Loja.Longitude,
-				IDCategoria: produto.Loja.IDCategoria,
-				Categoria:   produto.Loja.Categoria.Nome,
+				Categoria: produto.Loja.Categoria,
+				IDUsuario: produto.Loja.IDUsuario,
 			},
 		}
 		produtosResponse = append(produtosResponse, produtoResp)
@@ -175,8 +175,8 @@ func UpdateProduto(id uint, req json.ProdutoRequest) (*json.ProdutoResponse, err
 			Imagem:      produto.Loja.Imagem,
 			Latitude:    produto.Loja.Latitude,
 			Longitude:   produto.Loja.Longitude,
-			IDCategoria: produto.Loja.IDCategoria,
-			Categoria:   produto.Loja.Categoria.Nome,
+			Categoria: produto.Loja.Categoria,
+			IDUsuario: produto.Loja.IDUsuario,
 		},
 	}
 

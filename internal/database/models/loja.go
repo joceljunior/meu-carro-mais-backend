@@ -11,10 +11,10 @@ type Loja struct {
 	Longitude       float64    `gorm:"type:decimal(11,8)"`
 	Rating          int        `gorm:"default:5"`
 	IsMeuCarroMais  bool       `gorm:"default:false"`
+	Categoria       string     `gorm:"size:255"`
 	DataCadastro    time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`
 	DataExclusao    *time.Time `gorm:"index"`
-	IDCategoria     uint
-	Categoria       CategoriaLojista `gorm:"foreignKey:IDCategoria"`
-	Anuncios        []Anuncio        `gorm:"foreignKey:IDLoja"`
+	IDUsuario uint
+	Anuncios  []Anuncio `gorm:"foreignKey:IDLoja"`
 }

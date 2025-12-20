@@ -54,8 +54,8 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 			Imagem:      historico.Loja.Imagem,
 			Latitude:    historico.Loja.Latitude,
 			Longitude:   historico.Loja.Longitude,
-			IDCategoria: historico.Loja.IDCategoria,
-			Categoria:   historico.Loja.Categoria.Nome,
+			Categoria: historico.Loja.Categoria,
+			IDUsuario: historico.Loja.IDUsuario,
 		},
 	}
 
@@ -149,8 +149,8 @@ func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*json.HistoricoRe
 			Imagem:      historico.Loja.Imagem,
 			Latitude:    historico.Loja.Latitude,
 			Longitude:   historico.Loja.Longitude,
-			IDCategoria: historico.Loja.IDCategoria,
-			Categoria:   historico.Loja.Categoria.Nome,
+			Categoria: historico.Loja.Categoria,
+			IDUsuario: historico.Loja.IDUsuario,
 		},
 	}
 
@@ -244,8 +244,8 @@ func GetHistoricoResgateByID(id uint) (*json.HistoricoResgateResponse, error) {
 			Imagem:      historico.Loja.Imagem,
 			Latitude:    historico.Loja.Latitude,
 			Longitude:   historico.Loja.Longitude,
-			IDCategoria: historico.Loja.IDCategoria,
-			Categoria:   historico.Loja.Categoria.Nome,
+			Categoria: historico.Loja.Categoria,
+			IDUsuario: historico.Loja.IDUsuario,
 		},
 	}
 
@@ -341,8 +341,8 @@ func GetAllHistoricosResgate() ([]json.HistoricoResgateResponse, error) {
 				Imagem:      historico.Loja.Imagem,
 				Latitude:    historico.Loja.Latitude,
 				Longitude:   historico.Loja.Longitude,
-				IDCategoria: historico.Loja.IDCategoria,
-				Categoria:   historico.Loja.Categoria.Nome,
+				Categoria: historico.Loja.Categoria,
+				IDUsuario: historico.Loja.IDUsuario,
 			},
 		}
 
@@ -441,8 +441,8 @@ func GetHistoricosResgateByUsuarioID(idUsuario uint) (*json.HistoricosResgateRes
 				Imagem:      historico.Loja.Imagem,
 				Latitude:    historico.Loja.Latitude,
 				Longitude:   historico.Loja.Longitude,
-				IDCategoria: historico.Loja.IDCategoria,
-				Categoria:   historico.Loja.Categoria.Nome,
+				Categoria: historico.Loja.Categoria,
+				IDUsuario: historico.Loja.IDUsuario,
 			},
 		}
 
@@ -546,8 +546,8 @@ func GetHistoricosResgateByLojaID(idLoja uint) (*json.HistoricosResgateResponse,
 				Imagem:      historico.Loja.Imagem,
 				Latitude:    historico.Loja.Latitude,
 				Longitude:   historico.Loja.Longitude,
-				IDCategoria: historico.Loja.IDCategoria,
-				Categoria:   historico.Loja.Categoria.Nome,
+				Categoria: historico.Loja.Categoria,
+				IDUsuario: historico.Loja.IDUsuario,
 			},
 		}
 
@@ -649,8 +649,8 @@ func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*json.Hi
 			Imagem:      historico.Loja.Imagem,
 			Latitude:    historico.Loja.Latitude,
 			Longitude:   historico.Loja.Longitude,
-			IDCategoria: historico.Loja.IDCategoria,
-			Categoria:   historico.Loja.Categoria.Nome,
+			Categoria: historico.Loja.Categoria,
+			IDUsuario: historico.Loja.IDUsuario,
 		},
 	}
 

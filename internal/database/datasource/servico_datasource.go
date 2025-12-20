@@ -37,16 +37,16 @@ func GetServicosByProximidade(latitude, longitude float64) ([]json.ServicoRespon
 			Destaque:  servico.Destaque,
 			Distancia: distancia,
 			Categoria: servico.Categoria,
-			Loja: json.LojaResponse{
-				ID:          servico.Loja.ID,
-				Nome:        servico.Loja.Nome,
-				CNPJ:        servico.Loja.CNPJ,
-				Imagem:      servico.Loja.Imagem,
-				Latitude:    servico.Loja.Latitude,
-				Longitude:   servico.Loja.Longitude,
-				IDCategoria: servico.Loja.IDCategoria,
-				Categoria:   servico.Loja.Categoria.Nome,
-			},
+		Loja: json.LojaResponse{
+			ID:        servico.Loja.ID,
+			Nome:      servico.Loja.Nome,
+			CNPJ:      servico.Loja.CNPJ,
+			Imagem:    servico.Loja.Imagem,
+			Latitude:  servico.Loja.Latitude,
+			Longitude: servico.Loja.Longitude,
+			Categoria: servico.Loja.Categoria,
+			IDUsuario: servico.Loja.IDUsuario,
+		},
 		}
 
 		servicosResponse = append(servicosResponse, servicoResp)

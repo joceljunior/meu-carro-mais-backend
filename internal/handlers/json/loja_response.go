@@ -9,8 +9,8 @@ type LojaResponse struct {
 	Longitude       float64                  `json:"longitude"`
 	Rating          int                      `json:"rating"`
 	IsMeuCarroMais  bool                     `json:"is_meu_carro_mais"`
-	IDCategoria     uint                     `json:"id_categoria"`
 	Categoria       string                   `json:"categoria"`
+	IDUsuario       uint                     `json:"id_usuario"`
 	AnuncioDestaque *AnuncioDestaqueResponse `json:"anuncio_destaque,omitempty"`
 }
 

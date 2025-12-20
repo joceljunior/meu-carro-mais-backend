@@ -23,6 +23,7 @@ func (lr *LojaRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		lojas.GET("/:id/avaliacoes/estatisticas", handlers.GetAvaliacaoEstatisticasByLojaIDHandler) // GET /lojas/:id/avaliacoes/estatisticas - Estatísticas de avaliações da loja
 		lojas.GET("/proximidade", handlers.GetLojasByProximidadeHandler)                            // GET /lojas/proximidade - Listar por proximidade
 		lojas.GET("/categorias", handlers.GetCategoriasLojistaHandler)                              // GET /lojas/categorias - Listar categorias
+		lojas.GET("/usuario/:id_usuario", handlers.GetLojasByUsuarioIDHandler)                      // GET /lojas/usuario/:id_usuario - Listar lojas por usuário
 
 		// Endpoints CRUD com :id (devem vir por último)
 		lojas.GET("/:id", handlers.GetLojaHandler)              // GET /lojas/:id - Buscar loja por ID

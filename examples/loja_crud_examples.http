@@ -10,7 +10,8 @@ Content-Type: application/json
   "imagem": "https://example.com/auto-center.jpg",
   "latitude": -23.5505,
   "longitude": -46.6333,
-  "id_categoria": 1
+  "categoria": "Concessionária",
+  "id_usuario": 1
 }
 
 ### 1.1. Criar loja premium com rating
@@ -25,7 +26,8 @@ Content-Type: application/json
   "longitude": -46.6310,
   "rating": 5,
   "is_meu_carro_mais": true,
-  "id_categoria": 1
+  "categoria": "Concessionária",
+  "id_usuario": 1
 }
 
 ### 2. Listar todas as lojas
@@ -46,7 +48,8 @@ Content-Type: application/json
   "longitude": -46.6333,
   "rating": 4,
   "is_meu_carro_mais": true,
-  "id_categoria": 1
+  "categoria": "Concessionária",
+  "id_usuario": 1
 }
 
 ### 5. Soft delete loja (inativar)
@@ -61,5 +64,5 @@ GET http://localhost:8080/lojas/1
 ### 8. Listar lojas por proximidade (endpoint existente)
 GET http://localhost:8080/lojas/proximidade?latitude=-23.5505&longitude=-46.6333
 
-### 9. Listar categorias de lojista (endpoint existente)
-GET http://localhost:8080/lojas/categorias
+### 9. Listar lojas por usuário
+GET http://localhost:8080/lojas/usuario/1

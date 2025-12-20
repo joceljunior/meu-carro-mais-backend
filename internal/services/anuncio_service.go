@@ -30,8 +30,8 @@ func GetAnuncios() (*json.AnunciosResponse, error) {
 				Imagem:      anuncio.Loja.Imagem,
 				Latitude:    anuncio.Loja.Latitude,
 				Longitude:   anuncio.Loja.Longitude,
-				IDCategoria: anuncio.Loja.IDCategoria,
-				Categoria:   anuncio.Loja.Categoria.Nome,
+				Categoria: anuncio.Loja.Categoria,
+				IDUsuario: anuncio.Loja.IDUsuario,
 			},
 		}
 		anunciosResponse = append(anunciosResponse, anuncioResp)
@@ -68,8 +68,8 @@ func CreateAnuncio(req json.AnuncioRequest) (*json.AnuncioResponse, error) {
 			Imagem:      anuncio.Loja.Imagem,
 			Latitude:    anuncio.Loja.Latitude,
 			Longitude:   anuncio.Loja.Longitude,
-			IDCategoria: anuncio.Loja.IDCategoria,
-			Categoria:   anuncio.Loja.Categoria.Nome,
+			Categoria: anuncio.Loja.Categoria,
+			IDUsuario: anuncio.Loja.IDUsuario,
 		},
 	}
 
@@ -99,8 +99,8 @@ func GetAnuncioByID(id uint) (*json.AnuncioResponse, error) {
 			Imagem:      anuncio.Loja.Imagem,
 			Latitude:    anuncio.Loja.Latitude,
 			Longitude:   anuncio.Loja.Longitude,
-			IDCategoria: anuncio.Loja.IDCategoria,
-			Categoria:   anuncio.Loja.Categoria.Nome,
+			Categoria: anuncio.Loja.Categoria,
+			IDUsuario: anuncio.Loja.IDUsuario,
 		},
 	}
 
@@ -132,8 +132,8 @@ func GetAllAnuncios() ([]json.AnuncioResponse, error) {
 				Imagem:      anuncio.Loja.Imagem,
 				Latitude:    anuncio.Loja.Latitude,
 				Longitude:   anuncio.Loja.Longitude,
-				IDCategoria: anuncio.Loja.IDCategoria,
-				Categoria:   anuncio.Loja.Categoria.Nome,
+				Categoria: anuncio.Loja.Categoria,
+				IDUsuario: anuncio.Loja.IDUsuario,
 			},
 		}
 		responses = append(responses, response)
@@ -167,8 +167,8 @@ func GetAnunciosByLojaID(lojaID uint) (*json.AnunciosResponse, error) {
 				Imagem:      anuncio.Loja.Imagem,
 				Latitude:    anuncio.Loja.Latitude,
 				Longitude:   anuncio.Loja.Longitude,
-				IDCategoria: anuncio.Loja.IDCategoria,
-				Categoria:   anuncio.Loja.Categoria.Nome,
+				Categoria: anuncio.Loja.Categoria,
+				IDUsuario: anuncio.Loja.IDUsuario,
 			},
 		}
 		anunciosResponse = append(anunciosResponse, anuncioResp)
@@ -205,8 +205,8 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*json.AnuncioResponse, err
 			Imagem:      anuncio.Loja.Imagem,
 			Latitude:    anuncio.Loja.Latitude,
 			Longitude:   anuncio.Loja.Longitude,
-			IDCategoria: anuncio.Loja.IDCategoria,
-			Categoria:   anuncio.Loja.Categoria.Nome,
+			Categoria: anuncio.Loja.Categoria,
+			IDUsuario: anuncio.Loja.IDUsuario,
 		},
 	}
 

@@ -43,8 +43,8 @@ func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*json.RegistroI
 				Imagem:      registroInteresse.Anuncio.Loja.Imagem,
 				Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 				Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-				IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-				Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
+				Categoria: registroInteresse.Anuncio.Loja.Categoria,
+				IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
 			}
 		}
 		response.Anuncio = anuncioResp
@@ -91,8 +91,8 @@ func GetRegistroInteresseByID(id uint) (*json.RegistroInteresseResponse, error) 
 				Imagem:      registroInteresse.Anuncio.Loja.Imagem,
 				Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 				Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-				IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-				Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
+				Categoria: registroInteresse.Anuncio.Loja.Categoria,
+				IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
 			}
 		}
 		response.Anuncio = anuncioResp
@@ -141,8 +141,8 @@ func GetAllRegistroInteresses() ([]json.RegistroInteresseResponse, error) {
 					Imagem:      registroInteresse.Anuncio.Loja.Imagem,
 					Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 					Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-					IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-					Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
+					Categoria: registroInteresse.Anuncio.Loja.Categoria,
+					IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
 				}
 			}
 			response.Anuncio = anuncioResp
@@ -194,8 +194,8 @@ func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]json.RegistroInteresseR
 					Imagem:      registroInteresse.Anuncio.Loja.Imagem,
 					Latitude:    registroInteresse.Anuncio.Loja.Latitude,
 					Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-					IDCategoria: registroInteresse.Anuncio.Loja.IDCategoria,
-					Categoria:   registroInteresse.Anuncio.Loja.Categoria.Nome,
+					Categoria: registroInteresse.Anuncio.Loja.Categoria,
+					IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
 				}
 			}
 			response.Anuncio = anuncioResp

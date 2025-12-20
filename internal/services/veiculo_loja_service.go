@@ -28,8 +28,8 @@ func CreateVeiculoLoja(req json.VeiculoLojaRequest) (*json.VeiculoLojaResponse, 
 			Imagem:      veiculo.Loja.Imagem,
 			Latitude:    veiculo.Loja.Latitude,
 			Longitude:   veiculo.Loja.Longitude,
-			IDCategoria: veiculo.Loja.IDCategoria,
-			Categoria:   veiculo.Loja.Categoria.Nome,
+			Categoria: veiculo.Loja.Categoria,
+			IDUsuario: veiculo.Loja.IDUsuario,
 		},
 	}
 
@@ -59,8 +59,8 @@ func GetVeiculoLojaByID(id uint) (*json.VeiculoLojaResponse, error) {
 			Imagem:      veiculo.Loja.Imagem,
 			Latitude:    veiculo.Loja.Latitude,
 			Longitude:   veiculo.Loja.Longitude,
-			IDCategoria: veiculo.Loja.IDCategoria,
-			Categoria:   veiculo.Loja.Categoria.Nome,
+			Categoria: veiculo.Loja.Categoria,
+			IDUsuario: veiculo.Loja.IDUsuario,
 		},
 	}
 
@@ -92,8 +92,8 @@ func GetAllVeiculosLoja() ([]json.VeiculoLojaResponse, error) {
 				Imagem:      veiculo.Loja.Imagem,
 				Latitude:    veiculo.Loja.Latitude,
 				Longitude:   veiculo.Loja.Longitude,
-				IDCategoria: veiculo.Loja.IDCategoria,
-				Categoria:   veiculo.Loja.Categoria.Nome,
+				Categoria: veiculo.Loja.Categoria,
+				IDUsuario: veiculo.Loja.IDUsuario,
 			},
 		}
 		responses = append(responses, response)
@@ -127,8 +127,8 @@ func GetVeiculosLojaByLojaID(idLoja uint) (*json.VeiculosLojaResponse, error) {
 				Imagem:      veiculo.Loja.Imagem,
 				Latitude:    veiculo.Loja.Latitude,
 				Longitude:   veiculo.Loja.Longitude,
-				IDCategoria: veiculo.Loja.IDCategoria,
-				Categoria:   veiculo.Loja.Categoria.Nome,
+				Categoria: veiculo.Loja.Categoria,
+				IDUsuario: veiculo.Loja.IDUsuario,
 			},
 		}
 		veiculosResponse = append(veiculosResponse, veiculoResp)
@@ -165,8 +165,8 @@ func UpdateVeiculoLoja(id uint, req json.VeiculoLojaRequest) (*json.VeiculoLojaR
 			Imagem:      veiculo.Loja.Imagem,
 			Latitude:    veiculo.Loja.Latitude,
 			Longitude:   veiculo.Loja.Longitude,
-			IDCategoria: veiculo.Loja.IDCategoria,
-			Categoria:   veiculo.Loja.Categoria.Nome,
+			Categoria: veiculo.Loja.Categoria,
+			IDUsuario: veiculo.Loja.IDUsuario,
 		},
 	}
 

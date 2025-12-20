@@ -571,9 +571,11 @@ definitions:
     type: object
   json.LojaRequest:
     properties:
+      categoria:
+        type: string
       cnpj:
         type: string
-      id_categoria:
+      id_usuario:
         type: integer
       imagem:
         type: string
@@ -588,8 +590,9 @@ definitions:
       rating:
         type: integer
     required:
+    - categoria
     - cnpj
-    - id_categoria
+    - id_usuario
     - latitude
     - longitude
     - nome
@@ -604,7 +607,7 @@ definitions:
         type: string
       id:
         type: integer
-      id_categoria:
+      id_usuario:
         type: integer
       imagem:
         type: string
@@ -3041,6 +3044,39 @@ paths:
             additionalProperties: true
             type: object
       summary: Lista lojas por proximidade
+      tags:
+      - Lojas
+  /lojas/usuario/{id_usuario}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as lojas de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id_usuario
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de lojas do usuário
+          schema:
+            items:
+              $ref: '#/definitions/json.LojaResponse'
+            type: array
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista lojas por usuário
       tags:
       - Lojas
   /pagamentos/checkout:

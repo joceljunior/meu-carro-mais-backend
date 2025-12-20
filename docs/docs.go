@@ -2226,6 +2226,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/lojas/usuario/{id_usuario}": {
+            "get": {
+                "description": "Retorna todas as lojas de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Lista lojas por usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id_usuario",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de lojas do usuário",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.LojaResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/lojas/{id}": {
             "get": {
                 "description": "Retorna os dados de uma loja específica pelo ID",
@@ -6759,17 +6808,21 @@ const docTemplate = `{
         "json.LojaRequest": {
             "type": "object",
             "required": [
+                "categoria",
                 "cnpj",
-                "id_categoria",
+                "id_usuario",
                 "latitude",
                 "longitude",
                 "nome"
             ],
             "properties": {
+                "categoria": {
+                    "type": "string"
+                },
                 "cnpj": {
                     "type": "string"
                 },
-                "id_categoria": {
+                "id_usuario": {
                     "type": "integer"
                 },
                 "imagem": {
@@ -6807,7 +6860,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "id_categoria": {
+                "id_usuario": {
                     "type": "integer"
                 },
                 "imagem": {
