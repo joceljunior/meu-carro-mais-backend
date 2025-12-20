@@ -145,6 +145,12 @@ definitions:
         description: Motivo opcional da aprovação
         type: string
     type: object
+  json.AprovarSolicitacaoExecutivoRequest:
+    properties:
+      motivo:
+        description: Motivo opcional da aprovação
+        type: string
+    type: object
   json.AvaliacaoEstatisticasResponse:
     properties:
       media_nota:
@@ -929,6 +935,14 @@ definitions:
     required:
     - motivo
     type: object
+  json.RejeitarSolicitacaoExecutivoRequest:
+    properties:
+      motivo:
+        description: Motivo obrigatório da rejeição
+        type: string
+    required:
+    - motivo
+    type: object
   json.ResgatarAnuncioRequest:
     properties:
       id_usuario:
@@ -989,6 +1003,44 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  json.SolicitacaoExecutivoResponse:
+    properties:
+      data_solicitacao_executivo:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      mensagem:
+        type: string
+      motivo_solicitacao_executivo:
+        type: string
+      nome:
+        type: string
+      solicitacao_executivo:
+        type: string
+      tipo:
+        type: string
+    type: object
+  json.SolicitacoesExecutivoListResponse:
+    properties:
+      mensagem:
+        type: string
+      solicitacoes:
+        items:
+          $ref: '#/definitions/json.SolicitacaoExecutivoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.SolicitarExecutivoRequest:
+    properties:
+      motivo:
+        description: Justificativa/motivo da solicitação
+        type: string
+    required:
+    - motivo
     type: object
   json.SubscriptionCheckoutRequest:
     properties:
@@ -2596,8 +2648,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Valida se o email existe. Se existir, retorna os dados do usuário.
-        Se não existir, cria um novo usuário e retorna os dados.
+      description: Login para o aplicativo mobile. Valida se o email existe. Se existir,
+        retorna os dados do usuário. Se não existir, cria um novo usuário mobile.
+        Usuários do tipo 'customer' não podem fazer login no mobile.
       parameters:
       - description: Dados de login (email e senha)
         in: body
@@ -2616,11 +2669,54 @@ paths:
           description: Dados inválidos
           schema:
             type: string
+        "401":
+          description: Não autorizado
+          schema:
+            type: string
         "500":
           description: Erro interno do servidor
           schema:
             type: string
-      summary: Login/Criação do usuário
+      summary: Login Mobile
+      tags:
+      - Autenticação
+  /login/web:
+    post:
+      consumes:
+      - application/json
+      description: Login para a plataforma web. Apenas usuários do tipo 'executivo',
+        'administrativo' e 'customer' podem fazer login. Customers precisam estar
+        aprovados.
+      parameters:
+      - description: Dados de login (email e senha)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login realizado com sucesso
+          schema:
+            $ref: '#/definitions/json.LoginResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Não autorizado
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login Web
       tags:
       - Autenticação
   /logs:
@@ -4712,6 +4808,48 @@ paths:
       summary: Atualiza usuário
       tags:
       - Usuários
+  /users/{id}/aprovar-executivo:
+    post:
+      consumes:
+      - application/json
+      description: Aprova a solicitação de um usuário mobile para virar executivo.
+        O usuário passa a ter tipo 'executivo'.
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados da aprovação (motivo opcional)
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/json.AprovarSolicitacaoExecutivoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Solicitação aprovada
+          schema:
+            $ref: '#/definitions/json.SolicitacaoExecutivoResponse'
+        "400":
+          description: ID inválido ou usuário não tem solicitação pendente
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Aprova solicitação de executivo
+      tags:
+      - Administrativo
   /users/{id}/avaliacoes:
     get:
       consumes:
@@ -4779,6 +4917,50 @@ paths:
       summary: Verifica status do plano do usuário
       tags:
       - Usuários
+  /users/{id}/rejeitar-executivo:
+    post:
+      consumes:
+      - application/json
+      description: Rejeita a solicitação de um usuário mobile para virar executivo.
+        O usuário continua como mobile.
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados da rejeição (motivo obrigatório)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.RejeitarSolicitacaoExecutivoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Solicitação rejeitada
+          schema:
+            $ref: '#/definitions/json.SolicitacaoExecutivoResponse'
+        "400":
+          description: ID inválido, motivo não informado ou usuário não tem solicitação
+            pendente
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Rejeita solicitação de executivo
+      tags:
+      - Administrativo
   /users/{id}/restore:
     post:
       consumes:
@@ -4814,6 +4996,49 @@ paths:
             additionalProperties: true
             type: object
       summary: Restaura usuário excluído
+      tags:
+      - Usuários
+  /users/{id}/solicitar-executivo:
+    post:
+      consumes:
+      - application/json
+      description: Permite que um usuário mobile solicite se tornar executivo. A solicitação
+        fica pendente até ser aprovada por um administrativo.
+      parameters:
+      - description: ID do usuário mobile
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Motivo/justificativa da solicitação
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.SolicitarExecutivoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Solicitação enviada com sucesso
+          schema:
+            $ref: '#/definitions/json.SolicitacaoExecutivoResponse'
+        "400":
+          description: ID inválido, usuário não é mobile ou já tem solicitação pendente
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Solicitar virar executivo
       tags:
       - Usuários
   /users/administrativo:
@@ -5044,6 +5269,27 @@ paths:
             additionalProperties: true
             type: object
       summary: Criar usuário executivo
+      tags:
+      - Administrativo
+  /users/solicitacoes-executivo:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todas as solicitações de usuários mobile
+        que querem virar executivo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de solicitações pendentes
+          schema:
+            $ref: '#/definitions/json.SolicitacoesExecutivoListResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista solicitações de executivo pendentes
       tags:
       - Administrativo
   /usuarios/{id_usuario}/historico:

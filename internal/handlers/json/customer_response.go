@@ -49,3 +49,22 @@ type AprovacaoResponse struct {
 	Mensagem             string  `json:"mensagem"`
 }
 
+// SolicitacaoExecutivoResponse representa a resposta de uma solicitação para virar executivo
+type SolicitacaoExecutivoResponse struct {
+	ID                         uint       `json:"id"`
+	Nome                       string     `json:"nome"`
+	Email                      string     `json:"email"`
+	Tipo                       string     `json:"tipo"`
+	SolicitacaoExecutivo       string     `json:"solicitacao_executivo"`
+	DataSolicitacaoExecutivo   *time.Time `json:"data_solicitacao_executivo,omitempty"`
+	MotivoSolicitacaoExecutivo string     `json:"motivo_solicitacao_executivo,omitempty"`
+	Mensagem                   string     `json:"mensagem"`
+}
+
+// SolicitacoesExecutivoListResponse representa a lista de solicitações de executivo
+type SolicitacoesExecutivoListResponse struct {
+	Solicitacoes []SolicitacaoExecutivoResponse `json:"solicitacoes"`
+	Total        int                            `json:"total"`
+	Mensagem     string                         `json:"mensagem,omitempty"`
+}
+

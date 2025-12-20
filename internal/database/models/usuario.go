@@ -21,6 +21,16 @@ const (
 	StatusUsuarioRejeitado StatusUsuario = "rejeitado"
 )
 
+// StatusSolicitacaoExecutivo representa o status da solicitação para virar executivo
+type StatusSolicitacaoExecutivo string
+
+const (
+	StatusSolicitacaoNenhuma   StatusSolicitacaoExecutivo = ""
+	StatusSolicitacaoPendente  StatusSolicitacaoExecutivo = "pendente"
+	StatusSolicitacaoAprovada  StatusSolicitacaoExecutivo = "aprovada"
+	StatusSolicitacaoRejeitada StatusSolicitacaoExecutivo = "rejeitada"
+)
+
 type Usuario struct {
 	ID              uint          `gorm:"primaryKey"`
 	Nome            string        `gorm:"size:255"`
@@ -42,6 +52,12 @@ type Usuario struct {
 	Tipo            TipoUsuario   `gorm:"size:20;default:'mobile'"`          // Tipo do usuário: mobile, administrativo, customer, executivo
 	Status          StatusUsuario `gorm:"size:20;default:'aprovado'"`        // Status de aprovação (usado para customers)
 	IDExecutivo     *uint         `gorm:"index"`                              // ID do executivo que criou o customer (para bonificação)
+	
+	// Campos para solicitação de virar executivo (usado por usuários mobile)
+	SolicitacaoExecutivo       StatusSolicitacaoExecutivo `gorm:"size:20;default:''"` // Status da solicitação: "", pendente, aprovada, rejeitada
+	DataSolicitacaoExecutivo   *time.Time                 `gorm:"type:datetime"`      // Data da solicitação
+	MotivoSolicitacaoExecutivo string                     `gorm:"size:500"`           // Motivo/justificativa da solicitação
+	
 	Plano           TipoPlano     `gorm:"foreignKey:IDPlano"`
 	Loja            Loja          `gorm:"foreignKey:IDLoja"`
 	Veiculos        []Veiculo     `gorm:"foreignKey:IDUsuario"`

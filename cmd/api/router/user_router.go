@@ -30,6 +30,11 @@ func (ur *UserRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		users.POST("/customers/:id/rejeitar", handlers.RejeitarCustomerHandler) // POST /users/customers/:id/rejeitar - Rejeitar customer
 
 		// =====================================================
+		// ENDPOINTS SOLICITAÇÃO DE EXECUTIVO (para administrativo)
+		// =====================================================
+		users.GET("/solicitacoes-executivo", handlers.GetSolicitacoesExecutivoPendentesHandler) // GET /users/solicitacoes-executivo - Listar solicitações pendentes
+
+		// =====================================================
 		// ENDPOINTS ESPECÍFICOS DO USUÁRIO (devem vir antes dos endpoints com :id)
 		// =====================================================
 		users.GET("/:id/veiculos", handlers.GetVeiculosByUsuarioHandler)                      // GET /users/:id/veiculos - Veículos do usuário
@@ -37,6 +42,9 @@ func (ur *UserRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		users.GET("/:id/historicos-resgate", handlers.GetHistoricosResgateByUsuarioIDHandler) // GET /users/:id/historicos-resgate - Históricos de resgate do usuário
 		users.GET("/:id/avaliacoes", handlers.GetAvaliacoesByUsuarioIDHandler)                // GET /users/:id/avaliacoes - Avaliações do usuário
 		users.GET("/:id/plan-status", handlers.GetUserPlanStatusHandler)                      // GET /users/:id/plan-status - Status do plano do usuário
+		users.POST("/:id/solicitar-executivo", handlers.SolicitarExecutivoHandler)            // POST /users/:id/solicitar-executivo - Usuário mobile solicita virar executivo
+		users.POST("/:id/aprovar-executivo", handlers.AprovarSolicitacaoExecutivoHandler)     // POST /users/:id/aprovar-executivo - Aprovar solicitação de executivo
+		users.POST("/:id/rejeitar-executivo", handlers.RejeitarSolicitacaoExecutivoHandler)   // POST /users/:id/rejeitar-executivo - Rejeitar solicitação de executivo
 
 		// =====================================================
 		// ENDPOINTS CRUD COM :id (devem vir por último)

@@ -8,7 +8,8 @@ import (
 )
 
 // Login realiza o login do usuário mobile
-// Importante: usuários do tipo "customer" não podem fazer login no mobile
+// IMPORTANTE: Apenas usuários do tipo "mobile" podem fazer login no app mobile
+// Usuários do tipo customer, administrativo e executivo devem usar o login web
 func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 	// Primeiro, tenta buscar o usuário apenas por email
 	user, err := datasource.GetUserByEmailOnly(req.Email)
@@ -20,13 +21,22 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		}
 	}
 
-	// IMPORTANTE: Verifica se o usuário é do tipo customer
-	// Customers não podem fazer login no mobile
-	if user.Tipo == models.TipoUsuarioCustomer {
-		return nil, errors.New("usuários do tipo customer não podem fazer login no aplicativo mobile")
+	// IMPORTANTE: Apenas usuários do tipo MOBILE podem fazer login no app
+	// Outros tipos (customer, administrativo, executivo) devem usar /login/web
+	if user.Tipo != models.TipoUsuarioMobile {
+		switch user.Tipo {
+		case models.TipoUsuarioCustomer:
+			return nil, errors.New("usuários do tipo customer devem fazer login pela plataforma web")
+		case models.TipoUsuarioAdministrativo:
+			return nil, errors.New("usuários do tipo administrativo devem fazer login pela plataforma web")
+		case models.TipoUsuarioExecutivo:
+			return nil, errors.New("usuários do tipo executivo devem fazer login pela plataforma web")
+		default:
+			return nil, errors.New("tipo de usuário não permitido para login mobile")
+		}
 	}
 
-	// Verifica se o usuário está aprovado (para casos de outros tipos que possam ter status)
+	// Verifica se o usuário está aprovado
 	if user.Status == models.StatusUsuarioPendente {
 		return nil, errors.New("usuário pendente de aprovação")
 	}
@@ -35,6 +45,69 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		return nil, errors.New("usuário rejeitado")
 	}
 
+	var anuncioResp json.AnuncioDestaqueResponse
+	if user.Loja.ID != 0 {
+		anuncio, err := datasource.GetAnuncioDestaqueByLojaID(user.Loja.ID)
+		if err == nil {
+			anuncioResp = json.AnuncioDestaqueResponse{
+				ID:        anuncio.ID,
+				Titulo:    anuncio.Titulo,
+				Descricao: anuncio.Descricao,
+				Preco:     anuncio.Preco,
+				Imagem:    anuncio.Imagem,
+			}
+		}
+	}
+
+	resp := &json.LoginResponse{
+		ID:        user.ID,
+		Nome:      user.Nome,
+		Email:     user.Email,
+		Tipo:      string(user.Tipo),
+		Status:    string(user.Status),
+		NomePlano: user.Plano.Nome,
+		LojaUsuarioResponse: json.LojaUsuarioResponse{
+			Id:                      user.Loja.ID,
+			Nome:                    user.Loja.Nome,
+			Logo:                    user.Loja.Imagem,
+			AnuncioDestaqueResponse: anuncioResp,
+		},
+	}
+	return resp, nil
+}
+
+// LoginWeb realiza o login para a plataforma web
+// Apenas usuários do tipo "executivo", "administrativo" e "customer" podem fazer login
+// Customers precisam estar aprovados
+func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
+	// Busca o usuário por email
+	user, err := datasource.GetUserByEmailOnly(req.Email)
+	if err != nil {
+		return nil, errors.New("usuário não encontrado")
+	}
+
+	// Verifica se o tipo de usuário é permitido para login web
+	tiposPermitidos := map[models.TipoUsuario]bool{
+		models.TipoUsuarioExecutivo:     true,
+		models.TipoUsuarioAdministrativo: true,
+		models.TipoUsuarioCustomer:      true,
+	}
+
+	if !tiposPermitidos[user.Tipo] {
+		return nil, errors.New("usuários do tipo mobile não podem fazer login na plataforma web")
+	}
+
+	// Para customers, verifica se está aprovado
+	if user.Tipo == models.TipoUsuarioCustomer {
+		if user.Status == models.StatusUsuarioPendente {
+			return nil, errors.New("sua conta está pendente de aprovação")
+		}
+		if user.Status == models.StatusUsuarioRejeitado {
+			return nil, errors.New("sua conta foi rejeitada")
+		}
+	}
+
+	// Monta a resposta
 	var anuncioResp json.AnuncioDestaqueResponse
 	if user.Loja.ID != 0 {
 		anuncio, err := datasource.GetAnuncioDestaqueByLojaID(user.Loja.ID)

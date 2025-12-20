@@ -55,3 +55,18 @@ type RejeitarCustomerRequest struct {
 	Motivo string `json:"motivo" binding:"required"` // Motivo obrigatório da rejeição
 }
 
+// SolicitarExecutivoRequest representa a requisição de um usuário mobile para virar executivo
+type SolicitarExecutivoRequest struct {
+	Motivo string `json:"motivo" binding:"required"` // Justificativa/motivo da solicitação
+}
+
+// AprovarSolicitacaoExecutivoRequest representa a requisição para aprovar solicitação de executivo
+type AprovarSolicitacaoExecutivoRequest struct {
+	Motivo string `json:"motivo,omitempty"` // Motivo opcional da aprovação
+}
+
+// RejeitarSolicitacaoExecutivoRequest representa a requisição para rejeitar solicitação de executivo
+type RejeitarSolicitacaoExecutivoRequest struct {
+	Motivo string `json:"motivo" binding:"required"` // Motivo obrigatório da rejeição
+}
+

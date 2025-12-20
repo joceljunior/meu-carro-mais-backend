@@ -430,3 +430,107 @@ func GetUserPlanStatus(id uint) (*models.Usuario, *models.HistoricoPagamento, er
 
 	return usuario, &historico, nil
 }
+
+// =====================================================
+// FUNÇÕES PARA SOLICITAÇÃO DE EXECUTIVO
+// =====================================================
+
+// SolicitarExecutivo registra a solicitação de um usuário mobile para virar executivo
+func SolicitarExecutivo(id uint, motivo string) (*models.Usuario, error) {
+	// Busca o usuário
+	usuario, err := GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("usuário não encontrado")
+	}
+
+	// Verifica se é um usuário mobile
+	if usuario.Tipo != models.TipoUsuarioMobile {
+		return nil, errors.New("apenas usuários mobile podem solicitar virar executivo")
+	}
+
+	// Verifica se já tem uma solicitação pendente
+	if usuario.SolicitacaoExecutivo == models.StatusSolicitacaoPendente {
+		return nil, errors.New("usuário já possui uma solicitação pendente")
+	}
+
+	// Registra a solicitação
+	now := time.Now()
+	err = database.DB.Model(&models.Usuario{}).
+		Where("id = ?", id).
+		Updates(map[string]interface{}{
+			"solicitacao_executivo":        models.StatusSolicitacaoPendente,
+			"data_solicitacao_executivo":   now,
+			"motivo_solicitacao_executivo": motivo,
+		}).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByID(id)
+}
+
+// GetSolicitacoesExecutivoPendentes retorna todos os usuários com solicitação de executivo pendente
+func GetSolicitacoesExecutivoPendentes() ([]models.Usuario, error) {
+	var usuarios []models.Usuario
+	err := database.DB.
+		Preload("Loja").
+		Preload("Plano").
+		Where("solicitacao_executivo = ? AND data_exclusao IS NULL", models.StatusSolicitacaoPendente).
+		Order("data_solicitacao_executivo DESC").
+		Find(&usuarios).Error
+	if err != nil {
+		return nil, err
+	}
+	return usuarios, nil
+}
+
+// AprovarSolicitacaoExecutivo aprova a solicitação de executivo de um usuário
+func AprovarSolicitacaoExecutivo(id uint) (*models.Usuario, error) {
+	// Busca o usuário
+	usuario, err := GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("usuário não encontrado")
+	}
+
+	// Verifica se tem solicitação pendente
+	if usuario.SolicitacaoExecutivo != models.StatusSolicitacaoPendente {
+		return nil, errors.New("usuário não possui solicitação pendente")
+	}
+
+	// Aprova a solicitação e muda o tipo para executivo
+	err = database.DB.Model(&models.Usuario{}).
+		Where("id = ?", id).
+		Updates(map[string]interface{}{
+			"solicitacao_executivo": models.StatusSolicitacaoAprovada,
+			"tipo":                  models.TipoUsuarioExecutivo,
+		}).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByID(id)
+}
+
+// RejeitarSolicitacaoExecutivo rejeita a solicitação de executivo de um usuário
+func RejeitarSolicitacaoExecutivo(id uint) (*models.Usuario, error) {
+	// Busca o usuário
+	usuario, err := GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("usuário não encontrado")
+	}
+
+	// Verifica se tem solicitação pendente
+	if usuario.SolicitacaoExecutivo != models.StatusSolicitacaoPendente {
+		return nil, errors.New("usuário não possui solicitação pendente")
+	}
+
+	// Rejeita a solicitação (mantém o tipo mobile)
+	err = database.DB.Model(&models.Usuario{}).
+		Where("id = ?", id).
+		Update("solicitacao_executivo", models.StatusSolicitacaoRejeitada).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByID(id)
+}

@@ -1776,7 +1776,7 @@ const docTemplate = `{
         },
         "/login": {
             "post": {
-                "description": "Valida se o email existe. Se existir, retorna os dados do usuário. Se não existir, cria um novo usuário e retorna os dados.",
+                "description": "Login para o aplicativo mobile. Valida se o email existe. Se existir, retorna os dados do usuário. Se não existir, cria um novo usuário mobile. Usuários do tipo 'customer' não podem fazer login no mobile.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1786,7 +1786,7 @@ const docTemplate = `{
                 "tags": [
                     "Autenticação"
                 ],
-                "summary": "Login/Criação do usuário",
+                "summary": "Login Mobile",
                 "parameters": [
                     {
                         "description": "Dados de login (email e senha)",
@@ -1811,10 +1811,71 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "401": {
+                        "description": "Não autorizado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "500": {
                         "description": "Erro interno do servidor",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/login/web": {
+            "post": {
+                "description": "Login para a plataforma web. Apenas usuários do tipo 'executivo', 'administrativo' e 'customer' podem fazer login. Customers precisam estar aprovados.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Login Web",
+                "parameters": [
+                    {
+                        "description": "Dados de login (email e senha)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login realizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -5058,6 +5119,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/solicitacoes-executivo": {
+            "get": {
+                "description": "Retorna uma lista com todas as solicitações de usuários mobile que querem virar executivo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Lista solicitações de executivo pendentes",
+                "responses": {
+                    "200": {
+                        "description": "Lista de solicitações pendentes",
+                        "schema": {
+                            "$ref": "#/definitions/json.SolicitacoesExecutivoListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}": {
             "get": {
                 "description": "Retorna os dados de um usuário específico pelo ID",
@@ -5223,6 +5314,67 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/{id}/aprovar-executivo": {
+            "post": {
+                "description": "Aprova a solicitação de um usuário mobile para virar executivo. O usuário passa a ter tipo 'executivo'.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Aprova solicitação de executivo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados da aprovação (motivo opcional)",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/json.AprovarSolicitacaoExecutivoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solicitação aprovada",
+                        "schema": {
+                            "$ref": "#/definitions/json.SolicitacaoExecutivoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou usuário não tem solicitação pendente",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}/avaliacoes": {
             "get": {
                 "description": "Retorna todas as avaliações feitas por um usuário específico",
@@ -5322,6 +5474,68 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/{id}/rejeitar-executivo": {
+            "post": {
+                "description": "Rejeita a solicitação de um usuário mobile para virar executivo. O usuário continua como mobile.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Rejeita solicitação de executivo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados da rejeição (motivo obrigatório)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.RejeitarSolicitacaoExecutivoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solicitação rejeitada",
+                        "schema": {
+                            "$ref": "#/definitions/json.SolicitacaoExecutivoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido, motivo não informado ou usuário não tem solicitação pendente",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}/restore": {
             "post": {
                 "description": "Restaura um usuário que foi soft deleted",
@@ -5354,6 +5568,68 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/solicitar-executivo": {
+            "post": {
+                "description": "Permite que um usuário mobile solicite se tornar executivo. A solicitação fica pendente até ser aprovada por um administrativo.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Solicitar virar executivo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário mobile",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Motivo/justificativa da solicitação",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.SolicitarExecutivoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Solicitação enviada com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.SolicitacaoExecutivoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido, usuário não é mobile ou já tem solicitação pendente",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -6502,6 +6778,15 @@ const docTemplate = `{
             }
         },
         "json.AprovarCustomerRequest": {
+            "type": "object",
+            "properties": {
+                "motivo": {
+                    "description": "Motivo opcional da aprovação",
+                    "type": "string"
+                }
+            }
+        },
+        "json.AprovarSolicitacaoExecutivoRequest": {
             "type": "object",
             "properties": {
                 "motivo": {
@@ -7672,6 +7957,18 @@ const docTemplate = `{
                 }
             }
         },
+        "json.RejeitarSolicitacaoExecutivoRequest": {
+            "type": "object",
+            "required": [
+                "motivo"
+            ],
+            "properties": {
+                "motivo": {
+                    "description": "Motivo obrigatório da rejeição",
+                    "type": "string"
+                }
+            }
+        },
         "json.ResgatarAnuncioRequest": {
             "type": "object",
             "required": [
@@ -7760,6 +8057,64 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "json.SolicitacaoExecutivoResponse": {
+            "type": "object",
+            "properties": {
+                "data_solicitacao_executivo": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "motivo_solicitacao_executivo": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "solicitacao_executivo": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.SolicitacoesExecutivoListResponse": {
+            "type": "object",
+            "properties": {
+                "mensagem": {
+                    "type": "string"
+                },
+                "solicitacoes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.SolicitacaoExecutivoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.SolicitarExecutivoRequest": {
+            "type": "object",
+            "required": [
+                "motivo"
+            ],
+            "properties": {
+                "motivo": {
+                    "description": "Justificativa/motivo da solicitação",
+                    "type": "string"
                 }
             }
         },

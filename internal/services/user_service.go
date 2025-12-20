@@ -452,3 +452,98 @@ func buildCustomersListResponse(customers []models.Usuario, mensagem string) (*j
 		Mensagem:  mensagem,
 	}, nil
 }
+
+// =====================================================
+// FUNÇÕES PARA SOLICITAÇÃO DE EXECUTIVO
+// =====================================================
+
+// SolicitarExecutivo registra a solicitação de um usuário mobile para virar executivo
+func SolicitarExecutivo(id uint, motivo string) (*json.SolicitacaoExecutivoResponse, error) {
+	user, err := datasource.SolicitarExecutivo(id, motivo)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.SolicitacaoExecutivoResponse{
+		ID:                         user.ID,
+		Nome:                       user.Nome,
+		Email:                      user.Email,
+		Tipo:                       string(user.Tipo),
+		SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
+		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
+		MotivoSolicitacaoExecutivo: user.MotivoSolicitacaoExecutivo,
+		Mensagem:                   "Solicitação para virar executivo enviada com sucesso. Aguardando aprovação.",
+	}
+
+	return response, nil
+}
+
+// GetSolicitacoesExecutivoPendentes retorna todas as solicitações pendentes
+func GetSolicitacoesExecutivoPendentes() (*json.SolicitacoesExecutivoListResponse, error) {
+	usuarios, err := datasource.GetSolicitacoesExecutivoPendentes()
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []json.SolicitacaoExecutivoResponse
+	for _, user := range usuarios {
+		response := json.SolicitacaoExecutivoResponse{
+			ID:                         user.ID,
+			Nome:                       user.Nome,
+			Email:                      user.Email,
+			Tipo:                       string(user.Tipo),
+			SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
+			DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
+			MotivoSolicitacaoExecutivo: user.MotivoSolicitacaoExecutivo,
+		}
+		responses = append(responses, response)
+	}
+
+	return &json.SolicitacoesExecutivoListResponse{
+		Solicitacoes: responses,
+		Total:        len(responses),
+		Mensagem:     "Solicitações pendentes listadas com sucesso",
+	}, nil
+}
+
+// AprovarSolicitacaoExecutivo aprova a solicitação de um usuário para virar executivo
+func AprovarSolicitacaoExecutivo(id uint, motivo string) (*json.SolicitacaoExecutivoResponse, error) {
+	user, err := datasource.AprovarSolicitacaoExecutivo(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.SolicitacaoExecutivoResponse{
+		ID:                         user.ID,
+		Nome:                       user.Nome,
+		Email:                      user.Email,
+		Tipo:                       string(user.Tipo),
+		SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
+		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
+		MotivoSolicitacaoExecutivo: motivo,
+		Mensagem:                   "Solicitação aprovada! Usuário agora é executivo.",
+	}
+
+	return response, nil
+}
+
+// RejeitarSolicitacaoExecutivo rejeita a solicitação de um usuário para virar executivo
+func RejeitarSolicitacaoExecutivo(id uint, motivo string) (*json.SolicitacaoExecutivoResponse, error) {
+	user, err := datasource.RejeitarSolicitacaoExecutivo(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.SolicitacaoExecutivoResponse{
+		ID:                         user.ID,
+		Nome:                       user.Nome,
+		Email:                      user.Email,
+		Tipo:                       string(user.Tipo),
+		SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
+		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
+		MotivoSolicitacaoExecutivo: motivo,
+		Mensagem:                   "Solicitação rejeitada.",
+	}
+
+	return response, nil
+}

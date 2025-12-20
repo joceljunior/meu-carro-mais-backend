@@ -478,3 +478,152 @@ func CreateCustomerHandler(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, resp)
 }
+
+// =====================================================
+// ENDPOINTS SOLICITAÇÃO DE EXECUTIVO
+// =====================================================
+
+// SolicitarExecutivoHandler godoc
+// @Summary      Solicitar virar executivo
+// @Description  Permite que um usuário mobile solicite se tornar executivo. A solicitação fica pendente até ser aprovada por um administrativo.
+// @Tags         Usuários
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do usuário mobile"
+// @Param        request body json.SolicitarExecutivoRequest true "Motivo/justificativa da solicitação"
+// @Success      200 {object} json.SolicitacaoExecutivoResponse "Solicitação enviada com sucesso"
+// @Failure      400 {object} map[string]interface{} "ID inválido, usuário não é mobile ou já tem solicitação pendente"
+// @Failure      404 {object} map[string]interface{} "Usuário não encontrado"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/{id}/solicitar-executivo [post]
+func SolicitarExecutivoHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	var req json.SolicitarExecutivoRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Motivo da solicitação é obrigatório",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.SolicitarExecutivo(uint(id), req.Motivo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// GetSolicitacoesExecutivoPendentesHandler godoc
+// @Summary      Lista solicitações de executivo pendentes
+// @Description  Retorna uma lista com todas as solicitações de usuários mobile que querem virar executivo
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} json.SolicitacoesExecutivoListResponse "Lista de solicitações pendentes"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/solicitacoes-executivo [get]
+func GetSolicitacoesExecutivoPendentesHandler(c *gin.Context) {
+	resp, err := services.GetSolicitacoesExecutivoPendentes()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// AprovarSolicitacaoExecutivoHandler godoc
+// @Summary      Aprova solicitação de executivo
+// @Description  Aprova a solicitação de um usuário mobile para virar executivo. O usuário passa a ter tipo 'executivo'.
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do usuário"
+// @Param        request body json.AprovarSolicitacaoExecutivoRequest false "Dados da aprovação (motivo opcional)"
+// @Success      200 {object} json.SolicitacaoExecutivoResponse "Solicitação aprovada"
+// @Failure      400 {object} map[string]interface{} "ID inválido ou usuário não tem solicitação pendente"
+// @Failure      404 {object} map[string]interface{} "Usuário não encontrado"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/{id}/aprovar-executivo [post]
+func AprovarSolicitacaoExecutivoHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	var req json.AprovarSolicitacaoExecutivoRequest
+	// Ignora erro se body estiver vazio (motivo é opcional)
+	c.ShouldBindJSON(&req)
+
+	resp, err := services.AprovarSolicitacaoExecutivo(uint(id), req.Motivo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// RejeitarSolicitacaoExecutivoHandler godoc
+// @Summary      Rejeita solicitação de executivo
+// @Description  Rejeita a solicitação de um usuário mobile para virar executivo. O usuário continua como mobile.
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do usuário"
+// @Param        request body json.RejeitarSolicitacaoExecutivoRequest true "Dados da rejeição (motivo obrigatório)"
+// @Success      200 {object} json.SolicitacaoExecutivoResponse "Solicitação rejeitada"
+// @Failure      400 {object} map[string]interface{} "ID inválido, motivo não informado ou usuário não tem solicitação pendente"
+// @Failure      404 {object} map[string]interface{} "Usuário não encontrado"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/{id}/rejeitar-executivo [post]
+func RejeitarSolicitacaoExecutivoHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	var req json.RejeitarSolicitacaoExecutivoRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Motivo da rejeição é obrigatório",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.RejeitarSolicitacaoExecutivo(uint(id), req.Motivo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

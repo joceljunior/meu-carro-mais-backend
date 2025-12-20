@@ -1,4 +1,98 @@
 ### =====================================================
+### LOGIN WEB - Para executivo, administrativo e customer
+### =====================================================
+
+### Login WEB com usuário ADMINISTRATIVO
+POST http://localhost:8080/api/login/web
+Content-Type: application/json
+
+{
+  "email": "admin@meucarro.com",
+  "senha": "admin123"
+}
+
+### Login WEB com usuário EXECUTIVO
+POST http://localhost:8080/api/login/web
+Content-Type: application/json
+
+{
+  "email": "executivo@meucarro.com",
+  "senha": "exec123"
+}
+
+### Login WEB com usuário CUSTOMER aprovado
+POST http://localhost:8080/api/login/web
+Content-Type: application/json
+
+{
+  "email": "loja@joao.com",
+  "senha": "loja123"
+}
+
+### Login WEB com usuário MOBILE (deve retornar ERRO)
+POST http://localhost:8080/api/login/web
+Content-Type: application/json
+
+{
+  "email": "joao.mobile@email.com",
+  "senha": "joao123"
+}
+# Esperado: Erro "usuários do tipo mobile não podem fazer login na plataforma web"
+
+### Login WEB com usuário CUSTOMER pendente (deve retornar ERRO)
+POST http://localhost:8080/api/login/web
+Content-Type: application/json
+
+{
+  "email": "customer.pendente@email.com",
+  "senha": "senha123"
+}
+# Esperado: Erro "sua conta está pendente de aprovação"
+
+### =====================================================
+### LOGIN MOBILE - APENAS para usuários tipo mobile
+### =====================================================
+
+### Login MOBILE (cria usuário se não existir)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "novo.usuario@email.com",
+  "senha": "senha123"
+}
+
+### Login MOBILE com usuário ADMINISTRATIVO (deve retornar ERRO)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "admin@meucarro.com",
+  "senha": "admin123"
+}
+# Esperado: Erro "usuários do tipo administrativo devem fazer login pela plataforma web"
+
+### Login MOBILE com usuário EXECUTIVO (deve retornar ERRO)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "executivo@meucarro.com",
+  "senha": "exec123"
+}
+# Esperado: Erro "usuários do tipo executivo devem fazer login pela plataforma web"
+
+### Login MOBILE com usuário CUSTOMER (deve retornar ERRO)
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "loja@joao.com",
+  "senha": "loja123"
+}
+# Esperado: Erro "usuários do tipo customer devem fazer login pela plataforma web"
+
+### =====================================================
 ### ENDPOINTS ADMINISTRATIVO - Criação de Usuários Especiais
 ### =====================================================
 
@@ -143,5 +237,46 @@ Content-Type: application/json
 {
   "email": "joao.mobile@email.com",
   "senha": "joao123"
+}
+
+### =====================================================
+### SOLICITAÇÃO PARA VIRAR EXECUTIVO
+### =====================================================
+
+### Usuário MOBILE solicita virar EXECUTIVO (ID = 5)
+### Apenas usuários mobile podem fazer essa solicitação
+POST http://localhost:8080/api/users/5/solicitar-executivo
+Content-Type: application/json
+
+{
+  "motivo": "Quero indicar lojas e ganhar bonificações. Tenho contatos no ramo automotivo."
+}
+
+### Listar todas as solicitações de executivo PENDENTES
+### Apenas administrativos devem ter acesso
+GET http://localhost:8080/api/users/solicitacoes-executivo
+
+### APROVAR solicitação de executivo (ID = 5)
+### O usuário muda de tipo "mobile" para "executivo"
+POST http://localhost:8080/api/users/5/aprovar-executivo
+Content-Type: application/json
+
+{
+  "motivo": "Perfil aprovado após análise"
+}
+
+### APROVAR solicitação sem motivo (opcional)
+POST http://localhost:8080/api/users/5/aprovar-executivo
+Content-Type: application/json
+
+{}
+
+### REJEITAR solicitação de executivo (ID = 6) - motivo obrigatório
+### O usuário continua como "mobile"
+POST http://localhost:8080/api/users/6/rejeitar-executivo
+Content-Type: application/json
+
+{
+  "motivo": "Perfil não atende aos requisitos mínimos"
 }
 
