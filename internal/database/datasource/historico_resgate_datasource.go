@@ -8,6 +8,58 @@ import (
 	"time"
 )
 
+// CreateHistoricoResgateFromAnuncio cria um histórico de resgate a partir de um anúncio
+func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*models.HistoricoResgate, error) {
+	// Busca o anúncio
+	anuncio, err := GetAnuncioByID(anuncioID)
+	if err != nil {
+		return nil, errors.New("anúncio não encontrado")
+	}
+
+	// Verifica se o anúncio não foi excluído
+	if anuncio.DataExclusao != nil {
+		return nil, errors.New("anúncio não está disponível")
+	}
+
+	// Prepara o histórico de resgate baseado no tipo do anúncio
+	historico := models.HistoricoResgate{
+		IDUsuario:   usuarioID,
+		IDLoja:      anuncio.IDLoja,
+		TipoResgate: anuncio.TipoAnuncio,
+		Valor:       anuncio.Preco,
+		Status:      "pendente", // Sempre inicia como pendente
+	}
+
+	// Define o ID apropriado baseado no tipo do anúncio
+	switch anuncio.TipoAnuncio {
+	case "produto":
+		if anuncio.IDProduto == nil {
+			return nil, errors.New("anúncio de produto sem ID de produto associado")
+		}
+		historico.IDProduto = anuncio.IDProduto
+	case "servico":
+		if anuncio.IDServico == nil {
+			return nil, errors.New("anúncio de serviço sem ID de serviço associado")
+		}
+		historico.IDServico = anuncio.IDServico
+	case "veiculo":
+		if anuncio.IDVeiculo == nil {
+			return nil, errors.New("anúncio de veículo sem ID de veículo associado")
+		}
+		historico.IDVeiculo = anuncio.IDVeiculo
+	default:
+		return nil, errors.New("tipo de anúncio inválido")
+	}
+
+	err = database.DB.Create(&historico).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Recarrega o histórico com os relacionamentos
+	return GetHistoricoResgateByID(historico.ID)
+}
+
 // CreateHistoricoResgate cria um novo histórico de resgate
 func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*models.HistoricoResgate, error) {
 	// Validação: apenas um dos IDs deve ser preenchido

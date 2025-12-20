@@ -770,6 +770,57 @@ definitions:
       total:
         type: integer
     type: object
+  json.RegistroInteresseRequest:
+    properties:
+      email:
+        type: string
+      id_anuncio:
+        type: integer
+      mensagem:
+        maxLength: 1000
+        type: string
+      nome:
+        maxLength: 255
+        minLength: 2
+        type: string
+      telefone:
+        maxLength: 20
+        minLength: 10
+        type: string
+    required:
+    - email
+    - id_anuncio
+    - nome
+    - telefone
+    type: object
+  json.RegistroInteresseResponse:
+    properties:
+      anuncio:
+        $ref: '#/definitions/json.AnuncioResponse'
+      data_atualizacao:
+        type: string
+      data_cadastro:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      id_anuncio:
+        type: integer
+      mensagem:
+        type: string
+      nome:
+        type: string
+      telefone:
+        type: string
+    type: object
+  json.ResgatarAnuncioRequest:
+    properties:
+      id_usuario:
+        type: integer
+    required:
+    - id_usuario
+    type: object
   json.ServicoRequest:
     properties:
       descricao:
@@ -1271,6 +1322,49 @@ paths:
             additionalProperties: true
             type: object
       summary: Atualiza anúncio
+      tags:
+      - Anúncios
+  /anuncios/{id}/resgatar:
+    post:
+      consumes:
+      - application/json
+      description: Cria um histórico de resgate com status pendente quando um usuário
+        resgata um anúncio
+      parameters:
+      - description: ID do anúncio
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados do resgate (ID do usuário)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.ResgatarAnuncioRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Histórico de resgate criado com sucesso
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Anúncio não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Resgata um anúncio
       tags:
       - Anúncios
   /anuncios/{id}/restore:
@@ -2371,6 +2465,78 @@ paths:
       summary: Atualiza histórico de resgate
       tags:
       - Histórico de Resgates
+  /historicos-resgate/{id}/aprovar:
+    put:
+      consumes:
+      - application/json
+      description: Aprova um resgate pendente, alterando o status para confirmado
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Resgate aprovado com sucesso
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: Resgate não está pendente ou dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Aprova um resgate
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/{id}/rejeitar:
+    put:
+      consumes:
+      - application/json
+      description: Rejeita um resgate pendente, alterando o status para cancelado
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Resgate rejeitado com sucesso
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: Resgate não está pendente ou dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Rejeita um resgate
+      tags:
+      - Histórico de Resgates
   /historicos-resgate/{id}/restore:
     post:
       consumes:
@@ -3453,6 +3619,202 @@ paths:
       summary: Restaura produto
       tags:
       - Produtos
+  /registro-interesse:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os registros de interesse ativos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de registros de interesse
+          schema:
+            items:
+              $ref: '#/definitions/json.RegistroInteresseResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os registros de interesse
+      tags:
+      - Registro de Interesse
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo registro de interesse em um anúncio de veículo
+      parameters:
+      - description: Dados do registro de interesse
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.RegistroInteresseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Registro de interesse criado com sucesso
+          schema:
+            $ref: '#/definitions/json.RegistroInteresseResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Registra interesse em um veículo
+      tags:
+      - Registro de Interesse
+  /registro-interesse/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete do registro de interesse, marcando como excluído
+        sem remover do banco
+      parameters:
+      - description: ID do registro de interesse
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Registro de interesse excluído com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Registro de interesse não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui registro de interesse (soft delete)
+      tags:
+      - Registro de Interesse
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de um registro de interesse específico pelo ID
+      parameters:
+      - description: ID do registro de interesse
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Registro de interesse encontrado
+          schema:
+            $ref: '#/definitions/json.RegistroInteresseResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Registro de interesse não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca registro de interesse por ID
+      tags:
+      - Registro de Interesse
+  /registro-interesse/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um registro de interesse que foi soft deleted
+      parameters:
+      - description: ID do registro de interesse
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Registro de interesse restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Registro de interesse não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura registro de interesse excluído
+      tags:
+      - Registro de Interesse
+  /registro-interesse/anuncio/{anuncio_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os registros de interesse de um anúncio específico
+      parameters:
+      - description: ID do anúncio
+        in: path
+        name: anuncio_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de registros de interesse do anúncio
+          schema:
+            items:
+              $ref: '#/definitions/json.RegistroInteresseResponse'
+            type: array
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista registros de interesse por anúncio
+      tags:
+      - Registro de Interesse
   /servicos:
     get:
       consumes:

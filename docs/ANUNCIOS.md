@@ -128,3 +128,113 @@ Este endpoint pode ser expandido no futuro para incluir:
 - Filtro por faixa de preço
 - Filtro por localização (proximidade)
 - Ordenação por preço, destaque, data, etc.
+
+---
+
+## Resgatar Anúncio
+
+### POST /anuncios/{id}/resgatar
+
+Cria um histórico de resgate automaticamente quando um usuário resgata um anúncio. O histórico é criado com status "pendente", aguardando aprovação da loja.
+
+#### Request
+
+**Método**: POST  
+**URL**: `/anuncios/{id}/resgatar`  
+**Headers**: 
+- `Content-Type: application/json`
+
+**Parâmetros de Path**: 
+- `id` (obrigatório): ID do anúncio a ser resgatado
+
+**Body**:
+```json
+{
+  "id_usuario": 1
+}
+```
+
+#### Response
+
+**Status: 201 Created**
+
+```json
+{
+  "id": 1,
+  "id_usuario": 1,
+  "id_produto": null,
+  "id_servico": 5,
+  "id_veiculo": null,
+  "id_loja": 1,
+  "tipo_resgate": "servico",
+  "valor": 89.90,
+  "status": "pendente",
+  "data_resgate": "2024-01-15T14:30:00Z",
+  "data_atualizacao": "2024-01-15T14:30:00Z",
+  "usuario": {
+    "id": 1,
+    "nome": "João Silva",
+    "email": "joao@example.com"
+  },
+  "loja": {
+    "id": 1,
+    "nome": "Oficina São Paulo",
+    "cnpj": "12.345.678/0001-90"
+  },
+  "servico": {
+    "id": 5,
+    "titulo": "Troca de Óleo Completa",
+    "descricao": "Troca de óleo com filtro incluído",
+    "preco": 89.90
+  }
+}
+```
+
+#### Erros
+
+**Status: 400 Bad Request** - Dados inválidos
+```json
+{
+  "error": "Dados inválidos",
+  "details": "Campo 'id_usuario' é obrigatório"
+}
+```
+
+**Status: 404 Not Found** - Anúncio não encontrado
+```json
+{
+  "error": "anúncio não encontrado"
+}
+```
+
+**Status: 500 Internal Server Error**
+```json
+{
+  "error": "anúncio não está disponível"
+}
+```
+
+#### Observações
+
+- O histórico de resgate é criado automaticamente com status "pendente"
+- A loja precisa aprovar ou rejeitar o resgate posteriormente
+- O sistema extrai automaticamente: tipo do anúncio, preço, loja e produto/serviço/veículo associado
+- O anúncio deve existir e não estar excluído (soft delete)
+
+#### Exemplo de Uso
+
+```bash
+curl -X POST "http://localhost:8080/anuncios/5/resgatar" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id_usuario": 1
+  }'
+```
+
+#### Fluxo Completo
+
+1. Usuário resgata anúncio → `POST /anuncios/{id}/resgatar`
+2. Sistema cria histórico com status "pendente"
+3. Loja visualiza resgates pendentes → `GET /lojas/{id}/historicos-resgate`
+4. Loja aprova → `PUT /historicos-resgate/{id}/aprovar`
+5. Loja rejeita → `PUT /historicos-resgate/{id}/rejeitar`

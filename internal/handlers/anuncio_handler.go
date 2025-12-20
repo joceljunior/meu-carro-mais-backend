@@ -250,3 +250,46 @@ func GetCategoriasAnuncioHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+// ResgatarAnuncioHandler godoc
+// @Summary      Resgata um anúncio
+// @Description  Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio
+// @Tags         Anúncios
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do anúncio"
+// @Param        request body json.ResgatarAnuncioRequest true "Dados do resgate (ID do usuário)"
+// @Success      201  {object}  json.HistoricoResgateResponse "Histórico de resgate criado com sucesso"
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      404  {object}  map[string]interface{} "Anúncio não encontrado"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /anuncios/{id}/resgatar [post]
+func ResgatarAnuncioHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	anuncioID, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID do anúncio inválido",
+		})
+		return
+	}
+
+	var req json.ResgatarAnuncioRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Dados inválidos",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := services.CreateHistoricoResgateFromAnuncio(uint(anuncioID), req.IDUsuario)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, resp)
+}

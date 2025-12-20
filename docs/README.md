@@ -41,6 +41,17 @@ API para gerenciamento de usuários, lojas e serviços automotivos.
 - **GET /veiculos/{id_veiculo}/historico** - Lista histórico de um veículo específico
   - [Documentação detalhada](HISTORICO_VEICULOS.md)
 
+### Histórico de Resgate
+
+- **POST /anuncios/{id}/resgatar** - Resgata um anúncio (cria histórico com status pendente)
+- **GET /historicos-resgate** - Lista todos os históricos de resgate
+- **GET /users/{id}/historicos-resgate** - Lista históricos de resgate de um usuário
+- **GET /lojas/{id}/historicos-resgate** - Lista históricos de resgate de uma loja
+- **PUT /historicos-resgate/{id}/aprovar** - Aprova um resgate pendente
+- **PUT /historicos-resgate/{id}/rejeitar** - Rejeita um resgate pendente
+- **PUT /historicos-resgate/{id}/status** - Atualiza status do resgate
+  - [Documentação detalhada](HISTORICO_RESGATE.md)
+
 ### Pagamentos
 
 - **POST /pagamentos/checkout** - Cria sessão de checkout para pagamento único

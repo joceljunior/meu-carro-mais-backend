@@ -245,6 +245,19 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 		return
 	}
 
+	// Valida o status
+	validStatuses := map[string]bool{
+		"pendente":   true,
+		"confirmado": true,
+		"cancelado":  true,
+	}
+	if !validStatuses[status] {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Status inválido. Valores aceitos: pendente, confirmado, cancelado",
+		})
+		return
+	}
+
 	err = services.UpdateStatusHistoricoResgate(uint(id), status)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -255,7 +268,110 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Status atualizado com sucesso",
+		"status":   status,
 	})
+}
+
+// AprovarResgateHandler godoc
+// @Summary      Aprova um resgate
+// @Description  Aprova um resgate pendente, alterando o status para confirmado
+// @Tags         Histórico de Resgates
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do histórico de resgate"
+// @Success      200  {object}  json.HistoricoResgateResponse "Resgate aprovado com sucesso"
+// @Failure      400  {object}  map[string]interface{} "Resgate não está pendente ou dados inválidos"
+// @Failure      404  {object}  map[string]interface{} "Histórico não encontrado"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /historicos-resgate/{id}/aprovar [put]
+func AprovarResgateHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	// Verifica se o resgate existe e está pendente
+	historico, err := services.GetHistoricoResgateByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Histórico não encontrado",
+		})
+		return
+	}
+
+	if historico.Status != "pendente" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Apenas resgates com status 'pendente' podem ser aprovados",
+		})
+		return
+	}
+
+	err = services.UpdateStatusHistoricoResgate(uint(id), "confirmado")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// Retorna o histórico atualizado
+	historicoAtualizado, _ := services.GetHistoricoResgateByID(uint(id))
+	c.JSON(http.StatusOK, historicoAtualizado)
+}
+
+// RejeitarResgateHandler godoc
+// @Summary      Rejeita um resgate
+// @Description  Rejeita um resgate pendente, alterando o status para cancelado
+// @Tags         Histórico de Resgates
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do histórico de resgate"
+// @Success      200  {object}  json.HistoricoResgateResponse "Resgate rejeitado com sucesso"
+// @Failure      400  {object}  map[string]interface{} "Resgate não está pendente ou dados inválidos"
+// @Failure      404  {object}  map[string]interface{} "Histórico não encontrado"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /historicos-resgate/{id}/rejeitar [put]
+func RejeitarResgateHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	// Verifica se o resgate existe e está pendente
+	historico, err := services.GetHistoricoResgateByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Histórico não encontrado",
+		})
+		return
+	}
+
+	if historico.Status != "pendente" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Apenas resgates com status 'pendente' podem ser rejeitados",
+		})
+		return
+	}
+
+	err = services.UpdateStatusHistoricoResgate(uint(id), "cancelado")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// Retorna o histórico atualizado
+	historicoAtualizado, _ := services.GetHistoricoResgateByID(uint(id))
+	c.JSON(http.StatusOK, historicoAtualizado)
 }
 
 // SoftDeleteHistoricoResgateHandler godoc

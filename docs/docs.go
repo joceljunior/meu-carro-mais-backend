@@ -298,6 +298,68 @@ const docTemplate = `{
                 }
             }
         },
+        "/anuncios/{id}/resgatar": {
+            "post": {
+                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Resgata um anúncio",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do anúncio",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados do resgate (ID do usuário)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.ResgatarAnuncioRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Histórico de resgate criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Anúncio não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/anuncios/{id}/restore": {
             "post": {
                 "description": "Restaura um anúncio que foi soft deleted",
@@ -1857,6 +1919,112 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/{id}/aprovar": {
+            "put": {
+                "description": "Aprova um resgate pendente, alterando o status para confirmado",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Aprova um resgate",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resgate aprovado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Resgate não está pendente ou dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/{id}/rejeitar": {
+            "put": {
+                "description": "Rejeita um resgate pendente, alterando o status para cancelado",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Rejeita um resgate",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resgate rejeitado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Resgate não está pendente ou dados inválidos",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -3455,6 +3623,293 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Produto não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/registro-interesse": {
+            "get": {
+                "description": "Retorna uma lista com todos os registros de interesse ativos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Registro de Interesse"
+                ],
+                "summary": "Lista todos os registros de interesse",
+                "responses": {
+                    "200": {
+                        "description": "Lista de registros de interesse",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.RegistroInteresseResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo registro de interesse em um anúncio de veículo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Registro de Interesse"
+                ],
+                "summary": "Registra interesse em um veículo",
+                "parameters": [
+                    {
+                        "description": "Dados do registro de interesse",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.RegistroInteresseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Registro de interesse criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.RegistroInteresseResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/registro-interesse/anuncio/{anuncio_id}": {
+            "get": {
+                "description": "Retorna todos os registros de interesse de um anúncio específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Registro de Interesse"
+                ],
+                "summary": "Lista registros de interesse por anúncio",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do anúncio",
+                        "name": "anuncio_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de registros de interesse do anúncio",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.RegistroInteresseResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/registro-interesse/{id}": {
+            "get": {
+                "description": "Retorna os dados de um registro de interesse específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Registro de Interesse"
+                ],
+                "summary": "Busca registro de interesse por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do registro de interesse",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registro de interesse encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/json.RegistroInteresseResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Registro de interesse não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete do registro de interesse, marcando como excluído sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Registro de Interesse"
+                ],
+                "summary": "Exclui registro de interesse (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do registro de interesse",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registro de interesse excluído com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Registro de interesse não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/registro-interesse/{id}/restore": {
+            "post": {
+                "description": "Restaura um registro de interesse que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Registro de Interesse"
+                ],
+                "summary": "Restaura registro de interesse excluído",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do registro de interesse",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Registro de interesse restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Registro de interesse não encontrado",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -6306,6 +6761,80 @@ const docTemplate = `{
                     }
                 },
                 "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.RegistroInteresseRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "id_anuncio",
+                "nome",
+                "telefone"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id_anuncio": {
+                    "type": "integer"
+                },
+                "mensagem": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "nome": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
+                },
+                "telefone": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 10
+                }
+            }
+        },
+        "json.RegistroInteresseResponse": {
+            "type": "object",
+            "properties": {
+                "anuncio": {
+                    "$ref": "#/definitions/json.AnuncioResponse"
+                },
+                "data_atualizacao": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_anuncio": {
+                    "type": "integer"
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "telefone": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.ResgatarAnuncioRequest": {
+            "type": "object",
+            "required": [
+                "id_usuario"
+            ],
+            "properties": {
+                "id_usuario": {
                     "type": "integer"
                 }
             }

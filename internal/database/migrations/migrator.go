@@ -344,6 +344,30 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration014)
 
+	// Migration 015: Criar tabela de registro de interesse em veículos
+	migration015 := m.NewMigration("015", "create_registro_interesse_table").
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS registro_interesses (
+				id SERIAL PRIMARY KEY,
+				id_anuncio INTEGER NOT NULL,
+				nome VARCHAR(255) NOT NULL,
+				email VARCHAR(255) NOT NULL,
+				telefone VARCHAR(20) NOT NULL,
+				mensagem VARCHAR(1000),
+				data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_exclusao TIMESTAMP,
+				CONSTRAINT fk_registro_interesse_anuncio FOREIGN KEY (id_anuncio) REFERENCES anuncios(id)
+			)
+		`, `
+			DROP TABLE IF EXISTS registro_interesses CASCADE
+		`).
+		AddIndexSQL("registro_interesses", "idx_registro_interesse_anuncio", "id_anuncio").
+		AddIndexSQL("registro_interesses", "idx_registro_interesse_data_exclusao", "data_exclusao").
+		AddIndexSQL("registro_interesses", "idx_registro_interesse_email", "email").
+		Build()
+	m.migrations = append(m.migrations, migration015)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

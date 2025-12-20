@@ -19,7 +19,10 @@ func (ar *AnuncioRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		anuncios.DELETE("/:id", handlers.SoftDeleteAnuncioHandler)    // DELETE /anuncios/:id - Soft delete anúncio
 		anuncios.POST("/:id/restore", handlers.RestoreAnuncioHandler) // POST /anuncios/:id/restore - Restaurar anúncio
 
-		// Endpoints específicos
+		// Endpoints específicos (devem vir antes dos endpoints com :id)
 		anuncios.GET("/categorias", handlers.GetCategoriasAnuncioHandler) // GET /anuncios/categorias - Listar categorias
+
+		// Endpoints com :id (devem vir por último)
+		anuncios.POST("/:id/resgatar", handlers.ResgatarAnuncioHandler) // POST /anuncios/:id/resgatar - Resgatar anúncio (cria histórico de resgate)
 	}
 }
