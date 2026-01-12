@@ -588,6 +588,13 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration022)
 
+	// Migration 023: Adicionar campo categoria à tabela lojas
+	migration023 := m.NewMigration("023", "add_categoria_to_lojas").
+		AddColumnSQL("lojas", "categoria", "VARCHAR(255)").
+		AddIndexSQL("lojas", "idx_loja_categoria", "categoria").
+		Build()
+	m.migrations = append(m.migrations, migration023)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
