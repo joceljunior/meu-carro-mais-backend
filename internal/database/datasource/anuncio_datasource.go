@@ -243,6 +243,53 @@ func GetAnunciosProdutosByProximidade(latitude, longitude float64) ([]AnuncioPro
 	return anunciosComDistancia, nil
 }
 
+// GetAnunciosServicos retorna todos os anúncios de serviços ativos
+func GetAnunciosServicos() ([]models.Anuncio, error) {
+	var anuncios []models.Anuncio
+	err := database.DB.
+		Preload("Loja").
+		Preload("Servico").
+		Preload("OfertaAutoMais").
+		Where("tipo_anuncio = ? AND data_exclusao IS NULL", "servico").
+		Order("data_cadastro DESC").
+		Find(&anuncios).Error
+	if err != nil {
+		return nil, err
+	}
+	return anuncios, nil
+}
+
+// AnuncioServicoComDistancia representa um anúncio de serviço com sua distância calculada
+type AnuncioServicoComDistancia struct {
+	Anuncio   models.Anuncio
+	Distancia float64
+}
+
+// GetAnunciosServicosByProximidade retorna anúncios de serviços ordenados por proximidade
+func GetAnunciosServicosByProximidade(latitude, longitude float64) ([]AnuncioServicoComDistancia, error) {
+	anuncios, err := GetAnunciosServicos()
+	if err != nil {
+		return nil, err
+	}
+
+	var anunciosComDistancia []AnuncioServicoComDistancia
+	for _, anuncio := range anuncios {
+		// Calcula a distância usando a fórmula de Haversine
+		distancia := calcularDistanciaAnuncio(latitude, longitude, anuncio.Loja.Latitude, anuncio.Loja.Longitude)
+		anunciosComDistancia = append(anunciosComDistancia, AnuncioServicoComDistancia{
+			Anuncio:   anuncio,
+			Distancia: distancia,
+		})
+	}
+
+	// Ordena por distância (menor primeiro)
+	sort.Slice(anunciosComDistancia, func(i, j int) bool {
+		return anunciosComDistancia[i].Distancia < anunciosComDistancia[j].Distancia
+	})
+
+	return anunciosComDistancia, nil
+}
+
 // calcularDistanciaAnuncio calcula a distância entre dois pontos usando a fórmula de Haversine
 func calcularDistanciaAnuncio(lat1, lng1, lat2, lng2 float64) float64 {
 	const R = 6371 // Raio da Terra em km

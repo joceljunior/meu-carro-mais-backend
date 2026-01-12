@@ -420,3 +420,147 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 		Total:    len(anunciosResponse),
 	}, nil
 }
+
+// GetAnunciosServicos retorna todos os anúncios de serviços com informações de desconto
+// Se latitude e longitude forem fornecidos, ordena por proximidade
+func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoResponse, error) {
+	var anunciosResponse []json.AnuncioServicoResponse
+
+	// Se latitude e longitude foram fornecidos, busca por proximidade
+	if latitude != nil && longitude != nil {
+		anunciosComDistancia, err := datasource.GetAnunciosServicosByProximidade(*latitude, *longitude)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, anuncioComDist := range anunciosComDistancia {
+			anuncio := anuncioComDist.Anuncio
+			// Verifica se o anúncio tem serviço associado
+			if anuncio.Servico == nil || anuncio.IDServico == nil {
+				continue
+			}
+
+			servico := anuncio.Servico
+
+			// Busca desconto ativo da loja
+			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			
+			// Calcula preço com desconto
+			precoOriginal := anuncio.Preco
+			porcentagemDesconto := 0.0
+			precoComDesconto := precoOriginal
+
+			if desconto != nil {
+				porcentagemDesconto = desconto.Porcentagem
+				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			}
+
+			// Determina a imagem (prioridade: anúncio > serviço)
+			imagem := anuncio.Imagem
+			if imagem == "" && servico.Imagem != "" {
+				imagem = servico.Imagem
+			}
+
+			// Nome do serviço (usa Titulo do anúncio ou Titulo do serviço)
+			nomeServico := anuncio.Titulo
+			if nomeServico == "" {
+				nomeServico = servico.Titulo
+			}
+
+			// Moedas da oferta Auto Mais
+			var moedasUtiliza *int
+			if anuncio.OfertaAutoMais != nil && anuncio.OfertaAutoMais.Ativo {
+				moedas := anuncio.OfertaAutoMais.Moedas
+				moedasUtiliza = &moedas
+			}
+
+			distancia := anuncioComDist.Distancia
+			response := json.AnuncioServicoResponse{
+				ID:                  anuncio.ID,
+				NomeServico:         nomeServico,
+				NomeLoja:            anuncio.Loja.Nome,
+				Imagem:              imagem,
+				PrecoOriginal:       precoOriginal,
+				PrecoComDesconto:    precoComDesconto,
+				PorcentagemDesconto: porcentagemDesconto,
+				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				Categoria:           anuncio.Categoria,
+				Descricao:           anuncio.Descricao,
+				Rate:                anuncio.Loja.Rating,
+				MoedasUtiliza:        moedasUtiliza,
+				Distancia:           &distancia,
+			}
+
+			anunciosResponse = append(anunciosResponse, response)
+		}
+	} else {
+		// Busca sem ordenação por proximidade
+		anuncios, err := datasource.GetAnunciosServicos()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, anuncio := range anuncios {
+			// Verifica se o anúncio tem serviço associado
+			if anuncio.Servico == nil || anuncio.IDServico == nil {
+				continue
+			}
+
+			servico := anuncio.Servico
+
+			// Busca desconto ativo da loja
+			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			
+			// Calcula preço com desconto
+			precoOriginal := anuncio.Preco
+			porcentagemDesconto := 0.0
+			precoComDesconto := precoOriginal
+
+			if desconto != nil {
+				porcentagemDesconto = desconto.Porcentagem
+				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			}
+
+			// Determina a imagem (prioridade: anúncio > serviço)
+			imagem := anuncio.Imagem
+			if imagem == "" && servico.Imagem != "" {
+				imagem = servico.Imagem
+			}
+
+			// Nome do serviço (usa Titulo do anúncio ou Titulo do serviço)
+			nomeServico := anuncio.Titulo
+			if nomeServico == "" {
+				nomeServico = servico.Titulo
+			}
+
+			// Moedas da oferta Auto Mais
+			var moedasUtiliza *int
+			if anuncio.OfertaAutoMais != nil && anuncio.OfertaAutoMais.Ativo {
+				moedas := anuncio.OfertaAutoMais.Moedas
+				moedasUtiliza = &moedas
+			}
+
+			response := json.AnuncioServicoResponse{
+				ID:                  anuncio.ID,
+				NomeServico:         nomeServico,
+				NomeLoja:            anuncio.Loja.Nome,
+				Imagem:              imagem,
+				PrecoOriginal:       precoOriginal,
+				PrecoComDesconto:    precoComDesconto,
+				PorcentagemDesconto: porcentagemDesconto,
+				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				Categoria:           anuncio.Categoria,
+				Descricao:           anuncio.Descricao,
+				Rate:                anuncio.Loja.Rating,
+				MoedasUtiliza:        moedasUtiliza,
+			}
+
+			anunciosResponse = append(anunciosResponse, response)
+		}
+	}
+
+	return &json.AnunciosServicoResponse{
+		Anuncios: anunciosResponse,
+		Total:    len(anunciosResponse),
+	}, nil
+}

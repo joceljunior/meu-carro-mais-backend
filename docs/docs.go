@@ -200,6 +200,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/anuncios/servicos": {
+            "get": {
+                "description": "Retorna anúncios de serviços ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Lista anúncios de serviços por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário (opcional)",
+                        "name": "latitude",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário (opcional)",
+                        "name": "longitude",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnunciosServicoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/anuncios/veiculos": {
             "get": {
                 "description": "Retorna anúncios de veículos ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.",
@@ -7818,6 +7869,51 @@ const docTemplate = `{
                 }
             }
         },
+        "json.AnuncioServicoResponse": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "distancia": {
+                    "description": "Distância em km da loja, se fornecida localização",
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
+                "moedas_utiliza": {
+                    "type": "integer"
+                },
+                "nome_loja": {
+                    "type": "string"
+                },
+                "nome_servico": {
+                    "type": "string"
+                },
+                "porcentagem_desconto": {
+                    "type": "number"
+                },
+                "preco_com_desconto": {
+                    "type": "number"
+                },
+                "preco_original": {
+                    "type": "number"
+                },
+                "rate": {
+                    "type": "integer"
+                }
+            }
+        },
         "json.AnuncioVeiculoResponse": {
             "type": "object",
             "properties": {
@@ -7914,6 +8010,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/json.AnuncioResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.AnunciosServicoResponse": {
+            "type": "object",
+            "properties": {
+                "anuncios": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.AnuncioServicoResponse"
                     }
                 },
                 "total": {

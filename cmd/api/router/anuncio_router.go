@@ -22,6 +22,7 @@ func (ar *AnuncioRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		// Endpoints específicos (devem vir antes dos endpoints com :id)
 		anuncios.GET("/produtos", handlers.GetAnunciosProdutosHandler)        // GET /anuncios/produtos - Listar anúncios de produtos
 		anuncios.GET("/veiculos", handlers.GetAnunciosVeiculosHandler)       // GET /anuncios/veiculos - Listar anúncios de veículos
+		anuncios.GET("/servicos", handlers.GetAnunciosServicosHandler)       // GET /anuncios/servicos - Listar anúncios de serviços
 		anuncios.GET("/loja/:loja_id", handlers.GetAnunciosByLojaIDHandler) // GET /anuncios/loja/:loja_id - Listar anúncios por loja
 
 		// Endpoints com :id (devem vir por último)
