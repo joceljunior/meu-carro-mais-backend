@@ -1827,6 +1827,98 @@ const docTemplate = `{
                 }
             }
         },
+        "/historicos-resgate/anuncio/{id}": {
+            "get": {
+                "description": "Retorna todos os históricos de resgate de um anúncio específico (utilização do anúncio)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista histórico de resgate de um anúncio específico",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do anúncio",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de anúncio inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/cliente/{id}": {
+            "get": {
+                "description": "Retorna histórico de resgate do cliente com campos simplificados (id, nome loja, imagem loja, data resgate, status, valor)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista histórico de resgate simplificado do cliente",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateClienteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/historicos-resgate/{id}": {
             "get": {
                 "description": "Retorna um histórico de resgate específico pelo ID",
@@ -8757,6 +8849,29 @@ const docTemplate = `{
                 }
             }
         },
+        "json.HistoricoResgateClienteResponse": {
+            "type": "object",
+            "properties": {
+                "data_resgate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem_loja": {
+                    "type": "string"
+                },
+                "nome_loja": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "valor": {
+                    "type": "number"
+                }
+            }
+        },
         "json.HistoricoResgateRequest": {
             "type": "object",
             "required": [
@@ -8891,6 +9006,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/json.HistoricoPagamentoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.HistoricosResgateClienteResponse": {
+            "type": "object",
+            "properties": {
+                "historicos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.HistoricoResgateClienteResponse"
                     }
                 },
                 "total": {

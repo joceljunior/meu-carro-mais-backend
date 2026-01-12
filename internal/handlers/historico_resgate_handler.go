@@ -455,3 +455,67 @@ func RestoreHistoricoResgateHandler(c *gin.Context) {
 		"message": "Histórico restaurado com sucesso",
 	})
 }
+
+// GetHistoricosResgateClienteByUsuarioIDHandler godoc
+// @Summary      Lista histórico de resgate simplificado do cliente
+// @Description  Retorna histórico de resgate do cliente com campos simplificados (id, nome loja, imagem loja, data resgate, status, valor)
+// @Tags         Histórico de Resgates
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do usuário"
+// @Success      200  {object}  json.HistoricosResgateClienteResponse
+// @Failure      400  {object}  map[string]interface{} "ID de usuário inválido"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /historicos-resgate/cliente/{id} [get]
+func GetHistoricosResgateClienteByUsuarioIDHandler(c *gin.Context) {
+	idUsuarioStr := c.Param("id")
+	idUsuario, err := strconv.ParseUint(idUsuarioStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID de usuário inválido",
+		})
+		return
+	}
+
+	resp, err := services.GetHistoricosResgateClienteByUsuarioID(uint(idUsuario))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// GetHistoricosResgateByAnuncioIDHandler godoc
+// @Summary      Lista histórico de resgate de um anúncio específico
+// @Description  Retorna todos os históricos de resgate de um anúncio específico (utilização do anúncio)
+// @Tags         Histórico de Resgates
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do anúncio"
+// @Success      200  {object}  json.HistoricosResgateResponse
+// @Failure      400  {object}  map[string]interface{} "ID de anúncio inválido"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /historicos-resgate/anuncio/{id} [get]
+func GetHistoricosResgateByAnuncioIDHandler(c *gin.Context) {
+	idAnuncioStr := c.Param("id")
+	idAnuncio, err := strconv.ParseUint(idAnuncioStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID de anúncio inválido",
+		})
+		return
+	}
+
+	resp, err := services.GetHistoricosResgateByAnuncioID(uint(idAnuncio))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

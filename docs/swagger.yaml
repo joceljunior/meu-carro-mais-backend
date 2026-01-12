@@ -756,6 +756,21 @@ definitions:
       valor:
         type: number
     type: object
+  json.HistoricoResgateClienteResponse:
+    properties:
+      data_resgate:
+        type: string
+      id:
+        type: integer
+      imagem_loja:
+        type: string
+      nome_loja:
+        type: string
+      status:
+        type: string
+      valor:
+        type: number
+    type: object
   json.HistoricoResgateRequest:
     properties:
       id_loja:
@@ -846,6 +861,15 @@ definitions:
       historicos:
         items:
           $ref: '#/definitions/json.HistoricoPagamentoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.HistoricosResgateClienteResponse:
+    properties:
+      historicos:
+        items:
+          $ref: '#/definitions/json.HistoricoResgateClienteResponse'
         type: array
       total:
         type: integer
@@ -3217,6 +3241,70 @@ paths:
             additionalProperties: true
             type: object
       summary: Atualiza status do histórico de resgate
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/anuncio/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de resgate de um anúncio específico
+        (utilização do anúncio)
+      parameters:
+      - description: ID do anúncio
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateResponse'
+        "400":
+          description: ID de anúncio inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista histórico de resgate de um anúncio específico
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/cliente/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna histórico de resgate do cliente com campos simplificados
+        (id, nome loja, imagem loja, data resgate, status, valor)
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateClienteResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista histórico de resgate simplificado do cliente
       tags:
       - Histórico de Resgates
   /login:

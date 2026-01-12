@@ -260,3 +260,53 @@ func RestoreHistoricoResgate(id uint) error {
 
 	return nil
 }
+
+// GetHistoricosResgateByAnuncioID retorna todos os históricos de resgate de um anúncio específico
+// Busca pelos IDs do produto/serviço/veículo associados ao anúncio
+func GetHistoricosResgateByAnuncioID(anuncioID uint) ([]models.HistoricoResgate, error) {
+	// Busca o anúncio para obter os IDs relacionados
+	anuncio, err := GetAnuncioByID(anuncioID)
+	if err != nil {
+		return nil, errors.New("anúncio não encontrado")
+	}
+
+	var historicos []models.HistoricoResgate
+	query := database.DB.
+		Preload("Usuario").
+		Preload("Produto").
+		Preload("Servico").
+		Preload("Veiculo").
+		Preload("Loja").
+		Where("data_exclusao IS NULL")
+
+	// Busca históricos baseado no tipo do anúncio
+	switch anuncio.TipoAnuncio {
+	case "produto":
+		if anuncio.IDProduto != nil {
+			query = query.Where("id_produto = ?", *anuncio.IDProduto)
+		} else {
+			return []models.HistoricoResgate{}, nil
+		}
+	case "servico":
+		if anuncio.IDServico != nil {
+			query = query.Where("id_servico = ?", *anuncio.IDServico)
+		} else {
+			return []models.HistoricoResgate{}, nil
+		}
+	case "veiculo":
+		if anuncio.IDVeiculo != nil {
+			query = query.Where("id_veiculo = ?", *anuncio.IDVeiculo)
+		} else {
+			return []models.HistoricoResgate{}, nil
+		}
+	default:
+		return []models.HistoricoResgate{}, nil
+	}
+
+	err = query.Order("data_resgate DESC").Find(&historicos).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return historicos, nil
+}

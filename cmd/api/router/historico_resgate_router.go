@@ -16,6 +16,8 @@ func (hrr *HistoricoResgateRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		historicosResgate.GET("", handlers.GetAllHistoricosResgateHandler)                 // GET /historicos-resgate - Listar todos os históricos
 
 		// Endpoints específicos (devem vir antes dos endpoints com :id)
+		historicosResgate.GET("/cliente/:id", handlers.GetHistoricosResgateClienteByUsuarioIDHandler) // GET /historicos-resgate/cliente/:id - Histórico simplificado do cliente
+		historicosResgate.GET("/anuncio/:id", handlers.GetHistoricosResgateByAnuncioIDHandler)         // GET /historicos-resgate/anuncio/:id - Histórico de um anúncio específico
 		historicosResgate.PUT("/:id/status", handlers.UpdateStatusHistoricoResgateHandler) // PUT /historicos-resgate/:id/status - Atualizar status
 		historicosResgate.PUT("/:id/aprovar", handlers.AprovarResgateHandler)              // PUT /historicos-resgate/:id/aprovar - Aprovar resgate
 		historicosResgate.PUT("/:id/rejeitar", handlers.RejeitarResgateHandler)            // PUT /historicos-resgate/:id/rejeitar - Rejeitar resgate

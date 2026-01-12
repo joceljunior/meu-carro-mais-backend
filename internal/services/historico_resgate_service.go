@@ -716,3 +716,46 @@ func SoftDeleteHistoricoResgate(id uint) error {
 func RestoreHistoricoResgate(id uint) error {
 	return datasource.RestoreHistoricoResgate(id)
 }
+
+// GetHistoricosResgateClienteByUsuarioID retorna histórico simplificado do cliente
+func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosResgateClienteResponse, error) {
+	historicos, err := datasource.GetHistoricosResgateByUsuarioID(usuarioID)
+	if err != nil {
+		return nil, err
+	}
+
+	var historicosResponse []json.HistoricoResgateClienteResponse
+	for _, historico := range historicos {
+		historicosResponse = append(historicosResponse, json.HistoricoResgateClienteResponse{
+			ID:          historico.ID,
+			NomeLoja:    historico.Loja.Nome,
+			ImagemLoja:  historico.Loja.Imagem,
+			DataResgate: historico.DataResgate,
+			Status:      historico.Status,
+			Valor:       historico.Valor,
+		})
+	}
+
+	return &json.HistoricosResgateClienteResponse{
+		Historicos: historicosResponse,
+		Total:      len(historicosResponse),
+	}, nil
+}
+
+// GetHistoricosResgateByAnuncioID retorna todos os históricos de resgate de um anúncio específico
+func GetHistoricosResgateByAnuncioID(anuncioID uint) (*json.HistoricosResgateResponse, error) {
+	historicos, err := datasource.GetHistoricosResgateByAnuncioID(anuncioID)
+	if err != nil {
+		return nil, err
+	}
+
+	var historicosResponse []json.HistoricoResgateResponse
+	for _, historico := range historicos {
+		historicosResponse = append(historicosResponse, *convertHistoricoToResponse(&historico))
+	}
+
+	return &json.HistoricosResgateResponse{
+		Historicos: historicosResponse,
+		Total:      len(historicosResponse),
+	}, nil
+}
