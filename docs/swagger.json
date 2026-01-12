@@ -198,6 +198,57 @@
                 }
             }
         },
+        "/anuncios/veiculos": {
+            "get": {
+                "description": "Retorna anúncios de veículos ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Lista anúncios de veículos por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário (opcional)",
+                        "name": "latitude",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário (opcional)",
+                        "name": "longitude",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnunciosVeiculoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/anuncios/{id}": {
             "get": {
                 "description": "Retorna os dados de um anúncio específico pelo ID",
@@ -7765,6 +7816,81 @@
                 }
             }
         },
+        "json.AnuncioVeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "ano_fabricacao": {
+                    "type": "integer"
+                },
+                "ano_modelo": {
+                    "type": "integer"
+                },
+                "chassi": {
+                    "type": "string"
+                },
+                "combustivel": {
+                    "type": "string"
+                },
+                "cor": {
+                    "type": "string"
+                },
+                "distancia": {
+                    "description": "Distância em km da loja, se fornecida localização",
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "ipva_pago": {
+                    "type": "boolean"
+                },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
+                "km": {
+                    "type": "integer"
+                },
+                "licenciamento": {
+                    "type": "string"
+                },
+                "marca": {
+                    "type": "string"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "moedas_utiliza": {
+                    "type": "integer"
+                },
+                "nome_veiculo": {
+                    "type": "string"
+                },
+                "observacoes": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                },
+                "possui_financiamento": {
+                    "type": "boolean"
+                },
+                "possui_multas": {
+                    "type": "boolean"
+                },
+                "preco": {
+                    "type": "number"
+                },
+                "renavam": {
+                    "type": "string"
+                },
+                "tipo_veiculo": {
+                    "type": "string"
+                }
+            }
+        },
         "json.AnunciosProdutoResponse": {
             "type": "object",
             "properties": {
@@ -7786,6 +7912,20 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/json.AnuncioResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.AnunciosVeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "anuncios": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.AnuncioVeiculoResponse"
                     }
                 },
                 "total": {

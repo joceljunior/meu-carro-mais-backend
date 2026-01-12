@@ -156,6 +156,56 @@ definitions:
       veiculo:
         $ref: '#/definitions/json.VeiculoResponse'
     type: object
+  json.AnuncioVeiculoResponse:
+    properties:
+      ano_fabricacao:
+        type: integer
+      ano_modelo:
+        type: integer
+      chassi:
+        type: string
+      combustivel:
+        type: string
+      cor:
+        type: string
+      distancia:
+        description: Distância em km da loja, se fornecida localização
+        type: number
+      id:
+        type: integer
+      imagem:
+        type: string
+      ipva_pago:
+        type: boolean
+      is_meu_carro_mais:
+        type: boolean
+      km:
+        type: integer
+      licenciamento:
+        type: string
+      marca:
+        type: string
+      modelo:
+        type: string
+      moedas_utiliza:
+        type: integer
+      nome_veiculo:
+        type: string
+      observacoes:
+        type: string
+      placa:
+        type: string
+      possui_financiamento:
+        type: boolean
+      possui_multas:
+        type: boolean
+      preco:
+        type: number
+      renavam:
+        type: string
+      tipo_veiculo:
+        type: string
+    type: object
   json.AnunciosProdutoResponse:
     properties:
       anuncios:
@@ -170,6 +220,15 @@ definitions:
       anuncios:
         items:
           $ref: '#/definitions/json.AnuncioResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.AnunciosVeiculoResponse:
+    properties:
+      anuncios:
+        items:
+          $ref: '#/definitions/json.AnuncioVeiculoResponse'
         type: array
       total:
         type: integer
@@ -1935,6 +1994,41 @@ paths:
             additionalProperties: true
             type: object
       summary: Lista anúncios de produtos por proximidade
+      tags:
+      - Anúncios
+  /anuncios/veiculos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna anúncios de veículos ordenados por proximidade da loja.
+        Se latitude e longitude forem fornecidos, ordena por distância.
+      parameters:
+      - description: Latitude do usuário (opcional)
+        in: query
+        name: latitude
+        type: number
+      - description: Longitude do usuário (opcional)
+        in: query
+        name: longitude
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AnunciosVeiculoResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista anúncios de veículos por proximidade
       tags:
       - Anúncios
   /avaliacoes:

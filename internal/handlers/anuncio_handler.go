@@ -321,6 +321,67 @@ func GetAnunciosProdutosHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// GetAnunciosVeiculosHandler godoc
+// @Summary      Lista anúncios de veículos por proximidade
+// @Description  Retorna anúncios de veículos ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.
+// @Tags         Anúncios
+// @Accept       json
+// @Produce      json
+// @Param        latitude  query     number  false  "Latitude do usuário (opcional)"
+// @Param        longitude query     number  false  "Longitude do usuário (opcional)"
+// @Success      200       {object}  json.AnunciosVeiculoResponse
+// @Failure      400       {object}  map[string]interface{} "Parâmetros inválidos"
+// @Failure      500       {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /anuncios/veiculos [get]
+func GetAnunciosVeiculosHandler(c *gin.Context) {
+	latitudeStr := c.Query("latitude")
+	longitudeStr := c.Query("longitude")
+
+	var latitude, longitude *float64
+
+	// Se latitude foi fornecida, valida e converte
+	if latitudeStr != "" {
+		var lat float64
+		if _, err := fmt.Sscanf(latitudeStr, "%f", &lat); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Latitude deve ser um número válido",
+			})
+			return
+		}
+		latitude = &lat
+	}
+
+	// Se longitude foi fornecida, valida e converte
+	if longitudeStr != "" {
+		var lng float64
+		if _, err := fmt.Sscanf(longitudeStr, "%f", &lng); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Longitude deve ser um número válido",
+			})
+			return
+		}
+		longitude = &lng
+	}
+
+	// Se um dos dois foi fornecido, o outro também deve ser fornecido
+	if (latitude != nil && longitude == nil) || (latitude == nil && longitude != nil) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude e longitude devem ser fornecidos juntos",
+		})
+		return
+	}
+
+	resp, err := services.GetAnunciosVeiculos(latitude, longitude)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
 // GetAnunciosByLojaIDHandler godoc
 // @Summary      Lista anúncios de uma loja
 // @Description  Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data

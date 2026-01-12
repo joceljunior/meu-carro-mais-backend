@@ -280,3 +280,143 @@ func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoRes
 		Total:    len(anunciosResponse),
 	}, nil
 }
+
+// GetAnunciosVeiculos retorna todos os anúncios de veículos com informações detalhadas
+// Se latitude e longitude forem fornecidos, ordena por proximidade
+func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoResponse, error) {
+	var anunciosResponse []json.AnuncioVeiculoResponse
+
+	// Se latitude e longitude foram fornecidos, busca por proximidade
+	if latitude != nil && longitude != nil {
+		anunciosComDistancia, err := datasource.GetAnunciosVeiculosByProximidade(*latitude, *longitude)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, anuncioComDist := range anunciosComDistancia {
+			anuncio := anuncioComDist.Anuncio
+			// Verifica se o anúncio tem veículo associado
+			if anuncio.Veiculo == nil || anuncio.IDVeiculo == nil {
+				continue
+			}
+
+			veiculo := anuncio.Veiculo
+
+			// Determina a imagem (prioridade: anúncio > veículo)
+			imagem := anuncio.Imagem
+			if imagem == "" {
+				// Se não houver imagem no anúncio, pode buscar de outro lugar se necessário
+				imagem = ""
+			}
+
+			// Nome do veículo (usa Titulo do anúncio ou Modelo do veículo)
+			nomeVeiculo := anuncio.Titulo
+			if nomeVeiculo == "" {
+				nomeVeiculo = veiculo.Modelo
+			}
+
+			// Moedas da oferta Auto Mais
+			var moedasUtiliza *int
+			if anuncio.OfertaAutoMais != nil && anuncio.OfertaAutoMais.Ativo {
+				moedas := anuncio.OfertaAutoMais.Moedas
+				moedasUtiliza = &moedas
+			}
+
+			distancia := anuncioComDist.Distancia
+			response := json.AnuncioVeiculoResponse{
+				ID:                  anuncio.ID,
+				NomeVeiculo:         nomeVeiculo,
+				KM:                  veiculo.Quilometragem,
+				AnoModelo:            veiculo.Ano,
+				AnoFabricacao:       &veiculo.Ano, // Usa o mesmo ano, pode ser ajustado se houver campo separado
+				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				Preco:               anuncio.Preco,
+				Imagem:              imagem,
+				Modelo:              veiculo.Modelo,
+				Marca:               nil, // Campo não existe no modelo atual
+				Placa:               veiculo.Placa,
+				Renavam:             nil, // Campo não existe no modelo atual
+				Chassi:              nil, // Campo não existe no modelo atual
+				Cor:                 veiculo.Cor,
+				TipoVeiculo:         &anuncio.Categoria, // Usa categoria como tipo de veículo
+				Licenciamento:       nil,                // Campo não existe no modelo atual
+				IPVAPago:            nil,                // Campo não existe no modelo atual
+				PossuiFinanciamento: nil,                // Campo não existe no modelo atual
+				PossuiMultas:        nil,                // Campo não existe no modelo atual
+				Observacoes:         veiculo.Observacoes,
+				Combustivel:         nil, // Campo não existe no modelo atual
+				MoedasUtiliza:        moedasUtiliza,
+				Distancia:           &distancia,
+			}
+
+			anunciosResponse = append(anunciosResponse, response)
+		}
+	} else {
+		// Busca sem ordenação por proximidade
+		anuncios, err := datasource.GetAnunciosVeiculos()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, anuncio := range anuncios {
+			// Verifica se o anúncio tem veículo associado
+			if anuncio.Veiculo == nil || anuncio.IDVeiculo == nil {
+				continue
+			}
+
+			veiculo := anuncio.Veiculo
+
+			// Determina a imagem (prioridade: anúncio > veículo)
+			imagem := anuncio.Imagem
+			if imagem == "" {
+				// Se não houver imagem no anúncio, pode buscar de outro lugar se necessário
+				imagem = ""
+			}
+
+			// Nome do veículo (usa Titulo do anúncio ou Modelo do veículo)
+			nomeVeiculo := anuncio.Titulo
+			if nomeVeiculo == "" {
+				nomeVeiculo = veiculo.Modelo
+			}
+
+			// Moedas da oferta Auto Mais
+			var moedasUtiliza *int
+			if anuncio.OfertaAutoMais != nil && anuncio.OfertaAutoMais.Ativo {
+				moedas := anuncio.OfertaAutoMais.Moedas
+				moedasUtiliza = &moedas
+			}
+
+			response := json.AnuncioVeiculoResponse{
+				ID:                  anuncio.ID,
+				NomeVeiculo:         nomeVeiculo,
+				KM:                  veiculo.Quilometragem,
+				AnoModelo:            veiculo.Ano,
+				AnoFabricacao:       &veiculo.Ano, // Usa o mesmo ano, pode ser ajustado se houver campo separado
+				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				Preco:               anuncio.Preco,
+				Imagem:              imagem,
+				Modelo:              veiculo.Modelo,
+				Marca:               nil, // Campo não existe no modelo atual
+				Placa:               veiculo.Placa,
+				Renavam:             nil, // Campo não existe no modelo atual
+				Chassi:              nil, // Campo não existe no modelo atual
+				Cor:                 veiculo.Cor,
+				TipoVeiculo:         &anuncio.Categoria, // Usa categoria como tipo de veículo
+				Licenciamento:       nil,                // Campo não existe no modelo atual
+				IPVAPago:            nil,                // Campo não existe no modelo atual
+				PossuiFinanciamento: nil,                // Campo não existe no modelo atual
+				PossuiMultas:        nil,                // Campo não existe no modelo atual
+				Observacoes:         veiculo.Observacoes,
+				Combustivel:         nil, // Campo não existe no modelo atual
+				MoedasUtiliza:        moedasUtiliza,
+			}
+
+			anunciosResponse = append(anunciosResponse, response)
+		}
+	}
+
+	return &json.AnunciosVeiculoResponse{
+		Anuncios: anunciosResponse,
+		Total:    len(anunciosResponse),
+	}, nil
+}
