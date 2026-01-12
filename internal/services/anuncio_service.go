@@ -152,3 +152,131 @@ func SoftDeleteAnuncio(id uint) error {
 func RestoreAnuncio(id uint) error {
 	return datasource.RestoreAnuncio(id)
 }
+
+// GetAnunciosProdutos retorna todos os anúncios de produtos com informações de desconto
+// Se latitude e longitude forem fornecidos, ordena por proximidade
+func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoResponse, error) {
+	var anunciosResponse []json.AnuncioProdutoResponse
+
+	// Se latitude e longitude foram fornecidos, busca por proximidade
+	if latitude != nil && longitude != nil {
+		anunciosComDistancia, err := datasource.GetAnunciosProdutosByProximidade(*latitude, *longitude)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, anuncioComDist := range anunciosComDistancia {
+			anuncio := anuncioComDist.Anuncio
+			// Verifica se o anúncio tem produto associado
+			if anuncio.Produto == nil || anuncio.IDProduto == nil {
+				continue
+			}
+
+			// Busca desconto ativo da loja
+			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			
+			// Calcula preço com desconto
+			precoOriginal := anuncio.Preco
+			porcentagemDesconto := 0.0
+			precoComDesconto := precoOriginal
+
+			if desconto != nil {
+				porcentagemDesconto = desconto.Porcentagem
+				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			}
+
+			// Determina a imagem (prioridade: anúncio > produto)
+			imagem := anuncio.Imagem
+			if imagem == "" && anuncio.Produto != nil {
+				imagem = anuncio.Produto.Imagem
+			}
+
+			// Moedas da oferta Auto Mais
+			var moedasUtiliza *int
+			if anuncio.OfertaAutoMais != nil && anuncio.OfertaAutoMais.Ativo {
+				moedas := anuncio.OfertaAutoMais.Moedas
+				moedasUtiliza = &moedas
+			}
+
+			distancia := anuncioComDist.Distancia
+			response := json.AnuncioProdutoResponse{
+				ID:                  anuncio.ID,
+				NomeProduto:         anuncio.Produto.Nome,
+				NomeLoja:            anuncio.Loja.Nome,
+				Imagem:              imagem,
+				PrecoOriginal:       precoOriginal,
+				PrecoComDesconto:    precoComDesconto,
+				PorcentagemDesconto: porcentagemDesconto,
+				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				Categoria:           anuncio.Categoria,
+				Descricao:           anuncio.Descricao,
+				Rate:                anuncio.Loja.Rating,
+				MoedasUtiliza:       moedasUtiliza,
+				Distancia:           &distancia,
+			}
+
+			anunciosResponse = append(anunciosResponse, response)
+		}
+	} else {
+		// Busca sem ordenação por proximidade
+		anuncios, err := datasource.GetAnunciosProdutos()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, anuncio := range anuncios {
+			// Verifica se o anúncio tem produto associado
+			if anuncio.Produto == nil || anuncio.IDProduto == nil {
+				continue
+			}
+
+			// Busca desconto ativo da loja
+			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			
+			// Calcula preço com desconto
+			precoOriginal := anuncio.Preco
+			porcentagemDesconto := 0.0
+			precoComDesconto := precoOriginal
+
+			if desconto != nil {
+				porcentagemDesconto = desconto.Porcentagem
+				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			}
+
+			// Determina a imagem (prioridade: anúncio > produto)
+			imagem := anuncio.Imagem
+			if imagem == "" && anuncio.Produto != nil {
+				imagem = anuncio.Produto.Imagem
+			}
+
+			// Moedas da oferta Auto Mais
+			var moedasUtiliza *int
+			if anuncio.OfertaAutoMais != nil && anuncio.OfertaAutoMais.Ativo {
+				moedas := anuncio.OfertaAutoMais.Moedas
+				moedasUtiliza = &moedas
+			}
+
+			response := json.AnuncioProdutoResponse{
+				ID:                  anuncio.ID,
+				NomeProduto:         anuncio.Produto.Nome,
+				NomeLoja:            anuncio.Loja.Nome,
+				Imagem:              imagem,
+				PrecoOriginal:       precoOriginal,
+				PrecoComDesconto:    precoComDesconto,
+				PorcentagemDesconto: porcentagemDesconto,
+				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				Categoria:           anuncio.Categoria,
+				Descricao:           anuncio.Descricao,
+				Rate:                anuncio.Loja.Rating,
+				MoedasUtiliza:       moedasUtiliza,
+			}
+
+			anunciosResponse = append(anunciosResponse, response)
+		}
+	}
+
+	return &json.AnunciosProdutoResponse{
+		Anuncios: anunciosResponse,
+		Total:    len(anunciosResponse),
+	}, nil
+}

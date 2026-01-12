@@ -44,6 +44,37 @@ definitions:
       titulo:
         type: string
     type: object
+  json.AnuncioProdutoResponse:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+      distancia:
+        description: Distância em km da loja, se fornecida localização
+        type: number
+      id:
+        type: integer
+      imagem:
+        type: string
+      is_meu_carro_mais:
+        type: boolean
+      moedas_utiliza:
+        description: Moedas da oferta Auto Mais, se houver
+        type: integer
+      nome_loja:
+        type: string
+      nome_produto:
+        type: string
+      porcentagem_desconto:
+        type: number
+      preco_com_desconto:
+        type: number
+      preco_original:
+        type: number
+      rate:
+        type: integer
+    type: object
   json.AnuncioRequest:
     properties:
       categoria:
@@ -124,6 +155,15 @@ definitions:
         type: string
       veiculo:
         $ref: '#/definitions/json.VeiculoResponse'
+    type: object
+  json.AnunciosProdutoResponse:
+    properties:
+      anuncios:
+        items:
+          $ref: '#/definitions/json.AnuncioProdutoResponse'
+        type: array
+      total:
+        type: integer
     type: object
   json.AnunciosResponse:
     properties:
@@ -1860,6 +1900,41 @@ paths:
             additionalProperties: true
             type: object
       summary: Lista anúncios de uma loja
+      tags:
+      - Anúncios
+  /anuncios/produtos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna anúncios de produtos ordenados por proximidade da loja.
+        Se latitude e longitude forem fornecidos, ordena por distância.
+      parameters:
+      - description: Latitude do usuário (opcional)
+        in: query
+        name: latitude
+        type: number
+      - description: Longitude do usuário (opcional)
+        in: query
+        name: longitude
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.AnunciosProdutoResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista anúncios de produtos por proximidade
       tags:
       - Anúncios
   /avaliacoes:

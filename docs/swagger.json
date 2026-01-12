@@ -147,6 +147,57 @@
                 }
             }
         },
+        "/anuncios/produtos": {
+            "get": {
+                "description": "Retorna anúncios de produtos ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Anúncios"
+                ],
+                "summary": "Lista anúncios de produtos por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário (opcional)",
+                        "name": "latitude",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário (opcional)",
+                        "name": "longitude",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.AnunciosProdutoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/anuncios/{id}": {
             "get": {
                 "description": "Retorna os dados de um anúncio específico pelo ID",
@@ -7548,6 +7599,52 @@
                 }
             }
         },
+        "json.AnuncioProdutoResponse": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "distancia": {
+                    "description": "Distância em km da loja, se fornecida localização",
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
+                "moedas_utiliza": {
+                    "description": "Moedas da oferta Auto Mais, se houver",
+                    "type": "integer"
+                },
+                "nome_loja": {
+                    "type": "string"
+                },
+                "nome_produto": {
+                    "type": "string"
+                },
+                "porcentagem_desconto": {
+                    "type": "number"
+                },
+                "preco_com_desconto": {
+                    "type": "number"
+                },
+                "preco_original": {
+                    "type": "number"
+                },
+                "rate": {
+                    "type": "integer"
+                }
+            }
+        },
         "json.AnuncioRequest": {
             "type": "object",
             "required": [
@@ -7665,6 +7762,20 @@
                 },
                 "veiculo": {
                     "$ref": "#/definitions/json.VeiculoResponse"
+                }
+            }
+        },
+        "json.AnunciosProdutoResponse": {
+            "type": "object",
+            "properties": {
+                "anuncios": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.AnuncioProdutoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

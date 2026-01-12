@@ -3,9 +3,11 @@ package datasource
 import (
 	"errors"
 	"fmt"
+	"math"
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
+	"sort"
 	"time"
 )
 
@@ -192,4 +194,72 @@ func RestoreAnuncio(id uint) error {
 	}
 
 	return nil
+}
+
+// GetAnunciosProdutos retorna todos os anúncios de produtos ativos
+func GetAnunciosProdutos() ([]models.Anuncio, error) {
+	var anuncios []models.Anuncio
+	err := database.DB.
+		Preload("Loja").
+		Preload("Produto").
+		Preload("OfertaAutoMais").
+		Where("tipo_anuncio = ? AND data_exclusao IS NULL", "produto").
+		Order("data_cadastro DESC").
+		Find(&anuncios).Error
+	if err != nil {
+		return nil, err
+	}
+	return anuncios, nil
+}
+
+// AnuncioProdutoComDistancia representa um anúncio de produto com sua distância calculada
+type AnuncioProdutoComDistancia struct {
+	Anuncio   models.Anuncio
+	Distancia float64
+}
+
+// GetAnunciosProdutosByProximidade retorna anúncios de produtos ordenados por proximidade
+func GetAnunciosProdutosByProximidade(latitude, longitude float64) ([]AnuncioProdutoComDistancia, error) {
+	anuncios, err := GetAnunciosProdutos()
+	if err != nil {
+		return nil, err
+	}
+
+	var anunciosComDistancia []AnuncioProdutoComDistancia
+	for _, anuncio := range anuncios {
+		// Calcula a distância usando a fórmula de Haversine
+		distancia := calcularDistanciaAnuncio(latitude, longitude, anuncio.Loja.Latitude, anuncio.Loja.Longitude)
+		anunciosComDistancia = append(anunciosComDistancia, AnuncioProdutoComDistancia{
+			Anuncio:   anuncio,
+			Distancia: distancia,
+		})
+	}
+
+	// Ordena por distância (menor primeiro)
+	sort.Slice(anunciosComDistancia, func(i, j int) bool {
+		return anunciosComDistancia[i].Distancia < anunciosComDistancia[j].Distancia
+	})
+
+	return anunciosComDistancia, nil
+}
+
+// calcularDistanciaAnuncio calcula a distância entre dois pontos usando a fórmula de Haversine
+func calcularDistanciaAnuncio(lat1, lng1, lat2, lng2 float64) float64 {
+	const R = 6371 // Raio da Terra em km
+
+	// Converte para radianos
+	lat1Rad := lat1 * math.Pi / 180
+	lng1Rad := lng1 * math.Pi / 180
+	lat2Rad := lat2 * math.Pi / 180
+	lng2Rad := lng2 * math.Pi / 180
+
+	// Diferenças
+	dlat := lat2Rad - lat1Rad
+	dlng := lng2Rad - lng1Rad
+
+	// Fórmula de Haversine
+	a := math.Sin(dlat/2)*math.Sin(dlat/2) + math.Cos(lat1Rad)*math.Cos(lat2Rad)*math.Sin(dlng/2)*math.Sin(dlng/2)
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+
+	return R * c
 }
