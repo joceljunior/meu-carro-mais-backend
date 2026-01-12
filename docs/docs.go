@@ -9148,6 +9148,9 @@ const docTemplate = `{
                 "preco": {
                     "type": "number"
                 },
+                "rate": {
+                    "type": "integer"
+                },
                 "titulo": {
                     "type": "string"
                 }

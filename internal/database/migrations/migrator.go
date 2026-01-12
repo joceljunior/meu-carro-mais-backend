@@ -588,10 +588,27 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration022)
 
-	// Migration 023: Adicionar campo categoria à tabela lojas
-	migration023 := m.NewMigration("023", "add_categoria_to_lojas").
+	// Migration 023: Adicionar campos categoria e id_usuario à tabela lojas
+	migration023 := m.NewMigration("023", "add_categoria_and_id_usuario_to_lojas").
 		AddColumnSQL("lojas", "categoria", "VARCHAR(255)").
+		AddColumnSQL("lojas", "id_usuario", "INTEGER").
 		AddIndexSQL("lojas", "idx_loja_categoria", "categoria").
+		AddIndexSQL("lojas", "idx_loja_id_usuario", "id_usuario").
+		ExecuteSQL(`
+			-- Adiciona foreign key para id_usuario se não existir
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_loja_usuario'
+				) THEN
+					ALTER TABLE lojas ADD CONSTRAINT fk_loja_usuario 
+					FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+		`, `
+			-- Rollback: remove foreign key
+			ALTER TABLE lojas DROP CONSTRAINT IF EXISTS fk_loja_usuario;
+		`).
 		Build()
 	m.migrations = append(m.migrations, migration023)
 

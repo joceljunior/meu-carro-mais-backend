@@ -1124,6 +1124,8 @@ definitions:
         $ref: '#/definitions/json.LojaResponse'
       preco:
         type: number
+      rate:
+        type: integer
       titulo:
         type: string
     type: object

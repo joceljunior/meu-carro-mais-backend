@@ -9,6 +9,7 @@ type ServicoResponse struct {
 	Destaque  bool         `json:"destaque"`
 	Distancia float64      `json:"distancia,omitempty"`
 	Categoria string       `json:"categoria"`
+	Rate      int          `json:"rate"`
 	Loja      LojaResponse `json:"loja"`
 }
 
