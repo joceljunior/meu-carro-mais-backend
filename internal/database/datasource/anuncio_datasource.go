@@ -36,14 +36,20 @@ func GetAnuncios() ([]models.Anuncio, error) {
 	return anuncios, nil
 }
 
+// removeDestaqueDeOutrosAnuncios remove o destaque de todos os outros anúncios da mesma loja
+// Garante que apenas um anúncio por loja seja destaque
+func removeDestaqueDeOutrosAnuncios(idLoja uint, idAnuncioExcluir uint) error {
+	return database.DB.Model(&models.Anuncio{}).
+		Where("id_loja = ? AND destaque = ? AND data_exclusao IS NULL AND id != ?", idLoja, true, idAnuncioExcluir).
+		Update("destaque", false).Error
+}
+
 // CreateAnuncio cria um novo anúncio
 func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
 	// Se o anúncio será criado como destaque, remove o destaque de outros anúncios da mesma loja
+	// Garante que apenas um anúncio por loja seja destaque
 	if req.Destaque {
-		err := database.DB.Model(&models.Anuncio{}).
-			Where("id_loja = ? AND destaque = ? AND data_exclusao IS NULL", req.IDLoja, true).
-			Update("destaque", false).Error
-		if err != nil {
+		if err := removeDestaqueDeOutrosAnuncios(req.IDLoja, 0); err != nil {
 			return nil, fmt.Errorf("erro ao remover destaque de outros anúncios: %v", err)
 		}
 	}
@@ -125,11 +131,11 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 	}
 
 	// Se o anúncio será atualizado como destaque, remove o destaque de outros anúncios da mesma loja
-	if req.Destaque && !anuncio.Destaque {
-		err := database.DB.Model(&models.Anuncio{}).
-			Where("id_loja = ? AND destaque = ? AND data_exclusao IS NULL AND id != ?", req.IDLoja, true, id).
-			Update("destaque", false).Error
-		if err != nil {
+	// Garante que apenas um anúncio por loja seja destaque
+	if req.Destaque {
+		// Sempre remove destaque dos outros anúncios da loja (seja loja nova ou antiga)
+		// Isso garante que apenas um anúncio por loja seja destaque
+		if err := removeDestaqueDeOutrosAnuncios(req.IDLoja, id); err != nil {
 			return nil, fmt.Errorf("erro ao remover destaque de outros anúncios: %v", err)
 		}
 	}
