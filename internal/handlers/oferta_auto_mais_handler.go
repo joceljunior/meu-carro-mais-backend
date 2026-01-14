@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -84,6 +85,60 @@ func GetOfertaAutoMaisHandler(c *gin.Context) {
 // @Router       /ofertas-auto-mais [get]
 func GetAllOfertasAutoMaisHandler(c *gin.Context) {
 	resp, err := services.GetAllOfertasAutoMais()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	response := json.OfertasAutoMaisResponse{
+		Ofertas: resp,
+		Total:   len(resp),
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// GetOfertasAutoMaisByProximidadeHandler godoc
+// @Summary      Lista ofertas Auto Mais ativas por proximidade
+// @Description  Retorna lista de ofertas Auto Mais ativas ordenadas por proximidade do usuário. Latitude e longitude são obrigatórios.
+// @Tags         Ofertas Auto Mais
+// @Accept       json
+// @Produce      json
+// @Param        latitude  query     number  true  "Latitude do usuário"
+// @Param        longitude query     number  true  "Longitude do usuário"
+// @Success      200  {object}  json.OfertasAutoMaisResponse
+// @Failure      400  {object}  map[string]interface{} "Parâmetros inválidos"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /ofertas-auto-mais/proximidade [get]
+func GetOfertasAutoMaisByProximidadeHandler(c *gin.Context) {
+	latitudeStr := c.Query("latitude")
+	longitudeStr := c.Query("longitude")
+
+	if latitudeStr == "" || longitudeStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude e longitude são obrigatórios",
+		})
+		return
+	}
+
+	var latitude, longitude float64
+	if _, err := fmt.Sscanf(latitudeStr, "%f", &latitude); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude deve ser um número válido",
+		})
+		return
+	}
+
+	if _, err := fmt.Sscanf(longitudeStr, "%f", &longitude); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Longitude deve ser um número válido",
+		})
+		return
+	}
+
+	resp, err := services.GetOfertasAutoMaisAtivasByProximidade(latitude, longitude)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

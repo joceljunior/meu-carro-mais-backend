@@ -4531,6 +4531,43 @@ paths:
       summary: Lista todas as ofertas Auto Mais ativas por proximidade
       tags:
       - Ofertas Auto Mais
+  /ofertas-auto-mais/proximidade:
+    get:
+      consumes:
+      - application/json
+      description: Retorna lista de ofertas Auto Mais ativas ordenadas por proximidade
+        do usuário. Latitude e longitude são obrigatórios.
+      parameters:
+      - description: Latitude do usuário
+        in: query
+        name: latitude
+        required: true
+        type: number
+      - description: Longitude do usuário
+        in: query
+        name: longitude
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.OfertasAutoMaisResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista ofertas Auto Mais ativas por proximidade
+      tags:
+      - Ofertas Auto Mais
   /pagamentos/checkout:
     post:
       consumes:

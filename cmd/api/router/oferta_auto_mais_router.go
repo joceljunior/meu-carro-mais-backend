@@ -14,7 +14,12 @@ func (oar *OfertaAutoMaisRouter) RegisterRoutes(rg *gin.RouterGroup) {
 	{
 		ofertas.POST("", handlers.CreateOfertaAutoMaisHandler)                    // POST /ofertas-auto-mais - Criar oferta
 		ofertas.GET("", handlers.GetAllOfertasAutoMaisHandler)                    // GET /ofertas-auto-mais - Listar todas as ofertas
+		
+		// Endpoints específicos (devem vir antes dos endpoints com :id)
+		ofertas.GET("/proximidade", handlers.GetOfertasAutoMaisByProximidadeHandler) // GET /ofertas-auto-mais/proximidade - Listar por proximidade
 		ofertas.GET("/ativas", handlers.GetOfertasAutoMaisAtivasHandler)          // GET /ofertas-auto-mais/ativas - Listar ofertas ativas
+		
+		// Endpoints CRUD com :id (devem vir por último)
 		ofertas.GET("/:id", handlers.GetOfertaAutoMaisHandler)                    // GET /ofertas-auto-mais/:id - Buscar oferta por ID
 		ofertas.PUT("/:id", handlers.UpdateOfertaAutoMaisHandler)                 // PUT /ofertas-auto-mais/:id - Atualizar oferta
 		ofertas.POST("/:id/desativar", handlers.DesativarOfertaAutoMaisHandler)   // POST /ofertas-auto-mais/:id/desativar - Desativar oferta

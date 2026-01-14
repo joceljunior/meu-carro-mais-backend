@@ -3815,6 +3815,59 @@
                 }
             }
         },
+        "/ofertas-auto-mais/proximidade": {
+            "get": {
+                "description": "Retorna lista de ofertas Auto Mais ativas ordenadas por proximidade do usuário. Latitude e longitude são obrigatórios.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ofertas Auto Mais"
+                ],
+                "summary": "Lista ofertas Auto Mais ativas por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário",
+                        "name": "latitude",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário",
+                        "name": "longitude",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.OfertasAutoMaisResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/ofertas-auto-mais/{id}": {
             "get": {
                 "description": "Retorna uma oferta Auto Mais específica pelo ID",
