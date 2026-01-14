@@ -110,8 +110,40 @@ func GetAllHistoricosResgateHandler(c *gin.Context) {
 // @Success      200  {object}  json.HistoricosResgateResponse
 // @Failure      400  {object}  map[string]interface{} "ID de usuário inválido"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
-// @Router       /usuarios/{id}/historicos-resgate [get]
+// @Router       /users/{id}/historicos-resgate [get]
 func GetHistoricosResgateByUsuarioIDHandler(c *gin.Context) {
+	idUsuarioStr := c.Param("id")
+	idUsuario, err := strconv.ParseUint(idUsuarioStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID de usuário inválido",
+		})
+		return
+	}
+
+	resp, err := services.GetHistoricosResgateByUsuarioID(uint(idUsuario))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
+// GetHistoricosResgateByUsuarioIDDirectHandler godoc
+// @Summary      Lista históricos de resgate de um usuário (endpoint direto)
+// @Description  Retorna todos os históricos de resgate de um usuário específico através do endpoint direto
+// @Tags         Histórico de Resgates
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do usuário"
+// @Success      200  {object}  json.HistoricosResgateResponse
+// @Failure      400  {object}  map[string]interface{} "ID de usuário inválido"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /historicos-resgate/usuario/{id} [get]
+func GetHistoricosResgateByUsuarioIDDirectHandler(c *gin.Context) {
 	idUsuarioStr := c.Param("id")
 	idUsuario, err := strconv.ParseUint(idUsuarioStr, 10, 32)
 	if err != nil {

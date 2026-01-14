@@ -3307,6 +3307,38 @@ paths:
       summary: Lista histórico de resgate simplificado do cliente
       tags:
       - Histórico de Resgates
+  /historicos-resgate/usuario/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de resgate de um usuário específico
+        através do endpoint direto
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista históricos de resgate de um usuário (endpoint direto)
+      tags:
+      - Histórico de Resgates
   /login:
     post:
       consumes:
@@ -5967,6 +5999,37 @@ paths:
       summary: Lista avaliações de um usuário
       tags:
       - Avaliações
+  /users/{id}/historicos-resgate:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de resgate de um usuário específico
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateResponse'
+        "400":
+          description: ID de usuário inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista históricos de resgate de um usuário
+      tags:
+      - Histórico de Resgates
   /users/{id}/plan-status:
     get:
       consumes:
@@ -6471,37 +6534,6 @@ paths:
       summary: Lista veículos de um usuário
       tags:
       - Veículos
-  /usuarios/{id}/historicos-resgate:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todos os históricos de resgate de um usuário específico
-      parameters:
-      - description: ID do usuário
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.HistoricosResgateResponse'
-        "400":
-          description: ID de usuário inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista históricos de resgate de um usuário
-      tags:
-      - Histórico de Resgates
   /veiculos:
     get:
       consumes:

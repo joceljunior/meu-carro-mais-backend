@@ -1919,6 +1919,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/historicos-resgate/usuario/{id}": {
+            "get": {
+                "description": "Retorna todos os históricos de resgate de um usuário específico através do endpoint direto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista históricos de resgate de um usuário (endpoint direto)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/historicos-resgate/{id}": {
             "get": {
                 "description": "Retorna um histórico de resgate específico pelo ID",
@@ -6579,6 +6625,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/{id}/historicos-resgate": {
+            "get": {
+                "description": "Retorna todos os históricos de resgate de um usuário específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista históricos de resgate de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}/plan-status": {
             "get": {
                 "description": "Retorna informações sobre o plano atual do usuário e se ele é premium",
@@ -6929,52 +7021,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/json.VeiculosResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de usuário inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/usuarios/{id}/historicos-resgate": {
-            "get": {
-                "description": "Retorna todos os históricos de resgate de um usuário específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Histórico de Resgates"
-                ],
-                "summary": "Lista históricos de resgate de um usuário",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do usuário",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.HistoricosResgateResponse"
                         }
                     },
                     "400": {
