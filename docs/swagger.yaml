@@ -4067,6 +4067,37 @@ paths:
       summary: Restaura loja excluída
       tags:
       - Lojas
+  /lojas/{id}/servicos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os serviços de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de serviços da loja
+          schema:
+            $ref: '#/definitions/json.ServicosResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista serviços de uma loja
+      tags:
+      - Serviços
   /lojas/{id}/uploads:
     get:
       consumes:

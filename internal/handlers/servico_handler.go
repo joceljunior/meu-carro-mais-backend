@@ -259,3 +259,34 @@ func RestoreServicoHandler(c *gin.Context) {
 	})
 }
 
+// GetServicosByLojaIDHandler godoc
+// @Summary      Lista serviços de uma loja
+// @Description  Retorna todos os serviços de uma loja específica
+// @Tags         Serviços
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID da loja"
+// @Success      200 {object} json.ServicosResponse "Lista de serviços da loja"
+// @Failure      400 {object} map[string]interface{} "ID de loja inválido"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /lojas/{id}/servicos [get]
+func GetServicosByLojaIDHandler(c *gin.Context) {
+	idLojaStr := c.Param("id")
+	idLoja, err := strconv.ParseUint(idLojaStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID de loja inválido",
+		})
+		return
+	}
+
+	resp, err := services.GetServicosByLojaID(uint(idLoja))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

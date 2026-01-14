@@ -114,6 +114,20 @@ func GetAllServicos() ([]models.Servico, error) {
 	return servicos, nil
 }
 
+// GetServicosByLojaID retorna todos os serviços de uma loja específica
+func GetServicosByLojaID(idLoja uint) ([]models.Servico, error) {
+	var servicos []models.Servico
+	err := database.DB.
+		Preload("Loja").
+		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
+		Order("data_cadastro DESC").
+		Find(&servicos).Error
+	if err != nil {
+		return nil, err
+	}
+	return servicos, nil
+}
+
 // UpdateServico atualiza um serviço existente
 func UpdateServico(id uint, req json.ServicoRequest) (*models.Servico, error) {
 	// Verifica se o serviço existe e não foi excluído

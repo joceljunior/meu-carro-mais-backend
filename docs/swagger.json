@@ -3550,6 +3550,52 @@
                 }
             }
         },
+        "/lojas/{id}/servicos": {
+            "get": {
+                "description": "Retorna todos os serviços de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Serviços"
+                ],
+                "summary": "Lista serviços de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de serviços da loja",
+                        "schema": {
+                            "$ref": "#/definitions/json.ServicosResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/lojas/{id}/uploads": {
             "get": {
                 "description": "Retorna todos os uploads de uma loja específica",

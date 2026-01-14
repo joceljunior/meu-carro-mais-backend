@@ -18,6 +18,7 @@ func (lr *LojaRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		// Endpoints específicos (devem vir antes dos endpoints com :id)
 		lojas.GET("/:id/veiculos", handlers.GetVeiculosLojaByLojaIDHandler)                         // GET /lojas/:id/veiculos - Veículos da loja
 		lojas.GET("/:id/produtos", handlers.GetProdutosByLojaIDHandler)                             // GET /lojas/:id/produtos - Produtos da loja
+		lojas.GET("/:id/servicos", handlers.GetServicosByLojaIDHandler)                             // GET /lojas/:id/servicos - Serviços da loja
 		lojas.GET("/:id/historicos-resgate", handlers.GetHistoricosResgateByLojaIDHandler)          // GET /lojas/:id/historicos-resgate - Históricos de resgate da loja
 		lojas.GET("/:id/avaliacoes", handlers.GetAvaliacoesByLojaIDHandler)                         // GET /lojas/:id/avaliacoes - Avaliações da loja
 		lojas.GET("/:id/avaliacoes/estatisticas", handlers.GetAvaliacaoEstatisticasByLojaIDHandler) // GET /lojas/:id/avaliacoes/estatisticas - Estatísticas de avaliações da loja

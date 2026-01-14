@@ -120,6 +120,48 @@ func GetAllServicos() ([]json.ServicoResponse, error) {
 	return responses, nil
 }
 
+// GetServicosByLojaID retorna todos os serviços de uma loja específica
+func GetServicosByLojaID(idLoja uint) (*json.ServicosResponse, error) {
+	servicos, err := datasource.GetServicosByLojaID(idLoja)
+	if err != nil {
+		return nil, err
+	}
+
+	var servicosResponse []json.ServicoResponse
+	for _, servico := range servicos {
+		servicoResp := json.ServicoResponse{
+			ID:        servico.ID,
+			Titulo:    servico.Titulo,
+			Descricao: servico.Descricao,
+			Preco:     servico.Preco,
+			Imagem:    servico.Imagem,
+			Destaque:  servico.Destaque,
+			Categoria: servico.Categoria,
+			Rate:      servico.Loja.Rating,
+			Loja: json.LojaResponse{
+				ID:            servico.Loja.ID,
+				Nome:          servico.Loja.Nome,
+				CNPJ:          servico.Loja.CNPJ,
+				Imagem:        servico.Loja.Imagem,
+				Latitude:      servico.Loja.Latitude,
+				Longitude:     servico.Loja.Longitude,
+				Rating:        servico.Loja.Rating,
+				IsMeuCarroMais: servico.Loja.IsMeuCarroMais,
+				Categoria:     servico.Loja.Categoria,
+				IDUsuario:     servico.Loja.IDUsuario,
+			},
+		}
+		servicosResponse = append(servicosResponse, servicoResp)
+	}
+
+	response := &json.ServicosResponse{
+		Servicos: servicosResponse,
+		Total:    len(servicosResponse),
+	}
+
+	return response, nil
+}
+
 // UpdateServico atualiza um serviço existente
 func UpdateServico(id uint, req json.ServicoRequest) (*json.ServicoResponse, error) {
 	servico, err := datasource.UpdateServico(id, req)
