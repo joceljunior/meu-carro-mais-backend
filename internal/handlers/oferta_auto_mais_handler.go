@@ -100,16 +100,53 @@ func GetAllOfertasAutoMaisHandler(c *gin.Context) {
 }
 
 // GetOfertasAutoMaisAtivasHandler godoc
-// @Summary      Lista todas as ofertas Auto Mais ativas
-// @Description  Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema
+// @Summary      Lista todas as ofertas Auto Mais ativas por proximidade
+// @Description  Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema. Se latitude e longitude forem fornecidos, ordena por proximidade da loja.
 // @Tags         Ofertas Auto Mais
 // @Accept       json
 // @Produce      json
+// @Param        latitude  query     number  false  "Latitude do usuário (opcional)"
+// @Param        longitude query     number  false  "Longitude do usuário (opcional)"
 // @Success      200  {object}  json.OfertasAutoMaisResponse
+// @Failure      400  {object}  map[string]interface{} "Parâmetros inválidos"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
 // @Router       /ofertas-auto-mais/ativas [get]
 func GetOfertasAutoMaisAtivasHandler(c *gin.Context) {
-	resp, err := services.GetAllOfertasAutoMaisAtivas()
+	var latitude, longitude *float64
+
+	// Parse latitude
+	if latStr := c.Query("latitude"); latStr != "" {
+		lat, err := strconv.ParseFloat(latStr, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Latitude inválida",
+			})
+			return
+		}
+		latitude = &lat
+	}
+
+	// Parse longitude
+	if lngStr := c.Query("longitude"); lngStr != "" {
+		lng, err := strconv.ParseFloat(lngStr, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Longitude inválida",
+			})
+			return
+		}
+		longitude = &lng
+	}
+
+	// Se um dos parâmetros foi fornecido, ambos devem ser fornecidos
+	if (latitude != nil && longitude == nil) || (latitude == nil && longitude != nil) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Latitude e longitude devem ser fornecidos juntos",
+		})
+		return
+	}
+
+	resp, err := services.GetAllOfertasAutoMaisAtivas(latitude, longitude)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

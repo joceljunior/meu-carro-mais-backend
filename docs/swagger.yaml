@@ -1077,6 +1077,9 @@ definitions:
         type: string
       descricao:
         type: string
+      distancia:
+        description: Distância em km (apenas quando filtro por proximidade é usado)
+        type: number
       id:
         type: integer
       id_loja:
@@ -4466,7 +4469,17 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema
+      description: Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema.
+        Se latitude e longitude forem fornecidos, ordena por proximidade da loja.
+      parameters:
+      - description: Latitude do usuário (opcional)
+        in: query
+        name: latitude
+        type: number
+      - description: Longitude do usuário (opcional)
+        in: query
+        name: longitude
+        type: number
       produces:
       - application/json
       responses:
@@ -4474,12 +4487,17 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/json.OfertasAutoMaisResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
         "500":
           description: Erro interno do servidor
           schema:
             additionalProperties: true
             type: object
-      summary: Lista todas as ofertas Auto Mais ativas
+      summary: Lista todas as ofertas Auto Mais ativas por proximidade
       tags:
       - Ofertas Auto Mais
   /pagamentos/checkout:

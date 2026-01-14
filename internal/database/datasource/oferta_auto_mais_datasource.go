@@ -2,9 +2,11 @@ package datasource
 
 import (
 	"errors"
+	"math"
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
+	"sort"
 	"time"
 )
 
@@ -69,6 +71,58 @@ func GetAllOfertasAutoMaisAtivas() ([]models.OfertaAutoMais, error) {
 		return nil, err
 	}
 	return ofertas, nil
+}
+
+// OfertaAutoMaisComDistancia representa uma oferta Auto Mais com sua distância calculada
+type OfertaAutoMaisComDistancia struct {
+	Oferta    models.OfertaAutoMais
+	Distancia float64
+}
+
+// GetOfertasAutoMaisAtivasByProximidade retorna ofertas Auto Mais ativas ordenadas por proximidade
+func GetOfertasAutoMaisAtivasByProximidade(latitude, longitude float64) ([]OfertaAutoMaisComDistancia, error) {
+	ofertas, err := GetAllOfertasAutoMaisAtivas()
+	if err != nil {
+		return nil, err
+	}
+
+	var ofertasComDistancia []OfertaAutoMaisComDistancia
+	for _, oferta := range ofertas {
+		// Calcula a distância usando a fórmula de Haversine
+		distancia := calcularDistanciaOferta(latitude, longitude, oferta.Loja.Latitude, oferta.Loja.Longitude)
+		ofertasComDistancia = append(ofertasComDistancia, OfertaAutoMaisComDistancia{
+			Oferta:    oferta,
+			Distancia: distancia,
+		})
+	}
+
+	// Ordena por distância (menor primeiro)
+	sort.Slice(ofertasComDistancia, func(i, j int) bool {
+		return ofertasComDistancia[i].Distancia < ofertasComDistancia[j].Distancia
+	})
+
+	return ofertasComDistancia, nil
+}
+
+// calcularDistanciaOferta calcula a distância entre dois pontos usando a fórmula de Haversine
+func calcularDistanciaOferta(lat1, lng1, lat2, lng2 float64) float64 {
+	const R = 6371 // Raio da Terra em km
+
+	// Converte para radianos
+	lat1Rad := lat1 * math.Pi / 180
+	lng1Rad := lng1 * math.Pi / 180
+	lat2Rad := lat2 * math.Pi / 180
+	lng2Rad := lng2 * math.Pi / 180
+
+	// Diferenças
+	dlat := lat2Rad - lat1Rad
+	dlng := lng2Rad - lng1Rad
+
+	// Fórmula de Haversine
+	a := math.Sin(dlat/2)*math.Sin(dlat/2) + math.Cos(lat1Rad)*math.Cos(lat2Rad)*math.Sin(dlng/2)*math.Sin(dlng/2)
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+
+	return R * c
 }
 
 // GetOfertasAutoMaisByLojaID retorna todas as ofertas Auto Mais de uma loja específica

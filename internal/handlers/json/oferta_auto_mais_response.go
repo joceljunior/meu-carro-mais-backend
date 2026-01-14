@@ -14,6 +14,7 @@ type OfertaAutoMaisResponse struct {
 	DataCadastro    time.Time    `json:"data_cadastro"`
 	DataAtualizacao time.Time    `json:"data_atualizacao"`
 	Loja            LojaResponse `json:"loja,omitempty"`
+	Distancia       *float64     `json:"distancia,omitempty"` // Distância em km (apenas quando filtro por proximidade é usado)
 }
 
 type OfertasAutoMaisResponse struct {

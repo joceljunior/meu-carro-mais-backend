@@ -3722,7 +3722,7 @@ const docTemplate = `{
         },
         "/ofertas-auto-mais/ativas": {
             "get": {
-                "description": "Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema",
+                "description": "Retorna todas as ofertas Auto Mais ativas e não expiradas do sistema. Se latitude e longitude forem fornecidos, ordena por proximidade da loja.",
                 "consumes": [
                     "application/json"
                 ],
@@ -3732,12 +3732,33 @@ const docTemplate = `{
                 "tags": [
                     "Ofertas Auto Mais"
                 ],
-                "summary": "Lista todas as ofertas Auto Mais ativas",
+                "summary": "Lista todas as ofertas Auto Mais ativas por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário (opcional)",
+                        "name": "latitude",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário (opcional)",
+                        "name": "longitude",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/json.OfertasAutoMaisResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "500": {
@@ -9376,6 +9397,10 @@ const docTemplate = `{
                 },
                 "descricao": {
                     "type": "string"
+                },
+                "distancia": {
+                    "description": "Distância em km (apenas quando filtro por proximidade é usado)",
+                    "type": "number"
                 },
                 "id": {
                     "type": "integer"

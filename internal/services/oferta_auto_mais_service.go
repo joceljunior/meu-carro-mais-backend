@@ -70,15 +70,33 @@ func GetAllOfertasAutoMais() ([]json.OfertaAutoMaisResponse, error) {
 }
 
 // GetAllOfertasAutoMaisAtivas retorna todas as ofertas Auto Mais ativas
-func GetAllOfertasAutoMaisAtivas() ([]json.OfertaAutoMaisResponse, error) {
-	ofertas, err := datasource.GetAllOfertasAutoMaisAtivas()
-	if err != nil {
-		return nil, err
-	}
-
+// Se latitude e longitude forem fornecidos, ordena por proximidade
+func GetAllOfertasAutoMaisAtivas(latitude, longitude *float64) ([]json.OfertaAutoMaisResponse, error) {
 	var responses []json.OfertaAutoMaisResponse
-	for _, oferta := range ofertas {
-		responses = append(responses, *modelToOfertaAutoMaisResponse(&oferta))
+
+	if latitude != nil && longitude != nil {
+		// Busca ofertas ordenadas por proximidade
+		ofertasComDistancia, err := datasource.GetOfertasAutoMaisAtivasByProximidade(*latitude, *longitude)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, ofertaComDistancia := range ofertasComDistancia {
+			response := modelToOfertaAutoMaisResponse(&ofertaComDistancia.Oferta)
+			distancia := ofertaComDistancia.Distancia
+			response.Distancia = &distancia
+			responses = append(responses, *response)
+		}
+	} else {
+		// Busca ofertas sem ordenação por proximidade
+		ofertas, err := datasource.GetAllOfertasAutoMaisAtivas()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, oferta := range ofertas {
+			responses = append(responses, *modelToOfertaAutoMaisResponse(&oferta))
+		}
 	}
 
 	return responses, nil
