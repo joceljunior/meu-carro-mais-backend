@@ -834,52 +834,64 @@ func (s *Seeder) seedVeiculos() error {
 
 	veiculos := []models.Veiculo{
 		{
-			Modelo:    "Honda Civic",
-			Ano:       2020,
-			Cor:       "Prata",
-			Placa:     "ABC-1234",
-			IDUsuario: usuarios[0].ID,
-			Ativo:     true,
+			Marca:         "Honda",
+			Modelo:        "Civic",
+			AnoFabricacao: 2020,
+			AnoModelo:     2020,
+			Cor:           "Prata",
+			Placa:         "ABC-1234",
+			IDUsuario:     usuarios[0].ID,
+			Ativo:         true,
 		},
 		{
-			Modelo:    "Toyota Corolla",
-			Ano:       2019,
-			Cor:       "Branco",
-			Placa:     "DEF-5678",
-			IDUsuario: usuarios[1].ID,
-			Ativo:     true,
+			Marca:         "Toyota",
+			Modelo:        "Corolla",
+			AnoFabricacao: 2019,
+			AnoModelo:     2019,
+			Cor:           "Branco",
+			Placa:         "DEF-5678",
+			IDUsuario:     usuarios[1].ID,
+			Ativo:         true,
 		},
 		{
-			Modelo:    "Volkswagen Golf",
-			Ano:       2021,
-			Cor:       "Preto",
-			Placa:     "GHI-9012",
-			IDUsuario: usuarios[2].ID,
-			Ativo:     true,
+			Marca:         "Volkswagen",
+			Modelo:        "Golf",
+			AnoFabricacao: 2021,
+			AnoModelo:     2021,
+			Cor:           "Preto",
+			Placa:         "GHI-9012",
+			IDUsuario:     usuarios[2].ID,
+			Ativo:         true,
 		},
 		{
-			Modelo:    "Ford Focus",
-			Ano:       2018,
-			Cor:       "Azul",
-			Placa:     "JKL-3456",
-			IDUsuario: usuarios[3].ID,
-			Ativo:     true,
+			Marca:         "Ford",
+			Modelo:        "Focus",
+			AnoFabricacao: 2018,
+			AnoModelo:     2018,
+			Cor:           "Azul",
+			Placa:         "JKL-3456",
+			IDUsuario:     usuarios[3].ID,
+			Ativo:         true,
 		},
 		{
-			Modelo:    "Chevrolet Onix",
-			Ano:       2022,
-			Cor:       "Vermelho",
-			Placa:     "MNO-7890",
-			IDUsuario: usuarios[0].ID,
-			Ativo:     true,
+			Marca:         "Chevrolet",
+			Modelo:        "Onix",
+			AnoFabricacao: 2022,
+			AnoModelo:     2022,
+			Cor:           "Vermelho",
+			Placa:         "MNO-7890",
+			IDUsuario:     usuarios[0].ID,
+			Ativo:         true,
 		},
 		{
-			Modelo:    "Fiat Argo",
-			Ano:       2020,
-			Cor:       "Cinza",
-			Placa:     "PQR-1357",
-			IDUsuario: usuarios[1].ID,
-			Ativo:     true,
+			Marca:         "Fiat",
+			Modelo:        "Argo",
+			AnoFabricacao: 2020,
+			AnoModelo:     2020,
+			Cor:           "Cinza",
+			Placa:         "PQR-1357",
+			IDUsuario:     usuarios[1].ID,
+			Ativo:         true,
 		},
 	}
 
@@ -887,13 +899,13 @@ func (s *Seeder) seedVeiculos() error {
 		var existing models.Veiculo
 		if err := s.db.Where("placa = ?", veiculo.Placa).First(&existing).Error; err != nil {
 			// Se não existe, cria
-			if err := s.db.Create(&veiculo).Error; err != nil {
-				return fmt.Errorf("erro ao criar veiculo %s: %v", veiculo.Placa, err)
-			}
-			log.Printf("✅ Veiculo criado: %s %d (%s)", veiculo.Modelo, veiculo.Ano, veiculo.Placa)
-		} else {
-			log.Printf("⏭️ Veiculo já existe: %s %d (%s)", veiculo.Modelo, veiculo.Ano, veiculo.Placa)
+		if err := s.db.Create(&veiculo).Error; err != nil {
+			return fmt.Errorf("erro ao criar veiculo %s: %v", veiculo.Placa, err)
 		}
+		log.Printf("✅ Veiculo criado: %s %s %d (%s)", veiculo.Marca, veiculo.Modelo, veiculo.AnoFabricacao, veiculo.Placa)
+	} else {
+		log.Printf("⏭️ Veiculo já existe: %s %s %d (%s)", veiculo.Marca, veiculo.Modelo, veiculo.AnoFabricacao, veiculo.Placa)
+	}
 	}
 
 	return nil
@@ -929,7 +941,7 @@ func (s *Seeder) seedUploads() error {
 			IDVeiculo:    &veiculo.ID,
 			TipoEntidade: "veiculo",
 			Tipo:         "Imagem",
-			URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d", veiculo.Modelo, veiculo.Ano),
+			URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d", veiculo.Modelo, veiculo.AnoFabricacao),
 			NomeArquivo:  fmt.Sprintf("veiculo_%d_principal.jpg", veiculo.ID),
 			Tamanho:      2048000, // 2MB
 			TipoMime:     "image/jpeg",
@@ -942,7 +954,7 @@ func (s *Seeder) seedUploads() error {
 				IDVeiculo:    &veiculo.ID,
 				TipoEntidade: "veiculo",
 				Tipo:         "Imagem",
-				URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d+Interior", veiculo.Modelo, veiculo.Ano),
+				URL:          fmt.Sprintf("https://via.placeholder.com/800x600?text=%s+%d+Interior", veiculo.Modelo, veiculo.AnoFabricacao),
 				NomeArquivo:  fmt.Sprintf("veiculo_%d_interior.jpg", veiculo.ID),
 				Tamanho:      1856000, // 1.8MB
 				TipoMime:     "image/jpeg",

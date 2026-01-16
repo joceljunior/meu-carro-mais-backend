@@ -43,14 +43,27 @@ func convertUploadToResponse(upload *models.Upload) *json.UploadResponse {
 	// Adiciona dados do veículo se existir
 	if upload.Veiculo != nil {
 		veiculoResp := &json.VeiculoResponse{
-			ID:           upload.Veiculo.ID,
-			Modelo:       upload.Veiculo.Modelo,
-			Ano:          upload.Veiculo.Ano,
-			Cor:          upload.Veiculo.Cor,
-			Placa:        upload.Veiculo.Placa,
-			IDUsuario:    upload.Veiculo.IDUsuario,
-			DataCadastro: upload.Veiculo.DataCadastro,
-			Ativo:        upload.Veiculo.Ativo,
+			ID:                  upload.Veiculo.ID,
+			Marca:               upload.Veiculo.Marca,
+			Modelo:               upload.Veiculo.Modelo,
+			AnoFabricacao:        upload.Veiculo.AnoFabricacao,
+			AnoModelo:            upload.Veiculo.AnoModelo,
+			Cor:                  upload.Veiculo.Cor,
+			Placa:                upload.Veiculo.Placa,
+			Renavam:              upload.Veiculo.Renavam,
+			Chassi:               upload.Veiculo.Chassi,
+			TipoVeiculo:          upload.Veiculo.TipoVeiculo,
+			Combustivel:          upload.Veiculo.Combustivel,
+			Quilometragem:        upload.Veiculo.Quilometragem,
+			Preco:                upload.Veiculo.Preco,
+			Licenciamento:        upload.Veiculo.Licenciamento,
+			IPVAPago:             upload.Veiculo.IPVAPago,
+			PossuiFinanciamento:  upload.Veiculo.PossuiFinanciamento,
+			PossuiMultas:         upload.Veiculo.PossuiMultas,
+			Observacoes:          upload.Veiculo.Observacoes,
+			IDUsuario:            upload.Veiculo.IDUsuario,
+			DataCadastro:         upload.Veiculo.DataCadastro,
+			Ativo:                upload.Veiculo.Ativo,
 		}
 		response.Veiculo = veiculoResp
 	}

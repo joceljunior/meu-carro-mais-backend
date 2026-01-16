@@ -1624,38 +1624,90 @@ definitions:
     type: object
   json.VeiculoRequest:
     properties:
-      ano:
+      ano_fabricacao:
+        example: 2020
         maximum: 2030
         minimum: 1900
         type: integer
+      ano_modelo:
+        example: 2020
+        maximum: 2030
+        minimum: 1900
+        type: integer
+      chassi:
+        example: 9BW12345678901234
+        type: string
+      combustivel:
+        example: Flex
+        type: string
       cor:
+        example: Branco
         type: string
       id_usuario:
         type: integer
+      ipva_pago:
+        example: true
+        type: boolean
+      licenciamento:
+        example: Pago
+        type: string
+      marca:
+        example: Toyota
+        type: string
       modelo:
+        example: Corolla
         type: string
       observacoes:
         example: Veículo em ótimo estado
         type: string
       placa:
+        example: ABC-1234
         type: string
+      possui_financiamento:
+        example: false
+        type: boolean
+      possui_multas:
+        example: false
+        type: boolean
+      preco:
+        example: 45000
+        type: number
       quilometragem:
         example: 50000
         type: integer
+      renavam:
+        example: "12345678901"
+        type: string
+      tipo_veiculo:
+        example: Carro
+        type: string
     required:
-    - ano
+    - ano_fabricacao
+    - ano_modelo
     - cor
     - id_usuario
+    - marca
     - modelo
     - placa
     type: object
   json.VeiculoResponse:
     properties:
-      ano:
+      ano_fabricacao:
+        description: Ano de fabricação
+        type: integer
+      ano_modelo:
+        description: Ano modelo
         type: integer
       ativo:
         type: boolean
+      chassi:
+        description: Chassi do veículo
+        type: string
+      combustivel:
+        description: Tipo de combustível
+        type: string
       cor:
+        description: Cor do veículo
         type: string
       data_cadastro:
         type: string
@@ -1663,14 +1715,45 @@ definitions:
         type: integer
       id_usuario:
         type: integer
+      imagem:
+        description: URL da imagem principal do veículo
+        type: string
+      ipva_pago:
+        description: Se o IPVA está pago
+        type: boolean
+      licenciamento:
+        description: Status do licenciamento
+        type: string
+      marca:
+        description: Marca do veículo
+        type: string
       modelo:
+        description: Modelo do veículo
         type: string
       observacoes:
+        description: Observações do veículo
         type: string
       placa:
+        description: Placa do veículo
         type: string
+      possui_financiamento:
+        description: Se possui financiamento
+        type: boolean
+      possui_multas:
+        description: Se possui multas
+        type: boolean
+      preco:
+        description: Preço do veículo
+        type: number
       quilometragem:
+        description: KM do veículo
         type: integer
+      renavam:
+        description: RENAVAM do veículo
+        type: string
+      tipo_veiculo:
+        description: Tipo do veículo
+        type: string
     type: object
   json.VeiculosLojaResponse:
     properties:
@@ -6624,7 +6707,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna todos os veículos ativos de um usuário específico
+      description: Retorna todos os veículos ativos de um usuário específico, incluindo
+        quilometragem (km), observações e imagem principal
       parameters:
       - description: ID do usuário
         in: path
@@ -6635,7 +6719,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Lista de veículos (cada veículo inclui quilometragem, observacoes
+            e imagem)
           schema:
             $ref: '#/definitions/json.VeiculosResponse'
         "400":
@@ -6655,12 +6740,14 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna uma lista com todos os veículos ativos
+      description: Retorna uma lista com todos os veículos ativos, incluindo quilometragem
+        (km), observações e imagem principal
       produces:
       - application/json
       responses:
         "200":
-          description: Lista de veículos
+          description: Lista de veículos (cada veículo inclui quilometragem, observacoes
+            e imagem)
           schema:
             items:
               $ref: '#/definitions/json.VeiculoResponse'
@@ -6980,7 +7067,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna os dados de um veículo específico pelo ID
+      description: Retorna os dados de um veículo específico pelo ID, incluindo quilometragem
+        (km), observações e imagem principal
       parameters:
       - description: ID do veículo
         in: path
@@ -6991,7 +7079,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Veículo encontrado
+          description: Veículo encontrado (inclui quilometragem, observacoes e imagem)
           schema:
             $ref: '#/definitions/json.VeiculoResponse'
         "400":

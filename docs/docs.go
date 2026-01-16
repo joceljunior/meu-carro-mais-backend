@@ -7116,7 +7116,7 @@ const docTemplate = `{
         },
         "/usuarios/{id_usuario}/veiculos": {
             "get": {
-                "description": "Retorna todos os veículos ativos de um usuário específico",
+                "description": "Retorna todos os veículos ativos de um usuário específico, incluindo quilometragem (km), observações e imagem principal",
                 "consumes": [
                     "application/json"
                 ],
@@ -7138,7 +7138,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Lista de veículos (cada veículo inclui quilometragem, observacoes e imagem)",
                         "schema": {
                             "$ref": "#/definitions/json.VeiculosResponse"
                         }
@@ -7162,7 +7162,7 @@ const docTemplate = `{
         },
         "/veiculos": {
             "get": {
-                "description": "Retorna uma lista com todos os veículos ativos",
+                "description": "Retorna uma lista com todos os veículos ativos, incluindo quilometragem (km), observações e imagem principal",
                 "consumes": [
                     "application/json"
                 ],
@@ -7175,7 +7175,7 @@ const docTemplate = `{
                 "summary": "Lista todos os veículos",
                 "responses": {
                     "200": {
-                        "description": "Lista de veículos",
+                        "description": "Lista de veículos (cada veículo inclui quilometragem, observacoes e imagem)",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -7585,7 +7585,7 @@ const docTemplate = `{
         },
         "/veiculos/{id}": {
             "get": {
-                "description": "Retorna os dados de um veículo específico pelo ID",
+                "description": "Retorna os dados de um veículo específico pelo ID, incluindo quilometragem (km), observações e imagem principal",
                 "consumes": [
                     "application/json"
                 ],
@@ -7607,7 +7607,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Veículo encontrado",
+                        "description": "Veículo encontrado (inclui quilometragem, observacoes e imagem)",
                         "schema": {
                             "$ref": "#/definitions/json.VeiculoResponse"
                         }
@@ -10300,50 +10300,116 @@ const docTemplate = `{
         "json.VeiculoRequest": {
             "type": "object",
             "required": [
-                "ano",
+                "ano_fabricacao",
+                "ano_modelo",
                 "cor",
                 "id_usuario",
+                "marca",
                 "modelo",
                 "placa"
             ],
             "properties": {
-                "ano": {
+                "ano_fabricacao": {
                     "type": "integer",
                     "maximum": 2030,
-                    "minimum": 1900
+                    "minimum": 1900,
+                    "example": 2020
+                },
+                "ano_modelo": {
+                    "type": "integer",
+                    "maximum": 2030,
+                    "minimum": 1900,
+                    "example": 2020
+                },
+                "chassi": {
+                    "type": "string",
+                    "example": "9BW12345678901234"
+                },
+                "combustivel": {
+                    "type": "string",
+                    "example": "Flex"
                 },
                 "cor": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Branco"
                 },
                 "id_usuario": {
                     "type": "integer"
                 },
+                "ipva_pago": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "licenciamento": {
+                    "type": "string",
+                    "example": "Pago"
+                },
+                "marca": {
+                    "type": "string",
+                    "example": "Toyota"
+                },
                 "modelo": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Corolla"
                 },
                 "observacoes": {
                     "type": "string",
                     "example": "Veículo em ótimo estado"
                 },
                 "placa": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ABC-1234"
+                },
+                "possui_financiamento": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "possui_multas": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "preco": {
+                    "type": "number",
+                    "example": 45000
                 },
                 "quilometragem": {
                     "type": "integer",
                     "example": 50000
+                },
+                "renavam": {
+                    "type": "string",
+                    "example": "12345678901"
+                },
+                "tipo_veiculo": {
+                    "type": "string",
+                    "example": "Carro"
                 }
             }
         },
         "json.VeiculoResponse": {
             "type": "object",
             "properties": {
-                "ano": {
+                "ano_fabricacao": {
+                    "description": "Ano de fabricação",
+                    "type": "integer"
+                },
+                "ano_modelo": {
+                    "description": "Ano modelo",
                     "type": "integer"
                 },
                 "ativo": {
                     "type": "boolean"
                 },
+                "chassi": {
+                    "description": "Chassi do veículo",
+                    "type": "string"
+                },
+                "combustivel": {
+                    "description": "Tipo de combustível",
+                    "type": "string"
+                },
                 "cor": {
+                    "description": "Cor do veículo",
                     "type": "string"
                 },
                 "data_cadastro": {
@@ -10355,17 +10421,57 @@ const docTemplate = `{
                 "id_usuario": {
                     "type": "integer"
                 },
+                "imagem": {
+                    "description": "URL da imagem principal do veículo",
+                    "type": "string"
+                },
+                "ipva_pago": {
+                    "description": "Se o IPVA está pago",
+                    "type": "boolean"
+                },
+                "licenciamento": {
+                    "description": "Status do licenciamento",
+                    "type": "string"
+                },
+                "marca": {
+                    "description": "Marca do veículo",
+                    "type": "string"
+                },
                 "modelo": {
+                    "description": "Modelo do veículo",
                     "type": "string"
                 },
                 "observacoes": {
+                    "description": "Observações do veículo",
                     "type": "string"
                 },
                 "placa": {
+                    "description": "Placa do veículo",
                     "type": "string"
                 },
+                "possui_financiamento": {
+                    "description": "Se possui financiamento",
+                    "type": "boolean"
+                },
+                "possui_multas": {
+                    "description": "Se possui multas",
+                    "type": "boolean"
+                },
+                "preco": {
+                    "description": "Preço do veículo",
+                    "type": "number"
+                },
                 "quilometragem": {
+                    "description": "KM do veículo",
                     "type": "integer"
+                },
+                "renavam": {
+                    "description": "RENAVAM do veículo",
+                    "type": "string"
+                },
+                "tipo_veiculo": {
+                    "description": "Tipo do veículo",
+                    "type": "string"
                 }
             }
         },

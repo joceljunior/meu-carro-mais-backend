@@ -619,6 +619,54 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration024)
 
+	// Migration 025: Adicionar campos completos à tabela veiculos
+	migration025 := m.NewMigration("025", "add_complete_fields_to_veiculos").
+		// Renomear campo 'ano' para 'ano_fabricacao' e adicionar 'ano_modelo'
+		ExecuteSQL(`
+			-- Renomeia 'ano' para 'ano_fabricacao' se ainda não foi renomeado
+			DO $$
+			BEGIN
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'veiculos' AND column_name = 'ano' 
+					AND NOT EXISTS (SELECT 1 FROM information_schema.columns 
+						WHERE table_name = 'veiculos' AND column_name = 'ano_fabricacao')) THEN
+					ALTER TABLE veiculos RENAME COLUMN ano TO ano_fabricacao;
+				END IF;
+			END $$;
+		`, `
+			-- Rollback: renomeia de volta
+			DO $$
+			BEGIN
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'veiculos' AND column_name = 'ano_fabricacao') THEN
+					ALTER TABLE veiculos RENAME COLUMN ano_fabricacao TO ano;
+				END IF;
+			END $$;
+		`).
+		// Adiciona novos campos
+		AddColumnSQL("veiculos", "marca", "VARCHAR(100) NOT NULL DEFAULT ''").
+		AddColumnSQL("veiculos", "ano_modelo", "INTEGER NOT NULL DEFAULT 0").
+		AddColumnSQL("veiculos", "renavam", "VARCHAR(20)").
+		AddColumnSQL("veiculos", "chassi", "VARCHAR(50)").
+		AddColumnSQL("veiculos", "tipo_veiculo", "VARCHAR(50)").
+		AddColumnSQL("veiculos", "combustivel", "VARCHAR(50)").
+		AddColumnSQL("veiculos", "preco", "DECIMAL(10,2)").
+		AddColumnSQL("veiculos", "licenciamento", "VARCHAR(50)").
+		AddColumnSQL("veiculos", "ipva_pago", "BOOLEAN DEFAULT FALSE").
+		AddColumnSQL("veiculos", "possui_financiamento", "BOOLEAN DEFAULT FALSE").
+		AddColumnSQL("veiculos", "possui_multas", "BOOLEAN DEFAULT FALSE").
+		// Atualiza ano_modelo para ser igual ao ano_fabricacao se não foi definido
+		ExecuteSQL(`
+			UPDATE veiculos 
+			SET ano_modelo = ano_fabricacao 
+			WHERE ano_modelo = 0 OR ano_modelo IS NULL
+		`, `
+			-- Rollback: não faz nada
+			SELECT 'Rollback não implementado para atualização de ano_modelo' as message
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration025)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

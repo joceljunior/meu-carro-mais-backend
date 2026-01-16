@@ -5,6 +5,15 @@ import (
 	"meu-carro-mais/internal/handlers/json"
 )
 
+// getImagemVeiculo busca a imagem principal de um veículo
+func getImagemVeiculo(idVeiculo uint) string {
+	upload, err := datasource.GetUploadPrincipalByEntidade("veiculo", idVeiculo)
+	if err != nil {
+		return ""
+	}
+	return upload.URL
+}
+
 // GetVeiculosByUsuario retorna todos os veículos de um usuário
 func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	veiculos, err := datasource.GetVeiculosByUsuario(idUsuario)
@@ -14,17 +23,30 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 
 	var veiculosResponse []json.VeiculoResponse
 	for _, veiculo := range veiculos {
+		imagem := getImagemVeiculo(veiculo.ID)
 		veiculoResp := json.VeiculoResponse{
-			ID:            veiculo.ID,
-			Modelo:        veiculo.Modelo,
-			Ano:           veiculo.Ano,
-			Cor:           veiculo.Cor,
-			Placa:         veiculo.Placa,
-			Quilometragem: veiculo.Quilometragem,
-			Observacoes:   veiculo.Observacoes,
-			IDUsuario:     veiculo.IDUsuario,
-			DataCadastro:  veiculo.DataCadastro,
-			Ativo:         veiculo.Ativo,
+			ID:                  veiculo.ID,
+			Marca:               veiculo.Marca,
+			Modelo:              veiculo.Modelo,
+			AnoFabricacao:       veiculo.AnoFabricacao,
+			AnoModelo:           veiculo.AnoModelo,
+			Cor:                 veiculo.Cor,
+			Placa:               veiculo.Placa,
+			Renavam:             veiculo.Renavam,
+			Chassi:              veiculo.Chassi,
+			TipoVeiculo:         veiculo.TipoVeiculo,
+			Combustivel:         veiculo.Combustivel,
+			Quilometragem:       veiculo.Quilometragem,
+			Preco:               veiculo.Preco,
+			Licenciamento:       veiculo.Licenciamento,
+			IPVAPago:            veiculo.IPVAPago,
+			PossuiFinanciamento: veiculo.PossuiFinanciamento,
+			PossuiMultas:        veiculo.PossuiMultas,
+			Observacoes:         veiculo.Observacoes,
+			Imagem:              imagem,
+			IDUsuario:           veiculo.IDUsuario,
+			DataCadastro:        veiculo.DataCadastro,
+			Ativo:               veiculo.Ativo,
 		}
 		veiculosResponse = append(veiculosResponse, veiculoResp)
 	}
@@ -100,17 +122,30 @@ func CreateVeiculo(req json.VeiculoRequest) (*json.VeiculoResponse, error) {
 		return nil, err
 	}
 
+	imagem := getImagemVeiculo(veiculo.ID)
 	response := &json.VeiculoResponse{
-		ID:            veiculo.ID,
-		Modelo:        veiculo.Modelo,
-		Ano:           veiculo.Ano,
-		Cor:           veiculo.Cor,
-		Placa:         veiculo.Placa,
-		Quilometragem: veiculo.Quilometragem,
-		Observacoes:   veiculo.Observacoes,
-		IDUsuario:     veiculo.IDUsuario,
-		DataCadastro:  veiculo.DataCadastro,
-		Ativo:         veiculo.Ativo,
+		ID:                  veiculo.ID,
+		Marca:               veiculo.Marca,
+		Modelo:              veiculo.Modelo,
+		AnoFabricacao:       veiculo.AnoFabricacao,
+		AnoModelo:           veiculo.AnoModelo,
+		Cor:                 veiculo.Cor,
+		Placa:               veiculo.Placa,
+		Renavam:             veiculo.Renavam,
+		Chassi:              veiculo.Chassi,
+		TipoVeiculo:         veiculo.TipoVeiculo,
+		Combustivel:         veiculo.Combustivel,
+		Quilometragem:       veiculo.Quilometragem,
+		Preco:               veiculo.Preco,
+		Licenciamento:       veiculo.Licenciamento,
+		IPVAPago:            veiculo.IPVAPago,
+		PossuiFinanciamento: veiculo.PossuiFinanciamento,
+		PossuiMultas:        veiculo.PossuiMultas,
+		Observacoes:         veiculo.Observacoes,
+		Imagem:              imagem,
+		IDUsuario:           veiculo.IDUsuario,
+		DataCadastro:        veiculo.DataCadastro,
+		Ativo:               veiculo.Ativo,
 	}
 
 	return response, nil
@@ -123,17 +158,30 @@ func GetVeiculoByID(id uint) (*json.VeiculoResponse, error) {
 		return nil, err
 	}
 
+	imagem := getImagemVeiculo(veiculo.ID)
 	response := &json.VeiculoResponse{
-		ID:            veiculo.ID,
-		Modelo:        veiculo.Modelo,
-		Ano:           veiculo.Ano,
-		Cor:           veiculo.Cor,
-		Placa:         veiculo.Placa,
-		Quilometragem: veiculo.Quilometragem,
-		Observacoes:   veiculo.Observacoes,
-		IDUsuario:     veiculo.IDUsuario,
-		DataCadastro:  veiculo.DataCadastro,
-		Ativo:         veiculo.Ativo,
+		ID:                  veiculo.ID,
+		Marca:               veiculo.Marca,
+		Modelo:              veiculo.Modelo,
+		AnoFabricacao:       veiculo.AnoFabricacao,
+		AnoModelo:           veiculo.AnoModelo,
+		Cor:                 veiculo.Cor,
+		Placa:               veiculo.Placa,
+		Renavam:             veiculo.Renavam,
+		Chassi:              veiculo.Chassi,
+		TipoVeiculo:         veiculo.TipoVeiculo,
+		Combustivel:         veiculo.Combustivel,
+		Quilometragem:       veiculo.Quilometragem,
+		Preco:               veiculo.Preco,
+		Licenciamento:       veiculo.Licenciamento,
+		IPVAPago:            veiculo.IPVAPago,
+		PossuiFinanciamento: veiculo.PossuiFinanciamento,
+		PossuiMultas:        veiculo.PossuiMultas,
+		Observacoes:         veiculo.Observacoes,
+		Imagem:              imagem,
+		IDUsuario:           veiculo.IDUsuario,
+		DataCadastro:        veiculo.DataCadastro,
+		Ativo:               veiculo.Ativo,
 	}
 
 	return response, nil
@@ -148,17 +196,30 @@ func GetAllVeiculos() ([]json.VeiculoResponse, error) {
 
 	var responses []json.VeiculoResponse
 	for _, veiculo := range veiculos {
+		imagem := getImagemVeiculo(veiculo.ID)
 		response := json.VeiculoResponse{
-			ID:            veiculo.ID,
-			Modelo:        veiculo.Modelo,
-			Ano:           veiculo.Ano,
-			Cor:           veiculo.Cor,
-			Placa:         veiculo.Placa,
-			Quilometragem: veiculo.Quilometragem,
-			Observacoes:   veiculo.Observacoes,
-			IDUsuario:     veiculo.IDUsuario,
-			DataCadastro:  veiculo.DataCadastro,
-			Ativo:         veiculo.Ativo,
+			ID:                  veiculo.ID,
+			Marca:               veiculo.Marca,
+			Modelo:              veiculo.Modelo,
+			AnoFabricacao:       veiculo.AnoFabricacao,
+			AnoModelo:           veiculo.AnoModelo,
+			Cor:                 veiculo.Cor,
+			Placa:               veiculo.Placa,
+			Renavam:             veiculo.Renavam,
+			Chassi:              veiculo.Chassi,
+			TipoVeiculo:         veiculo.TipoVeiculo,
+			Combustivel:         veiculo.Combustivel,
+			Quilometragem:       veiculo.Quilometragem,
+			Preco:               veiculo.Preco,
+			Licenciamento:       veiculo.Licenciamento,
+			IPVAPago:            veiculo.IPVAPago,
+			PossuiFinanciamento: veiculo.PossuiFinanciamento,
+			PossuiMultas:        veiculo.PossuiMultas,
+			Observacoes:         veiculo.Observacoes,
+			Imagem:              imagem,
+			IDUsuario:           veiculo.IDUsuario,
+			DataCadastro:        veiculo.DataCadastro,
+			Ativo:               veiculo.Ativo,
 		}
 		responses = append(responses, response)
 	}
@@ -173,17 +234,30 @@ func UpdateVeiculo(id uint, req json.VeiculoRequest) (*json.VeiculoResponse, err
 		return nil, err
 	}
 
+	imagem := getImagemVeiculo(veiculo.ID)
 	response := &json.VeiculoResponse{
-		ID:            veiculo.ID,
-		Modelo:        veiculo.Modelo,
-		Ano:           veiculo.Ano,
-		Cor:           veiculo.Cor,
-		Placa:         veiculo.Placa,
-		Quilometragem: veiculo.Quilometragem,
-		Observacoes:   veiculo.Observacoes,
-		IDUsuario:     veiculo.IDUsuario,
-		DataCadastro:  veiculo.DataCadastro,
-		Ativo:         veiculo.Ativo,
+		ID:                  veiculo.ID,
+		Marca:               veiculo.Marca,
+		Modelo:              veiculo.Modelo,
+		AnoFabricacao:       veiculo.AnoFabricacao,
+		AnoModelo:           veiculo.AnoModelo,
+		Cor:                 veiculo.Cor,
+		Placa:               veiculo.Placa,
+		Renavam:             veiculo.Renavam,
+		Chassi:              veiculo.Chassi,
+		TipoVeiculo:         veiculo.TipoVeiculo,
+		Combustivel:         veiculo.Combustivel,
+		Quilometragem:       veiculo.Quilometragem,
+		Preco:               veiculo.Preco,
+		Licenciamento:       veiculo.Licenciamento,
+		IPVAPago:            veiculo.IPVAPago,
+		PossuiFinanciamento: veiculo.PossuiFinanciamento,
+		PossuiMultas:        veiculo.PossuiMultas,
+		Observacoes:         veiculo.Observacoes,
+		Imagem:              imagem,
+		IDUsuario:           veiculo.IDUsuario,
+		DataCadastro:        veiculo.DataCadastro,
+		Ativo:               veiculo.Ativo,
 	}
 
 	return response, nil

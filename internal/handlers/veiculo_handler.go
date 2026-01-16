@@ -12,12 +12,12 @@ import (
 
 // GetVeiculosByUsuarioHandler godoc
 // @Summary      Lista veículos de um usuário
-// @Description  Retorna todos os veículos ativos de um usuário específico
+// @Description  Retorna todos os veículos ativos de um usuário específico, incluindo quilometragem (km), observações e imagem principal
 // @Tags         Veículos
 // @Accept       json
 // @Produce      json
 // @Param        id_usuario path int true "ID do usuário"
-// @Success      200  {object}  json.VeiculosResponse
+// @Success      200  {object}  json.VeiculosResponse "Lista de veículos (cada veículo inclui quilometragem, observacoes e imagem)"
 // @Failure      400  {object}  map[string]interface{} "ID de usuário inválido"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
 // @Router       /usuarios/{id_usuario}/veiculos [get]
@@ -76,12 +76,12 @@ func CreateVeiculoHandler(c *gin.Context) {
 
 // GetVeiculoHandler godoc
 // @Summary      Busca veículo por ID
-// @Description  Retorna os dados de um veículo específico pelo ID
+// @Description  Retorna os dados de um veículo específico pelo ID, incluindo quilometragem (km), observações e imagem principal
 // @Tags         Veículos
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID do veículo"
-// @Success      200 {object} json.VeiculoResponse "Veículo encontrado"
+// @Success      200 {object} json.VeiculoResponse "Veículo encontrado (inclui quilometragem, observacoes e imagem)"
 // @Failure      400 {object} map[string]interface{} "ID inválido"
 // @Failure      404 {object} map[string]interface{} "Veículo não encontrado"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
@@ -109,11 +109,11 @@ func GetVeiculoHandler(c *gin.Context) {
 
 // GetAllVeiculosHandler godoc
 // @Summary      Lista todos os veículos
-// @Description  Retorna uma lista com todos os veículos ativos
+// @Description  Retorna uma lista com todos os veículos ativos, incluindo quilometragem (km), observações e imagem principal
 // @Tags         Veículos
 // @Accept       json
 // @Produce      json
-// @Success      200 {array} json.VeiculoResponse "Lista de veículos"
+// @Success      200 {array} json.VeiculoResponse "Lista de veículos (cada veículo inclui quilometragem, observacoes e imagem)"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
 // @Router       /veiculos [get]
 func GetAllVeiculosHandler(c *gin.Context) {

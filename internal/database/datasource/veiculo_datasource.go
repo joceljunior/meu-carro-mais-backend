@@ -80,14 +80,25 @@ func GetHistoricosByUsuario(idUsuario uint) ([]models.HistoricoVeiculo, error) {
 // CreateVeiculo cria um novo veículo
 func CreateVeiculo(req json.VeiculoRequest) (*models.Veiculo, error) {
 	veiculo := models.Veiculo{
-		Modelo:        req.Modelo,
-		Ano:           req.Ano,
-		Cor:           req.Cor,
-		Placa:         req.Placa,
-		Quilometragem: req.Quilometragem,
-		Observacoes:   req.Observacoes,
-		IDUsuario:     req.IDUsuario,
-		Ativo:         true,
+		Marca:               req.Marca,
+		Modelo:              req.Modelo,
+		AnoFabricacao:       req.AnoFabricacao,
+		AnoModelo:           req.AnoModelo,
+		Cor:                 req.Cor,
+		Placa:               req.Placa,
+		Renavam:             req.Renavam,
+		Chassi:              req.Chassi,
+		TipoVeiculo:         req.TipoVeiculo,
+		Combustivel:         req.Combustivel,
+		Quilometragem:       req.Quilometragem,
+		Preco:               req.Preco,
+		Licenciamento:       req.Licenciamento,
+		IPVAPago:            req.IPVAPago,
+		PossuiFinanciamento: req.PossuiFinanciamento,
+		PossuiMultas:        req.PossuiMultas,
+		Observacoes:         req.Observacoes,
+		IDUsuario:           req.IDUsuario,
+		Ativo:               true,
 	}
 
 	err := database.DB.Create(&veiculo).Error
@@ -122,11 +133,22 @@ func UpdateVeiculo(id uint, req json.VeiculoRequest) (*models.Veiculo, error) {
 	}
 
 	// Atualiza os campos
+	veiculo.Marca = req.Marca
 	veiculo.Modelo = req.Modelo
-	veiculo.Ano = req.Ano
+	veiculo.AnoFabricacao = req.AnoFabricacao
+	veiculo.AnoModelo = req.AnoModelo
 	veiculo.Cor = req.Cor
 	veiculo.Placa = req.Placa
+	veiculo.Renavam = req.Renavam
+	veiculo.Chassi = req.Chassi
+	veiculo.TipoVeiculo = req.TipoVeiculo
+	veiculo.Combustivel = req.Combustivel
 	veiculo.Quilometragem = req.Quilometragem
+	veiculo.Preco = req.Preco
+	veiculo.Licenciamento = req.Licenciamento
+	veiculo.IPVAPago = req.IPVAPago
+	veiculo.PossuiFinanciamento = req.PossuiFinanciamento
+	veiculo.PossuiMultas = req.PossuiMultas
 	veiculo.Observacoes = req.Observacoes
 	veiculo.IDUsuario = req.IDUsuario
 
