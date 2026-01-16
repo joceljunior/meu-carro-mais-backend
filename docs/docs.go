@@ -26,7 +26,7 @@ const docTemplate = `{
     "paths": {
         "/anuncios": {
             "get": {
-                "description": "Retorna uma lista com todos os anúncios ativos",
+                "description": "Retorna uma lista com todos os anúncios ativos, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja",
                 "consumes": [
                     "application/json"
                 ],
@@ -39,7 +39,7 @@ const docTemplate = `{
                 "summary": "Lista todos os anúncios",
                 "responses": {
                     "200": {
-                        "description": "Lista de anúncios",
+                        "description": "Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -57,7 +57,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Cria um novo anúncio com todos os dados fornecidos",
+                "description": "Cria um novo anúncio com todos os dados fornecidos, incluindo porcentagem de desconto e preço com desconto",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,7 +70,7 @@ const docTemplate = `{
                 "summary": "Criação do anúncio completo",
                 "parameters": [
                     {
-                        "description": "Dados completos do anúncio",
+                        "description": "Dados completos do anúncio (inclui porcentagem_desconto e preco_com_desconto)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -81,7 +81,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Anúncio criado com sucesso",
+                        "description": "Anúncio criado com sucesso (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
                         "schema": {
                             "$ref": "#/definitions/json.AnuncioResponse"
                         }
@@ -105,7 +105,7 @@ const docTemplate = `{
         },
         "/anuncios/loja/{loja_id}": {
             "get": {
-                "description": "Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data",
+                "description": "Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja",
                 "consumes": [
                     "application/json"
                 ],
@@ -127,7 +127,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
                         "schema": {
                             "$ref": "#/definitions/json.AnunciosResponse"
                         }
@@ -304,7 +304,7 @@ const docTemplate = `{
         },
         "/anuncios/{id}": {
             "get": {
-                "description": "Retorna os dados de um anúncio específico pelo ID",
+                "description": "Retorna os dados de um anúncio específico pelo ID, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja",
                 "consumes": [
                     "application/json"
                 ],
@@ -326,7 +326,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Anúncio encontrado",
+                        "description": "Anúncio encontrado (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
                         "schema": {
                             "$ref": "#/definitions/json.AnuncioResponse"
                         }
@@ -355,7 +355,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Atualiza os dados de um anúncio existente",
+                "description": "Atualiza os dados de um anúncio existente, incluindo porcentagem de desconto e preço com desconto",
                 "consumes": [
                     "application/json"
                 ],
@@ -375,7 +375,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Dados atualizados do anúncio",
+                        "description": "Dados atualizados do anúncio (inclui porcentagem_desconto e preco_com_desconto)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -386,7 +386,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Anúncio atualizado com sucesso",
+                        "description": "Anúncio atualizado com sucesso (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
                         "schema": {
                             "$ref": "#/definitions/json.AnuncioResponse"
                         }
@@ -8046,7 +8046,18 @@ const docTemplate = `{
                 "imagem": {
                     "type": "string"
                 },
+                "porcentagem_desconto": {
+                    "description": "Porcentagem de desconto (0-100)",
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                },
                 "preco": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "preco_com_desconto": {
+                    "description": "Preço com desconto aplicado",
                     "type": "number",
                     "minimum": 0
                 },
@@ -8066,6 +8077,10 @@ const docTemplate = `{
         "json.AnuncioResponse": {
             "type": "object",
             "properties": {
+                "avaliacao": {
+                    "description": "Média de avaliações da loja",
+                    "type": "number"
+                },
                 "categoria": {
                     "type": "string"
                 },
@@ -8107,7 +8122,19 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "porcentagem_desconto": {
+                    "description": "Porcentagem de desconto",
+                    "type": "number"
+                },
                 "preco": {
+                    "type": "number"
+                },
+                "preco_com_desconto": {
+                    "description": "Preço com desconto aplicado",
+                    "type": "number"
+                },
+                "preco_original": {
+                    "description": "Preço original do produto/serviço/veículo",
                     "type": "number"
                 },
                 "produto": {

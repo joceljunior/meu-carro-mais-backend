@@ -96,7 +96,16 @@ definitions:
         type: integer
       imagem:
         type: string
+      porcentagem_desconto:
+        description: Porcentagem de desconto (0-100)
+        maximum: 100
+        minimum: 0
+        type: number
       preco:
+        minimum: 0
+        type: number
+      preco_com_desconto:
+        description: Preço com desconto aplicado
         minimum: 0
         type: number
       tipo_anuncio:
@@ -117,6 +126,9 @@ definitions:
     type: object
   json.AnuncioResponse:
     properties:
+      avaliacao:
+        description: Média de avaliações da loja
+        type: number
       categoria:
         type: string
       descricao:
@@ -143,7 +155,16 @@ definitions:
         allOf:
         - $ref: '#/definitions/json.OfertaAutoMaisResponse'
         description: Oferta Auto Mais para pagamento com moedas
+      porcentagem_desconto:
+        description: Porcentagem de desconto
+        type: number
       preco:
+        type: number
+      preco_com_desconto:
+        description: Preço com desconto aplicado
+        type: number
+      preco_original:
+        description: Preço original do produto/serviço/veículo
         type: number
       produto:
         $ref: '#/definitions/json.ProdutoResponse'
@@ -1752,12 +1773,14 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna uma lista com todos os anúncios ativos
+      description: Retorna uma lista com todos os anúncios ativos, incluindo preço
+        original, preço com desconto, porcentagem de desconto e avaliação da loja
       produces:
       - application/json
       responses:
         "200":
-          description: Lista de anúncios
+          description: Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto,
+            porcentagem_desconto e avaliacao)
           schema:
             items:
               $ref: '#/definitions/json.AnuncioResponse'
@@ -1773,9 +1796,10 @@ paths:
     post:
       consumes:
       - application/json
-      description: Cria um novo anúncio com todos os dados fornecidos
+      description: Cria um novo anúncio com todos os dados fornecidos, incluindo porcentagem
+        de desconto e preço com desconto
       parameters:
-      - description: Dados completos do anúncio
+      - description: Dados completos do anúncio (inclui porcentagem_desconto e preco_com_desconto)
         in: body
         name: request
         required: true
@@ -1785,7 +1809,8 @@ paths:
       - application/json
       responses:
         "201":
-          description: Anúncio criado com sucesso
+          description: Anúncio criado com sucesso (inclui preco_original, preco_com_desconto,
+            porcentagem_desconto e avaliacao)
           schema:
             $ref: '#/definitions/json.AnuncioResponse'
         "400":
@@ -1842,7 +1867,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna os dados de um anúncio específico pelo ID
+      description: Retorna os dados de um anúncio específico pelo ID, incluindo preço
+        original, preço com desconto, porcentagem de desconto e avaliação da loja
       parameters:
       - description: ID do anúncio
         in: path
@@ -1853,7 +1879,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: Anúncio encontrado
+          description: Anúncio encontrado (inclui preco_original, preco_com_desconto,
+            porcentagem_desconto e avaliacao)
           schema:
             $ref: '#/definitions/json.AnuncioResponse'
         "400":
@@ -1877,14 +1904,15 @@ paths:
     put:
       consumes:
       - application/json
-      description: Atualiza os dados de um anúncio existente
+      description: Atualiza os dados de um anúncio existente, incluindo porcentagem
+        de desconto e preço com desconto
       parameters:
       - description: ID do anúncio
         in: path
         name: id
         required: true
         type: integer
-      - description: Dados atualizados do anúncio
+      - description: Dados atualizados do anúncio (inclui porcentagem_desconto e preco_com_desconto)
         in: body
         name: request
         required: true
@@ -1894,7 +1922,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: Anúncio atualizado com sucesso
+          description: Anúncio atualizado com sucesso (inclui preco_original, preco_com_desconto,
+            porcentagem_desconto e avaliacao)
           schema:
             $ref: '#/definitions/json.AnuncioResponse'
         "400":
@@ -2000,7 +2029,8 @@ paths:
       consumes:
       - application/json
       description: Retorna todos os anúncios ativos de uma loja específica, ordenados
-        por destaque e data
+        por destaque e data, incluindo preço original, preço com desconto, porcentagem
+        de desconto e avaliação da loja
       parameters:
       - description: ID da loja
         in: path
@@ -2011,7 +2041,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto,
+            porcentagem_desconto e avaliacao)
           schema:
             $ref: '#/definitions/json.AnunciosResponse'
         "400":

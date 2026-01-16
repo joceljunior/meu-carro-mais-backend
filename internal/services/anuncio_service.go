@@ -8,20 +8,53 @@ import (
 
 // modelToAnuncioResponse converte o model de anúncio para response
 func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
+	// Calcula o preço original baseado no produto/serviço/veículo
+	var precoOriginal float64
+	if anuncio.Produto != nil && anuncio.IDProduto != nil {
+		precoOriginal = anuncio.Produto.Preco
+	} else if anuncio.Servico != nil && anuncio.IDServico != nil {
+		precoOriginal = anuncio.Servico.Preco
+	} else if anuncio.Veiculo != nil && anuncio.IDVeiculo != nil {
+		// Para veículos, usa o preço do anúncio como original (veículos não têm preço próprio)
+		precoOriginal = anuncio.Preco
+	} else {
+		// Fallback: usa o preço do anúncio
+		precoOriginal = anuncio.Preco
+	}
+
+	// Usa o preço com desconto do anúncio, ou calcula se não estiver definido
+	precoComDesconto := anuncio.PrecoComDesconto
+	if precoComDesconto == 0 && anuncio.PorcentagemDesconto > 0 {
+		precoComDesconto = precoOriginal * (1 - anuncio.PorcentagemDesconto/100)
+	} else if precoComDesconto == 0 {
+		precoComDesconto = precoOriginal
+	}
+
+	// Busca a avaliação média da loja
+	var avaliacao *float64
+	estatisticas, err := datasource.GetAvaliacaoEstatisticasByLojaID(anuncio.IDLoja)
+	if err == nil && estatisticas != nil && estatisticas.TotalAvaliacoes > 0 {
+		avaliacao = &estatisticas.MediaNota
+	}
+
 	response := json.AnuncioResponse{
-		ID:               anuncio.ID,
-		Titulo:           anuncio.Titulo,
-		Descricao:        anuncio.Descricao,
-		Preco:            anuncio.Preco,
-		Imagem:           anuncio.Imagem,
-		Destaque:         anuncio.Destaque,
-		Categoria:        anuncio.Categoria,
-		IDLoja:           anuncio.IDLoja,
-		IDProduto:        anuncio.IDProduto,
-		IDServico:        anuncio.IDServico,
-		IDVeiculo:        anuncio.IDVeiculo,
-		IDOfertaAutoMais: anuncio.IDOfertaAutoMais,
-		TipoAnuncio:      anuncio.TipoAnuncio,
+		ID:                 anuncio.ID,
+		Titulo:             anuncio.Titulo,
+		Descricao:          anuncio.Descricao,
+		Preco:              anuncio.Preco,
+		Imagem:             anuncio.Imagem,
+		Destaque:           anuncio.Destaque,
+		Categoria:          anuncio.Categoria,
+		IDLoja:             anuncio.IDLoja,
+		IDProduto:          anuncio.IDProduto,
+		IDServico:          anuncio.IDServico,
+		IDVeiculo:          anuncio.IDVeiculo,
+		IDOfertaAutoMais:   anuncio.IDOfertaAutoMais,
+		TipoAnuncio:        anuncio.TipoAnuncio,
+		PrecoOriginal:      precoOriginal,
+		PrecoComDesconto:   precoComDesconto,
+		PorcentagemDesconto: anuncio.PorcentagemDesconto,
+		Avaliacao:          avaliacao,
 		Loja: json.LojaResponse{
 			ID:             anuncio.Loja.ID,
 			Nome:           anuncio.Loja.Nome,
@@ -49,6 +82,62 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 			DataValidade:    anuncio.OfertaAutoMais.DataValidade,
 			DataCadastro:    anuncio.OfertaAutoMais.DataCadastro,
 			DataAtualizacao: anuncio.OfertaAutoMais.DataAtualizacao,
+		}
+	}
+
+	// Inclui produto, serviço ou veículo se existir
+	if anuncio.Produto != nil {
+		response.Produto = &json.ProdutoResponse{
+			ID:           anuncio.Produto.ID,
+			Nome:         anuncio.Produto.Nome,
+			Descricao:    anuncio.Produto.Descricao,
+			Preco:        anuncio.Produto.Preco,
+			Imagem:       anuncio.Produto.Imagem,
+			Estoque:      anuncio.Produto.Estoque,
+			Ativo:        anuncio.Produto.Ativo,
+			Categoria:    anuncio.Produto.Categoria,
+			IDLoja:       anuncio.Produto.IDLoja,
+			DataCadastro: anuncio.Produto.DataCadastro,
+		}
+	}
+
+	if anuncio.Servico != nil {
+		response.Servico = &json.ServicoResponse{
+			ID:        anuncio.Servico.ID,
+			Titulo:    anuncio.Servico.Titulo,
+			Descricao: anuncio.Servico.Descricao,
+			Preco:     anuncio.Servico.Preco,
+			Imagem:    anuncio.Servico.Imagem,
+			Destaque:  anuncio.Servico.Destaque,
+			Categoria: anuncio.Servico.Categoria,
+			Rate:      anuncio.Loja.Rating,
+			Loja: json.LojaResponse{
+				ID:             anuncio.Loja.ID,
+				Nome:           anuncio.Loja.Nome,
+				CNPJ:           anuncio.Loja.CNPJ,
+				Imagem:         anuncio.Loja.Imagem,
+				Latitude:       anuncio.Loja.Latitude,
+				Longitude:      anuncio.Loja.Longitude,
+				Rating:         anuncio.Loja.Rating,
+				IsMeuCarroMais: anuncio.Loja.IsMeuCarroMais,
+				Categoria:      anuncio.Loja.Categoria,
+				IDUsuario:      anuncio.Loja.IDUsuario,
+			},
+		}
+	}
+
+	if anuncio.Veiculo != nil {
+		response.Veiculo = &json.VeiculoResponse{
+			ID:            anuncio.Veiculo.ID,
+			Modelo:        anuncio.Veiculo.Modelo,
+			Ano:           anuncio.Veiculo.Ano,
+			Cor:           anuncio.Veiculo.Cor,
+			Placa:         anuncio.Veiculo.Placa,
+			Quilometragem: anuncio.Veiculo.Quilometragem,
+			Observacoes:   anuncio.Veiculo.Observacoes,
+			IDUsuario:     anuncio.Veiculo.IDUsuario,
+			Ativo:         anuncio.Veiculo.Ativo,
+			DataCadastro:  anuncio.Veiculo.DataCadastro,
 		}
 	}
 

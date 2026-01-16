@@ -26,6 +26,10 @@ func GetAnuncios() ([]models.Anuncio, error) {
 
 	err := database.DB.
 		Preload("Loja").
+		Preload("Produto").
+		Preload("Servico").
+		Preload("Veiculo").
+		Preload("OfertaAutoMais").
 		Where("data_exclusao IS NULL").
 		Find(&anuncios).Error
 
@@ -54,19 +58,66 @@ func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
 		}
 	}
 
+	// Calcula o preço com desconto se a porcentagem for fornecida mas o preço com desconto não
+	precoComDesconto := req.PrecoComDesconto
+	if precoComDesconto == 0 && req.PorcentagemDesconto > 0 {
+		// Busca o preço original do produto/serviço/veículo
+		var precoOriginal float64
+		if req.IDProduto != nil {
+			produto, err := GetProdutoByID(*req.IDProduto)
+			if err == nil {
+				precoOriginal = produto.Preco
+			} else {
+				precoOriginal = req.Preco
+			}
+		} else if req.IDServico != nil {
+			servico, err := GetServicoByID(*req.IDServico)
+			if err == nil {
+				precoOriginal = servico.Preco
+			} else {
+				precoOriginal = req.Preco
+			}
+		} else {
+			// Para veículos, usa o preço do anúncio como original
+			precoOriginal = req.Preco
+		}
+		precoComDesconto = precoOriginal * (1 - req.PorcentagemDesconto/100)
+	} else if precoComDesconto == 0 {
+		// Se não houver desconto, o preço com desconto é igual ao preço original
+		if req.IDProduto != nil {
+			produto, err := GetProdutoByID(*req.IDProduto)
+			if err == nil {
+				precoComDesconto = produto.Preco
+			} else {
+				precoComDesconto = req.Preco
+			}
+		} else if req.IDServico != nil {
+			servico, err := GetServicoByID(*req.IDServico)
+			if err == nil {
+				precoComDesconto = servico.Preco
+			} else {
+				precoComDesconto = req.Preco
+			}
+		} else {
+			precoComDesconto = req.Preco
+		}
+	}
+
 	anuncio := models.Anuncio{
-		Titulo:           req.Titulo,
-		Descricao:        req.Descricao,
-		Preco:            req.Preco,
-		Imagem:           req.Imagem,
-		Destaque:         req.Destaque,
-		Categoria:        req.Categoria,
-		IDLoja:           req.IDLoja,
-		IDProduto:        req.IDProduto,
-		IDServico:        req.IDServico,
-		IDVeiculo:        req.IDVeiculo,
-		IDOfertaAutoMais: req.IDOfertaAutoMais,
-		TipoAnuncio:      req.TipoAnuncio,
+		Titulo:             req.Titulo,
+		Descricao:          req.Descricao,
+		Preco:              req.Preco,
+		Imagem:             req.Imagem,
+		Destaque:           req.Destaque,
+		Categoria:          req.Categoria,
+		IDLoja:             req.IDLoja,
+		IDProduto:          req.IDProduto,
+		IDServico:          req.IDServico,
+		IDVeiculo:          req.IDVeiculo,
+		IDOfertaAutoMais:   req.IDOfertaAutoMais,
+		TipoAnuncio:        req.TipoAnuncio,
+		PorcentagemDesconto: req.PorcentagemDesconto,
+		PrecoComDesconto:   precoComDesconto,
 	}
 
 	err := database.DB.Create(&anuncio).Error
@@ -83,6 +134,9 @@ func GetAnuncioByID(id uint) (*models.Anuncio, error) {
 	var anuncio models.Anuncio
 	err := database.DB.
 		Preload("Loja").
+		Preload("Produto").
+		Preload("Servico").
+		Preload("Veiculo").
 		Preload("OfertaAutoMais").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&anuncio).Error
@@ -97,6 +151,9 @@ func GetAllAnuncios() ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
 		Preload("Loja").
+		Preload("Produto").
+		Preload("Servico").
+		Preload("Veiculo").
 		Preload("OfertaAutoMais").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
@@ -112,6 +169,9 @@ func GetAnunciosByLojaID(lojaID uint) ([]models.Anuncio, error) {
 	var anuncios []models.Anuncio
 	err := database.DB.
 		Preload("Loja").
+		Preload("Produto").
+		Preload("Servico").
+		Preload("Veiculo").
 		Preload("OfertaAutoMais").
 		Where("id_loja = ? AND data_exclusao IS NULL", lojaID).
 		Order("destaque DESC, data_cadastro DESC").
@@ -140,6 +200,51 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 		}
 	}
 
+	// Calcula o preço com desconto se a porcentagem for fornecida mas o preço com desconto não
+	precoComDesconto := req.PrecoComDesconto
+	if precoComDesconto == 0 && req.PorcentagemDesconto > 0 {
+		// Busca o preço original do produto/serviço/veículo
+		var precoOriginal float64
+		if req.IDProduto != nil {
+			produto, err := GetProdutoByID(*req.IDProduto)
+			if err == nil {
+				precoOriginal = produto.Preco
+			} else {
+				precoOriginal = req.Preco
+			}
+		} else if req.IDServico != nil {
+			servico, err := GetServicoByID(*req.IDServico)
+			if err == nil {
+				precoOriginal = servico.Preco
+			} else {
+				precoOriginal = req.Preco
+			}
+		} else {
+			// Para veículos, usa o preço do anúncio como original
+			precoOriginal = req.Preco
+		}
+		precoComDesconto = precoOriginal * (1 - req.PorcentagemDesconto/100)
+	} else if precoComDesconto == 0 {
+		// Se não houver desconto, o preço com desconto é igual ao preço original
+		if req.IDProduto != nil {
+			produto, err := GetProdutoByID(*req.IDProduto)
+			if err == nil {
+				precoComDesconto = produto.Preco
+			} else {
+				precoComDesconto = req.Preco
+			}
+		} else if req.IDServico != nil {
+			servico, err := GetServicoByID(*req.IDServico)
+			if err == nil {
+				precoComDesconto = servico.Preco
+			} else {
+				precoComDesconto = req.Preco
+			}
+		} else {
+			precoComDesconto = req.Preco
+		}
+	}
+
 	// Atualiza os campos
 	anuncio.Titulo = req.Titulo
 	anuncio.Descricao = req.Descricao
@@ -153,6 +258,8 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 	anuncio.IDVeiculo = req.IDVeiculo
 	anuncio.IDOfertaAutoMais = req.IDOfertaAutoMais
 	anuncio.TipoAnuncio = req.TipoAnuncio
+	anuncio.PorcentagemDesconto = req.PorcentagemDesconto
+	anuncio.PrecoComDesconto = precoComDesconto
 
 	err = database.DB.Save(&anuncio).Error
 	if err != nil {

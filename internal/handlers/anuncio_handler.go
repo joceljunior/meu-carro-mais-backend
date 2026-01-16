@@ -13,11 +13,11 @@ import (
 
 // GetAnunciosHandler godoc
 // @Summary      Lista todos os anúncios
-// @Description  Retorna todos os anúncios disponíveis com informações da loja e categoria
+// @Description  Retorna todos os anúncios disponíveis com informações da loja e categoria, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja
 // @Tags         Anúncios
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  json.AnunciosResponse
+// @Success      200  {object}  json.AnunciosResponse "Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
 // @Router       /anuncios [get]
 func GetAnunciosHandler(c *gin.Context) {
@@ -34,12 +34,12 @@ func GetAnunciosHandler(c *gin.Context) {
 
 // CreateAnuncioHandler godoc
 // @Summary      Criação do anúncio completo
-// @Description  Cria um novo anúncio com todos os dados fornecidos
+// @Description  Cria um novo anúncio com todos os dados fornecidos, incluindo porcentagem de desconto e preço com desconto
 // @Tags         Anúncios
 // @Accept       json
 // @Produce      json
-// @Param        request body json.AnuncioRequest true "Dados completos do anúncio"
-// @Success      201  {object}  json.AnuncioResponse "Anúncio criado com sucesso"
+// @Param        request body json.AnuncioRequest true "Dados completos do anúncio (inclui porcentagem_desconto e preco_com_desconto)"
+// @Success      201  {object}  json.AnuncioResponse "Anúncio criado com sucesso (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)"
 // @Failure      400  {object}  map[string]interface{} "Dados inválidos"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
 // @Router       /anuncios [post]
@@ -71,12 +71,12 @@ func CreateAnuncioHandler(c *gin.Context) {
 
 // GetAnuncioHandler godoc
 // @Summary      Busca anúncio por ID
-// @Description  Retorna os dados de um anúncio específico pelo ID
+// @Description  Retorna os dados de um anúncio específico pelo ID, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja
 // @Tags         Anúncios
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID do anúncio"
-// @Success      200 {object} json.AnuncioResponse "Anúncio encontrado"
+// @Success      200 {object} json.AnuncioResponse "Anúncio encontrado (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)"
 // @Failure      400 {object} map[string]interface{} "ID inválido"
 // @Failure      404 {object} map[string]interface{} "Anúncio não encontrado"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
@@ -104,11 +104,11 @@ func GetAnuncioHandler(c *gin.Context) {
 
 // GetAllAnunciosHandler godoc
 // @Summary      Lista todos os anúncios
-// @Description  Retorna uma lista com todos os anúncios ativos
+// @Description  Retorna uma lista com todos os anúncios ativos, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja
 // @Tags         Anúncios
 // @Accept       json
 // @Produce      json
-// @Success      200 {array} json.AnuncioResponse "Lista de anúncios"
+// @Success      200 {array} json.AnuncioResponse "Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
 // @Router       /anuncios [get]
 func GetAllAnunciosHandler(c *gin.Context) {
@@ -125,13 +125,13 @@ func GetAllAnunciosHandler(c *gin.Context) {
 
 // UpdateAnuncioHandler godoc
 // @Summary      Atualiza anúncio
-// @Description  Atualiza os dados de um anúncio existente
+// @Description  Atualiza os dados de um anúncio existente, incluindo porcentagem de desconto e preço com desconto
 // @Tags         Anúncios
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID do anúncio"
-// @Param        request body json.AnuncioRequest true "Dados atualizados do anúncio"
-// @Success      200 {object} json.AnuncioResponse "Anúncio atualizado com sucesso"
+// @Param        request body json.AnuncioRequest true "Dados atualizados do anúncio (inclui porcentagem_desconto e preco_com_desconto)"
+// @Success      200 {object} json.AnuncioResponse "Anúncio atualizado com sucesso (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)"
 // @Failure      400 {object} map[string]interface{} "Dados inválidos"
 // @Failure      404 {object} map[string]interface{} "Anúncio não encontrado"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
@@ -445,12 +445,12 @@ func GetAnunciosServicosHandler(c *gin.Context) {
 
 // GetAnunciosByLojaIDHandler godoc
 // @Summary      Lista anúncios de uma loja
-// @Description  Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data
+// @Description  Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja
 // @Tags         Anúncios
 // @Accept       json
 // @Produce      json
 // @Param        loja_id path int true "ID da loja"
-// @Success      200  {object}  json.AnunciosResponse
+// @Success      200  {object}  json.AnunciosResponse "Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)"
 // @Failure      400  {object}  map[string]interface{} "ID de loja inválido"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
 // @Router       /anuncios/loja/{loja_id} [get]

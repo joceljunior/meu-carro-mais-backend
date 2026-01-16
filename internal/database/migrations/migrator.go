@@ -612,6 +612,13 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration023)
 
+	// Migration 024: Adicionar campos de desconto à tabela anuncios
+	migration024 := m.NewMigration("024", "add_desconto_fields_to_anuncios").
+		AddColumnSQL("anuncios", "porcentagem_desconto", "DECIMAL(5,2) DEFAULT 0").
+		AddColumnSQL("anuncios", "preco_com_desconto", "DECIMAL(10,2)").
+		Build()
+	m.migrations = append(m.migrations, migration024)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

@@ -19,6 +19,8 @@ type Anuncio struct {
 	IDVeiculo         *uint              `gorm:"null"`             // Pode ser null se for produto ou serviço
 	IDOfertaAutoMais  *uint              `gorm:"null;index"`       // Referência à oferta Auto Mais (pagamento com moedas do app)
 	TipoAnuncio       string             `gorm:"size:20;not null"` // "produto", "servico", "veiculo"
+	PorcentagemDesconto float64          `gorm:"type:decimal(5,2);default:0"` // Porcentagem de desconto do anúncio
+	PrecoComDesconto  float64            `gorm:"type:decimal(10,2)"` // Preço com desconto aplicado
 	Loja              Loja               `gorm:"foreignKey:IDLoja"`
 	Produto           *Produto           `gorm:"foreignKey:IDProduto"`
 	Servico           *Servico           `gorm:"foreignKey:IDServico"`
