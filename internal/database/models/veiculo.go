@@ -16,10 +16,10 @@ type Veiculo struct {
 	Combustivel         *string    `gorm:"size:50"`                        // Tipo de combustível
 	Quilometragem       *int       `gorm:"default:null"`                  // Quilometragem (KM)
 	Preco               *float64   `gorm:"type:decimal(10,2)"`             // Preço do veículo
-	Licenciamento       *string    `gorm:"size:50"`                         // Status do licenciamento
-	IPVAPago            *bool       `gorm:"default:false"`                  // Se o IPVA está pago
-	PossuiFinanciamento *bool       `gorm:"default:false"`                   // Se possui financiamento
-	PossuiMultas        *bool       `gorm:"default:false"`                  // Se possui multas
+	Licenciamento       *string    `gorm:"size:50"`                                  // Status do licenciamento
+	IPVAPago            *bool      `gorm:"column:ipva_pago;default:false"`           // Se o IPVA está pago
+	PossuiFinanciamento *bool      `gorm:"column:possui_financiamento;default:false"` // Se possui financiamento
+	PossuiMultas        *bool      `gorm:"column:possui_multas;default:false"`       // Se possui multas
 	Observacoes         *string    `gorm:"type:text"`                      // Observações gerais
 	IDUsuario           uint       `gorm:"not null"`
 	DataCadastro        time.Time  `gorm:"autoCreateTime"`

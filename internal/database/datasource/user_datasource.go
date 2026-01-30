@@ -58,6 +58,16 @@ func CreateNewUser(json json.UserRequest) (*models.Usuario, error) {
 		return nil, err
 	}
 
+	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	carteira := models.Carteira{
+		UsuarioID: user.ID,
+		Saldo:     1000, // Saldo inicial padrão
+	}
+	if err := database.DB.Create(&carteira).Error; err != nil {
+		// Log do erro mas não falha a criação do usuário
+		// A carteira pode ser criada posteriormente se necessário
+	}
+
 	// Recarrega o usuário com os relacionamentos
 	return GetUserByEmailOnly(json.Email)
 }
@@ -86,6 +96,13 @@ func CreateAdministrativo(req json.AdministrativoRequest) (*models.Usuario, erro
 		return nil, err
 	}
 
+	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	carteira := models.Carteira{
+		UsuarioID: user.ID,
+		Saldo:     1000,
+	}
+	database.DB.Create(&carteira)
+
 	return GetUserByEmailOnly(req.Email)
 }
 
@@ -112,6 +129,13 @@ func CreateExecutivo(req json.ExecutivoRequest) (*models.Usuario, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	carteira := models.Carteira{
+		UsuarioID: user.ID,
+		Saldo:     1000,
+	}
+	database.DB.Create(&carteira)
 
 	return GetUserByEmailOnly(req.Email)
 }
@@ -140,6 +164,13 @@ func CreateCustomer(req json.CustomerRequest) (*models.Usuario, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	carteira := models.Carteira{
+		UsuarioID: user.ID,
+		Saldo:     1000,
+	}
+	database.DB.Create(&carteira)
 
 	return GetUserByID(user.ID)
 }
@@ -287,6 +318,13 @@ func CreateUserFromLogin(loginReq json.LoginRequest) (*models.Usuario, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	carteira := models.Carteira{
+		UsuarioID: user.ID,
+		Saldo:     1000,
+	}
+	database.DB.Create(&carteira)
 
 	// Recarrega o usuário com os relacionamentos
 	return GetUserByEmailOnly(loginReq.Email)
