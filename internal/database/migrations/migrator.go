@@ -667,6 +667,16 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration025)
 
+	// Migration 026: Adicionar campos faltantes à tabela veiculos
+	migration026 := m.NewMigration("026", "add_missing_fields_to_veiculos").
+		AddColumnSQL("veiculos", "quilometragem", "INTEGER").
+		AddColumnSQL("veiculos", "observacoes", "TEXT").
+		AddColumnSQL("veiculos", "data_atualizacao", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP").
+		AddColumnSQL("veiculos", "data_exclusao", "TIMESTAMP").
+		AddIndexSQL("veiculos", "idx_veiculo_data_exclusao", "data_exclusao").
+		Build()
+	m.migrations = append(m.migrations, migration026)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
