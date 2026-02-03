@@ -5,7 +5,7 @@ import "time"
 type UserRequest struct {
 	Nome           string     `json:"nome" binding:"required"`
 	Email          string     `json:"email" binding:"required,email"`
-	Senha          string     `json:"senha" binding:"required,min=6"`
+	Senha          string     `json:"senha,omitempty"`
 	CPF            string     `json:"cpf" binding:"required"`
 	Imagem         string     `json:"imagem,omitempty"`
 	Telefone       string     `json:"telefone,omitempty"`

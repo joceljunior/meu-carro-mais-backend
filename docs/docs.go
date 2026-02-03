@@ -10185,8 +10185,7 @@ const docTemplate = `{
             "required": [
                 "cpf",
                 "email",
-                "nome",
-                "senha"
+                "nome"
             ],
             "properties": {
                 "cpf": {
@@ -10214,8 +10213,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "senha": {
-                    "type": "string",
-                    "minLength": 6
+                    "type": "string"
                 },
                 "telefone": {
                     "type": "string"

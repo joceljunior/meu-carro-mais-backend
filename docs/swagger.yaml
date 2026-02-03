@@ -1562,7 +1562,6 @@ definitions:
       nome:
         type: string
       senha:
-        minLength: 6
         type: string
       telefone:
         type: string
@@ -1570,7 +1569,6 @@ definitions:
     - cpf
     - email
     - nome
-    - senha
     type: object
   json.UserResponse:
     properties:

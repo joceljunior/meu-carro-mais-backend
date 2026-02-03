@@ -370,7 +370,6 @@ func UpdateUser(id uint, req json.UserRequest) (*models.Usuario, error) {
 	// Atualiza os campos
 	usuario.Nome = req.Nome
 	usuario.Email = req.Email
-	usuario.Senha = req.Senha
 	usuario.CPF = req.CPF
 	usuario.Imagem = req.Imagem
 	usuario.Telefone = req.Telefone
@@ -378,6 +377,11 @@ func UpdateUser(id uint, req json.UserRequest) (*models.Usuario, error) {
 	usuario.DataNascimento = req.DataNascimento
 	usuario.Latitude = req.Latitude
 	usuario.Longitude = req.Longitude
+
+	// Só atualiza a senha se ela foi fornecida
+	if req.Senha != "" {
+		usuario.Senha = req.Senha
+	}
 
 	err = database.DB.Save(&usuario).Error
 	if err != nil {
