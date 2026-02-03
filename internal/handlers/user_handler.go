@@ -341,6 +341,27 @@ func GetAllCustomersHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// GetAllExecutivosHandler godoc
+// @Summary      Lista todos os executivos
+// @Description  Retorna uma lista com todos os usuários do tipo executivo
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Success      200 {object} json.ExecutivosListResponse "Lista de executivos"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/executivos [get]
+func GetAllExecutivosHandler(c *gin.Context) {
+	resp, err := services.GetAllExecutivos()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}
+
 // GetCustomersPendentesHandler godoc
 // @Summary      Lista customers pendentes
 // @Description  Retorna uma lista com todos os customers aguardando aprovação

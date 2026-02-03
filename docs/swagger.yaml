@@ -746,6 +746,56 @@ definitions:
     - nome
     - senha
     type: object
+  json.ExecutivoResponse:
+    properties:
+      ativo:
+        type: boolean
+      cpf:
+        type: string
+      data_cadastro:
+        type: string
+      data_nascimento:
+        type: string
+      email:
+        type: string
+      endereco:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_plano:
+        type: integer
+      imagem:
+        type: string
+      latitude:
+        type: number
+      loja:
+        $ref: '#/definitions/json.LojaUsuarioResponse'
+      longitude:
+        type: number
+      mensagem:
+        type: string
+      nome:
+        type: string
+      status:
+        type: string
+      telefone:
+        type: string
+      tipo:
+        type: string
+    type: object
+  json.ExecutivosListResponse:
+    properties:
+      executivos:
+        items:
+          $ref: '#/definitions/json.ExecutivoResponse'
+        type: array
+      mensagem:
+        type: string
+      total:
+        type: integer
+    type: object
   json.HistoricoPagamentoResponse:
     properties:
       data_atualizacao:
@@ -6703,6 +6753,26 @@ paths:
             additionalProperties: true
             type: object
       summary: Criar usuário executivo
+      tags:
+      - Administrativo
+  /users/executivos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os usuários do tipo executivo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de executivos
+          schema:
+            $ref: '#/definitions/json.ExecutivosListResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os executivos
       tags:
       - Administrativo
   /users/solicitacoes-executivo:

@@ -223,6 +223,21 @@ func GetCustomersByStatus(status models.StatusUsuario) ([]models.Usuario, error)
 	return usuarios, nil
 }
 
+// GetAllExecutivos retorna todos os executivos
+func GetAllExecutivos() ([]models.Usuario, error) {
+	var usuarios []models.Usuario
+	err := database.DB.
+		Preload("Loja").
+		Preload("Plano").
+		Where("tipo = ? AND data_exclusao IS NULL", models.TipoUsuarioExecutivo).
+		Order("data_cadastro DESC").
+		Find(&usuarios).Error
+	if err != nil {
+		return nil, err
+	}
+	return usuarios, nil
+}
+
 // AprovarCustomer aprova um customer pendente
 func AprovarCustomer(id uint) (*models.Usuario, error) {
 	// Busca o usuário

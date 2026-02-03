@@ -321,6 +321,53 @@ func GetCustomersPendentes() (*json.CustomersListResponse, error) {
 	return buildCustomersListResponse(customers, "Customers pendentes listados com sucesso")
 }
 
+// GetAllExecutivos retorna todos os executivos
+func GetAllExecutivos() (*json.ExecutivosListResponse, error) {
+	executivos, err := datasource.GetAllExecutivos()
+	if err != nil {
+		return nil, err
+	}
+
+	var responses []json.ExecutivoResponse
+	for _, executivo := range executivos {
+		var lojaResponse *json.LojaUsuarioResponse
+		if executivo.Loja.ID != 0 {
+			lojaResponse = &json.LojaUsuarioResponse{
+				Id:   executivo.Loja.ID,
+				Nome: executivo.Loja.Nome,
+				Logo: executivo.Loja.Imagem,
+			}
+		}
+
+		response := json.ExecutivoResponse{
+			ID:             executivo.ID,
+			Nome:           executivo.Nome,
+			Email:          executivo.Email,
+			CPF:            executivo.CPF,
+			Imagem:         executivo.Imagem,
+			Telefone:       executivo.Telefone,
+			Endereco:       executivo.Endereco,
+			DataNascimento: executivo.DataNascimento,
+			DataCadastro:   executivo.DataCadastro,
+			Ativo:          executivo.Ativo,
+			Latitude:       executivo.Latitude,
+			Longitude:      executivo.Longitude,
+			IDPlano:        executivo.IDPlano,
+			IDLoja:         executivo.IDLoja,
+			Tipo:           string(executivo.Tipo),
+			Status:         string(executivo.Status),
+			Loja:           lojaResponse,
+		}
+		responses = append(responses, response)
+	}
+
+	return &json.ExecutivosListResponse{
+		Executivos: responses,
+		Total:      len(responses),
+		Mensagem:   "Executivos listados com sucesso",
+	}, nil
+}
+
 // GetCustomersByStatus retorna customers filtrados por status
 func GetCustomersByStatus(status string) (*json.CustomersListResponse, error) {
 	var statusModel models.StatusUsuario

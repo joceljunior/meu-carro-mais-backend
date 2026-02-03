@@ -6443,6 +6443,36 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/executivos": {
+            "get": {
+                "description": "Retorna uma lista com todos os usuários do tipo executivo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Lista todos os executivos",
+                "responses": {
+                    "200": {
+                        "description": "Lista de executivos",
+                        "schema": {
+                            "$ref": "#/definitions/json.ExecutivosListResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/solicitacoes-executivo": {
             "get": {
                 "description": "Retorna uma lista com todas as solicitações de usuários mobile que querem virar executivo",
@@ -8990,6 +9020,82 @@ const docTemplate = `{
                 },
                 "telefone": {
                     "type": "string"
+                }
+            }
+        },
+        "json.ExecutivoResponse": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
+                "cpf": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_plano": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaUsuarioResponse"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "telefone": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.ExecutivosListResponse": {
+            "type": "object",
+            "properties": {
+                "executivos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.ExecutivoResponse"
+                    }
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

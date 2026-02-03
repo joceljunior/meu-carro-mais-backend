@@ -30,6 +30,11 @@ func (ur *UserRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		users.POST("/customers/:id/rejeitar", handlers.RejeitarCustomerHandler) // POST /users/customers/:id/rejeitar - Rejeitar customer
 
 		// =====================================================
+		// ENDPOINTS EXECUTIVO
+		// =====================================================
+		users.GET("/executivos", handlers.GetAllExecutivosHandler) // GET /users/executivos - Listar todos os executivos
+
+		// =====================================================
 		// ENDPOINTS SOLICITAÇÃO DE EXECUTIVO (para administrativo)
 		// =====================================================
 		users.GET("/solicitacoes-executivo", handlers.GetSolicitacoesExecutivoPendentesHandler) // GET /users/solicitacoes-executivo - Listar solicitações pendentes
