@@ -9547,6 +9547,10 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "id_executivo": {
+                    "description": "ID do executivo vinculado (para customers)",
+                    "type": "integer"
+                },
                 "id_loja": {
                     "type": "integer"
                 },

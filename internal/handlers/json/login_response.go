@@ -6,23 +6,24 @@ type LoginResponse struct {
 	ID                         uint       `json:"id"`
 	Nome                       string     `json:"nome"`
 	Email                      string     `json:"email"`
-	CPF                        string     `json:"cpf,omitempty"`
-	Imagem                     string     `json:"imagem,omitempty"`
-	Telefone                   string     `json:"telefone,omitempty"`
-	Endereco                   string     `json:"endereco,omitempty"`
-	DataNascimento             *time.Time `json:"data_nascimento,omitempty"`
+	CPF                        string     `json:"cpf"`
+	Imagem                     string     `json:"imagem"`
+	Telefone                   string     `json:"telefone"`
+	Endereco                   string     `json:"endereco"`
+	DataNascimento             *time.Time `json:"data_nascimento"`
 	DataCadastro               time.Time  `json:"data_cadastro"`
 	Ativo                      bool       `json:"ativo"`
-	Latitude                   *float64   `json:"latitude,omitempty"`
-	Longitude                  *float64   `json:"longitude,omitempty"`
+	Latitude                   *float64   `json:"latitude"`
+	Longitude                  *float64   `json:"longitude"`
 	IDPlano                    uint       `json:"id_plano"`
-	IDLoja                     *uint      `json:"id_loja,omitempty"`
+	IDLoja                     *uint      `json:"id_loja"`
 	Tipo                       string     `json:"tipo"`
 	Status                     string     `json:"status"`
-	NomePlano                  string     `json:"nome_plano,omitempty"`
-	SolicitacaoExecutivo       string     `json:"solicitacao_executivo,omitempty"`        // Status da solicitação: "", pendente, aprovada, rejeitada
-	DataSolicitacaoExecutivo   *time.Time `json:"data_solicitacao_executivo,omitempty"`   // Data da solicitação
-	MotivoSolicitacaoExecutivo string     `json:"motivo_solicitacao_executivo,omitempty"` // Motivo/justificativa da solicitação
+	NomePlano                  string     `json:"nome_plano"`
+	IDExecutivo                *uint      `json:"id_executivo"`                           // ID do executivo vinculado (para customers)
+	SolicitacaoExecutivo       string     `json:"solicitacao_executivo"`                  // Status da solicitação: "", pendente, aprovada, rejeitada
+	DataSolicitacaoExecutivo   *time.Time `json:"data_solicitacao_executivo"`             // Data da solicitação
+	MotivoSolicitacaoExecutivo string     `json:"motivo_solicitacao_executivo"`           // Motivo/justificativa da solicitação
 	LojaUsuarioResponse        `json:"loja,omitempty"`
 }
 
