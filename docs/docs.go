@@ -8398,6 +8398,23 @@ const docTemplate = `{
                 }
             }
         },
+        "json.AvaliacaoClienteResponse": {
+            "type": "object",
+            "properties": {
+                "comentario": {
+                    "type": "string"
+                },
+                "data_avaliacao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nota": {
+                    "type": "integer"
+                }
+            }
+        },
         "json.AvaliacaoEstatisticasResponse": {
             "type": "object",
             "properties": {
@@ -9156,6 +9173,9 @@ const docTemplate = `{
         "json.HistoricoResgateClienteResponse": {
             "type": "object",
             "properties": {
+                "avaliacao": {
+                    "$ref": "#/definitions/json.AvaliacaoClienteResponse"
+                },
                 "data_resgate": {
                     "type": "string"
                 },
@@ -9163,6 +9183,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
                     "type": "integer"
                 },
                 "imagem_loja": {

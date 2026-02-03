@@ -318,6 +318,17 @@ definitions:
         description: Motivo opcional da aprovação
         type: string
     type: object
+  json.AvaliacaoClienteResponse:
+    properties:
+      comentario:
+        type: string
+      data_avaliacao:
+        type: string
+      id:
+        type: integer
+      nota:
+        type: integer
+    type: object
   json.AvaliacaoEstatisticasResponse:
     properties:
       media_nota:
@@ -832,11 +843,15 @@ definitions:
     type: object
   json.HistoricoResgateClienteResponse:
     properties:
+      avaliacao:
+        $ref: '#/definitions/json.AvaliacaoClienteResponse'
       data_resgate:
         type: string
       desconto_aplicado:
         type: number
       id:
+        type: integer
+      id_loja:
         type: integer
       imagem_loja:
         type: string

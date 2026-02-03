@@ -92,6 +92,18 @@ func GetAvaliacoesByUsuarioID(idUsuario uint) ([]models.Avaliacao, error) {
 	return avaliacoes, nil
 }
 
+// GetAvaliacaoByUsuarioELoja busca uma avaliação específica de um usuário para uma loja
+func GetAvaliacaoByUsuarioELoja(idUsuario uint, idLoja uint) (*models.Avaliacao, error) {
+	var avaliacao models.Avaliacao
+	err := database.DB.
+		Where("id_usuario = ? AND id_loja = ? AND data_exclusao IS NULL", idUsuario, idLoja).
+		First(&avaliacao).Error
+	if err != nil {
+		return nil, err
+	}
+	return &avaliacao, nil
+}
+
 // GetAvaliacaoEstatisticasByLojaID retorna estatísticas das avaliações de uma loja
 func GetAvaliacaoEstatisticasByLojaID(idLoja uint) (*json.AvaliacaoEstatisticasResponse, error) {
 	var total int64

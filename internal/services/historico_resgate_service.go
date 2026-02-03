@@ -861,8 +861,21 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 			})
 		}
 
+		// Busca a avaliação do cliente para esta loja
+		var avaliacaoResp *json.AvaliacaoClienteResponse
+		avaliacao, err := datasource.GetAvaliacaoByUsuarioELoja(usuarioID, historico.IDLoja)
+		if err == nil && avaliacao != nil {
+			avaliacaoResp = &json.AvaliacaoClienteResponse{
+				ID:            avaliacao.ID,
+				Nota:          avaliacao.Nota,
+				Comentario:    avaliacao.Comentario,
+				DataAvaliacao: avaliacao.DataAvaliacao,
+			}
+		}
+
 		historicosResponse = append(historicosResponse, json.HistoricoResgateClienteResponse{
 			ID:               historico.ID,
+			IDLoja:           historico.IDLoja,
 			NomeLoja:         historico.Loja.Nome,
 			ImagemLoja:       historico.Loja.Imagem,
 			DataResgate:      historico.DataResgate,
@@ -873,6 +886,7 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 			ValorOriginal:    historico.ValorOriginal,
 			DescontoAplicado: historico.DescontoAplicado,
 			ValorTotal:       historico.Valor,
+			Avaliacao:        avaliacaoResp,
 		})
 	}
 
