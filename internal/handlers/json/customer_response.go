@@ -1,4 +1,4 @@
-﻿package json
+package json
 
 import "time"
 
@@ -26,7 +26,7 @@ type CustomerResponse struct {
 	Mensagem       string               `json:"mensagem,omitempty"`
 }
 
-// ExecutivoInfo representa informacoes basicas do executivo
+// ExecutivoInfo representa informações básicas do executivo
 type ExecutivoInfo struct {
 	ID    uint   `json:"id"`
 	Nome  string `json:"nome"`
@@ -40,16 +40,16 @@ type CustomersListResponse struct {
 	Mensagem  string             `json:"mensagem,omitempty"`
 }
 
-// AprovacaoResponse representa a resposta de aprovacao/rejeicao de customer
+// AprovacaoResponse representa a resposta de aprovação/rejeição de customer
 type AprovacaoResponse struct {
 	ID                   uint    `json:"id"`
 	Status               string  `json:"status"`
 	Motivo               string  `json:"motivo,omitempty"`
-	BonificacaoExecutivo *int    `json:"bonificacao_executivo,omitempty"`
+	BonificacaoExecutivo *int    `json:"bonificacao_executivo,omitempty"` // Moedas bonificadas ao executivo (se aprovado)
 	Mensagem             string  `json:"mensagem"`
 }
 
-// SolicitacaoExecutivoResponse representa a resposta de uma solicitacao para virar executivo
+// SolicitacaoExecutivoResponse representa a resposta de uma solicitação para virar executivo
 type SolicitacaoExecutivoResponse struct {
 	ID                         uint       `json:"id"`
 	Nome                       string     `json:"nome"`
@@ -61,7 +61,7 @@ type SolicitacaoExecutivoResponse struct {
 	Mensagem                   string     `json:"mensagem"`
 }
 
-// SolicitacoesExecutivoListResponse representa a lista de solicitacoes de executivo
+// SolicitacoesExecutivoListResponse representa a lista de solicitações de executivo
 type SolicitacoesExecutivoListResponse struct {
 	Solicitacoes []SolicitacaoExecutivoResponse `json:"solicitacoes"`
 	Total        int                            `json:"total"`

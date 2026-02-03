@@ -8364,6 +8364,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "bonificacao_executivo": {
+                    "description": "Moedas bonificadas ao executivo (se aprovado)",
                     "type": "integer"
                 },
                 "id": {
