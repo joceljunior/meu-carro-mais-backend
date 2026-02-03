@@ -1,4 +1,4 @@
-package json
+﻿package json
 
 import "time"
 
@@ -26,7 +26,7 @@ type CustomerResponse struct {
 	Mensagem       string               `json:"mensagem,omitempty"`
 }
 
-// ExecutivoInfo representa informações básicas do executivo
+// ExecutivoInfo representa informacoes basicas do executivo
 type ExecutivoInfo struct {
 	ID    uint   `json:"id"`
 	Nome  string `json:"nome"`
@@ -40,16 +40,16 @@ type CustomersListResponse struct {
 	Mensagem  string             `json:"mensagem,omitempty"`
 }
 
-// AprovacaoResponse representa a resposta de aprovação/rejeição de customer
+// AprovacaoResponse representa a resposta de aprovacao/rejeicao de customer
 type AprovacaoResponse struct {
 	ID                   uint    `json:"id"`
 	Status               string  `json:"status"`
 	Motivo               string  `json:"motivo,omitempty"`
-	BonificacaoExecutivo *int    `json:"bonificacao_executivo,omitempty"` // Moedas bonificadas ao executivo (se aprovado)
+	BonificacaoExecutivo *int    `json:"bonificacao_executivo,omitempty"`
 	Mensagem             string  `json:"mensagem"`
 }
 
-// SolicitacaoExecutivoResponse representa a resposta de uma solicitação para virar executivo
+// SolicitacaoExecutivoResponse representa a resposta de uma solicitacao para virar executivo
 type SolicitacaoExecutivoResponse struct {
 	ID                         uint       `json:"id"`
 	Nome                       string     `json:"nome"`
@@ -61,34 +61,35 @@ type SolicitacaoExecutivoResponse struct {
 	Mensagem                   string     `json:"mensagem"`
 }
 
-// SolicitacoesExecutivoListResponse representa a lista de solicitações de executivo
+// SolicitacoesExecutivoListResponse representa a lista de solicitacoes de executivo
 type SolicitacoesExecutivoListResponse struct {
 	Solicitacoes []SolicitacaoExecutivoResponse `json:"solicitacoes"`
 	Total        int                            `json:"total"`
 	Mensagem     string                         `json:"mensagem,omitempty"`
 }
 
-
 // ExecutivoResponse representa a resposta com dados de um executivo
 type ExecutivoResponse struct {
-	ID             uint                 `json:"id"`
-	Nome           string               `json:"nome"`
-	Email          string               `json:"email"`
-	CPF            string               `json:"cpf"`
-	Imagem         string               `json:"imagem,omitempty"`
-	Telefone       string               `json:"telefone,omitempty"`
-	Endereco       string               `json:"endereco,omitempty"`
-	DataNascimento *time.Time           `json:"data_nascimento,omitempty"`
-	DataCadastro   time.Time            `json:"data_cadastro"`
-	Ativo          bool                 `json:"ativo"`
-	Latitude       *float64             `json:"latitude,omitempty"`
-	Longitude      *float64             `json:"longitude,omitempty"`
-	IDPlano        uint                 `json:"id_plano"`
-	IDLoja         *uint                `json:"id_loja,omitempty"`
-	Tipo           string               `json:"tipo"`
-	Status         string               `json:"status"`
-	Loja           *LojaUsuarioResponse `json:"loja,omitempty"`
-	Mensagem       string               `json:"mensagem,omitempty"`
+	ID                   uint                 `json:"id"`
+	Nome                 string               `json:"nome"`
+	Email                string               `json:"email"`
+	CPF                  string               `json:"cpf"`
+	Imagem               string               `json:"imagem,omitempty"`
+	FotoPerfil           string               `json:"foto_perfil,omitempty"`
+	Telefone             string               `json:"telefone,omitempty"`
+	Endereco             string               `json:"endereco,omitempty"`
+	DataNascimento       *time.Time           `json:"data_nascimento,omitempty"`
+	DataCadastro         time.Time            `json:"data_cadastro"`
+	Ativo                bool                 `json:"ativo"`
+	Latitude             *float64             `json:"latitude,omitempty"`
+	Longitude            *float64             `json:"longitude,omitempty"`
+	IDPlano              uint                 `json:"id_plano"`
+	IDLoja               *uint                `json:"id_loja,omitempty"`
+	Tipo                 string               `json:"tipo"`
+	Status               string               `json:"status"`
+	LinkCompartilhamento string               `json:"link_compartilhamento,omitempty"`
+	Loja                 *LojaUsuarioResponse `json:"loja,omitempty"`
+	Mensagem             string               `json:"mensagem,omitempty"`
 }
 
 // ExecutivosListResponse representa a resposta com lista de executivos

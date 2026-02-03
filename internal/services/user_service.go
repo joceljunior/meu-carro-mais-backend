@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"meu-carro-mais/internal/database/datasource"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
@@ -321,6 +323,22 @@ func GetCustomersPendentes() (*json.CustomersListResponse, error) {
 	return buildCustomersListResponse(customers, "Customers pendentes listados com sucesso")
 }
 
+// getFotoPerfilUsuario busca a foto de perfil de um usuário
+func getFotoPerfilUsuario(idUsuario uint) string {
+	upload, err := datasource.GetUploadPrincipalByEntidade("usuario", idUsuario)
+	if err != nil {
+		return ""
+	}
+	return upload.URL
+}
+
+// gerarLinkCompartilhamentoExecutivo gera o link de compartilhamento para um executivo
+func gerarLinkCompartilhamentoExecutivo(idExecutivo uint) string {
+	// URL base do app - pode ser configurada via environment variable
+	baseURL := "https://app.meucarromais.com.br"
+	return baseURL + "/executivo/" + string(rune(idExecutivo))
+}
+
 // GetAllExecutivos retorna todos os executivos
 func GetAllExecutivos() (*json.ExecutivosListResponse, error) {
 	executivos, err := datasource.GetAllExecutivos()
@@ -339,24 +357,32 @@ func GetAllExecutivos() (*json.ExecutivosListResponse, error) {
 			}
 		}
 
+		// Busca a foto de perfil do executivo
+		fotoPerfil := getFotoPerfilUsuario(executivo.ID)
+		
+		// Gera o link de compartilhamento
+		linkCompartilhamento := fmt.Sprintf("https://app.meucarromais.com.br/executivo/%d", executivo.ID)
+
 		response := json.ExecutivoResponse{
-			ID:             executivo.ID,
-			Nome:           executivo.Nome,
-			Email:          executivo.Email,
-			CPF:            executivo.CPF,
-			Imagem:         executivo.Imagem,
-			Telefone:       executivo.Telefone,
-			Endereco:       executivo.Endereco,
-			DataNascimento: executivo.DataNascimento,
-			DataCadastro:   executivo.DataCadastro,
-			Ativo:          executivo.Ativo,
-			Latitude:       executivo.Latitude,
-			Longitude:      executivo.Longitude,
-			IDPlano:        executivo.IDPlano,
-			IDLoja:         executivo.IDLoja,
-			Tipo:           string(executivo.Tipo),
-			Status:         string(executivo.Status),
-			Loja:           lojaResponse,
+			ID:                   executivo.ID,
+			Nome:                 executivo.Nome,
+			Email:                executivo.Email,
+			CPF:                  executivo.CPF,
+			Imagem:               executivo.Imagem,
+			FotoPerfil:           fotoPerfil,
+			Telefone:             executivo.Telefone,
+			Endereco:             executivo.Endereco,
+			DataNascimento:       executivo.DataNascimento,
+			DataCadastro:         executivo.DataCadastro,
+			Ativo:                executivo.Ativo,
+			Latitude:             executivo.Latitude,
+			Longitude:            executivo.Longitude,
+			IDPlano:              executivo.IDPlano,
+			IDLoja:               executivo.IDLoja,
+			Tipo:                 string(executivo.Tipo),
+			Status:               string(executivo.Status),
+			LinkCompartilhamento: linkCompartilhamento,
+			Loja:                 lojaResponse,
 		}
 		responses = append(responses, response)
 	}

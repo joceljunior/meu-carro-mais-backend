@@ -8364,7 +8364,6 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "bonificacao_executivo": {
-                    "description": "Moedas bonificadas ao executivo (se aprovado)",
                     "type": "integer"
                 },
                 "id": {
@@ -9044,6 +9043,9 @@ const docTemplate = `{
                 "endereco": {
                     "type": "string"
                 },
+                "foto_perfil": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -9058,6 +9060,9 @@ const docTemplate = `{
                 },
                 "latitude": {
                     "type": "number"
+                },
+                "link_compartilhamento": {
+                    "type": "string"
                 },
                 "loja": {
                     "$ref": "#/definitions/json.LojaUsuarioResponse"
