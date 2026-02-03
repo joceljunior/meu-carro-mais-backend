@@ -23,11 +23,15 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*models.
 
 	// Prepara o histórico de resgate baseado no tipo do anúncio
 	historico := models.HistoricoResgate{
-		IDUsuario:   usuarioID,
-		IDLoja:      anuncio.IDLoja,
-		TipoResgate: anuncio.TipoAnuncio,
-		Valor:       anuncio.Preco,
-		Status:      "pendente", // Sempre inicia como pendente
+		IDUsuario:        usuarioID,
+		IDLoja:           anuncio.IDLoja,
+		TipoResgate:      anuncio.TipoAnuncio,
+		Quantidade:       1,
+		ValorUnitario:    anuncio.Preco,
+		ValorOriginal:    anuncio.Preco,
+		DescontoAplicado: 0,
+		Valor:            anuncio.Preco,
+		Status:           "pendente", // Sempre inicia como pendente
 	}
 
 	// Define o ID apropriado baseado no tipo do anúncio
@@ -78,15 +82,25 @@ func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*models.Historico
 		return nil, errors.New("deve ser informado exatamente um ID: produto, serviço ou veículo")
 	}
 
+	// Define quantidade padrão se não informada
+	quantidade := req.Quantidade
+	if quantidade == 0 {
+		quantidade = 1
+	}
+
 	historico := models.HistoricoResgate{
-		IDUsuario:   req.IDUsuario,
-		IDProduto:   req.IDProduto,
-		IDServico:   req.IDServico,
-		IDVeiculo:   req.IDVeiculo,
-		IDLoja:      req.IDLoja,
-		TipoResgate: req.TipoResgate,
-		Valor:       req.Valor,
-		Status:      "pendente", // Status padrão
+		IDUsuario:        req.IDUsuario,
+		IDProduto:        req.IDProduto,
+		IDServico:        req.IDServico,
+		IDVeiculo:        req.IDVeiculo,
+		IDLoja:           req.IDLoja,
+		TipoResgate:      req.TipoResgate,
+		Quantidade:       quantidade,
+		ValorUnitario:    req.ValorUnitario,
+		ValorOriginal:    req.ValorOriginal,
+		DescontoAplicado: req.DescontoAplicado,
+		Valor:            req.Valor,
+		Status:           "pendente", // Status padrão
 	}
 
 	// Se status foi informado, usa o informado

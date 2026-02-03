@@ -20,17 +20,21 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*json.Hi
 // convertHistoricoToResponse converte um modelo de histórico para response
 func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.HistoricoResgateResponse {
 	response := &json.HistoricoResgateResponse{
-		ID:              historico.ID,
-		IDUsuario:       historico.IDUsuario,
-		IDProduto:       historico.IDProduto,
-		IDServico:       historico.IDServico,
-		IDVeiculo:       historico.IDVeiculo,
-		IDLoja:          historico.IDLoja,
-		TipoResgate:     historico.TipoResgate,
-		Valor:           historico.Valor,
-		Status:          historico.Status,
-		DataResgate:     historico.DataResgate,
-		DataAtualizacao: historico.DataAtualizacao,
+		ID:               historico.ID,
+		IDUsuario:        historico.IDUsuario,
+		IDProduto:        historico.IDProduto,
+		IDServico:        historico.IDServico,
+		IDVeiculo:        historico.IDVeiculo,
+		IDLoja:           historico.IDLoja,
+		TipoResgate:      historico.TipoResgate,
+		Quantidade:       historico.Quantidade,
+		ValorUnitario:    historico.ValorUnitario,
+		ValorOriginal:    historico.ValorOriginal,
+		DescontoAplicado: historico.DescontoAplicado,
+		Valor:            historico.Valor,
+		Status:           historico.Status,
+		DataResgate:      historico.DataResgate,
+		DataAtualizacao:  historico.DataAtualizacao,
 		Usuario: json.UserResponse{
 			ID:             historico.Usuario.ID,
 			Nome:           historico.Usuario.Nome,
@@ -817,13 +821,58 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 
 	var historicosResponse []json.HistoricoResgateClienteResponse
 	for _, historico := range historicos {
+		// Monta os itens comprados
+		var itens []json.ItemCompraResponse
+
+		if historico.Produto != nil {
+			itens = append(itens, json.ItemCompraResponse{
+				ID:            historico.Produto.ID,
+				Nome:          historico.Produto.Nome,
+				Descricao:     historico.Produto.Descricao,
+				Imagem:        historico.Produto.Imagem,
+				TipoItem:      "produto",
+				Quantidade:    historico.Quantidade,
+				ValorUnitario: historico.ValorUnitario,
+			})
+		}
+
+		if historico.Servico != nil {
+			itens = append(itens, json.ItemCompraResponse{
+				ID:            historico.Servico.ID,
+				Nome:          historico.Servico.Titulo,
+				Descricao:     historico.Servico.Descricao,
+				Imagem:        historico.Servico.Imagem,
+				TipoItem:      "servico",
+				Quantidade:    historico.Quantidade,
+				ValorUnitario: historico.ValorUnitario,
+			})
+		}
+
+		if historico.Veiculo != nil {
+			nomeVeiculo := historico.Veiculo.Marca + " " + historico.Veiculo.Modelo
+			itens = append(itens, json.ItemCompraResponse{
+				ID:            historico.Veiculo.ID,
+				Nome:          nomeVeiculo,
+				Descricao:     historico.Veiculo.Cor,
+				Imagem:        "", // Veículo não tem campo imagem direto, buscar do upload
+				TipoItem:      "veiculo",
+				Quantidade:    historico.Quantidade,
+				ValorUnitario: historico.ValorUnitario,
+			})
+		}
+
 		historicosResponse = append(historicosResponse, json.HistoricoResgateClienteResponse{
-			ID:          historico.ID,
-			NomeLoja:    historico.Loja.Nome,
-			ImagemLoja:  historico.Loja.Imagem,
-			DataResgate: historico.DataResgate,
-			Status:      historico.Status,
-			Valor:       historico.Valor,
+			ID:               historico.ID,
+			NomeLoja:         historico.Loja.Nome,
+			ImagemLoja:       historico.Loja.Imagem,
+			DataResgate:      historico.DataResgate,
+			Status:           historico.Status,
+			Itens:            itens,
+			Quantidade:       historico.Quantidade,
+			ValorUnitario:    historico.ValorUnitario,
+			ValorOriginal:    historico.ValorOriginal,
+			DescontoAplicado: historico.DescontoAplicado,
+			ValorTotal:       historico.Valor,
 		})
 	}
 

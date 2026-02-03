@@ -834,19 +834,33 @@ definitions:
     properties:
       data_resgate:
         type: string
+      desconto_aplicado:
+        type: number
       id:
         type: integer
       imagem_loja:
         type: string
+      itens:
+        items:
+          $ref: '#/definitions/json.ItemCompraResponse'
+        type: array
       nome_loja:
         type: string
+      quantidade:
+        type: integer
       status:
         type: string
-      valor:
+      valor_original:
+        type: number
+      valor_total:
+        type: number
+      valor_unitario:
         type: number
     type: object
   json.HistoricoResgateRequest:
     properties:
+      desconto_aplicado:
+        type: number
       id_loja:
         type: integer
       id_produto:
@@ -856,6 +870,8 @@ definitions:
       id_usuario:
         type: integer
       id_veiculo:
+        type: integer
+      quantidade:
         type: integer
       status:
         enum:
@@ -872,6 +888,10 @@ definitions:
       valor:
         minimum: 0
         type: number
+      valor_original:
+        type: number
+      valor_unitario:
+        type: number
     required:
     - id_loja
     - id_usuario
@@ -884,6 +904,8 @@ definitions:
         type: string
       data_resgate:
         type: string
+      desconto_aplicado:
+        type: number
       id:
         type: integer
       id_loja:
@@ -900,6 +922,8 @@ definitions:
         $ref: '#/definitions/json.LojaResponse'
       produto:
         $ref: '#/definitions/json.ProdutoResponse'
+      quantidade:
+        type: integer
       servico:
         $ref: '#/definitions/json.ServicoResponse'
       status:
@@ -911,6 +935,10 @@ definitions:
         - $ref: '#/definitions/json.UserResponse'
         description: Dados relacionados
       valor:
+        type: number
+      valor_original:
+        type: number
+      valor_unitario:
         type: number
       veiculo:
         $ref: '#/definitions/json.VeiculoResponse'
@@ -965,6 +993,24 @@ definitions:
         type: array
       total:
         type: integer
+    type: object
+  json.ItemCompraResponse:
+    properties:
+      descricao:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      nome:
+        type: string
+      quantidade:
+        type: integer
+      tipo_item:
+        description: '"produto", "servico", "veiculo"'
+        type: string
+      valor_unitario:
+        type: number
     type: object
   json.LogResponse:
     properties:

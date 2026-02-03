@@ -9159,19 +9159,37 @@ const docTemplate = `{
                 "data_resgate": {
                     "type": "string"
                 },
+                "desconto_aplicado": {
+                    "type": "number"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "imagem_loja": {
                     "type": "string"
                 },
+                "itens": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.ItemCompraResponse"
+                    }
+                },
                 "nome_loja": {
                     "type": "string"
+                },
+                "quantidade": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
                 },
-                "valor": {
+                "valor_original": {
+                    "type": "number"
+                },
+                "valor_total": {
+                    "type": "number"
+                },
+                "valor_unitario": {
                     "type": "number"
                 }
             }
@@ -9185,6 +9203,9 @@ const docTemplate = `{
                 "valor"
             ],
             "properties": {
+                "desconto_aplicado": {
+                    "type": "number"
+                },
                 "id_loja": {
                     "type": "integer"
                 },
@@ -9198,6 +9219,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "id_veiculo": {
+                    "type": "integer"
+                },
+                "quantidade": {
                     "type": "integer"
                 },
                 "status": {
@@ -9219,6 +9243,12 @@ const docTemplate = `{
                 "valor": {
                     "type": "number",
                     "minimum": 0
+                },
+                "valor_original": {
+                    "type": "number"
+                },
+                "valor_unitario": {
+                    "type": "number"
                 }
             }
         },
@@ -9230,6 +9260,9 @@ const docTemplate = `{
                 },
                 "data_resgate": {
                     "type": "string"
+                },
+                "desconto_aplicado": {
+                    "type": "number"
                 },
                 "id": {
                     "type": "integer"
@@ -9255,6 +9288,9 @@ const docTemplate = `{
                 "produto": {
                     "$ref": "#/definitions/json.ProdutoResponse"
                 },
+                "quantidade": {
+                    "type": "integer"
+                },
                 "servico": {
                     "$ref": "#/definitions/json.ServicoResponse"
                 },
@@ -9273,6 +9309,12 @@ const docTemplate = `{
                     ]
                 },
                 "valor": {
+                    "type": "number"
+                },
+                "valor_original": {
+                    "type": "number"
+                },
+                "valor_unitario": {
                     "type": "number"
                 },
                 "veiculo": {
@@ -9356,6 +9398,33 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "json.ItemCompraResponse": {
+            "type": "object",
+            "properties": {
+                "descricao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "quantidade": {
+                    "type": "integer"
+                },
+                "tipo_item": {
+                    "description": "\"produto\", \"servico\", \"veiculo\"",
+                    "type": "string"
+                },
+                "valor_unitario": {
+                    "type": "number"
                 }
             }
         },

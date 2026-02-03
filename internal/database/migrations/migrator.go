@@ -677,6 +677,15 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration026)
 
+	// Migration 027: Adicionar campos de quantidade e desconto ao histórico de resgates
+	migration027 := m.NewMigration("027", "add_quantidade_desconto_to_historico_resgates").
+		AddColumnSQL("historico_resgates", "quantidade", "INTEGER DEFAULT 1").
+		AddColumnSQL("historico_resgates", "valor_unitario", "DECIMAL(10,2) DEFAULT 0").
+		AddColumnSQL("historico_resgates", "valor_original", "DECIMAL(10,2) DEFAULT 0").
+		AddColumnSQL("historico_resgates", "desconto_aplicado", "DECIMAL(10,2) DEFAULT 0").
+		Build()
+	m.migrations = append(m.migrations, migration027)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
