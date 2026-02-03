@@ -9319,14 +9319,52 @@ const docTemplate = `{
         "json.LoginResponse": {
             "type": "object",
             "properties": {
+                "ativo": {
+                    "type": "boolean"
+                },
+                "cpf": {
+                    "type": "string"
+                },
+                "data_cadastro": {
+                    "type": "string"
+                },
+                "data_nascimento": {
+                    "type": "string"
+                },
+                "data_solicitacao_executivo": {
+                    "description": "Data da solicitação",
+                    "type": "string"
+                },
                 "email": {
+                    "type": "string"
+                },
+                "endereco": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_plano": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "latitude": {
+                    "type": "number"
+                },
                 "loja": {
                     "$ref": "#/definitions/json.LojaUsuarioResponse"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "motivo_solicitacao_executivo": {
+                    "description": "Motivo/justificativa da solicitação",
+                    "type": "string"
                 },
                 "nome": {
                     "type": "string"
@@ -9334,7 +9372,14 @@ const docTemplate = `{
                 "nome_plano": {
                     "type": "string"
                 },
+                "solicitacao_executivo": {
+                    "description": "Status da solicitação: \"\", pendente, aprovada, rejeitada",
+                    "type": "string"
+                },
                 "status": {
+                    "type": "string"
+                },
+                "telefone": {
                     "type": "string"
                 },
                 "tipo": {

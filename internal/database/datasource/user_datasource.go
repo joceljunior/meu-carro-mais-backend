@@ -481,6 +481,11 @@ func SolicitarExecutivo(id uint, motivo string) (*models.Usuario, error) {
 		return nil, errors.New("usuário não encontrado")
 	}
 
+	// Verifica se já é executivo (não precisa solicitar)
+	if usuario.Tipo == models.TipoUsuarioExecutivo {
+		return nil, errors.New("usuário já é executivo")
+	}
+
 	// Verifica se é um usuário mobile
 	if usuario.Tipo != models.TipoUsuarioMobile {
 		return nil, errors.New("apenas usuários mobile podem solicitar virar executivo")
@@ -488,7 +493,12 @@ func SolicitarExecutivo(id uint, motivo string) (*models.Usuario, error) {
 
 	// Verifica se já tem uma solicitação pendente
 	if usuario.SolicitacaoExecutivo == models.StatusSolicitacaoPendente {
-		return nil, errors.New("usuário já possui uma solicitação pendente")
+		return nil, errors.New("você já possui uma solicitação pendente aguardando aprovação")
+	}
+
+	// Verifica se a solicitação já foi aprovada (o usuário já é executivo)
+	if usuario.SolicitacaoExecutivo == models.StatusSolicitacaoAprovada {
+		return nil, errors.New("sua solicitação já foi aprovada, você já é executivo")
 	}
 
 	// Registra a solicitação
