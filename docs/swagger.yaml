@@ -1609,6 +1609,52 @@ definitions:
       tipo:
         type: string
     type: object
+  json.VeiculoFotoResponse:
+    properties:
+      data_upload:
+        type: string
+      id:
+        type: integer
+      nome_arquivo:
+        type: string
+      ordem:
+        type: integer
+      principal:
+        type: boolean
+      tamanho:
+        type: integer
+      tipo_mime:
+        type: string
+      url:
+        type: string
+    type: object
+  json.VeiculoImagemRequest:
+    properties:
+      nome_arquivo:
+        example: foto_frontal.jpg
+        type: string
+      ordem:
+        example: 1
+        type: integer
+      principal:
+        example: true
+        type: boolean
+      tamanho:
+        example: 1024000
+        minimum: 1
+        type: integer
+      tipo_mime:
+        example: image/jpeg
+        type: string
+      url:
+        example: https://exemplo.com/foto1.jpg
+        type: string
+    required:
+    - nome_arquivo
+    - tamanho
+    - tipo_mime
+    - url
+    type: object
   json.VeiculoLojaRequest:
     properties:
       ano:
@@ -1672,6 +1718,11 @@ definitions:
       cor:
         example: Branco
         type: string
+      fotos:
+        description: Lista de fotos do veículo
+        items:
+          $ref: '#/definitions/json.VeiculoImagemRequest'
+        type: array
       id_usuario:
         type: integer
       ipva_pago:
@@ -1740,6 +1791,11 @@ definitions:
         type: string
       data_cadastro:
         type: string
+      fotos:
+        description: Lista de todas as fotos do veículo
+        items:
+          $ref: '#/definitions/json.VeiculoFotoResponse'
+        type: array
       id:
         type: integer
       id_usuario:

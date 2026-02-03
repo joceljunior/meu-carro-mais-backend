@@ -10279,6 +10279,71 @@ const docTemplate = `{
                 }
             }
         },
+        "json.VeiculoFotoResponse": {
+            "type": "object",
+            "properties": {
+                "data_upload": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nome_arquivo": {
+                    "type": "string"
+                },
+                "ordem": {
+                    "type": "integer"
+                },
+                "principal": {
+                    "type": "boolean"
+                },
+                "tamanho": {
+                    "type": "integer"
+                },
+                "tipo_mime": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.VeiculoImagemRequest": {
+            "type": "object",
+            "required": [
+                "nome_arquivo",
+                "tamanho",
+                "tipo_mime",
+                "url"
+            ],
+            "properties": {
+                "nome_arquivo": {
+                    "type": "string",
+                    "example": "foto_frontal.jpg"
+                },
+                "ordem": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "principal": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "tamanho": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 1024000
+                },
+                "tipo_mime": {
+                    "type": "string",
+                    "example": "image/jpeg"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "https://exemplo.com/foto1.jpg"
+                }
+            }
+        },
         "json.VeiculoLojaRequest": {
             "type": "object",
             "required": [
@@ -10376,6 +10441,13 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Branco"
                 },
+                "fotos": {
+                    "description": "Lista de fotos do veículo",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.VeiculoImagemRequest"
+                    }
+                },
                 "id_usuario": {
                     "type": "integer"
                 },
@@ -10457,6 +10529,13 @@ const docTemplate = `{
                 },
                 "data_cadastro": {
                     "type": "string"
+                },
+                "fotos": {
+                    "description": "Lista de todas as fotos do veículo",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.VeiculoFotoResponse"
+                    }
                 },
                 "id": {
                     "type": "integer"

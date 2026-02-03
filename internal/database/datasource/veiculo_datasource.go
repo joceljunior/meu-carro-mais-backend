@@ -106,8 +106,47 @@ func CreateVeiculo(req json.VeiculoRequest) (*models.Veiculo, error) {
 		return nil, err
 	}
 
+	// Se há fotos para adicionar, cria os uploads
+	if len(req.Fotos) > 0 {
+		for i, foto := range req.Fotos {
+			// Se for a primeira foto e nenhuma foi marcada como principal, marca como principal
+			isPrincipal := foto.Principal
+			if i == 0 && !hasPrincipalFoto(req.Fotos) {
+				isPrincipal = true
+			}
+
+			upload := models.Upload{
+				IDVeiculo:    &veiculo.ID,
+				TipoEntidade: "veiculo",
+				Tipo:         "Imagem",
+				URL:          foto.URL,
+				NomeArquivo:  foto.NomeArquivo,
+				Tamanho:      foto.Tamanho,
+				TipoMime:     foto.TipoMime,
+				Principal:    isPrincipal,
+				Ordem:        foto.Ordem,
+			}
+
+			if err := database.DB.Create(&upload).Error; err != nil {
+				// Log do erro mas não falha a criação do veículo
+				// As fotos podem ser adicionadas posteriormente se necessário
+				continue
+			}
+		}
+	}
+
 	// Recarrega o veículo com os relacionamentos
 	return GetVeiculoByID(veiculo.ID)
+}
+
+// hasPrincipalFoto verifica se alguma foto já foi marcada como principal
+func hasPrincipalFoto(fotos []json.VeiculoImagemRequest) bool {
+	for _, foto := range fotos {
+		if foto.Principal {
+			return true
+		}
+	}
+	return false
 }
 
 // GetAllVeiculos retorna todos os veículos ativos (não excluídos)

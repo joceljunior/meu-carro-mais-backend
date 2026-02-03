@@ -14,6 +14,34 @@ func getImagemVeiculo(idVeiculo uint) string {
 	return upload.URL
 }
 
+// getFotosVeiculo busca todas as fotos de um veículo
+func getFotosVeiculo(idVeiculo uint) []json.VeiculoFotoResponse {
+	uploads, err := datasource.GetUploadsByVeiculoID(idVeiculo)
+	if err != nil {
+		return nil
+	}
+
+	var fotos []json.VeiculoFotoResponse
+	for _, upload := range uploads {
+		// Apenas retorna imagens (não documentos)
+		if upload.Tipo == "Imagem" {
+			foto := json.VeiculoFotoResponse{
+				ID:          upload.ID,
+				URL:         upload.URL,
+				NomeArquivo: upload.NomeArquivo,
+				Tamanho:     upload.Tamanho,
+				TipoMime:    upload.TipoMime,
+				Principal:   upload.Principal,
+				Ordem:       upload.Ordem,
+				DataUpload:  upload.DataUpload,
+			}
+			fotos = append(fotos, foto)
+		}
+	}
+
+	return fotos
+}
+
 // GetVeiculosByUsuario retorna todos os veículos de um usuário
 func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	veiculos, err := datasource.GetVeiculosByUsuario(idUsuario)
@@ -24,6 +52,7 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	var veiculosResponse []json.VeiculoResponse
 	for _, veiculo := range veiculos {
 		imagem := getImagemVeiculo(veiculo.ID)
+		fotos := getFotosVeiculo(veiculo.ID)
 		veiculoResp := json.VeiculoResponse{
 			ID:                  veiculo.ID,
 			Marca:               veiculo.Marca,
@@ -44,6 +73,7 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 			PossuiMultas:        veiculo.PossuiMultas,
 			Observacoes:         veiculo.Observacoes,
 			Imagem:              imagem,
+			Fotos:               fotos,
 			IDUsuario:           veiculo.IDUsuario,
 			DataCadastro:        veiculo.DataCadastro,
 			Ativo:               veiculo.Ativo,
@@ -123,6 +153,7 @@ func CreateVeiculo(req json.VeiculoRequest) (*json.VeiculoResponse, error) {
 	}
 
 	imagem := getImagemVeiculo(veiculo.ID)
+	fotos := getFotosVeiculo(veiculo.ID)
 	response := &json.VeiculoResponse{
 		ID:                  veiculo.ID,
 		Marca:               veiculo.Marca,
@@ -143,6 +174,7 @@ func CreateVeiculo(req json.VeiculoRequest) (*json.VeiculoResponse, error) {
 		PossuiMultas:        veiculo.PossuiMultas,
 		Observacoes:         veiculo.Observacoes,
 		Imagem:              imagem,
+		Fotos:               fotos,
 		IDUsuario:           veiculo.IDUsuario,
 		DataCadastro:        veiculo.DataCadastro,
 		Ativo:               veiculo.Ativo,
@@ -159,6 +191,7 @@ func GetVeiculoByID(id uint) (*json.VeiculoResponse, error) {
 	}
 
 	imagem := getImagemVeiculo(veiculo.ID)
+	fotos := getFotosVeiculo(veiculo.ID)
 	response := &json.VeiculoResponse{
 		ID:                  veiculo.ID,
 		Marca:               veiculo.Marca,
@@ -179,6 +212,7 @@ func GetVeiculoByID(id uint) (*json.VeiculoResponse, error) {
 		PossuiMultas:        veiculo.PossuiMultas,
 		Observacoes:         veiculo.Observacoes,
 		Imagem:              imagem,
+		Fotos:               fotos,
 		IDUsuario:           veiculo.IDUsuario,
 		DataCadastro:        veiculo.DataCadastro,
 		Ativo:               veiculo.Ativo,
@@ -197,6 +231,7 @@ func GetAllVeiculos() ([]json.VeiculoResponse, error) {
 	var responses []json.VeiculoResponse
 	for _, veiculo := range veiculos {
 		imagem := getImagemVeiculo(veiculo.ID)
+		fotos := getFotosVeiculo(veiculo.ID)
 		response := json.VeiculoResponse{
 			ID:                  veiculo.ID,
 			Marca:               veiculo.Marca,
@@ -217,6 +252,7 @@ func GetAllVeiculos() ([]json.VeiculoResponse, error) {
 			PossuiMultas:        veiculo.PossuiMultas,
 			Observacoes:         veiculo.Observacoes,
 			Imagem:              imagem,
+			Fotos:               fotos,
 			IDUsuario:           veiculo.IDUsuario,
 			DataCadastro:        veiculo.DataCadastro,
 			Ativo:               veiculo.Ativo,
@@ -235,6 +271,7 @@ func UpdateVeiculo(id uint, req json.VeiculoRequest) (*json.VeiculoResponse, err
 	}
 
 	imagem := getImagemVeiculo(veiculo.ID)
+	fotos := getFotosVeiculo(veiculo.ID)
 	response := &json.VeiculoResponse{
 		ID:                  veiculo.ID,
 		Marca:               veiculo.Marca,
@@ -255,6 +292,7 @@ func UpdateVeiculo(id uint, req json.VeiculoRequest) (*json.VeiculoResponse, err
 		PossuiMultas:        veiculo.PossuiMultas,
 		Observacoes:         veiculo.Observacoes,
 		Imagem:              imagem,
+		Fotos:               fotos,
 		IDUsuario:           veiculo.IDUsuario,
 		DataCadastro:        veiculo.DataCadastro,
 		Ativo:               veiculo.Ativo,
