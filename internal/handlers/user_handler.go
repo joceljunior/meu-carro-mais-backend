@@ -129,9 +129,28 @@ func UpdateUserHandler(c *gin.Context) {
 
 	resp, err := services.UpdateUser(uint(id), req)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Usuário não encontrado",
-		})
+		errMsg := err.Error()
+		// Verifica o tipo de erro e retorna status apropriado
+		switch errMsg {
+		case "usuário não encontrado":
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "Usuário não encontrado",
+			})
+		case "email já está em uso por outro usuário":
+			c.JSON(http.StatusConflict, gin.H{
+				"error": errMsg,
+			})
+		case "CPF já está em uso por outro usuário":
+			c.JSON(http.StatusConflict, gin.H{
+				"error": errMsg,
+			})
+		default:
+			// Retorna o erro real para facilitar debug
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Erro ao atualizar usuário",
+				"details": errMsg,
+			})
+		}
 		return
 	}
 

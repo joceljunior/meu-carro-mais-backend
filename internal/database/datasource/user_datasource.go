@@ -382,6 +382,24 @@ func UpdateUser(id uint, req json.UserRequest) (*models.Usuario, error) {
 		return nil, errors.New("usuário não encontrado")
 	}
 
+	// Verifica se o email está sendo alterado e se já existe em outro usuário
+	if req.Email != usuario.Email {
+		var existente models.Usuario
+		err := database.DB.Where("email = ? AND id != ? AND data_exclusao IS NULL", req.Email, id).First(&existente).Error
+		if err == nil {
+			return nil, errors.New("email já está em uso por outro usuário")
+		}
+	}
+
+	// Verifica se o CPF está sendo alterado e se já existe em outro usuário
+	if req.CPF != usuario.CPF {
+		var existente models.Usuario
+		err := database.DB.Where("cpf = ? AND id != ? AND data_exclusao IS NULL", req.CPF, id).First(&existente).Error
+		if err == nil {
+			return nil, errors.New("CPF já está em uso por outro usuário")
+		}
+	}
+
 	// Atualiza os campos
 	usuario.Nome = req.Nome
 	usuario.Email = req.Email
