@@ -14,23 +14,13 @@ import (
 func NewRouter() *gin.Engine {
 	r := gin.Default()
 
-	// Configuração de CORS - mais permissiva para funcionar com Swagger
+	// Configuração de CORS - permite todas as origens para funcionar com Flutter Web
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"https://meu-carro-mais-production.up.railway.app",
-			"http://meu-carro-mais-production.up.railway.app",
-			"https://meu-carro-mais-backend-production.up.railway.app",
-			"http://meu-carro-mais-backend-production.up.railway.app",
-			"http://localhost:3000",
-			"http://localhost:8080",
-			"http://127.0.0.1:3000",
-			"http://127.0.0.1:8080",
-		},
+		AllowAllOrigins:  true,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "Stripe-Signature", "X-Requested-With"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "Stripe-Signature", "X-Requested-With", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers"},
 		ExposeHeaders:    []string{"Content-Length", "Content-Type"},
-		AllowCredentials: true,
-		AllowWildcard:    true,
+		AllowCredentials: false, // Deve ser false quando AllowAllOrigins é true
 		MaxAge:           12 * time.Hour,
 	}))
 
