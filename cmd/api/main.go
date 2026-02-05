@@ -23,7 +23,7 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      meu-carro-mais-production.up.railway.app
+// @host      meu-carro-mais-backend-production.up.railway.app
 // @BasePath  /
 // @schemes   https http
 

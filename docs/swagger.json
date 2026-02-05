@@ -19,7 +19,7 @@
         },
         "version": "1.0"
     },
-    "host": "meu-carro-mais-production.up.railway.app",
+    "host": "meu-carro-mais-backend-production.up.railway.app",
     "basePath": "/",
     "paths": {
         "/anuncios": {

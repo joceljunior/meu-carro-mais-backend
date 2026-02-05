@@ -14,26 +14,23 @@ import (
 func NewRouter() *gin.Engine {
 	r := gin.Default()
 
-	// Configuração de CORS
-	corsOrigins := []string{
-		"https://meu-carro-mais-production.up.railway.app",
-		"http://localhost:3000",
-		"http://localhost:8080",
-		"http://127.0.0.1:3000",
-		"http://127.0.0.1:8080",
-	}
-
-	// Se estiver em desenvolvimento, permite todas as origens
-	if os.Getenv("GIN_MODE") != "release" {
-		corsOrigins = []string{"*"}
-	}
-
+	// Configuração de CORS - mais permissiva para funcionar com Swagger
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     corsOrigins,
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "Stripe-Signature"},
-		ExposeHeaders:    []string{"Content-Length"},
+		AllowOrigins: []string{
+			"https://meu-carro-mais-production.up.railway.app",
+			"http://meu-carro-mais-production.up.railway.app",
+			"https://meu-carro-mais-backend-production.up.railway.app",
+			"http://meu-carro-mais-backend-production.up.railway.app",
+			"http://localhost:3000",
+			"http://localhost:8080",
+			"http://127.0.0.1:3000",
+			"http://127.0.0.1:8080",
+		},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "Stripe-Signature", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length", "Content-Type"},
 		AllowCredentials: true,
+		AllowWildcard:    true,
 		MaxAge:           12 * time.Hour,
 	}))
 
@@ -83,7 +80,7 @@ func configureSwaggerHost() {
 
 	// Se estiver rodando no Railway (produção)
 	if railwayEnvironment == "production" || ginMode == "release" {
-		docs.SwaggerInfo.Host = "meu-carro-mais-production.up.railway.app"
+		docs.SwaggerInfo.Host = "meu-carro-mais-backend-production.up.railway.app"
 		docs.SwaggerInfo.Schemes = []string{"https", "http"}
 	} else {
 		// Ambiente de desenvolvimento/local
