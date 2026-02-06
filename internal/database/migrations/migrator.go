@@ -686,6 +686,64 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration027)
 
+	// Migration 028: Adicionar campos de indicação para usuarios e lojas
+	migration028 := m.NewMigration("028", "add_indicacao_fields_to_usuarios_and_lojas").
+		// Campos de indicação no Usuario
+		AddColumnSQL("usuarios", "id_loja_indicadora", "INTEGER").
+		AddColumnSQL("usuarios", "data_vinculo_loja", "TIMESTAMP").
+		AddColumnSQL("usuarios", "id_usuario_indicador", "INTEGER").
+		AddColumnSQL("usuarios", "data_vinculo_usuario", "TIMESTAMP").
+		// Campos de indicação na Loja
+		AddColumnSQL("lojas", "id_usuario_indicador", "INTEGER").
+		AddColumnSQL("lojas", "data_vinculo_usuario", "TIMESTAMP").
+		AddColumnSQL("lojas", "endereco", "VARCHAR(500)").
+		// Índices
+		AddIndexSQL("usuarios", "idx_usuario_loja_indicadora", "id_loja_indicadora").
+		AddIndexSQL("usuarios", "idx_usuario_usuario_indicador", "id_usuario_indicador").
+		AddIndexSQL("lojas", "idx_loja_usuario_indicador", "id_usuario_indicador").
+		// Foreign keys
+		ExecuteSQL(`
+			-- FK: Usuario -> Loja indicadora
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_usuario_loja_indicadora'
+				) THEN
+					ALTER TABLE usuarios ADD CONSTRAINT fk_usuario_loja_indicadora 
+					FOREIGN KEY (id_loja_indicadora) REFERENCES lojas(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+			
+			-- FK: Usuario -> Usuario indicador
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_usuario_usuario_indicador'
+				) THEN
+					ALTER TABLE usuarios ADD CONSTRAINT fk_usuario_usuario_indicador 
+					FOREIGN KEY (id_usuario_indicador) REFERENCES usuarios(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+			
+			-- FK: Loja -> Usuario indicador
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_loja_usuario_indicador'
+				) THEN
+					ALTER TABLE lojas ADD CONSTRAINT fk_loja_usuario_indicador 
+					FOREIGN KEY (id_usuario_indicador) REFERENCES usuarios(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+		`, `
+			-- Rollback: remove foreign keys
+			ALTER TABLE usuarios DROP CONSTRAINT IF EXISTS fk_usuario_loja_indicadora;
+			ALTER TABLE usuarios DROP CONSTRAINT IF EXISTS fk_usuario_usuario_indicador;
+			ALTER TABLE lojas DROP CONSTRAINT IF EXISTS fk_loja_usuario_indicador;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration028)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
