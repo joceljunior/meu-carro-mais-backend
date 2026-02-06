@@ -455,8 +455,20 @@ func GetAnunciosVeiculosByProximidade(latitude, longitude float64) ([]AnuncioVei
 
 	var anunciosComDistancia []AnuncioVeiculoComDistancia
 	for _, anuncio := range anuncios {
-		// Calcula a distância usando a fórmula de Haversine
-		distancia := calcularDistanciaAnuncio(latitude, longitude, anuncio.Loja.Latitude, anuncio.Loja.Longitude)
+		var distancia float64
+		// Se o anúncio tem loja, calcula a distância
+		// Caso contrário (veículo de usuário), usa a localização do usuário dono do veículo
+		if anuncio.Loja != nil {
+			distancia = calcularDistanciaAnuncio(latitude, longitude, anuncio.Loja.Latitude, anuncio.Loja.Longitude)
+		} else if anuncio.Veiculo != nil && anuncio.Veiculo.Usuario.ID != 0 &&
+			anuncio.Veiculo.Usuario.Latitude != nil && anuncio.Veiculo.Usuario.Longitude != nil {
+			// Usa a localização do usuário dono do veículo
+			distancia = calcularDistanciaAnuncio(latitude, longitude, *anuncio.Veiculo.Usuario.Latitude, *anuncio.Veiculo.Usuario.Longitude)
+		} else {
+			// Sem localização disponível, coloca no final (distância muito grande)
+			distancia = 999999
+		}
+		
 		anunciosComDistancia = append(anunciosComDistancia, AnuncioVeiculoComDistancia{
 			Anuncio:   anuncio,
 			Distancia: distancia,

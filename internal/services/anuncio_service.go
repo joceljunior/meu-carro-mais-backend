@@ -108,7 +108,7 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 	}
 
 	if anuncio.Servico != nil {
-		response.Servico = &json.ServicoResponse{
+		servicoResp := &json.ServicoResponse{
 			ID:        anuncio.Servico.ID,
 			Titulo:    anuncio.Servico.Titulo,
 			Descricao: anuncio.Servico.Descricao,
@@ -116,8 +116,11 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 			Imagem:    anuncio.Servico.Imagem,
 			Destaque:  anuncio.Servico.Destaque,
 			Categoria: anuncio.Servico.Categoria,
-			Rate:      anuncio.Loja.Rating,
-			Loja: json.LojaResponse{
+		}
+		// Adiciona dados da loja apenas se existir
+		if anuncio.Loja != nil {
+			servicoResp.Rate = anuncio.Loja.Rating
+			servicoResp.Loja = json.LojaResponse{
 				ID:             anuncio.Loja.ID,
 				Nome:           anuncio.Loja.Nome,
 				CNPJ:           anuncio.Loja.CNPJ,
@@ -128,8 +131,9 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 				IsMeuCarroMais: anuncio.Loja.IsMeuCarroMais,
 				Categoria:      anuncio.Loja.Categoria,
 				IDUsuario:      anuncio.Loja.IDUsuario,
-			},
+			}
 		}
+		response.Servico = servicoResp
 	}
 
 	if anuncio.Veiculo != nil {
@@ -434,6 +438,12 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				moedasUtiliza = &moedas
 			}
 
+			// IsMeuCarroMais só existe se tiver loja
+			isMeuCarroMais := false
+			if anuncio.Loja != nil {
+				isMeuCarroMais = anuncio.Loja.IsMeuCarroMais
+			}
+
 			distancia := anuncioComDist.Distancia
 			response := json.AnuncioVeiculoResponse{
 				ID:                  anuncio.ID,
@@ -441,7 +451,7 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				KM:                  veiculo.Quilometragem,
 				AnoModelo:            veiculo.AnoModelo,
 				AnoFabricacao:       &veiculo.AnoFabricacao,
-				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				IsMeuCarroMais:      isMeuCarroMais,
 				Preco:               anuncio.Preco,
 				Imagem:              imagem,
 				Modelo:              veiculo.Modelo,
@@ -498,13 +508,19 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				moedasUtiliza = &moedas
 			}
 
+			// IsMeuCarroMais só existe se tiver loja
+			isMeuCarroMais := false
+			if anuncio.Loja != nil {
+				isMeuCarroMais = anuncio.Loja.IsMeuCarroMais
+			}
+
 			response := json.AnuncioVeiculoResponse{
 				ID:                  anuncio.ID,
 				NomeVeiculo:         nomeVeiculo,
 				KM:                  veiculo.Quilometragem,
 				AnoModelo:            veiculo.AnoModelo,
 				AnoFabricacao:       &veiculo.AnoFabricacao,
-				IsMeuCarroMais:      anuncio.Loja.IsMeuCarroMais,
+				IsMeuCarroMais:      isMeuCarroMais,
 				Preco:               anuncio.Preco,
 				Imagem:              imagem,
 				Modelo:              veiculo.Modelo,
