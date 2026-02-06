@@ -63,6 +63,12 @@ func CreateAnuncioHandler(c *gin.Context) {
 		}
 	}
 
+	// Para anúncios de veículo do usuário, se IDLoja for 0, converte para nil
+	// Isso evita erro de foreign key constraint
+	if req.TipoAnuncio == "veiculo" && req.IDLoja != nil && *req.IDLoja == 0 {
+		req.IDLoja = nil
+	}
+
 	resp, err := services.CreateAnuncio(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -163,6 +169,12 @@ func UpdateAnuncioHandler(c *gin.Context) {
 			"details": err.Error(),
 		})
 		return
+	}
+
+	// Para anúncios de veículo do usuário, se IDLoja for 0, converte para nil
+	// Isso evita erro de foreign key constraint
+	if req.TipoAnuncio == "veiculo" && req.IDLoja != nil && *req.IDLoja == 0 {
+		req.IDLoja = nil
 	}
 
 	// Busca dados antigos para o log
