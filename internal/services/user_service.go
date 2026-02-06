@@ -56,25 +56,41 @@ func GetUserByID(id uint) (*json.UserResponse, error) {
 		}
 	}
 
+	// Monta a resposta da loja indicadora (se existir)
+	var lojaIndicadoraResponse *json.LojaUsuarioResponse
+	if user.LojaIndicadora != nil && user.LojaIndicadora.ID != 0 {
+		lojaIndicadoraResponse = &json.LojaUsuarioResponse{
+			Id:   user.LojaIndicadora.ID,
+			Nome: user.LojaIndicadora.Nome,
+			Logo: user.LojaIndicadora.Imagem,
+		}
+	}
+
 	response := &json.UserResponse{
-		ID:             user.ID,
-		Nome:           user.Nome,
-		Email:          user.Email,
-		CPF:            user.CPF,
-		Imagem:         user.Imagem,
-		Telefone:       user.Telefone,
-		Endereco:       user.Endereco,
-		DataNascimento: user.DataNascimento,
-		DataCadastro:   user.DataCadastro,
-		Ativo:          user.Ativo,
-		Latitude:       user.Latitude,
-		Longitude:      user.Longitude,
-		IDPlano:        user.IDPlano,
-		IDLoja:         user.IDLoja,
-		Tipo:           string(user.Tipo),
-		Status:         string(user.Status),
-		Loja:           lojaResponse,
-		Mensagem:       "Usuário encontrado com sucesso",
+		ID:                         user.ID,
+		Nome:                       user.Nome,
+		Email:                      user.Email,
+		CPF:                        user.CPF,
+		Imagem:                     user.Imagem,
+		Telefone:                   user.Telefone,
+		Endereco:                   user.Endereco,
+		DataNascimento:             user.DataNascimento,
+		DataCadastro:               user.DataCadastro,
+		Ativo:                      user.Ativo,
+		Latitude:                   user.Latitude,
+		Longitude:                  user.Longitude,
+		IDPlano:                    user.IDPlano,
+		IDLoja:                     user.IDLoja,
+		Tipo:                       string(user.Tipo),
+		Status:                     string(user.Status),
+		SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
+		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
+		MotivoSolicitacaoExecutivo: user.MotivoSolicitacaoExecutivo,
+		IDLojaIndicadora:           user.IDLojaIndicadora,
+		DataVinculoLoja:            user.DataVinculoLoja,
+		LojaIndicadora:             lojaIndicadoraResponse,
+		Loja:                       lojaResponse,
+		Mensagem:                   "Usuário encontrado com sucesso",
 	}
 
 	return response, nil

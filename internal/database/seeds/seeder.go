@@ -440,7 +440,7 @@ func (s *Seeder) seedAnuncio() error {
 			Destaque:    true,
 			Categoria:   "Carros",
 			TipoAnuncio: "veiculo",
-			IDLoja:      loja.ID,
+			IDLoja:      &loja.ID,
 		},
 		{
 			Titulo:      "Toyota Corolla 2019",
@@ -450,7 +450,7 @@ func (s *Seeder) seedAnuncio() error {
 			Destaque:    false,
 			Categoria:   "Carros",
 			TipoAnuncio: "veiculo",
-			IDLoja:      loja.ID,
+			IDLoja:      &loja.ID,
 		},
 		{
 			Titulo:      "Volkswagen Golf GTI",
@@ -460,7 +460,7 @@ func (s *Seeder) seedAnuncio() error {
 			Destaque:    true,
 			Categoria:   "Carros",
 			TipoAnuncio: "veiculo",
-			IDLoja:      loja.ID,
+			IDLoja:      &loja.ID,
 		},
 		{
 			Titulo:      "Honda CB 500",
@@ -470,7 +470,7 @@ func (s *Seeder) seedAnuncio() error {
 			Destaque:    false,
 			Categoria:   "Motos",
 			TipoAnuncio: "veiculo",
-			IDLoja:      loja.ID,
+			IDLoja:      &loja.ID,
 		},
 		{
 			Titulo:      "Kit Pastilhas de Freio Premium",
@@ -480,7 +480,7 @@ func (s *Seeder) seedAnuncio() error {
 			Destaque:    false,
 			Categoria:   "Peças",
 			TipoAnuncio: "produto",
-			IDLoja:      loja.ID,
+			IDLoja:      &loja.ID,
 		},
 	}
 
@@ -664,7 +664,7 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		Imagem:      "https://via.placeholder.com/400x300?text=BMW+X5+2023",
 		Destaque:    true,
 		Categoria:   "Carros",
-		IDLoja:      loja.ID,
+		IDLoja:      &loja.ID,
 		TipoAnuncio: "veiculo",
 	}
 

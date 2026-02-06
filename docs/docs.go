@@ -8042,7 +8042,6 @@ const docTemplate = `{
             "required": [
                 "categoria",
                 "descricao",
-                "id_loja",
                 "preco",
                 "tipo_anuncio",
                 "titulo"
@@ -8058,6 +8057,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "id_loja": {
+                    "description": "Obrigatório para produto/serviço, opcional para veículo do usuário",
                     "type": "integer"
                 },
                 "id_oferta_auto_mais": {
@@ -9632,7 +9632,14 @@ const docTemplate = `{
                 "cnpj": {
                     "type": "string"
                 },
+                "endereco": {
+                    "type": "string"
+                },
                 "id_usuario": {
+                    "type": "integer"
+                },
+                "id_usuario_indicador": {
+                    "description": "ID do usuário que indicou esta loja (opcional)",
                     "type": "integer"
                 },
                 "imagem": {
@@ -9667,10 +9674,21 @@ const docTemplate = `{
                 "cnpj": {
                     "type": "string"
                 },
+                "data_vinculo_usuario": {
+                    "description": "Data do vínculo com o usuário indicador",
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "id_usuario": {
+                    "type": "integer"
+                },
+                "id_usuario_indicador": {
+                    "description": "ID do usuário que indicou esta loja (opcional)",
                     "type": "integer"
                 },
                 "imagem": {
@@ -9690,6 +9708,14 @@ const docTemplate = `{
                 },
                 "rating": {
                     "type": "integer"
+                },
+                "usuario_indicador": {
+                    "description": "Dados do usuário que indicou",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.UsuarioIndicadorResponse"
+                        }
+                    ]
                 }
             }
         },
@@ -10408,6 +10434,10 @@ const docTemplate = `{
                 "endereco": {
                     "type": "string"
                 },
+                "id_loja_indicadora": {
+                    "description": "ID da loja que indicou este usuário (opcional)",
+                    "type": "integer"
+                },
                 "imagem": {
                     "type": "string"
                 },
@@ -10443,6 +10473,14 @@ const docTemplate = `{
                 "data_nascimento": {
                     "type": "string"
                 },
+                "data_solicitacao_executivo": {
+                    "description": "Data da solicitação",
+                    "type": "string"
+                },
+                "data_vinculo_loja": {
+                    "description": "Data do vínculo com a loja indicadora",
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -10453,6 +10491,10 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "id_loja": {
+                    "type": "integer"
+                },
+                "id_loja_indicadora": {
+                    "description": "ID da loja que indicou este usuário (opcional)",
                     "type": "integer"
                 },
                 "id_plano": {
@@ -10467,13 +10509,29 @@ const docTemplate = `{
                 "loja": {
                     "$ref": "#/definitions/json.LojaUsuarioResponse"
                 },
+                "loja_indicadora": {
+                    "description": "Dados da loja que indicou",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.LojaUsuarioResponse"
+                        }
+                    ]
+                },
                 "longitude": {
                     "type": "number"
                 },
                 "mensagem": {
                     "type": "string"
                 },
+                "motivo_solicitacao_executivo": {
+                    "description": "Motivo/justificativa da solicitação",
+                    "type": "string"
+                },
                 "nome": {
+                    "type": "string"
+                },
+                "solicitacao_executivo": {
+                    "description": "Status da solicitação: \"\", pendente, aprovada, rejeitada",
                     "type": "string"
                 },
                 "status": {
@@ -10483,6 +10541,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.UsuarioIndicadorResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "nome": {
                     "type": "string"
                 }
             }
@@ -10746,6 +10821,10 @@ const docTemplate = `{
                     }
                 },
                 "id": {
+                    "type": "integer"
+                },
+                "id_anuncio": {
+                    "description": "ID do anúncio vinculado ao veículo (se houver)",
                     "type": "integer"
                 },
                 "id_usuario": {

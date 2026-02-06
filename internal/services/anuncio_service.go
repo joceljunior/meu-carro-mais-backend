@@ -30,11 +30,13 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 		precoComDesconto = precoOriginal
 	}
 
-	// Busca a avaliação média da loja
+	// Busca a avaliação média da loja (apenas se tiver loja)
 	var avaliacao *float64
-	estatisticas, err := datasource.GetAvaliacaoEstatisticasByLojaID(anuncio.IDLoja)
-	if err == nil && estatisticas != nil && estatisticas.TotalAvaliacoes > 0 {
-		avaliacao = &estatisticas.MediaNota
+	if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+		estatisticas, err := datasource.GetAvaliacaoEstatisticasByLojaID(*anuncio.IDLoja)
+		if err == nil && estatisticas != nil && estatisticas.TotalAvaliacoes > 0 {
+			avaliacao = &estatisticas.MediaNota
+		}
 	}
 
 	response := json.AnuncioResponse{
@@ -55,7 +57,11 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 		PrecoComDesconto:   precoComDesconto,
 		PorcentagemDesconto: anuncio.PorcentagemDesconto,
 		Avaliacao:          avaliacao,
-		Loja: json.LojaResponse{
+	}
+
+	// Adiciona a loja apenas se existir
+	if anuncio.Loja != nil {
+		response.Loja = &json.LojaResponse{
 			ID:             anuncio.Loja.ID,
 			Nome:           anuncio.Loja.Nome,
 			CNPJ:           anuncio.Loja.CNPJ,
@@ -66,7 +72,7 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 			IsMeuCarroMais: anuncio.Loja.IsMeuCarroMais,
 			Categoria:      anuncio.Loja.Categoria,
 			IDUsuario:      anuncio.Loja.IDUsuario,
-		},
+		}
 	}
 
 	// Inclui a oferta Auto Mais se existir
@@ -272,8 +278,11 @@ func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoRes
 				continue
 			}
 
-			// Busca desconto ativo da loja
-			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			// Busca desconto ativo da loja (apenas se tiver loja)
+			var desconto *models.Desconto
+			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+			}
 			
 			// Calcula preço com desconto
 			precoOriginal := anuncio.Preco
@@ -330,8 +339,11 @@ func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoRes
 				continue
 			}
 
-			// Busca desconto ativo da loja
-			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			// Busca desconto ativo da loja (apenas se tiver loja)
+			var desconto *models.Desconto
+			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+			}
 			
 			// Calcula preço com desconto
 			precoOriginal := anuncio.Preco
@@ -542,8 +554,11 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 
 			servico := anuncio.Servico
 
-			// Busca desconto ativo da loja
-			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			// Busca desconto ativo da loja (apenas se tiver loja)
+			var desconto *models.Desconto
+			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+			}
 			
 			// Calcula preço com desconto
 			precoOriginal := anuncio.Preco
@@ -608,8 +623,11 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 
 			servico := anuncio.Servico
 
-			// Busca desconto ativo da loja
-			desconto, _ := datasource.GetDescontoAtivoByLojaID(anuncio.IDLoja)
+			// Busca desconto ativo da loja (apenas se tiver loja)
+			var desconto *models.Desconto
+			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+			}
 			
 			// Calcula preço com desconto
 			precoOriginal := anuncio.Preco

@@ -35,8 +35,8 @@ func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*json.RegistroI
 			Categoria: registroInteresse.Anuncio.Categoria,
 			IDLoja:    registroInteresse.Anuncio.IDLoja,
 		}
-		if registroInteresse.Anuncio.Loja.ID != 0 {
-			anuncioResp.Loja = json.LojaResponse{
+		if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
+			anuncioResp.Loja = &json.LojaResponse{
 				ID:          registroInteresse.Anuncio.Loja.ID,
 				Nome:        registroInteresse.Anuncio.Loja.Nome,
 				CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,
@@ -83,8 +83,8 @@ func GetRegistroInteresseByID(id uint) (*json.RegistroInteresseResponse, error) 
 			Categoria: registroInteresse.Anuncio.Categoria,
 			IDLoja:    registroInteresse.Anuncio.IDLoja,
 		}
-		if registroInteresse.Anuncio.Loja.ID != 0 {
-			anuncioResp.Loja = json.LojaResponse{
+		if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
+			anuncioResp.Loja = &json.LojaResponse{
 				ID:          registroInteresse.Anuncio.Loja.ID,
 				Nome:        registroInteresse.Anuncio.Loja.Nome,
 				CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,
@@ -133,8 +133,8 @@ func GetAllRegistroInteresses() ([]json.RegistroInteresseResponse, error) {
 				Categoria: registroInteresse.Anuncio.Categoria,
 				IDLoja:    registroInteresse.Anuncio.IDLoja,
 			}
-			if registroInteresse.Anuncio.Loja.ID != 0 {
-				anuncioResp.Loja = json.LojaResponse{
+			if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
+				anuncioResp.Loja = &json.LojaResponse{
 					ID:          registroInteresse.Anuncio.Loja.ID,
 					Nome:        registroInteresse.Anuncio.Loja.Nome,
 					CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,
@@ -186,8 +186,8 @@ func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]json.RegistroInteresseR
 				Categoria: registroInteresse.Anuncio.Categoria,
 				IDLoja:    registroInteresse.Anuncio.IDLoja,
 			}
-			if registroInteresse.Anuncio.Loja.ID != 0 {
-				anuncioResp.Loja = json.LojaResponse{
+			if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
+				anuncioResp.Loja = &json.LojaResponse{
 					ID:          registroInteresse.Anuncio.Loja.ID,
 					Nome:        registroInteresse.Anuncio.Loja.Nome,
 					CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,

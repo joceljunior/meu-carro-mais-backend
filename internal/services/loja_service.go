@@ -43,6 +43,7 @@ func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, er
 			Nome:            lojaComDist.Nome,
 			CNPJ:            lojaComDist.CNPJ,
 			Imagem:          lojaComDist.Imagem,
+			Endereco:        lojaComDist.Endereco,
 			Latitude:        lojaComDist.Latitude,
 			Longitude:       lojaComDist.Longitude,
 			Rating:          lojaComDist.Rating,
@@ -115,18 +116,33 @@ func GetLojaByID(id uint) (*json.LojaResponse, error) {
 		return nil, err
 	}
 
+	// Monta a resposta do usuário indicador (se existir)
+	var usuarioIndicadorResponse *json.UsuarioIndicadorResponse
+	if loja.UsuarioIndicador != nil && loja.UsuarioIndicador.ID != 0 {
+		usuarioIndicadorResponse = &json.UsuarioIndicadorResponse{
+			ID:     loja.UsuarioIndicador.ID,
+			Nome:   loja.UsuarioIndicador.Nome,
+			Email:  loja.UsuarioIndicador.Email,
+			Imagem: loja.UsuarioIndicador.Imagem,
+		}
+	}
+
 	response := &json.LojaResponse{
-		ID:              loja.ID,
-		Nome:            loja.Nome,
-		CNPJ:            loja.CNPJ,
-		Imagem:          loja.Imagem,
-		Latitude:        loja.Latitude,
-		Longitude:       loja.Longitude,
-		Rating:          loja.Rating,
-		IsMeuCarroMais:  loja.IsMeuCarroMais,
-		Categoria:       loja.Categoria,
-		IDUsuario:       loja.IDUsuario,
-		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
+		ID:                 loja.ID,
+		Nome:               loja.Nome,
+		CNPJ:               loja.CNPJ,
+		Imagem:             loja.Imagem,
+		Endereco:           loja.Endereco,
+		Latitude:           loja.Latitude,
+		Longitude:          loja.Longitude,
+		Rating:             loja.Rating,
+		IsMeuCarroMais:     loja.IsMeuCarroMais,
+		Categoria:          loja.Categoria,
+		IDUsuario:          loja.IDUsuario,
+		IDUsuarioIndicador: loja.IDUsuarioIndicador,
+		DataVinculoUsuario: loja.DataVinculoUsuario,
+		UsuarioIndicador:   usuarioIndicadorResponse,
+		AnuncioDestaque:    getAnuncioDestaqueFromLoja(*loja),
 	}
 
 	return response, nil

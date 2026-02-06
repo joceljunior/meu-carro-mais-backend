@@ -22,9 +22,13 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*models.
 	}
 
 	// Prepara o histórico de resgate baseado no tipo do anúncio
+	var idLoja uint
+	if anuncio.IDLoja != nil {
+		idLoja = *anuncio.IDLoja
+	}
 	historico := models.HistoricoResgate{
 		IDUsuario:        usuarioID,
-		IDLoja:           anuncio.IDLoja,
+		IDLoja:           idLoja,
 		TipoResgate:      anuncio.TipoAnuncio,
 		Quantidade:       1,
 		ValorUnitario:    anuncio.Preco,

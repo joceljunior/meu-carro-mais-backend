@@ -36,6 +36,7 @@ type VeiculoResponse struct {
 	Imagem              string                `json:"imagem,omitempty"`                 // URL da imagem principal do veículo
 	Fotos               []VeiculoFotoResponse `json:"fotos,omitempty"`                  // Lista de todas as fotos do veículo
 	IDUsuario           uint                  `json:"id_usuario"`
+	IDAnuncio           *uint                 `json:"id_anuncio,omitempty"`             // ID do anúncio vinculado ao veículo (se houver)
 	DataCadastro        time.Time             `json:"data_cadastro"`
 	Ativo               bool                  `json:"ativo"`
 }

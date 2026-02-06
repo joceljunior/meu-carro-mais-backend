@@ -50,10 +50,10 @@ func removeDestaqueDeOutrosAnuncios(idLoja uint, idAnuncioExcluir uint) error {
 
 // CreateAnuncio cria um novo anúncio
 func CreateAnuncio(req json.AnuncioRequest) (*models.Anuncio, error) {
-	// Se o anúncio será criado como destaque, remove o destaque de outros anúncios da mesma loja
+	// Se o anúncio será criado como destaque e tem loja, remove o destaque de outros anúncios da mesma loja
 	// Garante que apenas um anúncio por loja seja destaque
-	if req.Destaque {
-		if err := removeDestaqueDeOutrosAnuncios(req.IDLoja, 0); err != nil {
+	if req.Destaque && req.IDLoja != nil && *req.IDLoja > 0 {
+		if err := removeDestaqueDeOutrosAnuncios(*req.IDLoja, 0); err != nil {
 			return nil, fmt.Errorf("erro ao remover destaque de outros anúncios: %v", err)
 		}
 	}
@@ -190,12 +190,12 @@ func UpdateAnuncio(id uint, req json.AnuncioRequest) (*models.Anuncio, error) {
 		return nil, errors.New("anúncio não encontrado")
 	}
 
-	// Se o anúncio será atualizado como destaque, remove o destaque de outros anúncios da mesma loja
+	// Se o anúncio será atualizado como destaque e tem loja, remove o destaque de outros anúncios da mesma loja
 	// Garante que apenas um anúncio por loja seja destaque
-	if req.Destaque {
+	if req.Destaque && req.IDLoja != nil && *req.IDLoja > 0 {
 		// Sempre remove destaque dos outros anúncios da loja (seja loja nova ou antiga)
 		// Isso garante que apenas um anúncio por loja seja destaque
-		if err := removeDestaqueDeOutrosAnuncios(req.IDLoja, id); err != nil {
+		if err := removeDestaqueDeOutrosAnuncios(*req.IDLoja, id); err != nil {
 			return nil, fmt.Errorf("erro ao remover destaque de outros anúncios: %v", err)
 		}
 	}
@@ -469,4 +469,16 @@ func GetAnunciosVeiculosByProximidade(latitude, longitude float64) ([]AnuncioVei
 	})
 
 	return anunciosComDistancia, nil
+}
+
+// GetAnuncioByVeiculoID busca anúncio ativo por ID do veículo
+func GetAnuncioByVeiculoID(veiculoID uint) (*models.Anuncio, error) {
+	var anuncio models.Anuncio
+	err := database.DB.
+		Where("id_veiculo = ? AND data_exclusao IS NULL", veiculoID).
+		First(&anuncio).Error
+	if err != nil {
+		return nil, err
+	}
+	return &anuncio, nil
 }

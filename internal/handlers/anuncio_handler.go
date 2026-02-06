@@ -53,6 +53,16 @@ func CreateAnuncioHandler(c *gin.Context) {
 		return
 	}
 
+	// Valida que IDLoja é obrigatório para anúncios de produto ou serviço
+	if req.TipoAnuncio == "produto" || req.TipoAnuncio == "servico" {
+		if req.IDLoja == nil || *req.IDLoja == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "id_loja é obrigatório para anúncios de produto ou serviço",
+			})
+			return
+		}
+	}
+
 	resp, err := services.CreateAnuncio(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

@@ -42,6 +42,15 @@ func getFotosVeiculo(idVeiculo uint) []json.VeiculoFotoResponse {
 	return fotos
 }
 
+// getAnuncioIDByVeiculo busca o ID do anúncio vinculado a um veículo (se existir)
+func getAnuncioIDByVeiculo(idVeiculo uint) *uint {
+	anuncio, err := datasource.GetAnuncioByVeiculoID(idVeiculo)
+	if err != nil {
+		return nil
+	}
+	return &anuncio.ID
+}
+
 // GetVeiculosByUsuario retorna todos os veículos de um usuário
 func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	veiculos, err := datasource.GetVeiculosByUsuario(idUsuario)
@@ -53,6 +62,7 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	for _, veiculo := range veiculos {
 		imagem := getImagemVeiculo(veiculo.ID)
 		fotos := getFotosVeiculo(veiculo.ID)
+		idAnuncio := getAnuncioIDByVeiculo(veiculo.ID)
 		veiculoResp := json.VeiculoResponse{
 			ID:                  veiculo.ID,
 			Marca:               veiculo.Marca,
@@ -75,6 +85,7 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 			Imagem:              imagem,
 			Fotos:               fotos,
 			IDUsuario:           veiculo.IDUsuario,
+			IDAnuncio:           idAnuncio,
 			DataCadastro:        veiculo.DataCadastro,
 			Ativo:               veiculo.Ativo,
 		}

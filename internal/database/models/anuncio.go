@@ -13,7 +13,7 @@ type Anuncio struct {
 	DataCadastro      time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao   time.Time  `gorm:"autoUpdateTime"`
 	DataExclusao      *time.Time `gorm:"index"`
-	IDLoja            uint
+	IDLoja            *uint              `gorm:"null"`             // Pode ser null para anúncios de veículo do usuário
 	IDProduto         *uint              `gorm:"null"`             // Pode ser null se for serviço ou veículo
 	IDServico         *uint              `gorm:"null"`             // Pode ser null se for produto ou veículo
 	IDVeiculo         *uint              `gorm:"null"`             // Pode ser null se for produto ou serviço
@@ -21,7 +21,7 @@ type Anuncio struct {
 	TipoAnuncio       string             `gorm:"size:20;not null"` // "produto", "servico", "veiculo"
 	PorcentagemDesconto float64          `gorm:"type:decimal(5,2);default:0"` // Porcentagem de desconto do anúncio
 	PrecoComDesconto  float64            `gorm:"type:decimal(10,2)"` // Preço com desconto aplicado
-	Loja              Loja               `gorm:"foreignKey:IDLoja"`
+	Loja              *Loja              `gorm:"foreignKey:IDLoja"`
 	Produto           *Produto           `gorm:"foreignKey:IDProduto"`
 	Servico           *Servico           `gorm:"foreignKey:IDServico"`
 	Veiculo           *Veiculo           `gorm:"foreignKey:IDVeiculo"`

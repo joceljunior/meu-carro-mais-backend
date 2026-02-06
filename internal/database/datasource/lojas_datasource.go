@@ -93,12 +93,20 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 		Nome:           req.Nome,
 		CNPJ:           req.CNPJ,
 		Imagem:         req.Imagem,
+		Endereco:       req.Endereco,
 		Latitude:       req.Latitude,
 		Longitude:      req.Longitude,
 		Rating:         req.Rating,
 		IsMeuCarroMais: req.IsMeuCarroMais,
 		Categoria:      req.Categoria,
 		IDUsuario:      req.IDUsuario,
+	}
+
+	// Se foi informado um usuário indicador, salva o vínculo com a data atual
+	if req.IDUsuarioIndicador != nil {
+		now := time.Now()
+		loja.IDUsuarioIndicador = req.IDUsuarioIndicador
+		loja.DataVinculoUsuario = &now
 	}
 
 	err := database.DB.Create(&loja).Error
@@ -115,6 +123,7 @@ func GetLojaByID(id uint) (*models.Loja, error) {
 	var loja models.Loja
 	err := database.DB.
 		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
+		Preload("UsuarioIndicador").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&loja).Error
 	if err != nil {
@@ -149,12 +158,23 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.Nome = req.Nome
 	loja.CNPJ = req.CNPJ
 	loja.Imagem = req.Imagem
+	loja.Endereco = req.Endereco
 	loja.Latitude = req.Latitude
 	loja.Longitude = req.Longitude
 	loja.Rating = req.Rating
 	loja.IsMeuCarroMais = req.IsMeuCarroMais
 	loja.Categoria = req.Categoria
 	loja.IDUsuario = req.IDUsuario
+
+	// Atualiza o vínculo com usuário indicador (opcional)
+	// Se está sendo definido pela primeira vez, salva a data do vínculo
+	if req.IDUsuarioIndicador != nil && loja.IDUsuarioIndicador == nil {
+		now := time.Now()
+		loja.IDUsuarioIndicador = req.IDUsuarioIndicador
+		loja.DataVinculoUsuario = &now
+	} else if req.IDUsuarioIndicador != nil {
+		loja.IDUsuarioIndicador = req.IDUsuarioIndicador
+	}
 
 	err = database.DB.Save(&loja).Error
 	if err != nil {

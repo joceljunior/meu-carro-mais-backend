@@ -196,6 +196,38 @@ func UpdateVeiculo(id uint, req json.VeiculoRequest) (*models.Veiculo, error) {
 		return nil, err
 	}
 
+	// Se há fotos no request, atualiza as fotos do veículo
+	if len(req.Fotos) > 0 {
+		// Remove todas as fotos antigas do veículo
+		database.DB.Where("id_veiculo = ? AND tipo = ?", id, "Imagem").Delete(&models.Upload{})
+
+		// Cria as novas fotos
+		for i, foto := range req.Fotos {
+			// Se for a primeira foto e nenhuma foi marcada como principal, marca como principal
+			isPrincipal := foto.Principal
+			if i == 0 && !hasPrincipalFoto(req.Fotos) {
+				isPrincipal = true
+			}
+
+			upload := models.Upload{
+				IDVeiculo:    &id,
+				TipoEntidade: "veiculo",
+				Tipo:         "Imagem",
+				URL:          foto.URL,
+				NomeArquivo:  foto.NomeArquivo,
+				Tamanho:      foto.Tamanho,
+				TipoMime:     foto.TipoMime,
+				Principal:    isPrincipal,
+				Ordem:        foto.Ordem,
+			}
+
+			if err := database.DB.Create(&upload).Error; err != nil {
+				// Log do erro mas não falha a atualização do veículo
+				continue
+			}
+		}
+	}
+
 	// Recarrega o veículo com os relacionamentos
 	return GetVeiculoByID(id)
 }

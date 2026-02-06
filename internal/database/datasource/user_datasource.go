@@ -351,6 +351,7 @@ func GetUserByID(id uint) (*models.Usuario, error) {
 	err := database.DB.
 		Preload("Loja").
 		Preload("Plano").
+		Preload("LojaIndicadora").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&usuario).Error
 	if err != nil {
@@ -410,6 +411,16 @@ func UpdateUser(id uint, req json.UserRequest) (*models.Usuario, error) {
 	usuario.DataNascimento = req.DataNascimento
 	usuario.Latitude = req.Latitude
 	usuario.Longitude = req.Longitude
+
+	// Atualiza o vínculo com loja indicadora (opcional)
+	// Se está sendo definido pela primeira vez, salva a data do vínculo
+	if req.IDLojaIndicadora != nil && usuario.IDLojaIndicadora == nil {
+		now := time.Now()
+		usuario.IDLojaIndicadora = req.IDLojaIndicadora
+		usuario.DataVinculoLoja = &now
+	} else if req.IDLojaIndicadora != nil {
+		usuario.IDLojaIndicadora = req.IDLojaIndicadora
+	}
 
 	// Só atualiza a senha se ela foi fornecida
 	if req.Senha != "" {

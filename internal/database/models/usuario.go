@@ -58,8 +58,14 @@ type Usuario struct {
 	DataSolicitacaoExecutivo   *time.Time                 `gorm:"type:datetime"`      // Data da solicitação
 	MotivoSolicitacaoExecutivo string                     `gorm:"size:500"`           // Motivo/justificativa da solicitação
 	
+	// Campos para vínculo de indicação (opcional)
+	// Um usuário pode ter sido indicado por uma loja
+	IDLojaIndicadora  *uint      `gorm:"index"`        // ID da loja que indicou este usuário (opcional)
+	DataVinculoLoja   *time.Time `gorm:"type:datetime"` // Data do vínculo com a loja indicadora
+	
 	Plano           TipoPlano     `gorm:"foreignKey:IDPlano"`
 	Loja            Loja          `gorm:"foreignKey:IDLoja"`
 	Veiculos        []Veiculo     `gorm:"foreignKey:IDUsuario"`
 	Executivo       *Usuario      `gorm:"foreignKey:IDExecutivo"`             // Referência ao executivo que criou este customer
+	LojaIndicadora  *Loja         `gorm:"foreignKey:IDLojaIndicadora"`        // Referência à loja que indicou este usuário
 }

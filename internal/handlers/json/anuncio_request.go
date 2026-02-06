@@ -7,7 +7,7 @@ type AnuncioRequest struct {
 	Imagem             string  `json:"imagem,omitempty"`
 	Destaque           bool    `json:"destaque,omitempty"`
 	Categoria          string  `json:"categoria" binding:"required"`
-	IDLoja             uint    `json:"id_loja" binding:"required"`
+	IDLoja             *uint   `json:"id_loja,omitempty"`                             // Obrigatório para produto/serviço, opcional para veículo do usuário
 	IDProduto          *uint   `json:"id_produto,omitempty"`
 	IDServico          *uint   `json:"id_servico,omitempty"`
 	IDVeiculo          *uint   `json:"id_veiculo,omitempty"`
