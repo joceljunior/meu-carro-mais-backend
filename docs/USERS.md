@@ -7,11 +7,11 @@ O sistema possui 4 tipos de usuários:
 | Tipo | Descrição | Login Mobile | Login Web | Status Inicial |
 |------|-----------|--------------|-----------|----------------|
 | `mobile` | Usuário padrão do aplicativo mobile | ✅ Sim | ❌ Não | `aprovado` |
+| `executivo` | Usuário que pode indicar lojas/usuários | ✅ Sim | ❌ Não | `aprovado` |
 | `administrativo` | Donos do sistema, todos os poderes | ❌ Não | ✅ Sim | `aprovado` |
-| `executivo` | Pode criar customers e recebe bonificação | ❌ Não | ✅ Sim | `aprovado` |
-| `customer` | Pode criar lojas e produtos (web) | ❌ Não | ✅ Sim* | `pendente` |
+| `customer` | Lojistas, podem criar lojas e produtos | ❌ Não | ✅ Sim* | `pendente` |
 
-> *Customers precisam estar **aprovados** para fazer login na web.
+> *Customers/Lojistas precisam estar **aprovados** para fazer login no portal web.
 
 ## Status de Usuário
 
@@ -29,9 +29,9 @@ O sistema possui 4 tipos de usuários:
 
 Login para o aplicativo mobile. Se o usuário não existir, cria automaticamente como tipo `mobile`.
 
-**Tipos permitidos:** `mobile` (apenas)
+**Tipos permitidos:** `mobile`, `executivo`
 
-**Tipos bloqueados:** `customer`, `administrativo`, `executivo`
+**Tipos bloqueados:** `customer`, `administrativo`
 
 #### Request Body
 
@@ -64,9 +64,9 @@ Login para o aplicativo mobile. Se o usuário não existir, cria automaticamente
 
 Login para a plataforma web. Não cria usuário automaticamente.
 
-**Tipos permitidos:** `administrativo`, `executivo`, `customer` (aprovados)
+**Tipos permitidos:** `administrativo`, `customer` (aprovados)
 
-**Tipos bloqueados:** `mobile`
+**Tipos bloqueados:** `mobile`, `executivo`
 
 #### Request Body
 

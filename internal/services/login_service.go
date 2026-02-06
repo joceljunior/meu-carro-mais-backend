@@ -7,9 +7,9 @@ import (
 	"meu-carro-mais/internal/handlers/json"
 )
 
-// Login realiza o login do usuário mobile
-// IMPORTANTE: Apenas usuários do tipo "mobile" podem fazer login no app mobile
-// Usuários do tipo customer, administrativo e executivo devem usar o login web
+// Login realiza o login do usuário no app mobile
+// Usuários do tipo "mobile" e "executivo" podem fazer login no app mobile
+// Usuários do tipo "customer" e "administrativo" devem usar o login web (portal)
 func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 	// Primeiro, tenta buscar o usuário apenas por email
 	user, err := datasource.GetUserByEmailOnly(req.Email)
@@ -21,16 +21,20 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		}
 	}
 
-	// IMPORTANTE: Apenas usuários do tipo MOBILE podem fazer login no app
-	// Outros tipos (customer, administrativo, executivo) devem usar /login/web
-	if user.Tipo != models.TipoUsuarioMobile {
+	// Verifica se o tipo de usuário é permitido para login mobile
+	// Mobile e Executivo acessam o app mobile
+	// Customer e Administrativo acessam o portal web
+	tiposPermitidosMobile := map[models.TipoUsuario]bool{
+		models.TipoUsuarioMobile:    true,
+		models.TipoUsuarioExecutivo: true,
+	}
+
+	if !tiposPermitidosMobile[user.Tipo] {
 		switch user.Tipo {
 		case models.TipoUsuarioCustomer:
-			return nil, errors.New("usuários do tipo customer devem fazer login pela plataforma web")
+			return nil, errors.New("lojistas devem fazer login pela plataforma web")
 		case models.TipoUsuarioAdministrativo:
-			return nil, errors.New("usuários do tipo administrativo devem fazer login pela plataforma web")
-		case models.TipoUsuarioExecutivo:
-			return nil, errors.New("usuários do tipo executivo devem fazer login pela plataforma web")
+			return nil, errors.New("administradores devem fazer login pela plataforma web")
 		default:
 			return nil, errors.New("tipo de usuário não permitido para login mobile")
 		}
@@ -91,8 +95,8 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 	return resp, nil
 }
 
-// LoginWeb realiza o login para a plataforma web
-// Apenas usuários do tipo "executivo", "administrativo" e "customer" podem fazer login
+// LoginWeb realiza o login para a plataforma web (portal)
+// Apenas usuários do tipo "administrativo" e "customer" (lojistas) podem fazer login
 // Customers precisam estar aprovados
 func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 	// Busca o usuário por email
@@ -101,18 +105,26 @@ func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 		return nil, errors.New("usuário não encontrado")
 	}
 
-	// Verifica se o tipo de usuário é permitido para login web
+	// Verifica se o tipo de usuário é permitido para login web (portal)
+	// Administrativo e Customer/Lojistas acessam o portal web
+	// Mobile e Executivo acessam o app mobile
 	tiposPermitidos := map[models.TipoUsuario]bool{
-		models.TipoUsuarioExecutivo:     true,
 		models.TipoUsuarioAdministrativo: true,
-		models.TipoUsuarioCustomer:      true,
+		models.TipoUsuarioCustomer:       true,
 	}
 
 	if !tiposPermitidos[user.Tipo] {
-		return nil, errors.New("usuários do tipo mobile não podem fazer login na plataforma web")
+		switch user.Tipo {
+		case models.TipoUsuarioMobile:
+			return nil, errors.New("usuários do app devem fazer login pelo aplicativo mobile")
+		case models.TipoUsuarioExecutivo:
+			return nil, errors.New("executivos devem fazer login pelo aplicativo mobile")
+		default:
+			return nil, errors.New("tipo de usuário não permitido para login web")
+		}
 	}
 
-	// Para customers, verifica se está aprovado
+	// Para customers/lojistas, verifica se está aprovado
 	if user.Tipo == models.TipoUsuarioCustomer {
 		if user.Status == models.StatusUsuarioPendente {
 			return nil, errors.New("sua conta está pendente de aprovação")
