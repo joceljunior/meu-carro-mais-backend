@@ -162,9 +162,17 @@ func UpdateVeiculoHandler(c *gin.Context) {
 
 	resp, err := services.UpdateVeiculo(uint(id), req)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Veículo não encontrado",
-		})
+		errMsg := err.Error()
+		if errMsg == "veículo não encontrado" {
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": errMsg,
+			})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Erro ao atualizar veículo",
+				"details": errMsg,
+			})
+		}
 		return
 	}
 

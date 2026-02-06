@@ -23,13 +23,29 @@ func GetVeiculosByUsuario(idUsuario uint) ([]models.Veiculo, error) {
 	return veiculos, nil
 }
 
-// GetVeiculoByID retorna um veículo específico por ID
+// GetVeiculoByID retorna um veículo específico por ID (apenas ativos)
 func GetVeiculoByID(id uint) (*models.Veiculo, error) {
 	var veiculo models.Veiculo
 
 	err := database.DB.
 		Preload("Usuario").
 		Where("id = ? AND ativo = ? AND data_exclusao IS NULL", id, true).
+		First(&veiculo).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &veiculo, nil
+}
+
+// GetVeiculoByIDForUpdate retorna um veículo por ID para atualização (ignora campo ativo)
+func GetVeiculoByIDForUpdate(id uint) (*models.Veiculo, error) {
+	var veiculo models.Veiculo
+
+	err := database.DB.
+		Preload("Usuario").
+		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&veiculo).Error
 
 	if err != nil {
@@ -165,8 +181,8 @@ func GetAllVeiculos() ([]models.Veiculo, error) {
 
 // UpdateVeiculo atualiza um veículo existente
 func UpdateVeiculo(id uint, req json.VeiculoRequest) (*models.Veiculo, error) {
-	// Verifica se o veículo existe e não foi excluído
-	veiculo, err := GetVeiculoByID(id)
+	// Verifica se o veículo existe e não foi excluído (ignora campo ativo)
+	veiculo, err := GetVeiculoByIDForUpdate(id)
 	if err != nil {
 		return nil, errors.New("veículo não encontrado")
 	}
