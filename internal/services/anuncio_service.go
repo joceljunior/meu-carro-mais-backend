@@ -66,6 +66,7 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 			Nome:           anuncio.Loja.Nome,
 			CNPJ:           anuncio.Loja.CNPJ,
 			Imagem:         anuncio.Loja.Imagem,
+			Endereco:       anuncio.Loja.Endereco,
 			Latitude:       anuncio.Loja.Latitude,
 			Longitude:      anuncio.Loja.Longitude,
 			Rating:         anuncio.Loja.Rating,
@@ -125,6 +126,7 @@ func modelToAnuncioResponse(anuncio *models.Anuncio) json.AnuncioResponse {
 				Nome:           anuncio.Loja.Nome,
 				CNPJ:           anuncio.Loja.CNPJ,
 				Imagem:         anuncio.Loja.Imagem,
+				Endereco:       anuncio.Loja.Endereco,
 				Latitude:       anuncio.Loja.Latitude,
 				Longitude:      anuncio.Loja.Longitude,
 				Rating:         anuncio.Loja.Rating,
@@ -324,6 +326,7 @@ func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoRes
 				ID:                  anuncio.ID,
 				NomeProduto:         anuncio.Produto.Nome,
 				NomeLoja:            anuncio.Loja.Nome,
+				EnderecoLoja:        anuncio.Loja.Endereco,
 				Imagem:              imagem,
 				PrecoOriginal:       precoOriginal,
 				PrecoComDesconto:    precoComDesconto,
@@ -392,6 +395,7 @@ func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoRes
 				ID:                  anuncio.ID,
 				NomeProduto:         anuncio.Produto.Nome,
 				NomeLoja:            anuncio.Loja.Nome,
+				EnderecoLoja:        anuncio.Loja.Endereco,
 				Imagem:              imagem,
 				PrecoOriginal:       precoOriginal,
 				PrecoComDesconto:    precoComDesconto,
@@ -479,6 +483,12 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				nomeAnunciante = &veiculo.Usuario.Nome
 			}
 
+			// Endereço da loja (se tiver loja)
+			enderecoLoja := ""
+			if anuncio.Loja != nil {
+				enderecoLoja = anuncio.Loja.Endereco
+			}
+
 			distancia := anuncioComDist.Distancia
 			response := json.AnuncioVeiculoResponse{
 				ID:                  anuncio.ID,
@@ -505,6 +515,7 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				Combustivel:         veiculo.Combustivel,
 				MoedasUtiliza:       moedasUtiliza,
 				Distancia:           &distancia,
+				EnderecoLoja:        enderecoLoja,
 				EmailAnunciante:     emailAnunciante,
 				TelefoneAnunciante:  telefoneAnunciante,
 				NomeAnunciante:      nomeAnunciante,
@@ -572,6 +583,12 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				nomeAnunciante = &veiculo.Usuario.Nome
 			}
 
+			// Endereço da loja (se tiver loja)
+			enderecoLoja := ""
+			if anuncio.Loja != nil {
+				enderecoLoja = anuncio.Loja.Endereco
+			}
+
 			response := json.AnuncioVeiculoResponse{
 				ID:                  anuncio.ID,
 				NomeVeiculo:         nomeVeiculo,
@@ -596,6 +613,7 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				Observacoes:         veiculo.Observacoes,
 				Combustivel:         veiculo.Combustivel,
 				MoedasUtiliza:       moedasUtiliza,
+				EnderecoLoja:        enderecoLoja,
 				EmailAnunciante:     emailAnunciante,
 				TelefoneAnunciante:  telefoneAnunciante,
 				NomeAnunciante:      nomeAnunciante,
@@ -680,6 +698,7 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 				ID:                  anuncio.ID,
 				NomeServico:         nomeServico,
 				NomeLoja:            anuncio.Loja.Nome,
+				EnderecoLoja:        anuncio.Loja.Endereco,
 				Imagem:              imagem,
 				PrecoOriginal:       precoOriginal,
 				PrecoComDesconto:    precoComDesconto,
@@ -756,6 +775,7 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 				ID:                  anuncio.ID,
 				NomeServico:         nomeServico,
 				NomeLoja:            anuncio.Loja.Nome,
+				EnderecoLoja:        anuncio.Loja.Endereco,
 				Imagem:              imagem,
 				PrecoOriginal:       precoOriginal,
 				PrecoComDesconto:    precoComDesconto,

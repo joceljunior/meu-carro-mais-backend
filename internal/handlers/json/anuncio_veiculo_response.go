@@ -25,6 +25,7 @@ type AnuncioVeiculoResponse struct {
 	Combustivel         *string  `json:"combustivel,omitempty"`
 	MoedasUtiliza       *int     `json:"moedas_utiliza,omitempty"`
 	Distancia           *float64 `json:"distancia,omitempty"`              // Distância em km da loja, se fornecida localização
+	EnderecoLoja        string   `json:"endereco_loja,omitempty"`
 	// Dados do anunciante (apenas quando não é loja)
 	EmailAnunciante    *string `json:"email_anunciante,omitempty"`
 	TelefoneAnunciante *string `json:"telefone_anunciante,omitempty"`

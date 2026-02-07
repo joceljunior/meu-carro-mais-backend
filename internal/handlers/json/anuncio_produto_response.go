@@ -4,6 +4,7 @@ type AnuncioProdutoResponse struct {
 	ID                  uint     `json:"id"`
 	NomeProduto         string   `json:"nome_produto"`
 	NomeLoja            string   `json:"nome_loja"`
+	EnderecoLoja        string   `json:"endereco_loja,omitempty"`
 	Imagem              string   `json:"imagem"`
 	PrecoOriginal       float64  `json:"preco_original"`
 	PrecoComDesconto    float64  `json:"preco_com_desconto"`
