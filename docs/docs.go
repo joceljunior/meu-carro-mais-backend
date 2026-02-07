@@ -8251,6 +8251,17 @@ const docTemplate = `{
                     "description": "Distância em km da loja, se fornecida localização",
                     "type": "number"
                 },
+                "email_anunciante": {
+                    "description": "Dados do anunciante (apenas quando não é loja)",
+                    "type": "string"
+                },
+                "fotos": {
+                    "description": "Fotos do veículo",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -8278,6 +8289,9 @@ const docTemplate = `{
                 "moedas_utiliza": {
                     "type": "integer"
                 },
+                "nome_anunciante": {
+                    "type": "string"
+                },
                 "nome_veiculo": {
                     "type": "string"
                 },
@@ -8297,6 +8311,9 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "renavam": {
+                    "type": "string"
+                },
+                "telefone_anunciante": {
                     "type": "string"
                 },
                 "tipo_veiculo": {

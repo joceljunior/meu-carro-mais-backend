@@ -430,6 +430,7 @@ func GetAnunciosVeiculos() ([]models.Anuncio, error) {
 	err := database.DB.
 		Preload("Loja").
 		Preload("Veiculo").
+		Preload("Veiculo.Usuario"). // Preload do usuário dono do veículo
 		Preload("OfertaAutoMais").
 		Where("tipo_anuncio = ? AND data_exclusao IS NULL", "veiculo").
 		Order("data_cadastro DESC").

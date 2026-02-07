@@ -460,31 +460,54 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				isMeuCarroMais = anuncio.Loja.IsMeuCarroMais
 			}
 
+			// Busca fotos do veículo
+			var fotos []string
+			if veiculo.ID != 0 {
+				uploads, err := datasource.GetUploadsByVeiculoID(veiculo.ID)
+				if err == nil {
+					for _, upload := range uploads {
+						fotos = append(fotos, upload.URL)
+					}
+				}
+			}
+
+			// Dados do anunciante (apenas quando não é loja)
+			var emailAnunciante, telefoneAnunciante, nomeAnunciante *string
+			if anuncio.Loja == nil && veiculo.Usuario.ID != 0 {
+				emailAnunciante = &veiculo.Usuario.Email
+				telefoneAnunciante = &veiculo.Usuario.Telefone
+				nomeAnunciante = &veiculo.Usuario.Nome
+			}
+
 			distancia := anuncioComDist.Distancia
 			response := json.AnuncioVeiculoResponse{
 				ID:                  anuncio.ID,
 				NomeVeiculo:         nomeVeiculo,
 				KM:                  veiculo.Quilometragem,
-				AnoModelo:            veiculo.AnoModelo,
+				AnoModelo:           veiculo.AnoModelo,
 				AnoFabricacao:       &veiculo.AnoFabricacao,
 				IsMeuCarroMais:      isMeuCarroMais,
 				Preco:               anuncio.Preco,
 				Imagem:              imagem,
+				Fotos:               fotos,
 				Modelo:              veiculo.Modelo,
-				Marca:               nil, // Campo não existe no modelo atual
+				Marca:               &veiculo.Marca,
 				Placa:               veiculo.Placa,
-				Renavam:             nil, // Campo não existe no modelo atual
-				Chassi:              nil, // Campo não existe no modelo atual
+				Renavam:             veiculo.Renavam,
+				Chassi:              veiculo.Chassi,
 				Cor:                 veiculo.Cor,
-				TipoVeiculo:         &anuncio.Categoria, // Usa categoria como tipo de veículo
-				Licenciamento:       nil,                // Campo não existe no modelo atual
-				IPVAPago:            nil,                // Campo não existe no modelo atual
-				PossuiFinanciamento: nil,                // Campo não existe no modelo atual
-				PossuiMultas:        nil,                // Campo não existe no modelo atual
+				TipoVeiculo:         veiculo.TipoVeiculo,
+				Licenciamento:       veiculo.Licenciamento,
+				IPVAPago:            veiculo.IPVAPago,
+				PossuiFinanciamento: veiculo.PossuiFinanciamento,
+				PossuiMultas:        veiculo.PossuiMultas,
 				Observacoes:         veiculo.Observacoes,
-				Combustivel:         nil, // Campo não existe no modelo atual
-				MoedasUtiliza:        moedasUtiliza,
+				Combustivel:         veiculo.Combustivel,
+				MoedasUtiliza:       moedasUtiliza,
 				Distancia:           &distancia,
+				EmailAnunciante:     emailAnunciante,
+				TelefoneAnunciante:  telefoneAnunciante,
+				NomeAnunciante:      nomeAnunciante,
 			}
 
 			anunciosResponse = append(anunciosResponse, response)
@@ -530,29 +553,52 @@ func GetAnunciosVeiculos(latitude, longitude *float64) (*json.AnunciosVeiculoRes
 				isMeuCarroMais = anuncio.Loja.IsMeuCarroMais
 			}
 
+			// Busca fotos do veículo
+			var fotos []string
+			if veiculo.ID != 0 {
+				uploads, err := datasource.GetUploadsByVeiculoID(veiculo.ID)
+				if err == nil {
+					for _, upload := range uploads {
+						fotos = append(fotos, upload.URL)
+					}
+				}
+			}
+
+			// Dados do anunciante (apenas quando não é loja)
+			var emailAnunciante, telefoneAnunciante, nomeAnunciante *string
+			if anuncio.Loja == nil && veiculo.Usuario.ID != 0 {
+				emailAnunciante = &veiculo.Usuario.Email
+				telefoneAnunciante = &veiculo.Usuario.Telefone
+				nomeAnunciante = &veiculo.Usuario.Nome
+			}
+
 			response := json.AnuncioVeiculoResponse{
 				ID:                  anuncio.ID,
 				NomeVeiculo:         nomeVeiculo,
 				KM:                  veiculo.Quilometragem,
-				AnoModelo:            veiculo.AnoModelo,
+				AnoModelo:           veiculo.AnoModelo,
 				AnoFabricacao:       &veiculo.AnoFabricacao,
 				IsMeuCarroMais:      isMeuCarroMais,
 				Preco:               anuncio.Preco,
 				Imagem:              imagem,
+				Fotos:               fotos,
 				Modelo:              veiculo.Modelo,
-				Marca:               nil, // Campo não existe no modelo atual
+				Marca:               &veiculo.Marca,
 				Placa:               veiculo.Placa,
-				Renavam:             nil, // Campo não existe no modelo atual
-				Chassi:              nil, // Campo não existe no modelo atual
+				Renavam:             veiculo.Renavam,
+				Chassi:              veiculo.Chassi,
 				Cor:                 veiculo.Cor,
-				TipoVeiculo:         &anuncio.Categoria, // Usa categoria como tipo de veículo
-				Licenciamento:       nil,                // Campo não existe no modelo atual
-				IPVAPago:            nil,                // Campo não existe no modelo atual
-				PossuiFinanciamento: nil,                // Campo não existe no modelo atual
-				PossuiMultas:        nil,                // Campo não existe no modelo atual
+				TipoVeiculo:         veiculo.TipoVeiculo,
+				Licenciamento:       veiculo.Licenciamento,
+				IPVAPago:            veiculo.IPVAPago,
+				PossuiFinanciamento: veiculo.PossuiFinanciamento,
+				PossuiMultas:        veiculo.PossuiMultas,
 				Observacoes:         veiculo.Observacoes,
-				Combustivel:         nil, // Campo não existe no modelo atual
-				MoedasUtiliza:        moedasUtiliza,
+				Combustivel:         veiculo.Combustivel,
+				MoedasUtiliza:       moedasUtiliza,
+				EmailAnunciante:     emailAnunciante,
+				TelefoneAnunciante:  telefoneAnunciante,
+				NomeAnunciante:      nomeAnunciante,
 			}
 
 			anunciosResponse = append(anunciosResponse, response)
