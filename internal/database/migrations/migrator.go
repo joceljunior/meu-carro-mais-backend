@@ -830,6 +830,36 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration031)
 
+	// Migration 032: Adicionar campos id_anuncio e id_veiculo_usuario ao histórico de resgates
+	migration032 := m.NewMigration("032", "add_id_anuncio_and_id_veiculo_usuario_to_historico_resgates").
+		AddColumnSQL("historico_resgates", "id_anuncio", "INTEGER").
+		AddColumnSQL("historico_resgates", "id_veiculo_usuario", "INTEGER").
+		ExecuteSQL(`
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_historico_resgate_anuncio'
+				) THEN
+					ALTER TABLE historico_resgates ADD CONSTRAINT fk_historico_resgate_anuncio 
+					FOREIGN KEY (id_anuncio) REFERENCES anuncios(id) ON DELETE SET NULL;
+				END IF;
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_historico_resgate_veiculo_usuario'
+				) THEN
+					ALTER TABLE historico_resgates ADD CONSTRAINT fk_historico_resgate_veiculo_usuario 
+					FOREIGN KEY (id_veiculo_usuario) REFERENCES veiculos(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+		`, `
+			-- Rollback: remove foreign keys
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_anuncio;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_veiculo_usuario;
+		`).
+		AddIndexSQL("historico_resgates", "idx_historico_resgate_anuncio", "id_anuncio").
+		AddIndexSQL("historico_resgates", "idx_historico_resgate_veiculo_usuario", "id_veiculo_usuario").
+		Build()
+	m.migrations = append(m.migrations, migration032)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
