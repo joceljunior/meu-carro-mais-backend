@@ -282,20 +282,28 @@ func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoRes
 				continue
 			}
 
-			// Busca desconto ativo da loja (apenas se tiver loja)
-			var desconto *models.Desconto
-			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
-				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
-			}
-			
 			// Calcula preço com desconto
+			// Prioridade: 1) porcentagem do anúncio, 2) preço com desconto do anúncio, 3) desconto da loja
 			precoOriginal := anuncio.Preco
-			porcentagemDesconto := 0.0
+			porcentagemDesconto := anuncio.PorcentagemDesconto
 			precoComDesconto := precoOriginal
 
-			if desconto != nil {
-				porcentagemDesconto = desconto.Porcentagem
+			if porcentagemDesconto > 0 {
+				// Usa a porcentagem do próprio anúncio
 				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			} else if anuncio.PrecoComDesconto > 0 && anuncio.PrecoComDesconto < precoOriginal {
+				// Usa o preço com desconto já definido no anúncio
+				precoComDesconto = anuncio.PrecoComDesconto
+				porcentagemDesconto = ((precoOriginal - precoComDesconto) / precoOriginal) * 100
+			} else {
+				// Busca desconto ativo da loja como fallback
+				if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+					desconto, _ := datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+					if desconto != nil {
+						porcentagemDesconto = desconto.Porcentagem
+						precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+					}
+				}
 			}
 
 			// Determina a imagem (prioridade: anúncio > produto)
@@ -343,20 +351,28 @@ func GetAnunciosProdutos(latitude, longitude *float64) (*json.AnunciosProdutoRes
 				continue
 			}
 
-			// Busca desconto ativo da loja (apenas se tiver loja)
-			var desconto *models.Desconto
-			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
-				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
-			}
-			
 			// Calcula preço com desconto
+			// Prioridade: 1) porcentagem do anúncio, 2) preço com desconto do anúncio, 3) desconto da loja
 			precoOriginal := anuncio.Preco
-			porcentagemDesconto := 0.0
+			porcentagemDesconto := anuncio.PorcentagemDesconto
 			precoComDesconto := precoOriginal
 
-			if desconto != nil {
-				porcentagemDesconto = desconto.Porcentagem
+			if porcentagemDesconto > 0 {
+				// Usa a porcentagem do próprio anúncio
 				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			} else if anuncio.PrecoComDesconto > 0 && anuncio.PrecoComDesconto < precoOriginal {
+				// Usa o preço com desconto já definido no anúncio
+				precoComDesconto = anuncio.PrecoComDesconto
+				porcentagemDesconto = ((precoOriginal - precoComDesconto) / precoOriginal) * 100
+			} else {
+				// Busca desconto ativo da loja como fallback
+				if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+					desconto, _ := datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+					if desconto != nil {
+						porcentagemDesconto = desconto.Porcentagem
+						precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+					}
+				}
 			}
 
 			// Determina a imagem (prioridade: anúncio > produto)
@@ -570,20 +586,28 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 
 			servico := anuncio.Servico
 
-			// Busca desconto ativo da loja (apenas se tiver loja)
-			var desconto *models.Desconto
-			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
-				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
-			}
-			
 			// Calcula preço com desconto
+			// Prioridade: 1) porcentagem do anúncio, 2) preço com desconto do anúncio, 3) desconto da loja
 			precoOriginal := anuncio.Preco
-			porcentagemDesconto := 0.0
+			porcentagemDesconto := anuncio.PorcentagemDesconto
 			precoComDesconto := precoOriginal
 
-			if desconto != nil {
-				porcentagemDesconto = desconto.Porcentagem
+			if porcentagemDesconto > 0 {
+				// Usa a porcentagem do próprio anúncio
 				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			} else if anuncio.PrecoComDesconto > 0 && anuncio.PrecoComDesconto < precoOriginal {
+				// Usa o preço com desconto já definido no anúncio
+				precoComDesconto = anuncio.PrecoComDesconto
+				porcentagemDesconto = ((precoOriginal - precoComDesconto) / precoOriginal) * 100
+			} else {
+				// Busca desconto ativo da loja como fallback
+				if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+					desconto, _ := datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+					if desconto != nil {
+						porcentagemDesconto = desconto.Porcentagem
+						precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+					}
+				}
 			}
 
 			// Determina a imagem (prioridade: anúncio > serviço)
@@ -618,7 +642,7 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 				Categoria:           anuncio.Categoria,
 				Descricao:           anuncio.Descricao,
 				Rate:                anuncio.Loja.Rating,
-				MoedasUtiliza:        moedasUtiliza,
+				MoedasUtiliza:       moedasUtiliza,
 				Distancia:           &distancia,
 			}
 
@@ -639,20 +663,28 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 
 			servico := anuncio.Servico
 
-			// Busca desconto ativo da loja (apenas se tiver loja)
-			var desconto *models.Desconto
-			if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
-				desconto, _ = datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
-			}
-			
 			// Calcula preço com desconto
+			// Prioridade: 1) porcentagem do anúncio, 2) preço com desconto do anúncio, 3) desconto da loja
 			precoOriginal := anuncio.Preco
-			porcentagemDesconto := 0.0
+			porcentagemDesconto := anuncio.PorcentagemDesconto
 			precoComDesconto := precoOriginal
 
-			if desconto != nil {
-				porcentagemDesconto = desconto.Porcentagem
+			if porcentagemDesconto > 0 {
+				// Usa a porcentagem do próprio anúncio
 				precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+			} else if anuncio.PrecoComDesconto > 0 && anuncio.PrecoComDesconto < precoOriginal {
+				// Usa o preço com desconto já definido no anúncio
+				precoComDesconto = anuncio.PrecoComDesconto
+				porcentagemDesconto = ((precoOriginal - precoComDesconto) / precoOriginal) * 100
+			} else {
+				// Busca desconto ativo da loja como fallback
+				if anuncio.IDLoja != nil && *anuncio.IDLoja > 0 {
+					desconto, _ := datasource.GetDescontoAtivoByLojaID(*anuncio.IDLoja)
+					if desconto != nil {
+						porcentagemDesconto = desconto.Porcentagem
+						precoComDesconto = precoOriginal * (1 - porcentagemDesconto/100)
+					}
+				}
 			}
 
 			// Determina a imagem (prioridade: anúncio > serviço)
@@ -686,7 +718,7 @@ func GetAnunciosServicos(latitude, longitude *float64) (*json.AnunciosServicoRes
 				Categoria:           anuncio.Categoria,
 				Descricao:           anuncio.Descricao,
 				Rate:                anuncio.Loja.Rating,
-				MoedasUtiliza:        moedasUtiliza,
+				MoedasUtiliza:       moedasUtiliza,
 			}
 
 			anunciosResponse = append(anunciosResponse, response)
