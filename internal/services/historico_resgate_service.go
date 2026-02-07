@@ -7,8 +7,8 @@ import (
 )
 
 // CreateHistoricoResgateFromAnuncio cria um histórico de resgate a partir de um anúncio
-func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*json.HistoricoResgateResponse, error) {
-	historico, err := datasource.CreateHistoricoResgateFromAnuncio(anuncioID, usuarioID)
+func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint, idVeiculoUsuario *uint) (*json.HistoricoResgateResponse, error) {
+	historico, err := datasource.CreateHistoricoResgateFromAnuncio(anuncioID, usuarioID, idVeiculoUsuario)
 	if err != nil {
 		return nil, err
 	}
@@ -22,9 +22,11 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 	response := &json.HistoricoResgateResponse{
 		ID:                  historico.ID,
 		IDUsuario:           historico.IDUsuario,
+		IDAnuncio:           historico.IDAnuncio,
 		IDProduto:           historico.IDProduto,
 		IDServico:           historico.IDServico,
 		IDVeiculo:           historico.IDVeiculo,
+		IDVeiculoUsuario:    historico.IDVeiculoUsuario,
 		IDLoja:              historico.IDLoja,
 		TipoResgate:         historico.TipoResgate,
 		Quantidade:          historico.Quantidade,
@@ -120,6 +122,34 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 			Ativo:               historico.Veiculo.Ativo,
 		}
 		response.Veiculo = veiculoResp
+	}
+
+	// Adiciona dados do veículo do usuário se existir (para resgates de produto/serviço)
+	if historico.VeiculoUsuario != nil {
+		veiculoUsuarioResp := &json.VeiculoResponse{
+			ID:                  historico.VeiculoUsuario.ID,
+			Marca:               historico.VeiculoUsuario.Marca,
+			Modelo:              historico.VeiculoUsuario.Modelo,
+			AnoFabricacao:       historico.VeiculoUsuario.AnoFabricacao,
+			AnoModelo:           historico.VeiculoUsuario.AnoModelo,
+			Cor:                 historico.VeiculoUsuario.Cor,
+			Placa:               historico.VeiculoUsuario.Placa,
+			Renavam:             historico.VeiculoUsuario.Renavam,
+			Chassi:              historico.VeiculoUsuario.Chassi,
+			TipoVeiculo:         historico.VeiculoUsuario.TipoVeiculo,
+			Combustivel:         historico.VeiculoUsuario.Combustivel,
+			Quilometragem:       historico.VeiculoUsuario.Quilometragem,
+			Preco:               historico.VeiculoUsuario.Preco,
+			Licenciamento:       historico.VeiculoUsuario.Licenciamento,
+			IPVAPago:            historico.VeiculoUsuario.IPVAPago,
+			PossuiFinanciamento: historico.VeiculoUsuario.PossuiFinanciamento,
+			PossuiMultas:        historico.VeiculoUsuario.PossuiMultas,
+			Observacoes:         historico.VeiculoUsuario.Observacoes,
+			IDUsuario:           historico.VeiculoUsuario.IDUsuario,
+			DataCadastro:        historico.VeiculoUsuario.DataCadastro,
+			Ativo:               historico.VeiculoUsuario.Ativo,
+		}
+		response.VeiculoUsuario = veiculoUsuarioResp
 	}
 
 	return response

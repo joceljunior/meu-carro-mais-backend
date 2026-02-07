@@ -467,7 +467,7 @@
         },
         "/anuncios/{id}/resgatar": {
             "post": {
-                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio",
+                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio. Para anúncios de produto ou serviço, é obrigatório informar o id_veiculo_usuario para vincular o resgate ao veículo do usuário. Quando o resgate for aprovado pela loja, o histórico será automaticamente registrado no veículo.",
                 "consumes": [
                     "application/json"
                 ],
@@ -487,7 +487,7 @@
                         "required": true
                     },
                     {
-                        "description": "Dados do resgate (ID do usuário)",
+                        "description": "Dados do resgate (ID do usuário e veículo do usuário para produto/serviço)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -504,7 +504,7 @@
                         }
                     },
                     "400": {
-                        "description": "Dados inválidos",
+                        "description": "Dados inválidos ou veículo do usuário não informado para produto/serviço",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -2130,7 +2130,7 @@
         },
         "/historicos-resgate/{id}/aprovar": {
             "put": {
-                "description": "Aprova um resgate pendente, alterando o status para confirmado",
+                "description": "Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2152,7 +2152,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Resgate aprovado com sucesso",
+                        "description": "Resgate aprovado com sucesso e histórico do veículo criado (se aplicável)",
                         "schema": {
                             "$ref": "#/definitions/json.HistoricoResgateResponse"
                         }
@@ -9339,6 +9339,10 @@
                 "id": {
                     "type": "integer"
                 },
+                "id_anuncio": {
+                    "description": "ID do anúncio resgatado",
+                    "type": "integer"
+                },
                 "id_loja": {
                     "type": "integer"
                 },
@@ -9352,6 +9356,10 @@
                     "type": "integer"
                 },
                 "id_veiculo": {
+                    "type": "integer"
+                },
+                "id_veiculo_usuario": {
+                    "description": "Veículo do usuário vinculado ao resgate",
                     "type": "integer"
                 },
                 "loja": {
@@ -9394,6 +9402,14 @@
                 },
                 "veiculo": {
                     "$ref": "#/definitions/json.VeiculoResponse"
+                },
+                "veiculo_usuario": {
+                    "description": "Veículo do usuário vinculado",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.VeiculoResponse"
+                        }
+                    ]
                 }
             }
         },
@@ -10100,6 +10116,10 @@
             ],
             "properties": {
                 "id_usuario": {
+                    "type": "integer"
+                },
+                "id_veiculo_usuario": {
+                    "description": "Veículo do usuário para vincular o resgate (obrigatório para produto/serviço)",
                     "type": "integer"
                 }
             }

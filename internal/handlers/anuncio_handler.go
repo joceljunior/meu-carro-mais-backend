@@ -499,14 +499,14 @@ func GetAnunciosByLojaIDHandler(c *gin.Context) {
 
 // ResgatarAnuncioHandler godoc
 // @Summary      Resgata um anúncio
-// @Description  Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio
+// @Description  Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio. Para anúncios de produto ou serviço, é obrigatório informar o id_veiculo_usuario para vincular o resgate ao veículo do usuário. Quando o resgate for aprovado pela loja, o histórico será automaticamente registrado no veículo.
 // @Tags         Anúncios
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID do anúncio"
-// @Param        request body json.ResgatarAnuncioRequest true "Dados do resgate (ID do usuário)"
+// @Param        request body json.ResgatarAnuncioRequest true "Dados do resgate (ID do usuário e veículo do usuário para produto/serviço)"
 // @Success      201  {object}  json.HistoricoResgateResponse "Histórico de resgate criado com sucesso"
-// @Failure      400  {object}  map[string]interface{} "Dados inválidos"
+// @Failure      400  {object}  map[string]interface{} "Dados inválidos ou veículo do usuário não informado para produto/serviço"
 // @Failure      404  {object}  map[string]interface{} "Anúncio não encontrado"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
 // @Router       /anuncios/{id}/resgatar [post]
@@ -529,7 +529,7 @@ func ResgatarAnuncioHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := services.CreateHistoricoResgateFromAnuncio(uint(anuncioID), req.IDUsuario)
+	resp, err := services.CreateHistoricoResgateFromAnuncio(uint(anuncioID), req.IDUsuario, req.IDVeiculoUsuario)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

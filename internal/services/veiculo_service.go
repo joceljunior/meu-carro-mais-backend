@@ -321,3 +321,22 @@ func SoftDeleteVeiculo(id uint) error {
 func RestoreVeiculo(id uint) error {
 	return datasource.RestoreVeiculo(id)
 }
+
+// CreateHistoricoVeiculoFromResgate cria um histórico de veículo a partir de um resgate aprovado
+func CreateHistoricoVeiculoFromResgate(idVeiculo uint, idAnuncio uint, descricao string) (*json.HistoricoVeiculoResponse, error) {
+	historico, err := datasource.CreateHistoricoVeiculo(idVeiculo, idAnuncio, descricao)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.HistoricoVeiculoResponse{
+		ID:           historico.ID,
+		IDVeiculo:    historico.IDVeiculo,
+		IDAnuncio:    historico.IDAnuncio,
+		Descricao:    historico.Descricao,
+		Data:         historico.Data,
+		DataCadastro: historico.DataCadastro,
+	}
+
+	return response, nil
+}

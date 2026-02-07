@@ -286,3 +286,41 @@ func RestoreVeiculo(id uint) error {
 
 	return nil
 }
+
+// CreateHistoricoVeiculo cria um novo registro no histórico do veículo
+func CreateHistoricoVeiculo(idVeiculo uint, idAnuncio uint, descricao string) (*models.HistoricoVeiculo, error) {
+	historico := models.HistoricoVeiculo{
+		IDVeiculo: idVeiculo,
+		IDAnuncio: idAnuncio,
+		Descricao: descricao,
+		Data:      time.Now(),
+	}
+
+	err := database.DB.Create(&historico).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Recarrega com os relacionamentos
+	return GetHistoricoVeiculoByID(historico.ID)
+}
+
+// GetHistoricoVeiculoByID busca um histórico de veículo por ID
+func GetHistoricoVeiculoByID(id uint) (*models.HistoricoVeiculo, error) {
+	var historico models.HistoricoVeiculo
+
+	err := database.DB.
+		Preload("Veiculo").
+		Preload("Anuncio").
+		Preload("Anuncio.Loja").
+		Preload("Anuncio.Produto").
+		Preload("Anuncio.Servico").
+		Where("id = ?", id).
+		First(&historico).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &historico, nil
+}

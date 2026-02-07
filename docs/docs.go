@@ -469,7 +469,7 @@ const docTemplate = `{
         },
         "/anuncios/{id}/resgatar": {
             "post": {
-                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio",
+                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio. Para anúncios de produto ou serviço, é obrigatório informar o id_veiculo_usuario para vincular o resgate ao veículo do usuário. Quando o resgate for aprovado pela loja, o histórico será automaticamente registrado no veículo.",
                 "consumes": [
                     "application/json"
                 ],
@@ -489,7 +489,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Dados do resgate (ID do usuário)",
+                        "description": "Dados do resgate (ID do usuário e veículo do usuário para produto/serviço)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -506,7 +506,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Dados inválidos",
+                        "description": "Dados inválidos ou veículo do usuário não informado para produto/serviço",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -2132,7 +2132,7 @@ const docTemplate = `{
         },
         "/historicos-resgate/{id}/aprovar": {
             "put": {
-                "description": "Aprova um resgate pendente, alterando o status para confirmado",
+                "description": "Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2154,7 +2154,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Resgate aprovado com sucesso",
+                        "description": "Resgate aprovado com sucesso e histórico do veículo criado (se aplicável)",
                         "schema": {
                             "$ref": "#/definitions/json.HistoricoResgateResponse"
                         }
@@ -9341,6 +9341,10 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "id_anuncio": {
+                    "description": "ID do anúncio resgatado",
+                    "type": "integer"
+                },
                 "id_loja": {
                     "type": "integer"
                 },
@@ -9354,6 +9358,10 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "id_veiculo": {
+                    "type": "integer"
+                },
+                "id_veiculo_usuario": {
+                    "description": "Veículo do usuário vinculado ao resgate",
                     "type": "integer"
                 },
                 "loja": {
@@ -9396,6 +9404,14 @@ const docTemplate = `{
                 },
                 "veiculo": {
                     "$ref": "#/definitions/json.VeiculoResponse"
+                },
+                "veiculo_usuario": {
+                    "description": "Veículo do usuário vinculado",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.VeiculoResponse"
+                        }
+                    ]
                 }
             }
         },
@@ -10102,6 +10118,10 @@ const docTemplate = `{
             ],
             "properties": {
                 "id_usuario": {
+                    "type": "integer"
+                },
+                "id_veiculo_usuario": {
+                    "description": "Veículo do usuário para vincular o resgate (obrigatório para produto/serviço)",
                     "type": "integer"
                 }
             }

@@ -306,12 +306,12 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 
 // AprovarResgateHandler godoc
 // @Summary      Aprova um resgate
-// @Description  Aprova um resgate pendente, alterando o status para confirmado
+// @Description  Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo.
 // @Tags         Histórico de Resgates
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID do histórico de resgate"
-// @Success      200  {object}  json.HistoricoResgateResponse "Resgate aprovado com sucesso"
+// @Success      200  {object}  json.HistoricoResgateResponse "Resgate aprovado com sucesso e histórico do veículo criado (se aplicável)"
 // @Failure      400  {object}  map[string]interface{} "Resgate não está pendente ou dados inválidos"
 // @Failure      404  {object}  map[string]interface{} "Histórico não encontrado"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
@@ -348,6 +348,40 @@ func AprovarResgateHandler(c *gin.Context) {
 			"error": err.Error(),
 		})
 		return
+	}
+
+	// Se o resgate tem um veículo do usuário vinculado e um anúncio, cria o histórico do veículo
+	if historico.IDVeiculoUsuario != nil && historico.IDAnuncio != nil {
+		// Monta a descrição do histórico baseado no tipo de resgate
+		var descricao string
+		switch historico.TipoResgate {
+		case "produto":
+			if historico.Produto != nil {
+				descricao = "Produto resgatado: " + historico.Produto.Nome
+			} else {
+				descricao = "Produto resgatado"
+			}
+		case "servico":
+			if historico.Servico != nil {
+				descricao = "Serviço resgatado: " + historico.Servico.Titulo
+			} else {
+				descricao = "Serviço resgatado"
+			}
+		default:
+			descricao = "Resgate aprovado"
+		}
+
+		// Cria o registro no histórico do veículo
+		_, errHist := services.CreateHistoricoVeiculoFromResgate(
+			*historico.IDVeiculoUsuario,
+			*historico.IDAnuncio,
+			descricao,
+		)
+		if errHist != nil {
+			// Log do erro mas não falha a aprovação (o registro foi criado com sucesso)
+			LogAction(c, "erro", "historico_veiculo", nil,
+				"Erro ao criar histórico do veículo após aprovação: "+errHist.Error(), nil, nil)
+		}
 	}
 
 	// Retorna o histórico atualizado

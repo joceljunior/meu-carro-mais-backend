@@ -9,7 +9,7 @@ import (
 )
 
 // CreateHistoricoResgateFromAnuncio cria um histórico de resgate a partir de um anúncio
-func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*models.HistoricoResgate, error) {
+func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint, idVeiculoUsuario *uint) (*models.HistoricoResgate, error) {
 	// Busca o anúncio
 	anuncio, err := GetAnuncioByID(anuncioID)
 	if err != nil {
@@ -44,6 +44,7 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*models.
 
 	historico := models.HistoricoResgate{
 		IDUsuario:           usuarioID,
+		IDAnuncio:           &anuncioID,
 		IDLoja:              idLoja,
 		TipoResgate:         anuncio.TipoAnuncio,
 		Quantidade:          1,
@@ -62,16 +63,27 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*models.
 			return nil, errors.New("anúncio de produto sem ID de produto associado")
 		}
 		historico.IDProduto = anuncio.IDProduto
+		// Para produto, o veículo do usuário é obrigatório
+		if idVeiculoUsuario == nil {
+			return nil, errors.New("para resgatar um produto, é necessário informar o veículo do usuário (id_veiculo_usuario)")
+		}
+		historico.IDVeiculoUsuario = idVeiculoUsuario
 	case "servico":
 		if anuncio.IDServico == nil {
 			return nil, errors.New("anúncio de serviço sem ID de serviço associado")
 		}
 		historico.IDServico = anuncio.IDServico
+		// Para serviço, o veículo do usuário é obrigatório
+		if idVeiculoUsuario == nil {
+			return nil, errors.New("para resgatar um serviço, é necessário informar o veículo do usuário (id_veiculo_usuario)")
+		}
+		historico.IDVeiculoUsuario = idVeiculoUsuario
 	case "veiculo":
 		if anuncio.IDVeiculo == nil {
 			return nil, errors.New("anúncio de veículo sem ID de veículo associado")
 		}
 		historico.IDVeiculo = anuncio.IDVeiculo
+		// Para veículo, não precisa informar veículo do usuário (é a compra de um veículo)
 	default:
 		return nil, errors.New("tipo de anúncio inválido")
 	}
@@ -144,9 +156,12 @@ func GetHistoricoResgateByID(id uint) (*models.HistoricoResgate, error) {
 	var historico models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Anuncio").
+		Preload("Anuncio.Loja").
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Veiculo").
+		Preload("VeiculoUsuario").
 		Preload("Loja").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&historico).Error
@@ -161,9 +176,12 @@ func GetAllHistoricosResgate() ([]models.HistoricoResgate, error) {
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Anuncio").
+		Preload("Anuncio.Loja").
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Veiculo").
+		Preload("VeiculoUsuario").
 		Preload("Loja").
 		Where("data_exclusao IS NULL").
 		Order("data_resgate DESC").
@@ -179,9 +197,12 @@ func GetHistoricosResgateByUsuarioID(idUsuario uint) ([]models.HistoricoResgate,
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Anuncio").
+		Preload("Anuncio.Loja").
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Veiculo").
+		Preload("VeiculoUsuario").
 		Preload("Loja").
 		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
 		Order("data_resgate DESC").
@@ -197,9 +218,12 @@ func GetHistoricosResgateByLojaID(idLoja uint) ([]models.HistoricoResgate, error
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Anuncio").
+		Preload("Anuncio.Loja").
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Veiculo").
+		Preload("VeiculoUsuario").
 		Preload("Loja").
 		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
 		Order("data_resgate DESC").
@@ -309,9 +333,12 @@ func GetHistoricosResgateByAnuncioID(anuncioID uint) ([]models.HistoricoResgate,
 	var historicos []models.HistoricoResgate
 	query := database.DB.
 		Preload("Usuario").
+		Preload("Anuncio").
+		Preload("Anuncio.Loja").
 		Preload("Produto").
 		Preload("Servico").
 		Preload("Veiculo").
+		Preload("VeiculoUsuario").
 		Preload("Loja").
 		Where("data_exclusao IS NULL")
 
