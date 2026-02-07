@@ -2132,7 +2132,7 @@ const docTemplate = `{
         },
         "/historicos-resgate/{id}/aprovar": {
             "put": {
-                "description": "Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo.",
+                "description": "Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.",
                 "consumes": [
                     "application/json"
                 ],
@@ -5605,6 +5605,120 @@ const docTemplate = `{
                 }
             }
         },
+        "/transferencias": {
+            "get": {
+                "description": "Retorna todas as transferências de veículos do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transferências"
+                ],
+                "summary": "Lista todas as transferências",
+                "responses": {
+                    "200": {
+                        "description": "Lista de transferências",
+                        "schema": {
+                            "$ref": "#/definitions/json.TransferenciasResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transferencias/buscar-usuarios": {
+            "get": {
+                "description": "Busca usuários ativos para selecionar como novo dono do veículo. Permite buscar por nome, email ou CPF.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transferências"
+                ],
+                "summary": "Busca usuários para transferência",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Termo de busca (nome, email ou CPF)",
+                        "name": "termo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuários encontrados",
+                        "schema": {
+                            "$ref": "#/definitions/json.UsuariosBuscaResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transferencias/{id}": {
+            "get": {
+                "description": "Retorna os dados de uma transferência específica pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transferências"
+                ],
+                "summary": "Busca transferência por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da transferência",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transferência encontrada",
+                        "schema": {
+                            "$ref": "#/definitions/json.TransferenciaVeiculoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Transferência não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/uploads": {
             "get": {
                 "description": "Retorna todos os uploads ativos do sistema. Pode filtrar por tipo usando query parameter 'tipo' (Imagem ou Documento)",
@@ -7098,6 +7212,114 @@ const docTemplate = `{
                 }
             }
         },
+        "/usuarios/{id_usuario}/transferencias": {
+            "get": {
+                "description": "Retorna todas as transferências envolvendo um usuário (como origem ou destino)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transferências"
+                ],
+                "summary": "Lista transferências de um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "id_usuario",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de transferências",
+                        "schema": {
+                            "$ref": "#/definitions/json.TransferenciasResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/usuarios/{id_usuario}/transferir-veiculo": {
+            "post": {
+                "description": "Realiza a transferência de propriedade de um veículo de um usuário para outro. O veículo passa a pertencer ao novo usuário.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transferências"
+                ],
+                "summary": "Transfere um veículo para outro usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário atual (dono do veículo)",
+                        "name": "id_usuario",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados da transferência",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.TransferenciaVeiculoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Veículo transferido com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.TransferenciaVeiculoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos ou veículo não pertence ao usuário",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Veículo ou usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/usuarios/{id_usuario}/uploads": {
             "get": {
                 "description": "Retorna todos os uploads de um usuário específico",
@@ -7878,6 +8100,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/veiculos/{id}/transferencias": {
+            "get": {
+                "description": "Retorna o histórico de transferências de um veículo específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transferências"
+                ],
+                "summary": "Lista transferências de um veículo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do veículo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de transferências",
+                        "schema": {
+                            "$ref": "#/definitions/json.TransferenciasResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/veiculos/{id}/uploads": {
             "get": {
                 "description": "Retorna todos os uploads de um veículo específico",
@@ -8003,6 +8271,9 @@ const docTemplate = `{
                 "distancia": {
                     "description": "Distância em km da loja, se fornecida localização",
                     "type": "number"
+                },
+                "endereco_loja": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
@@ -8197,6 +8468,9 @@ const docTemplate = `{
                     "description": "Distância em km da loja, se fornecida localização",
                     "type": "number"
                 },
+                "endereco_loja": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -8253,6 +8527,9 @@ const docTemplate = `{
                 },
                 "email_anunciante": {
                     "description": "Dados do anunciante (apenas quando não é loja)",
+                    "type": "string"
+                },
+                "endereco_loja": {
                     "type": "string"
                 },
                 "fotos": {
@@ -10290,6 +10567,88 @@ const docTemplate = `{
                 }
             }
         },
+        "json.TransferenciaVeiculoRequest": {
+            "type": "object",
+            "required": [
+                "id_usuario_destino",
+                "id_veiculo"
+            ],
+            "properties": {
+                "id_usuario_destino": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "observacoes": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.TransferenciaVeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "data_transferencia": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_historico_resgate": {
+                    "type": "integer"
+                },
+                "id_loja_venda": {
+                    "type": "integer"
+                },
+                "id_usuario_destino": {
+                    "type": "integer"
+                },
+                "id_usuario_origem": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "loja_venda": {
+                    "$ref": "#/definitions/json.LojaUsuarioResponse"
+                },
+                "mensagem": {
+                    "type": "string"
+                },
+                "observacoes": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tipo_transferencia": {
+                    "type": "string"
+                },
+                "usuario_destino": {
+                    "$ref": "#/definitions/json.UsuarioTransferenciaResponse"
+                },
+                "usuario_origem": {
+                    "$ref": "#/definitions/json.UsuarioTransferenciaResponse"
+                },
+                "veiculo": {
+                    "$ref": "#/definitions/json.VeiculoTransferenciaResponse"
+                }
+            }
+        },
+        "json.TransferenciasResponse": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                },
+                "transferencias": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.TransferenciaVeiculoResponse"
+                    }
+                }
+            }
+        },
         "json.UploadRequest": {
             "type": "object",
             "required": [
@@ -10635,6 +10994,43 @@ const docTemplate = `{
                 }
             }
         },
+        "json.UsuarioTransferenciaResponse": {
+            "type": "object",
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "telefone": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.UsuariosBuscaResponse": {
+            "type": "object",
+            "properties": {
+                "total": {
+                    "type": "integer"
+                },
+                "usuarios": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.UsuarioTransferenciaResponse"
+                    }
+                }
+            }
+        },
         "json.VeiculoFotoResponse": {
             "type": "object",
             "properties": {
@@ -10953,6 +11349,35 @@ const docTemplate = `{
                 },
                 "tipo_veiculo": {
                     "description": "Tipo do veículo",
+                    "type": "string"
+                }
+            }
+        },
+        "json.VeiculoTransferenciaResponse": {
+            "type": "object",
+            "properties": {
+                "ano_fabricacao": {
+                    "type": "integer"
+                },
+                "ano_modelo": {
+                    "type": "integer"
+                },
+                "cor": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "marca": {
+                    "type": "string"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "placa": {
                     "type": "string"
                 }
             }

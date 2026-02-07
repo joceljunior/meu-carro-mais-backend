@@ -53,6 +53,8 @@ definitions:
       distancia:
         description: Distância em km da loja, se fornecida localização
         type: number
+      endereco_loja:
+        type: string
       id:
         type: integer
       imagem:
@@ -186,6 +188,8 @@ definitions:
       distancia:
         description: Distância em km da loja, se fornecida localização
         type: number
+      endereco_loja:
+        type: string
       id:
         type: integer
       imagem:
@@ -224,6 +228,8 @@ definitions:
         type: number
       email_anunciante:
         description: Dados do anunciante (apenas quando não é loja)
+        type: string
+      endereco_loja:
         type: string
       fotos:
         description: Fotos do veículo
@@ -1595,6 +1601,60 @@ definitions:
     - lookup_key
     - success_url
     type: object
+  json.TransferenciaVeiculoRequest:
+    properties:
+      id_usuario_destino:
+        type: integer
+      id_veiculo:
+        type: integer
+      observacoes:
+        type: string
+    required:
+    - id_usuario_destino
+    - id_veiculo
+    type: object
+  json.TransferenciaVeiculoResponse:
+    properties:
+      data_transferencia:
+        type: string
+      id:
+        type: integer
+      id_historico_resgate:
+        type: integer
+      id_loja_venda:
+        type: integer
+      id_usuario_destino:
+        type: integer
+      id_usuario_origem:
+        type: integer
+      id_veiculo:
+        type: integer
+      loja_venda:
+        $ref: '#/definitions/json.LojaUsuarioResponse'
+      mensagem:
+        type: string
+      observacoes:
+        type: string
+      status:
+        type: string
+      tipo_transferencia:
+        type: string
+      usuario_destino:
+        $ref: '#/definitions/json.UsuarioTransferenciaResponse'
+      usuario_origem:
+        $ref: '#/definitions/json.UsuarioTransferenciaResponse'
+      veiculo:
+        $ref: '#/definitions/json.VeiculoTransferenciaResponse'
+    type: object
+  json.TransferenciasResponse:
+    properties:
+      total:
+        type: integer
+      transferencias:
+        items:
+          $ref: '#/definitions/json.TransferenciaVeiculoResponse'
+        type: array
+    type: object
   json.UploadRequest:
     properties:
       id_loja:
@@ -1828,6 +1888,30 @@ definitions:
       nome:
         type: string
     type: object
+  json.UsuarioTransferenciaResponse:
+    properties:
+      cpf:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      nome:
+        type: string
+      telefone:
+        type: string
+    type: object
+  json.UsuariosBuscaResponse:
+    properties:
+      total:
+        type: integer
+      usuarios:
+        items:
+          $ref: '#/definitions/json.UsuarioTransferenciaResponse'
+        type: array
+    type: object
   json.VeiculoFotoResponse:
     properties:
       data_upload:
@@ -2060,6 +2144,25 @@ definitions:
         type: string
       tipo_veiculo:
         description: Tipo do veículo
+        type: string
+    type: object
+  json.VeiculoTransferenciaResponse:
+    properties:
+      ano_fabricacao:
+        type: integer
+      ano_modelo:
+        type: integer
+      cor:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      marca:
+        type: string
+      modelo:
+        type: string
+      placa:
         type: string
     type: object
   json.VeiculosLojaResponse:
@@ -3522,7 +3625,8 @@ paths:
       - application/json
       description: Aprova um resgate pendente, alterando o status para confirmado.
         Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços),
-        o histórico é automaticamente registrado no veículo.
+        o histórico é automaticamente registrado no veículo. Se for venda de veículo,
+        o veículo é automaticamente transferido para o comprador.
       parameters:
       - description: ID do histórico de resgate
         in: path
@@ -5981,6 +6085,83 @@ paths:
       summary: Lista serviços por proximidade
       tags:
       - Serviços
+  /transferencias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as transferências de veículos do sistema
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de transferências
+          schema:
+            $ref: '#/definitions/json.TransferenciasResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todas as transferências
+      tags:
+      - Transferências
+  /transferencias/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de uma transferência específica pelo ID
+      parameters:
+      - description: ID da transferência
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transferência encontrada
+          schema:
+            $ref: '#/definitions/json.TransferenciaVeiculoResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Transferência não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca transferência por ID
+      tags:
+      - Transferências
+  /transferencias/buscar-usuarios:
+    get:
+      consumes:
+      - application/json
+      description: Busca usuários ativos para selecionar como novo dono do veículo.
+        Permite buscar por nome, email ou CPF.
+      parameters:
+      - description: Termo de busca (nome, email ou CPF)
+        in: query
+        name: termo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de usuários encontrados
+          schema:
+            $ref: '#/definitions/json.UsuariosBuscaResponse'
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca usuários para transferência
+      tags:
+      - Transferências
   /uploads:
     get:
       consumes:
@@ -7005,6 +7186,81 @@ paths:
       summary: Lista histórico de todos os veículos de um usuário
       tags:
       - Veículos
+  /usuarios/{id_usuario}/transferencias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as transferências envolvendo um usuário (como origem
+        ou destino)
+      parameters:
+      - description: ID do usuário
+        in: path
+        name: id_usuario
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de transferências
+          schema:
+            $ref: '#/definitions/json.TransferenciasResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista transferências de um usuário
+      tags:
+      - Transferências
+  /usuarios/{id_usuario}/transferir-veiculo:
+    post:
+      consumes:
+      - application/json
+      description: Realiza a transferência de propriedade de um veículo de um usuário
+        para outro. O veículo passa a pertencer ao novo usuário.
+      parameters:
+      - description: ID do usuário atual (dono do veículo)
+        in: path
+        name: id_usuario
+        required: true
+        type: integer
+      - description: Dados da transferência
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.TransferenciaVeiculoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Veículo transferido com sucesso
+          schema:
+            $ref: '#/definitions/json.TransferenciaVeiculoResponse'
+        "400":
+          description: Dados inválidos ou veículo não pertence ao usuário
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Veículo ou usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Transfere um veículo para outro usuário
+      tags:
+      - Transferências
   /usuarios/{id_usuario}/uploads:
     get:
       consumes:
@@ -7542,6 +7798,37 @@ paths:
       summary: Restaura veículo excluído
       tags:
       - Veículos
+  /veiculos/{id}/transferencias:
+    get:
+      consumes:
+      - application/json
+      description: Retorna o histórico de transferências de um veículo específico
+      parameters:
+      - description: ID do veículo
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de transferências
+          schema:
+            $ref: '#/definitions/json.TransferenciasResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista transferências de um veículo
+      tags:
+      - Transferências
   /veiculos/{id}/uploads:
     get:
       consumes:
