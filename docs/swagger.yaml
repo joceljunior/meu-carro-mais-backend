@@ -862,6 +862,8 @@ definitions:
         type: array
       nome_loja:
         type: string
+      porcentagem_desconto:
+        type: number
       quantidade:
         type: integer
       status:
@@ -887,6 +889,8 @@ definitions:
         type: integer
       id_veiculo:
         type: integer
+      porcentagem_desconto:
+        type: number
       quantidade:
         type: integer
       status:
@@ -936,6 +940,8 @@ definitions:
         type: integer
       loja:
         $ref: '#/definitions/json.LojaResponse'
+      porcentagem_desconto:
+        type: number
       produto:
         $ref: '#/definitions/json.ProdutoResponse'
       quantidade:

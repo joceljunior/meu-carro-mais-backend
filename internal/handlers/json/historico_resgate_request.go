@@ -9,8 +9,9 @@ type HistoricoResgateRequest struct {
 	TipoResgate      string  `json:"tipo_resgate" binding:"required,oneof=produto servico veiculo"`
 	Quantidade       int     `json:"quantidade,omitempty"`
 	ValorUnitario    float64 `json:"valor_unitario,omitempty"`
-	ValorOriginal    float64 `json:"valor_original,omitempty"`
-	DescontoAplicado float64 `json:"desconto_aplicado,omitempty"`
+	ValorOriginal       float64 `json:"valor_original,omitempty"`
+	DescontoAplicado    float64 `json:"desconto_aplicado,omitempty"`
+	PorcentagemDesconto float64 `json:"porcentagem_desconto,omitempty"`
 	Valor            float64 `json:"valor" binding:"required,min=0"`
 	Status           string  `json:"status,omitempty" binding:"omitempty,oneof=pendente confirmado cancelado"`
 }

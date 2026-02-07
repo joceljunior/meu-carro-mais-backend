@@ -9201,6 +9201,9 @@ const docTemplate = `{
                 "nome_loja": {
                     "type": "string"
                 },
+                "porcentagem_desconto": {
+                    "type": "number"
+                },
                 "quantidade": {
                     "type": "integer"
                 },
@@ -9244,6 +9247,9 @@ const docTemplate = `{
                 },
                 "id_veiculo": {
                     "type": "integer"
+                },
+                "porcentagem_desconto": {
+                    "type": "number"
                 },
                 "quantidade": {
                     "type": "integer"
@@ -9308,6 +9314,9 @@ const docTemplate = `{
                 },
                 "loja": {
                     "$ref": "#/definitions/json.LojaResponse"
+                },
+                "porcentagem_desconto": {
+                    "type": "number"
                 },
                 "produto": {
                     "$ref": "#/definitions/json.ProdutoResponse"

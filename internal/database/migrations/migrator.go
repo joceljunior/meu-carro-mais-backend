@@ -744,6 +744,12 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration028)
 
+	// Migration 029: Adicionar campo porcentagem_desconto ao histórico de resgates
+	migration029 := m.NewMigration("029", "add_porcentagem_desconto_to_historico_resgates").
+		AddColumnSQL("historico_resgates", "porcentagem_desconto", "DECIMAL(5,2) DEFAULT 0").
+		Build()
+	m.migrations = append(m.migrations, migration029)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

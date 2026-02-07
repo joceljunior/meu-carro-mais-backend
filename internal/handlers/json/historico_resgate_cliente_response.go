@@ -32,9 +32,10 @@ type HistoricoResgateClienteResponse struct {
 	Itens            []ItemCompraResponse      `json:"itens"`
 	Quantidade       int                       `json:"quantidade"`
 	ValorUnitario    float64                   `json:"valor_unitario"`
-	ValorOriginal    float64                   `json:"valor_original"`
-	DescontoAplicado float64                   `json:"desconto_aplicado"`
-	ValorTotal       float64                   `json:"valor_total"`
+	ValorOriginal       float64                   `json:"valor_original"`
+	DescontoAplicado    float64                   `json:"desconto_aplicado"`
+	PorcentagemDesconto float64                   `json:"porcentagem_desconto"`
+	ValorTotal          float64                   `json:"valor_total"`
 	Avaliacao        *AvaliacaoClienteResponse `json:"avaliacao,omitempty"`
 }
 

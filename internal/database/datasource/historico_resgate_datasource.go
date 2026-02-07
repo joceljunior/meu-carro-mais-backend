@@ -26,16 +26,33 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*models.
 	if anuncio.IDLoja != nil {
 		idLoja = *anuncio.IDLoja
 	}
+	// Calcula o desconto se houver
+	valorOriginal := anuncio.Preco
+	porcentagemDesconto := anuncio.PorcentagemDesconto
+	var descontoAplicado float64
+	valorFinal := valorOriginal
+
+	if porcentagemDesconto > 0 {
+		descontoAplicado = valorOriginal * (porcentagemDesconto / 100)
+		valorFinal = valorOriginal - descontoAplicado
+	} else if anuncio.PrecoComDesconto > 0 && anuncio.PrecoComDesconto < valorOriginal {
+		// Se não tem porcentagem mas tem preço com desconto, calcula a porcentagem
+		descontoAplicado = valorOriginal - anuncio.PrecoComDesconto
+		porcentagemDesconto = (descontoAplicado / valorOriginal) * 100
+		valorFinal = anuncio.PrecoComDesconto
+	}
+
 	historico := models.HistoricoResgate{
-		IDUsuario:        usuarioID,
-		IDLoja:           idLoja,
-		TipoResgate:      anuncio.TipoAnuncio,
-		Quantidade:       1,
-		ValorUnitario:    anuncio.Preco,
-		ValorOriginal:    anuncio.Preco,
-		DescontoAplicado: 0,
-		Valor:            anuncio.Preco,
-		Status:           "pendente", // Sempre inicia como pendente
+		IDUsuario:           usuarioID,
+		IDLoja:              idLoja,
+		TipoResgate:         anuncio.TipoAnuncio,
+		Quantidade:          1,
+		ValorUnitario:       valorOriginal,
+		ValorOriginal:       valorOriginal,
+		DescontoAplicado:    descontoAplicado,
+		PorcentagemDesconto: porcentagemDesconto,
+		Valor:               valorFinal,
+		Status:              "pendente", // Sempre inicia como pendente
 	}
 
 	// Define o ID apropriado baseado no tipo do anúncio
@@ -93,18 +110,19 @@ func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*models.Historico
 	}
 
 	historico := models.HistoricoResgate{
-		IDUsuario:        req.IDUsuario,
-		IDProduto:        req.IDProduto,
-		IDServico:        req.IDServico,
-		IDVeiculo:        req.IDVeiculo,
-		IDLoja:           req.IDLoja,
-		TipoResgate:      req.TipoResgate,
-		Quantidade:       quantidade,
-		ValorUnitario:    req.ValorUnitario,
-		ValorOriginal:    req.ValorOriginal,
-		DescontoAplicado: req.DescontoAplicado,
-		Valor:            req.Valor,
-		Status:           "pendente", // Status padrão
+		IDUsuario:           req.IDUsuario,
+		IDProduto:           req.IDProduto,
+		IDServico:           req.IDServico,
+		IDVeiculo:           req.IDVeiculo,
+		IDLoja:              req.IDLoja,
+		TipoResgate:         req.TipoResgate,
+		Quantidade:          quantidade,
+		ValorUnitario:       req.ValorUnitario,
+		ValorOriginal:       req.ValorOriginal,
+		DescontoAplicado:    req.DescontoAplicado,
+		PorcentagemDesconto: req.PorcentagemDesconto,
+		Valor:               req.Valor,
+		Status:              "pendente", // Status padrão
 	}
 
 	// Se status foi informado, usa o informado

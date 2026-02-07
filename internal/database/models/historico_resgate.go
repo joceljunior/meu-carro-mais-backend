@@ -12,8 +12,9 @@ type HistoricoResgate struct {
 	TipoResgate      string     `gorm:"size:20;not null"` // "produto", "servico", "veiculo"
 	Quantidade       int        `gorm:"default:1"`        // Quantidade do item
 	ValorUnitario    float64    `gorm:"type:decimal(10,2);default:0"`
-	ValorOriginal    float64    `gorm:"type:decimal(10,2);default:0"`    // Valor antes do desconto
-	DescontoAplicado float64    `gorm:"type:decimal(10,2);default:0"`    // Valor do desconto aplicado
+	ValorOriginal        float64    `gorm:"type:decimal(10,2);default:0"`    // Valor antes do desconto
+	DescontoAplicado     float64    `gorm:"type:decimal(10,2);default:0"`    // Valor do desconto aplicado
+	PorcentagemDesconto  float64    `gorm:"type:decimal(5,2);default:0"`     // Porcentagem do desconto/cupom aplicado
 	Valor            float64    `gorm:"type:decimal(10,2);not null"`     // Valor total pago (após desconto)
 	Status           string     `gorm:"size:20;default:'pendente'"`      // "pendente", "confirmado", "cancelado"
 	DataResgate      time.Time  `gorm:"autoCreateTime"`

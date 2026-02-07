@@ -20,21 +20,22 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint) (*json.Hi
 // convertHistoricoToResponse converte um modelo de histórico para response
 func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.HistoricoResgateResponse {
 	response := &json.HistoricoResgateResponse{
-		ID:               historico.ID,
-		IDUsuario:        historico.IDUsuario,
-		IDProduto:        historico.IDProduto,
-		IDServico:        historico.IDServico,
-		IDVeiculo:        historico.IDVeiculo,
-		IDLoja:           historico.IDLoja,
-		TipoResgate:      historico.TipoResgate,
-		Quantidade:       historico.Quantidade,
-		ValorUnitario:    historico.ValorUnitario,
-		ValorOriginal:    historico.ValorOriginal,
-		DescontoAplicado: historico.DescontoAplicado,
-		Valor:            historico.Valor,
-		Status:           historico.Status,
-		DataResgate:      historico.DataResgate,
-		DataAtualizacao:  historico.DataAtualizacao,
+		ID:                  historico.ID,
+		IDUsuario:           historico.IDUsuario,
+		IDProduto:           historico.IDProduto,
+		IDServico:           historico.IDServico,
+		IDVeiculo:           historico.IDVeiculo,
+		IDLoja:              historico.IDLoja,
+		TipoResgate:         historico.TipoResgate,
+		Quantidade:          historico.Quantidade,
+		ValorUnitario:       historico.ValorUnitario,
+		ValorOriginal:       historico.ValorOriginal,
+		DescontoAplicado:    historico.DescontoAplicado,
+		PorcentagemDesconto: historico.PorcentagemDesconto,
+		Valor:               historico.Valor,
+		Status:              historico.Status,
+		DataResgate:         historico.DataResgate,
+		DataAtualizacao:     historico.DataAtualizacao,
 		Usuario: json.UserResponse{
 			ID:             historico.Usuario.ID,
 			Nome:           historico.Usuario.Nome,
@@ -52,12 +53,12 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 			IDLoja:         historico.Usuario.IDLoja,
 		},
 		Loja: json.LojaResponse{
-			ID:          historico.Loja.ID,
-			Nome:        historico.Loja.Nome,
-			CNPJ:        historico.Loja.CNPJ,
-			Imagem:      historico.Loja.Imagem,
-			Latitude:    historico.Loja.Latitude,
-			Longitude:   historico.Loja.Longitude,
+			ID:        historico.Loja.ID,
+			Nome:      historico.Loja.Nome,
+			CNPJ:      historico.Loja.CNPJ,
+			Imagem:    historico.Loja.Imagem,
+			Latitude:  historico.Loja.Latitude,
+			Longitude: historico.Loja.Longitude,
 			Categoria: historico.Loja.Categoria,
 			IDUsuario: historico.Loja.IDUsuario,
 		},
@@ -99,24 +100,24 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 			ID:                  historico.Veiculo.ID,
 			Marca:               historico.Veiculo.Marca,
 			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:        historico.Veiculo.AnoFabricacao,
-			AnoModelo:            historico.Veiculo.AnoModelo,
-			Cor:                  historico.Veiculo.Cor,
-			Placa:                historico.Veiculo.Placa,
-			Renavam:              historico.Veiculo.Renavam,
-			Chassi:               historico.Veiculo.Chassi,
-			TipoVeiculo:          historico.Veiculo.TipoVeiculo,
-			Combustivel:          historico.Veiculo.Combustivel,
-			Quilometragem:        historico.Veiculo.Quilometragem,
-			Preco:                historico.Veiculo.Preco,
-			Licenciamento:        historico.Veiculo.Licenciamento,
-			IPVAPago:             historico.Veiculo.IPVAPago,
-			PossuiFinanciamento:  historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:         historico.Veiculo.PossuiMultas,
-			Observacoes:          historico.Veiculo.Observacoes,
-			IDUsuario:            historico.Veiculo.IDUsuario,
-			DataCadastro:         historico.Veiculo.DataCadastro,
-			Ativo:                historico.Veiculo.Ativo,
+			AnoFabricacao:       historico.Veiculo.AnoFabricacao,
+			AnoModelo:           historico.Veiculo.AnoModelo,
+			Cor:                 historico.Veiculo.Cor,
+			Placa:               historico.Veiculo.Placa,
+			Renavam:             historico.Veiculo.Renavam,
+			Chassi:              historico.Veiculo.Chassi,
+			TipoVeiculo:         historico.Veiculo.TipoVeiculo,
+			Combustivel:         historico.Veiculo.Combustivel,
+			Quilometragem:       historico.Veiculo.Quilometragem,
+			Preco:               historico.Veiculo.Preco,
+			Licenciamento:       historico.Veiculo.Licenciamento,
+			IPVAPago:            historico.Veiculo.IPVAPago,
+			PossuiFinanciamento: historico.Veiculo.PossuiFinanciamento,
+			PossuiMultas:        historico.Veiculo.PossuiMultas,
+			Observacoes:         historico.Veiculo.Observacoes,
+			IDUsuario:           historico.Veiculo.IDUsuario,
+			DataCadastro:        historico.Veiculo.DataCadastro,
+			Ativo:               historico.Veiculo.Ativo,
 		}
 		response.Veiculo = veiculoResp
 	}
@@ -131,105 +132,7 @@ func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*json.HistoricoRe
 		return nil, err
 	}
 
-	response := &json.HistoricoResgateResponse{
-		ID:              historico.ID,
-		IDUsuario:       historico.IDUsuario,
-		IDProduto:       historico.IDProduto,
-		IDServico:       historico.IDServico,
-		IDVeiculo:       historico.IDVeiculo,
-		IDLoja:          historico.IDLoja,
-		TipoResgate:     historico.TipoResgate,
-		Valor:           historico.Valor,
-		Status:          historico.Status,
-		DataResgate:     historico.DataResgate,
-		DataAtualizacao: historico.DataAtualizacao,
-		Usuario: json.UserResponse{
-			ID:             historico.Usuario.ID,
-			Nome:           historico.Usuario.Nome,
-			Email:          historico.Usuario.Email,
-			CPF:            historico.Usuario.CPF,
-			Imagem:         historico.Usuario.Imagem,
-			Telefone:       historico.Usuario.Telefone,
-			Endereco:       historico.Usuario.Endereco,
-			DataNascimento: historico.Usuario.DataNascimento,
-			DataCadastro:   historico.Usuario.DataCadastro,
-			Ativo:          historico.Usuario.Ativo,
-			Latitude:       historico.Usuario.Latitude,
-			Longitude:      historico.Usuario.Longitude,
-			IDPlano:        historico.Usuario.IDPlano,
-			IDLoja:         historico.Usuario.IDLoja,
-		},
-		Loja: json.LojaResponse{
-			ID:          historico.Loja.ID,
-			Nome:        historico.Loja.Nome,
-			CNPJ:        historico.Loja.CNPJ,
-			Imagem:      historico.Loja.Imagem,
-			Latitude:    historico.Loja.Latitude,
-			Longitude:   historico.Loja.Longitude,
-			Categoria: historico.Loja.Categoria,
-			IDUsuario: historico.Loja.IDUsuario,
-		},
-	}
-
-	// Adiciona dados do produto se existir
-	if historico.Produto != nil {
-		produtoResp := &json.ProdutoResponse{
-			ID:           historico.Produto.ID,
-			Nome:         historico.Produto.Nome,
-			Descricao:    historico.Produto.Descricao,
-			Preco:        historico.Produto.Preco,
-			Imagem:       historico.Produto.Imagem,
-			Estoque:      historico.Produto.Estoque,
-			Ativo:        historico.Produto.Ativo,
-			IDLoja:       historico.Produto.IDLoja,
-			DataCadastro: historico.Produto.DataCadastro,
-		}
-		response.Produto = produtoResp
-	}
-
-	// Adiciona dados do serviço se existir
-	if historico.Servico != nil {
-		servicoResp := &json.ServicoResponse{
-			ID:        historico.Servico.ID,
-			Titulo:    historico.Servico.Titulo,
-			Descricao: historico.Servico.Descricao,
-			Preco:     historico.Servico.Preco,
-			Imagem:    historico.Servico.Imagem,
-			Destaque:  historico.Servico.Destaque,
-			Categoria: historico.Servico.Categoria,
-		}
-		response.Servico = servicoResp
-	}
-
-	// Adiciona dados do veículo se existir
-	if historico.Veiculo != nil {
-		veiculoResp := &json.VeiculoResponse{
-			ID:                  historico.Veiculo.ID,
-			Marca:               historico.Veiculo.Marca,
-			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:        historico.Veiculo.AnoFabricacao,
-			AnoModelo:            historico.Veiculo.AnoModelo,
-			Cor:                  historico.Veiculo.Cor,
-			Placa:                historico.Veiculo.Placa,
-			Renavam:              historico.Veiculo.Renavam,
-			Chassi:               historico.Veiculo.Chassi,
-			TipoVeiculo:          historico.Veiculo.TipoVeiculo,
-			Combustivel:          historico.Veiculo.Combustivel,
-			Quilometragem:        historico.Veiculo.Quilometragem,
-			Preco:                historico.Veiculo.Preco,
-			Licenciamento:        historico.Veiculo.Licenciamento,
-			IPVAPago:             historico.Veiculo.IPVAPago,
-			PossuiFinanciamento:  historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:         historico.Veiculo.PossuiMultas,
-			Observacoes:          historico.Veiculo.Observacoes,
-			IDUsuario:            historico.Veiculo.IDUsuario,
-			DataCadastro:         historico.Veiculo.DataCadastro,
-			Ativo:                historico.Veiculo.Ativo,
-		}
-		response.Veiculo = veiculoResp
-	}
-
-	return response, nil
+	return convertHistoricoToResponse(historico), nil
 }
 
 // GetHistoricoResgateByID busca um histórico por ID
@@ -239,105 +142,7 @@ func GetHistoricoResgateByID(id uint) (*json.HistoricoResgateResponse, error) {
 		return nil, err
 	}
 
-	response := &json.HistoricoResgateResponse{
-		ID:              historico.ID,
-		IDUsuario:       historico.IDUsuario,
-		IDProduto:       historico.IDProduto,
-		IDServico:       historico.IDServico,
-		IDVeiculo:       historico.IDVeiculo,
-		IDLoja:          historico.IDLoja,
-		TipoResgate:     historico.TipoResgate,
-		Valor:           historico.Valor,
-		Status:          historico.Status,
-		DataResgate:     historico.DataResgate,
-		DataAtualizacao: historico.DataAtualizacao,
-		Usuario: json.UserResponse{
-			ID:             historico.Usuario.ID,
-			Nome:           historico.Usuario.Nome,
-			Email:          historico.Usuario.Email,
-			CPF:            historico.Usuario.CPF,
-			Imagem:         historico.Usuario.Imagem,
-			Telefone:       historico.Usuario.Telefone,
-			Endereco:       historico.Usuario.Endereco,
-			DataNascimento: historico.Usuario.DataNascimento,
-			DataCadastro:   historico.Usuario.DataCadastro,
-			Ativo:          historico.Usuario.Ativo,
-			Latitude:       historico.Usuario.Latitude,
-			Longitude:      historico.Usuario.Longitude,
-			IDPlano:        historico.Usuario.IDPlano,
-			IDLoja:         historico.Usuario.IDLoja,
-		},
-		Loja: json.LojaResponse{
-			ID:          historico.Loja.ID,
-			Nome:        historico.Loja.Nome,
-			CNPJ:        historico.Loja.CNPJ,
-			Imagem:      historico.Loja.Imagem,
-			Latitude:    historico.Loja.Latitude,
-			Longitude:   historico.Loja.Longitude,
-			Categoria: historico.Loja.Categoria,
-			IDUsuario: historico.Loja.IDUsuario,
-		},
-	}
-
-	// Adiciona dados do produto se existir
-	if historico.Produto != nil {
-		produtoResp := &json.ProdutoResponse{
-			ID:           historico.Produto.ID,
-			Nome:         historico.Produto.Nome,
-			Descricao:    historico.Produto.Descricao,
-			Preco:        historico.Produto.Preco,
-			Imagem:       historico.Produto.Imagem,
-			Estoque:      historico.Produto.Estoque,
-			Ativo:        historico.Produto.Ativo,
-			IDLoja:       historico.Produto.IDLoja,
-			DataCadastro: historico.Produto.DataCadastro,
-		}
-		response.Produto = produtoResp
-	}
-
-	// Adiciona dados do serviço se existir
-	if historico.Servico != nil {
-		servicoResp := &json.ServicoResponse{
-			ID:        historico.Servico.ID,
-			Titulo:    historico.Servico.Titulo,
-			Descricao: historico.Servico.Descricao,
-			Preco:     historico.Servico.Preco,
-			Imagem:    historico.Servico.Imagem,
-			Destaque:  historico.Servico.Destaque,
-			Categoria: historico.Servico.Categoria,
-		}
-		response.Servico = servicoResp
-	}
-
-	// Adiciona dados do veículo se existir
-	if historico.Veiculo != nil {
-		veiculoResp := &json.VeiculoResponse{
-			ID:                  historico.Veiculo.ID,
-			Marca:               historico.Veiculo.Marca,
-			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:        historico.Veiculo.AnoFabricacao,
-			AnoModelo:            historico.Veiculo.AnoModelo,
-			Cor:                  historico.Veiculo.Cor,
-			Placa:                historico.Veiculo.Placa,
-			Renavam:              historico.Veiculo.Renavam,
-			Chassi:               historico.Veiculo.Chassi,
-			TipoVeiculo:          historico.Veiculo.TipoVeiculo,
-			Combustivel:          historico.Veiculo.Combustivel,
-			Quilometragem:        historico.Veiculo.Quilometragem,
-			Preco:                historico.Veiculo.Preco,
-			Licenciamento:        historico.Veiculo.Licenciamento,
-			IPVAPago:             historico.Veiculo.IPVAPago,
-			PossuiFinanciamento:  historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:         historico.Veiculo.PossuiMultas,
-			Observacoes:          historico.Veiculo.Observacoes,
-			IDUsuario:            historico.Veiculo.IDUsuario,
-			DataCadastro:         historico.Veiculo.DataCadastro,
-			Ativo:                historico.Veiculo.Ativo,
-		}
-		response.Veiculo = veiculoResp
-	}
-
-	return response, nil
+	return convertHistoricoToResponse(historico), nil
 }
 
 // GetAllHistoricosResgate retorna todos os históricos ativos
@@ -349,105 +154,7 @@ func GetAllHistoricosResgate() ([]json.HistoricoResgateResponse, error) {
 
 	var responses []json.HistoricoResgateResponse
 	for _, historico := range historicos {
-		response := json.HistoricoResgateResponse{
-			ID:              historico.ID,
-			IDUsuario:       historico.IDUsuario,
-			IDProduto:       historico.IDProduto,
-			IDServico:       historico.IDServico,
-			IDVeiculo:       historico.IDVeiculo,
-			IDLoja:          historico.IDLoja,
-			TipoResgate:     historico.TipoResgate,
-			Valor:           historico.Valor,
-			Status:          historico.Status,
-			DataResgate:     historico.DataResgate,
-			DataAtualizacao: historico.DataAtualizacao,
-			Usuario: json.UserResponse{
-				ID:             historico.Usuario.ID,
-				Nome:           historico.Usuario.Nome,
-				Email:          historico.Usuario.Email,
-				CPF:            historico.Usuario.CPF,
-				Imagem:         historico.Usuario.Imagem,
-				Telefone:       historico.Usuario.Telefone,
-				Endereco:       historico.Usuario.Endereco,
-				DataNascimento: historico.Usuario.DataNascimento,
-				DataCadastro:   historico.Usuario.DataCadastro,
-				Ativo:          historico.Usuario.Ativo,
-				Latitude:       historico.Usuario.Latitude,
-				Longitude:      historico.Usuario.Longitude,
-				IDPlano:        historico.Usuario.IDPlano,
-				IDLoja:         historico.Usuario.IDLoja,
-			},
-			Loja: json.LojaResponse{
-				ID:          historico.Loja.ID,
-				Nome:        historico.Loja.Nome,
-				CNPJ:        historico.Loja.CNPJ,
-				Imagem:      historico.Loja.Imagem,
-				Latitude:    historico.Loja.Latitude,
-				Longitude:   historico.Loja.Longitude,
-				Categoria: historico.Loja.Categoria,
-				IDUsuario: historico.Loja.IDUsuario,
-			},
-		}
-
-		// Adiciona dados do produto se existir
-		if historico.Produto != nil {
-			produtoResp := &json.ProdutoResponse{
-				ID:           historico.Produto.ID,
-				Nome:         historico.Produto.Nome,
-				Descricao:    historico.Produto.Descricao,
-				Preco:        historico.Produto.Preco,
-				Imagem:       historico.Produto.Imagem,
-				Estoque:      historico.Produto.Estoque,
-				Ativo:        historico.Produto.Ativo,
-				IDLoja:       historico.Produto.IDLoja,
-				DataCadastro: historico.Produto.DataCadastro,
-			}
-			response.Produto = produtoResp
-		}
-
-		// Adiciona dados do serviço se existir
-		if historico.Servico != nil {
-			servicoResp := &json.ServicoResponse{
-				ID:        historico.Servico.ID,
-				Titulo:    historico.Servico.Titulo,
-				Descricao: historico.Servico.Descricao,
-				Preco:     historico.Servico.Preco,
-				Imagem:    historico.Servico.Imagem,
-				Destaque:  historico.Servico.Destaque,
-				Categoria: historico.Servico.Categoria,
-			}
-			response.Servico = servicoResp
-		}
-
-		// Adiciona dados do veículo se existir
-		if historico.Veiculo != nil {
-		veiculoResp := &json.VeiculoResponse{
-			ID:                  historico.Veiculo.ID,
-			Marca:               historico.Veiculo.Marca,
-			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:        historico.Veiculo.AnoFabricacao,
-			AnoModelo:            historico.Veiculo.AnoModelo,
-			Cor:                  historico.Veiculo.Cor,
-			Placa:                historico.Veiculo.Placa,
-			Renavam:              historico.Veiculo.Renavam,
-			Chassi:               historico.Veiculo.Chassi,
-			TipoVeiculo:          historico.Veiculo.TipoVeiculo,
-			Combustivel:          historico.Veiculo.Combustivel,
-			Quilometragem:        historico.Veiculo.Quilometragem,
-			Preco:                historico.Veiculo.Preco,
-			Licenciamento:        historico.Veiculo.Licenciamento,
-			IPVAPago:             historico.Veiculo.IPVAPago,
-			PossuiFinanciamento:  historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:         historico.Veiculo.PossuiMultas,
-			Observacoes:          historico.Veiculo.Observacoes,
-			IDUsuario:            historico.Veiculo.IDUsuario,
-			DataCadastro:         historico.Veiculo.DataCadastro,
-			Ativo:                historico.Veiculo.Ativo,
-		}
-			response.Veiculo = veiculoResp
-		}
-
-		responses = append(responses, response)
+		responses = append(responses, *convertHistoricoToResponse(&historico))
 	}
 
 	return responses, nil
@@ -462,113 +169,13 @@ func GetHistoricosResgateByUsuarioID(idUsuario uint) (*json.HistoricosResgateRes
 
 	var historicosResponse []json.HistoricoResgateResponse
 	for _, historico := range historicos {
-		historicoResp := json.HistoricoResgateResponse{
-			ID:              historico.ID,
-			IDUsuario:       historico.IDUsuario,
-			IDProduto:       historico.IDProduto,
-			IDServico:       historico.IDServico,
-			IDVeiculo:       historico.IDVeiculo,
-			IDLoja:          historico.IDLoja,
-			TipoResgate:     historico.TipoResgate,
-			Valor:           historico.Valor,
-			Status:          historico.Status,
-			DataResgate:     historico.DataResgate,
-			DataAtualizacao: historico.DataAtualizacao,
-			Usuario: json.UserResponse{
-				ID:             historico.Usuario.ID,
-				Nome:           historico.Usuario.Nome,
-				Email:          historico.Usuario.Email,
-				CPF:            historico.Usuario.CPF,
-				Imagem:         historico.Usuario.Imagem,
-				Telefone:       historico.Usuario.Telefone,
-				Endereco:       historico.Usuario.Endereco,
-				DataNascimento: historico.Usuario.DataNascimento,
-				DataCadastro:   historico.Usuario.DataCadastro,
-				Ativo:          historico.Usuario.Ativo,
-				Latitude:       historico.Usuario.Latitude,
-				Longitude:      historico.Usuario.Longitude,
-				IDPlano:        historico.Usuario.IDPlano,
-				IDLoja:         historico.Usuario.IDLoja,
-			},
-			Loja: json.LojaResponse{
-				ID:          historico.Loja.ID,
-				Nome:        historico.Loja.Nome,
-				CNPJ:        historico.Loja.CNPJ,
-				Imagem:      historico.Loja.Imagem,
-				Latitude:    historico.Loja.Latitude,
-				Longitude:   historico.Loja.Longitude,
-				Categoria: historico.Loja.Categoria,
-				IDUsuario: historico.Loja.IDUsuario,
-			},
-		}
-
-		// Adiciona dados do produto se existir
-		if historico.Produto != nil {
-			produtoResp := &json.ProdutoResponse{
-				ID:           historico.Produto.ID,
-				Nome:         historico.Produto.Nome,
-				Descricao:    historico.Produto.Descricao,
-				Preco:        historico.Produto.Preco,
-				Imagem:       historico.Produto.Imagem,
-				Estoque:      historico.Produto.Estoque,
-				Ativo:        historico.Produto.Ativo,
-				IDLoja:       historico.Produto.IDLoja,
-				DataCadastro: historico.Produto.DataCadastro,
-			}
-			historicoResp.Produto = produtoResp
-		}
-
-		// Adiciona dados do serviço se existir
-		if historico.Servico != nil {
-			servicoResp := &json.ServicoResponse{
-				ID:        historico.Servico.ID,
-				Titulo:    historico.Servico.Titulo,
-				Descricao: historico.Servico.Descricao,
-				Preco:     historico.Servico.Preco,
-				Imagem:    historico.Servico.Imagem,
-				Destaque:  historico.Servico.Destaque,
-				Categoria: historico.Servico.Categoria,
-			}
-			historicoResp.Servico = servicoResp
-		}
-
-		// Adiciona dados do veículo se existir
-		if historico.Veiculo != nil {
-		veiculoResp := &json.VeiculoResponse{
-			ID:                  historico.Veiculo.ID,
-			Marca:               historico.Veiculo.Marca,
-			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:        historico.Veiculo.AnoFabricacao,
-			AnoModelo:            historico.Veiculo.AnoModelo,
-			Cor:                  historico.Veiculo.Cor,
-			Placa:                historico.Veiculo.Placa,
-			Renavam:              historico.Veiculo.Renavam,
-			Chassi:               historico.Veiculo.Chassi,
-			TipoVeiculo:          historico.Veiculo.TipoVeiculo,
-			Combustivel:          historico.Veiculo.Combustivel,
-			Quilometragem:        historico.Veiculo.Quilometragem,
-			Preco:                historico.Veiculo.Preco,
-			Licenciamento:        historico.Veiculo.Licenciamento,
-			IPVAPago:             historico.Veiculo.IPVAPago,
-			PossuiFinanciamento:  historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:         historico.Veiculo.PossuiMultas,
-			Observacoes:          historico.Veiculo.Observacoes,
-			IDUsuario:            historico.Veiculo.IDUsuario,
-			DataCadastro:         historico.Veiculo.DataCadastro,
-			Ativo:                historico.Veiculo.Ativo,
-		}
-			historicoResp.Veiculo = veiculoResp
-		}
-
-		historicosResponse = append(historicosResponse, historicoResp)
+		historicosResponse = append(historicosResponse, *convertHistoricoToResponse(&historico))
 	}
 
-	response := &json.HistoricosResgateResponse{
+	return &json.HistoricosResgateResponse{
 		Historicos: historicosResponse,
 		Total:      len(historicosResponse),
-	}
-
-	return response, nil
+	}, nil
 }
 
 // GetHistoricosResgateByLojaID retorna todos os históricos de uma loja específica
@@ -580,113 +187,13 @@ func GetHistoricosResgateByLojaID(idLoja uint) (*json.HistoricosResgateResponse,
 
 	var historicosResponse []json.HistoricoResgateResponse
 	for _, historico := range historicos {
-		historicoResp := json.HistoricoResgateResponse{
-			ID:              historico.ID,
-			IDUsuario:       historico.IDUsuario,
-			IDProduto:       historico.IDProduto,
-			IDServico:       historico.IDServico,
-			IDVeiculo:       historico.IDVeiculo,
-			IDLoja:          historico.IDLoja,
-			TipoResgate:     historico.TipoResgate,
-			Valor:           historico.Valor,
-			Status:          historico.Status,
-			DataResgate:     historico.DataResgate,
-			DataAtualizacao: historico.DataAtualizacao,
-			Usuario: json.UserResponse{
-				ID:             historico.Usuario.ID,
-				Nome:           historico.Usuario.Nome,
-				Email:          historico.Usuario.Email,
-				CPF:            historico.Usuario.CPF,
-				Imagem:         historico.Usuario.Imagem,
-				Telefone:       historico.Usuario.Telefone,
-				Endereco:       historico.Usuario.Endereco,
-				DataNascimento: historico.Usuario.DataNascimento,
-				DataCadastro:   historico.Usuario.DataCadastro,
-				Ativo:          historico.Usuario.Ativo,
-				Latitude:       historico.Usuario.Latitude,
-				Longitude:      historico.Usuario.Longitude,
-				IDPlano:        historico.Usuario.IDPlano,
-				IDLoja:         historico.Usuario.IDLoja,
-			},
-			Loja: json.LojaResponse{
-				ID:          historico.Loja.ID,
-				Nome:        historico.Loja.Nome,
-				CNPJ:        historico.Loja.CNPJ,
-				Imagem:      historico.Loja.Imagem,
-				Latitude:    historico.Loja.Latitude,
-				Longitude:   historico.Loja.Longitude,
-				Categoria: historico.Loja.Categoria,
-				IDUsuario: historico.Loja.IDUsuario,
-			},
-		}
-
-		// Adiciona dados do produto se existir
-		if historico.Produto != nil {
-			produtoResp := &json.ProdutoResponse{
-				ID:           historico.Produto.ID,
-				Nome:         historico.Produto.Nome,
-				Descricao:    historico.Produto.Descricao,
-				Preco:        historico.Produto.Preco,
-				Imagem:       historico.Produto.Imagem,
-				Estoque:      historico.Produto.Estoque,
-				Ativo:        historico.Produto.Ativo,
-				IDLoja:       historico.Produto.IDLoja,
-				DataCadastro: historico.Produto.DataCadastro,
-			}
-			historicoResp.Produto = produtoResp
-		}
-
-		// Adiciona dados do serviço se existir
-		if historico.Servico != nil {
-			servicoResp := &json.ServicoResponse{
-				ID:        historico.Servico.ID,
-				Titulo:    historico.Servico.Titulo,
-				Descricao: historico.Servico.Descricao,
-				Preco:     historico.Servico.Preco,
-				Imagem:    historico.Servico.Imagem,
-				Destaque:  historico.Servico.Destaque,
-				Categoria: historico.Servico.Categoria,
-			}
-			historicoResp.Servico = servicoResp
-		}
-
-		// Adiciona dados do veículo se existir
-		if historico.Veiculo != nil {
-		veiculoResp := &json.VeiculoResponse{
-			ID:                  historico.Veiculo.ID,
-			Marca:               historico.Veiculo.Marca,
-			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:        historico.Veiculo.AnoFabricacao,
-			AnoModelo:            historico.Veiculo.AnoModelo,
-			Cor:                  historico.Veiculo.Cor,
-			Placa:                historico.Veiculo.Placa,
-			Renavam:              historico.Veiculo.Renavam,
-			Chassi:               historico.Veiculo.Chassi,
-			TipoVeiculo:          historico.Veiculo.TipoVeiculo,
-			Combustivel:          historico.Veiculo.Combustivel,
-			Quilometragem:        historico.Veiculo.Quilometragem,
-			Preco:                historico.Veiculo.Preco,
-			Licenciamento:        historico.Veiculo.Licenciamento,
-			IPVAPago:             historico.Veiculo.IPVAPago,
-			PossuiFinanciamento:  historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:         historico.Veiculo.PossuiMultas,
-			Observacoes:          historico.Veiculo.Observacoes,
-			IDUsuario:            historico.Veiculo.IDUsuario,
-			DataCadastro:         historico.Veiculo.DataCadastro,
-			Ativo:                historico.Veiculo.Ativo,
-		}
-			historicoResp.Veiculo = veiculoResp
-		}
-
-		historicosResponse = append(historicosResponse, historicoResp)
+		historicosResponse = append(historicosResponse, *convertHistoricoToResponse(&historico))
 	}
 
-	response := &json.HistoricosResgateResponse{
+	return &json.HistoricosResgateResponse{
 		Historicos: historicosResponse,
 		Total:      len(historicosResponse),
-	}
-
-	return response, nil
+	}, nil
 }
 
 // UpdateHistoricoResgate atualiza um histórico existente
@@ -696,105 +203,7 @@ func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*json.Hi
 		return nil, err
 	}
 
-	response := &json.HistoricoResgateResponse{
-		ID:              historico.ID,
-		IDUsuario:       historico.IDUsuario,
-		IDProduto:       historico.IDProduto,
-		IDServico:       historico.IDServico,
-		IDVeiculo:       historico.IDVeiculo,
-		IDLoja:          historico.IDLoja,
-		TipoResgate:     historico.TipoResgate,
-		Valor:           historico.Valor,
-		Status:          historico.Status,
-		DataResgate:     historico.DataResgate,
-		DataAtualizacao: historico.DataAtualizacao,
-		Usuario: json.UserResponse{
-			ID:             historico.Usuario.ID,
-			Nome:           historico.Usuario.Nome,
-			Email:          historico.Usuario.Email,
-			CPF:            historico.Usuario.CPF,
-			Imagem:         historico.Usuario.Imagem,
-			Telefone:       historico.Usuario.Telefone,
-			Endereco:       historico.Usuario.Endereco,
-			DataNascimento: historico.Usuario.DataNascimento,
-			DataCadastro:   historico.Usuario.DataCadastro,
-			Ativo:          historico.Usuario.Ativo,
-			Latitude:       historico.Usuario.Latitude,
-			Longitude:      historico.Usuario.Longitude,
-			IDPlano:        historico.Usuario.IDPlano,
-			IDLoja:         historico.Usuario.IDLoja,
-		},
-		Loja: json.LojaResponse{
-			ID:          historico.Loja.ID,
-			Nome:        historico.Loja.Nome,
-			CNPJ:        historico.Loja.CNPJ,
-			Imagem:      historico.Loja.Imagem,
-			Latitude:    historico.Loja.Latitude,
-			Longitude:   historico.Loja.Longitude,
-			Categoria: historico.Loja.Categoria,
-			IDUsuario: historico.Loja.IDUsuario,
-		},
-	}
-
-	// Adiciona dados do produto se existir
-	if historico.Produto != nil {
-		produtoResp := &json.ProdutoResponse{
-			ID:           historico.Produto.ID,
-			Nome:         historico.Produto.Nome,
-			Descricao:    historico.Produto.Descricao,
-			Preco:        historico.Produto.Preco,
-			Imagem:       historico.Produto.Imagem,
-			Estoque:      historico.Produto.Estoque,
-			Ativo:        historico.Produto.Ativo,
-			IDLoja:       historico.Produto.IDLoja,
-			DataCadastro: historico.Produto.DataCadastro,
-		}
-		response.Produto = produtoResp
-	}
-
-	// Adiciona dados do serviço se existir
-	if historico.Servico != nil {
-		servicoResp := &json.ServicoResponse{
-			ID:        historico.Servico.ID,
-			Titulo:    historico.Servico.Titulo,
-			Descricao: historico.Servico.Descricao,
-			Preco:     historico.Servico.Preco,
-			Imagem:    historico.Servico.Imagem,
-			Destaque:  historico.Servico.Destaque,
-			Categoria: historico.Servico.Categoria,
-		}
-		response.Servico = servicoResp
-	}
-
-	// Adiciona dados do veículo se existir
-	if historico.Veiculo != nil {
-		veiculoResp := &json.VeiculoResponse{
-			ID:                  historico.Veiculo.ID,
-			Marca:               historico.Veiculo.Marca,
-			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:        historico.Veiculo.AnoFabricacao,
-			AnoModelo:            historico.Veiculo.AnoModelo,
-			Cor:                  historico.Veiculo.Cor,
-			Placa:                historico.Veiculo.Placa,
-			Renavam:              historico.Veiculo.Renavam,
-			Chassi:               historico.Veiculo.Chassi,
-			TipoVeiculo:          historico.Veiculo.TipoVeiculo,
-			Combustivel:          historico.Veiculo.Combustivel,
-			Quilometragem:        historico.Veiculo.Quilometragem,
-			Preco:                historico.Veiculo.Preco,
-			Licenciamento:        historico.Veiculo.Licenciamento,
-			IPVAPago:             historico.Veiculo.IPVAPago,
-			PossuiFinanciamento:  historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:         historico.Veiculo.PossuiMultas,
-			Observacoes:          historico.Veiculo.Observacoes,
-			IDUsuario:            historico.Veiculo.IDUsuario,
-			DataCadastro:         historico.Veiculo.DataCadastro,
-			Ativo:                historico.Veiculo.Ativo,
-		}
-		response.Veiculo = veiculoResp
-	}
-
-	return response, nil
+	return convertHistoricoToResponse(historico), nil
 }
 
 // UpdateStatusHistoricoResgate atualiza apenas o status de um histórico
@@ -874,19 +283,20 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 		}
 
 		historicosResponse = append(historicosResponse, json.HistoricoResgateClienteResponse{
-			ID:               historico.ID,
-			IDLoja:           historico.IDLoja,
-			NomeLoja:         historico.Loja.Nome,
-			ImagemLoja:       historico.Loja.Imagem,
-			DataResgate:      historico.DataResgate,
-			Status:           historico.Status,
-			Itens:            itens,
-			Quantidade:       historico.Quantidade,
-			ValorUnitario:    historico.ValorUnitario,
-			ValorOriginal:    historico.ValorOriginal,
-			DescontoAplicado: historico.DescontoAplicado,
-			ValorTotal:       historico.Valor,
-			Avaliacao:        avaliacaoResp,
+			ID:                  historico.ID,
+			IDLoja:              historico.IDLoja,
+			NomeLoja:            historico.Loja.Nome,
+			ImagemLoja:          historico.Loja.Imagem,
+			DataResgate:         historico.DataResgate,
+			Status:              historico.Status,
+			Itens:               itens,
+			Quantidade:          historico.Quantidade,
+			ValorUnitario:       historico.ValorUnitario,
+			ValorOriginal:       historico.ValorOriginal,
+			DescontoAplicado:    historico.DescontoAplicado,
+			PorcentagemDesconto: historico.PorcentagemDesconto,
+			ValorTotal:          historico.Valor,
+			Avaliacao:           avaliacaoResp,
 		})
 	}
 

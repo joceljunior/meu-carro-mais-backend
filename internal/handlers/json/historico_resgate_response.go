@@ -12,9 +12,10 @@ type HistoricoResgateResponse struct {
 	TipoResgate      string    `json:"tipo_resgate"`
 	Quantidade       int       `json:"quantidade"`
 	ValorUnitario    float64   `json:"valor_unitario"`
-	ValorOriginal    float64   `json:"valor_original"`
-	DescontoAplicado float64   `json:"desconto_aplicado"`
-	Valor            float64   `json:"valor"`
+	ValorOriginal       float64   `json:"valor_original"`
+	DescontoAplicado    float64   `json:"desconto_aplicado"`
+	PorcentagemDesconto float64   `json:"porcentagem_desconto"`
+	Valor               float64   `json:"valor"`
 	Status           string    `json:"status"`
 	DataResgate      time.Time `json:"data_resgate"`
 	DataAtualizacao  time.Time `json:"data_atualizacao"`
