@@ -352,7 +352,17 @@ definitions:
       comentario:
         maxLength: 500
         type: string
+      id_anuncio:
+        description: Opcional - referência ao anúncio
+        type: integer
       id_loja:
+        description: Opcional - avaliar loja
+        type: integer
+      id_produto:
+        description: Opcional - avaliar produto
+        type: integer
+      id_servico:
+        description: Opcional - avaliar serviço
         type: integer
       id_usuario:
         type: integer
@@ -361,7 +371,6 @@ definitions:
         minimum: 1
         type: integer
     required:
-    - id_loja
     - id_usuario
     - nota
     type: object
@@ -375,7 +384,13 @@ definitions:
         type: string
       id:
         type: integer
+      id_anuncio:
+        type: integer
       id_loja:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
         type: integer
       id_usuario:
         type: integer
@@ -383,6 +398,10 @@ definitions:
         $ref: '#/definitions/json.LojaResponse'
       nota:
         type: integer
+      produto:
+        $ref: '#/definitions/json.ProdutoResponse'
+      servico:
+        $ref: '#/definitions/json.ServicoResponse'
       usuario:
         allOf:
         - $ref: '#/definitions/json.UserResponse'

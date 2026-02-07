@@ -750,6 +750,50 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration029)
 
+	// Migration 030: Adicionar campos opcionais às avaliações (servico, produto, anuncio)
+	migration030 := m.NewMigration("030", "add_optional_fields_to_avaliacoes").
+		// Torna id_loja opcional (permite NULL)
+		ExecuteSQL(`
+			ALTER TABLE avaliacoes ALTER COLUMN id_loja DROP NOT NULL;
+		`, `
+			-- Rollback: restaura NOT NULL (pode falhar se houver dados NULL)
+			ALTER TABLE avaliacoes ALTER COLUMN id_loja SET NOT NULL;
+		`).
+		AddColumnSQL("avaliacoes", "id_servico", "INTEGER").
+		AddColumnSQL("avaliacoes", "id_produto", "INTEGER").
+		AddColumnSQL("avaliacoes", "id_anuncio", "INTEGER").
+		// Adiciona foreign keys
+		ExecuteSQL(`
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_avaliacao_servico'
+				) THEN
+					ALTER TABLE avaliacoes ADD CONSTRAINT fk_avaliacao_servico 
+					FOREIGN KEY (id_servico) REFERENCES servicos(id) ON DELETE SET NULL;
+				END IF;
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_avaliacao_produto'
+				) THEN
+					ALTER TABLE avaliacoes ADD CONSTRAINT fk_avaliacao_produto 
+					FOREIGN KEY (id_produto) REFERENCES produtos(id) ON DELETE SET NULL;
+				END IF;
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_avaliacao_anuncio'
+				) THEN
+					ALTER TABLE avaliacoes ADD CONSTRAINT fk_avaliacao_anuncio 
+					FOREIGN KEY (id_anuncio) REFERENCES anuncios(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+		`, `
+			-- Rollback: remove foreign keys
+			ALTER TABLE avaliacoes DROP CONSTRAINT IF EXISTS fk_avaliacao_servico;
+			ALTER TABLE avaliacoes DROP CONSTRAINT IF EXISTS fk_avaliacao_produto;
+			ALTER TABLE avaliacoes DROP CONSTRAINT IF EXISTS fk_avaliacao_anuncio;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration030)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

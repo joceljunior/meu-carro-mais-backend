@@ -10,21 +10,38 @@ import (
 
 // CreateAvaliacao cria uma nova avaliação
 func CreateAvaliacao(req json.AvaliacaoRequest) (*models.Avaliacao, error) {
-	// Verifica se o usuário já avaliou esta loja
+	// Verifica duplicação baseado no tipo de avaliação
 	var existingAvaliacao models.Avaliacao
-	err := database.DB.Where("id_usuario = ? AND id_loja = ? AND data_exclusao IS NULL", req.IDUsuario, req.IDLoja).First(&existingAvaliacao).Error
-	if err == nil {
-		return nil, errors.New("usuário já avaliou esta loja")
+	query := database.DB.Where("id_usuario = ? AND data_exclusao IS NULL", req.IDUsuario)
+
+	// Verifica se já existe avaliação para o mesmo item
+	if req.IDLoja != nil {
+		if err := query.Where("id_loja = ?", *req.IDLoja).First(&existingAvaliacao).Error; err == nil {
+			return nil, errors.New("usuário já avaliou esta loja")
+		}
+	}
+	if req.IDServico != nil {
+		if err := database.DB.Where("id_usuario = ? AND id_servico = ? AND data_exclusao IS NULL", req.IDUsuario, *req.IDServico).First(&existingAvaliacao).Error; err == nil {
+			return nil, errors.New("usuário já avaliou este serviço")
+		}
+	}
+	if req.IDProduto != nil {
+		if err := database.DB.Where("id_usuario = ? AND id_produto = ? AND data_exclusao IS NULL", req.IDUsuario, *req.IDProduto).First(&existingAvaliacao).Error; err == nil {
+			return nil, errors.New("usuário já avaliou este produto")
+		}
 	}
 
 	avaliacao := models.Avaliacao{
 		IDUsuario:  req.IDUsuario,
 		IDLoja:     req.IDLoja,
+		IDServico:  req.IDServico,
+		IDProduto:  req.IDProduto,
+		IDAnuncio:  req.IDAnuncio,
 		Nota:       req.Nota,
 		Comentario: req.Comentario,
 	}
 
-	err = database.DB.Create(&avaliacao).Error
+	err := database.DB.Create(&avaliacao).Error
 	if err != nil {
 		return nil, err
 	}
@@ -39,6 +56,9 @@ func GetAvaliacaoByID(id uint) (*models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
+		Preload("Servico").
+		Preload("Produto").
+		Preload("Anuncio").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&avaliacao).Error
 	if err != nil {
@@ -53,6 +73,9 @@ func GetAllAvaliacoes() ([]models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
+		Preload("Servico").
+		Preload("Produto").
+		Preload("Anuncio").
 		Where("data_exclusao IS NULL").
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -68,6 +91,9 @@ func GetAvaliacoesByLojaID(idLoja uint) ([]models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
+		Preload("Servico").
+		Preload("Produto").
+		Preload("Anuncio").
 		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -83,7 +109,46 @@ func GetAvaliacoesByUsuarioID(idUsuario uint) ([]models.Avaliacao, error) {
 	err := database.DB.
 		Preload("Usuario").
 		Preload("Loja").
+		Preload("Servico").
+		Preload("Produto").
+		Preload("Anuncio").
 		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
+		Order("data_avaliacao DESC").
+		Find(&avaliacoes).Error
+	if err != nil {
+		return nil, err
+	}
+	return avaliacoes, nil
+}
+
+// GetAvaliacoesByServicoID retorna todas as avaliações de um serviço específico
+func GetAvaliacoesByServicoID(idServico uint) ([]models.Avaliacao, error) {
+	var avaliacoes []models.Avaliacao
+	err := database.DB.
+		Preload("Usuario").
+		Preload("Loja").
+		Preload("Servico").
+		Preload("Produto").
+		Preload("Anuncio").
+		Where("id_servico = ? AND data_exclusao IS NULL", idServico).
+		Order("data_avaliacao DESC").
+		Find(&avaliacoes).Error
+	if err != nil {
+		return nil, err
+	}
+	return avaliacoes, nil
+}
+
+// GetAvaliacoesByProdutoID retorna todas as avaliações de um produto específico
+func GetAvaliacoesByProdutoID(idProduto uint) ([]models.Avaliacao, error) {
+	var avaliacoes []models.Avaliacao
+	err := database.DB.
+		Preload("Usuario").
+		Preload("Loja").
+		Preload("Servico").
+		Preload("Produto").
+		Preload("Anuncio").
+		Where("id_produto = ? AND data_exclusao IS NULL", idProduto).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
 	if err != nil {
@@ -96,6 +161,11 @@ func GetAvaliacoesByUsuarioID(idUsuario uint) ([]models.Avaliacao, error) {
 func GetAvaliacaoByUsuarioELoja(idUsuario uint, idLoja uint) (*models.Avaliacao, error) {
 	var avaliacao models.Avaliacao
 	err := database.DB.
+		Preload("Usuario").
+		Preload("Loja").
+		Preload("Servico").
+		Preload("Produto").
+		Preload("Anuncio").
 		Where("id_usuario = ? AND id_loja = ? AND data_exclusao IS NULL", idUsuario, idLoja).
 		First(&avaliacao).Error
 	if err != nil {
@@ -175,6 +245,10 @@ func UpdateAvaliacao(id uint, req json.AvaliacaoRequest) (*models.Avaliacao, err
 	}
 
 	// Atualiza os campos
+	avaliacao.IDLoja = req.IDLoja
+	avaliacao.IDServico = req.IDServico
+	avaliacao.IDProduto = req.IDProduto
+	avaliacao.IDAnuncio = req.IDAnuncio
 	avaliacao.Nota = req.Nota
 	avaliacao.Comentario = req.Comentario
 

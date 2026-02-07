@@ -5,15 +5,20 @@ import "time"
 type AvaliacaoResponse struct {
 	ID              uint      `json:"id"`
 	IDUsuario       uint      `json:"id_usuario"`
-	IDLoja          uint      `json:"id_loja"`
+	IDLoja          *uint     `json:"id_loja,omitempty"`
+	IDServico       *uint     `json:"id_servico,omitempty"`
+	IDProduto       *uint     `json:"id_produto,omitempty"`
+	IDAnuncio       *uint     `json:"id_anuncio,omitempty"`
 	Nota            int       `json:"nota"`
 	Comentario      string    `json:"comentario"`
 	DataAvaliacao   time.Time `json:"data_avaliacao"`
 	DataAtualizacao time.Time `json:"data_atualizacao"`
 
 	// Dados relacionados
-	Usuario UserResponse `json:"usuario,omitempty"`
-	Loja    LojaResponse `json:"loja,omitempty"`
+	Usuario UserResponse     `json:"usuario,omitempty"`
+	Loja    *LojaResponse    `json:"loja,omitempty"`
+	Servico *ServicoResponse `json:"servico,omitempty"`
+	Produto *ProdutoResponse `json:"produto,omitempty"`
 }
 
 type AvaliacoesResponse struct {

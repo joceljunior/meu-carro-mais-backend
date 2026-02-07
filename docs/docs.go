@@ -8445,7 +8445,6 @@ const docTemplate = `{
         "json.AvaliacaoRequest": {
             "type": "object",
             "required": [
-                "id_loja",
                 "id_usuario",
                 "nota"
             ],
@@ -8454,7 +8453,20 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 500
                 },
+                "id_anuncio": {
+                    "description": "Opcional - referência ao anúncio",
+                    "type": "integer"
+                },
                 "id_loja": {
+                    "description": "Opcional - avaliar loja",
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "description": "Opcional - avaliar produto",
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "description": "Opcional - avaliar serviço",
                     "type": "integer"
                 },
                 "id_usuario": {
@@ -8482,7 +8494,16 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "id_anuncio": {
+                    "type": "integer"
+                },
                 "id_loja": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
                     "type": "integer"
                 },
                 "id_usuario": {
@@ -8493,6 +8514,12 @@ const docTemplate = `{
                 },
                 "nota": {
                     "type": "integer"
+                },
+                "produto": {
+                    "$ref": "#/definitions/json.ProdutoResponse"
+                },
+                "servico": {
+                    "$ref": "#/definitions/json.ServicoResponse"
                 },
                 "usuario": {
                     "description": "Dados relacionados",
