@@ -1,0 +1,75 @@
+### Transferências de Veículos - Exemplos de API
+
+### Base URL (ajustar conforme ambiente)
+@baseUrl = http://localhost:8080
+
+### ============================================
+### BUSCAR USUÁRIOS PARA TRANSFERÊNCIA
+### ============================================
+
+### Buscar todos os usuários ativos (para selecionar novo dono)
+GET {{baseUrl}}/transferencias/buscar-usuarios
+
+### Buscar usuários por termo (nome, email ou CPF)
+GET {{baseUrl}}/transferencias/buscar-usuarios?termo=joao
+
+### ============================================
+### TRANSFERIR VEÍCULO (MANUAL)
+### ============================================
+
+### Transferir veículo para outro usuário
+### id_usuario na URL = dono atual do veículo
+### id_usuario_destino no body = novo dono
+POST {{baseUrl}}/usuarios/1/transferir-veiculo
+Content-Type: application/json
+
+{
+    "id_veiculo": 1,
+    "id_usuario_destino": 2,
+    "observacoes": "Venda particular realizada entre usuários"
+}
+
+### ============================================
+### CONSULTAR TRANSFERÊNCIAS
+### ============================================
+
+### Listar todas as transferências do sistema
+GET {{baseUrl}}/transferencias
+
+### Buscar transferência por ID
+GET {{baseUrl}}/transferencias/1
+
+### Listar transferências de um veículo específico
+GET {{baseUrl}}/veiculos/1/transferencias
+
+### Listar transferências de um usuário (como origem ou destino)
+GET {{baseUrl}}/usuarios/1/transferencias
+
+### ============================================
+### FLUXO COMPLETO DE TRANSFERÊNCIA MANUAL
+### ============================================
+
+### 1. Primeiro, buscar usuários para encontrar o destinatário
+GET {{baseUrl}}/transferencias/buscar-usuarios?termo=maria
+
+### 2. Depois, realizar a transferência
+POST {{baseUrl}}/usuarios/1/transferir-veiculo
+Content-Type: application/json
+
+{
+    "id_veiculo": 1,
+    "id_usuario_destino": 3,
+    "observacoes": "Veículo vendido para Maria Silva"
+}
+
+### 3. Verificar o histórico de transferências do veículo
+GET {{baseUrl}}/veiculos/1/transferencias
+
+### ============================================
+### TRANSFERÊNCIA AUTOMÁTICA POR VENDA EM LOJA
+### ============================================
+### NOTA: Transferência automática ocorre quando um resgate de veículo é aprovado
+### Basta aprovar o resgate normalmente e a transferência acontece automaticamente
+
+### Aprovar resgate de venda de veículo (transferência automática)
+PUT {{baseUrl}}/historicos-resgate/1/aprovar

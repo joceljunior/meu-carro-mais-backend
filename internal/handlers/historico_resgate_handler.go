@@ -306,7 +306,7 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 
 // AprovarResgateHandler godoc
 // @Summary      Aprova um resgate
-// @Description  Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo.
+// @Description  Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.
 // @Tags         Histórico de Resgates
 // @Accept       json
 // @Produce      json
@@ -348,6 +348,26 @@ func AprovarResgateHandler(c *gin.Context) {
 			"error": err.Error(),
 		})
 		return
+	}
+
+	// Se é uma venda de veículo, transfere automaticamente o veículo para o comprador
+	if historico.TipoResgate == "veiculo" && historico.IDVeiculo != nil {
+		idHistoricoResgate := uint(id)
+		_, errTransf := services.TransferirVeiculoVendaLoja(
+			*historico.IDVeiculo,
+			historico.Veiculo.IDUsuario,  // Dono atual do veículo
+			historico.IDUsuario,          // Comprador (usuário que fez o resgate)
+			&historico.IDLoja,            // Loja que realizou a venda
+			&idHistoricoResgate,          // Histórico de resgate que originou a transferência
+		)
+		if errTransf != nil {
+			// Log do erro mas não falha a aprovação (o status já foi atualizado)
+			LogAction(c, "erro", "transferencia_veiculo", nil,
+				"Erro ao transferir veículo após aprovação de venda: "+errTransf.Error(), nil, nil)
+		} else {
+			LogAction(c, "transferir", "veiculo", historico.IDVeiculo,
+				"Veículo transferido automaticamente por venda em loja", nil, nil)
+		}
 	}
 
 	// Se o resgate tem um veículo do usuário vinculado e um anúncio, cria o histórico do veículo

@@ -52,6 +52,7 @@ func NewRouter() *gin.Engine {
 		&LogRouter{},
 		&DescontoRouter{},
 		&OfertaAutoMaisRouter{},
+		&TransferenciaRouter{},
 	}
 
 	for _, rt := range routers {

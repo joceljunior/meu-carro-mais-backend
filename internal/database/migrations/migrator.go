@@ -795,6 +795,41 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration030)
 
+	// Migration 031: Criar tabela de transferências de veículos
+	migration031 := m.NewMigration("031", "create_transferencia_veiculos_table").
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS transferencia_veiculos (
+				id SERIAL PRIMARY KEY,
+				id_veiculo INTEGER NOT NULL,
+				id_usuario_origem INTEGER NOT NULL,
+				id_usuario_destino INTEGER NOT NULL,
+				id_loja_venda INTEGER,
+				id_historico_resgate INTEGER,
+				tipo_transferencia VARCHAR(20) NOT NULL DEFAULT 'manual',
+				status VARCHAR(20) NOT NULL DEFAULT 'confirmada',
+				observacoes TEXT,
+				data_transferencia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				data_exclusao TIMESTAMP,
+				CONSTRAINT fk_transferencia_veiculo FOREIGN KEY (id_veiculo) REFERENCES veiculos(id),
+				CONSTRAINT fk_transferencia_usuario_origem FOREIGN KEY (id_usuario_origem) REFERENCES usuarios(id),
+				CONSTRAINT fk_transferencia_usuario_destino FOREIGN KEY (id_usuario_destino) REFERENCES usuarios(id),
+				CONSTRAINT fk_transferencia_loja_venda FOREIGN KEY (id_loja_venda) REFERENCES lojas(id) ON DELETE SET NULL,
+				CONSTRAINT fk_transferencia_historico_resgate FOREIGN KEY (id_historico_resgate) REFERENCES historico_resgates(id) ON DELETE SET NULL
+			)
+		`, `
+			DROP TABLE IF EXISTS transferencia_veiculos CASCADE
+		`).
+		AddIndexSQL("transferencia_veiculos", "idx_transferencia_veiculo", "id_veiculo").
+		AddIndexSQL("transferencia_veiculos", "idx_transferencia_usuario_origem", "id_usuario_origem").
+		AddIndexSQL("transferencia_veiculos", "idx_transferencia_usuario_destino", "id_usuario_destino").
+		AddIndexSQL("transferencia_veiculos", "idx_transferencia_loja_venda", "id_loja_venda").
+		AddIndexSQL("transferencia_veiculos", "idx_transferencia_data_exclusao", "data_exclusao").
+		AddIndexSQL("transferencia_veiculos", "idx_transferencia_tipo", "tipo_transferencia").
+		AddIndexSQL("transferencia_veiculos", "idx_transferencia_status", "status").
+		Build()
+	m.migrations = append(m.migrations, migration031)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
