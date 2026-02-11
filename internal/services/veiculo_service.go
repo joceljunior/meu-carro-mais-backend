@@ -42,13 +42,13 @@ func getFotosVeiculo(idVeiculo uint) []json.VeiculoFotoResponse {
 	return fotos
 }
 
-// getAnuncioIDByVeiculo busca o ID do anúncio vinculado a um veículo (se existir)
-func getAnuncioIDByVeiculo(idVeiculo uint) *uint {
-	anuncio, err := datasource.GetAnuncioByVeiculoID(idVeiculo)
+// getCupomIDByVeiculo busca o ID do cupom vinculado a um veículo (se existir)
+func getCupomIDByVeiculo(idVeiculo uint) *uint {
+	cupom, err := datasource.GetCupomByVeiculoID(idVeiculo)
 	if err != nil {
 		return nil
 	}
-	return &anuncio.ID
+	return &cupom.ID
 }
 
 // GetVeiculosByUsuario retorna todos os veículos de um usuário
@@ -62,7 +62,7 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	for _, veiculo := range veiculos {
 		imagem := getImagemVeiculo(veiculo.ID)
 		fotos := getFotosVeiculo(veiculo.ID)
-		idAnuncio := getAnuncioIDByVeiculo(veiculo.ID)
+		idCupom := getCupomIDByVeiculo(veiculo.ID)
 		veiculoResp := json.VeiculoResponse{
 			ID:                  veiculo.ID,
 			Marca:               veiculo.Marca,
@@ -85,7 +85,7 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 			Imagem:              imagem,
 			Fotos:               fotos,
 			IDUsuario:           veiculo.IDUsuario,
-			IDAnuncio:           idAnuncio,
+			IDCupom:             idCupom,
 			DataCadastro:        veiculo.DataCadastro,
 			Ativo:               veiculo.Ativo,
 		}
@@ -112,7 +112,7 @@ func GetHistoricosByVeiculo(idVeiculo uint) (*json.HistoricosVeiculoResponse, er
 		historicoResp := json.HistoricoVeiculoResponse{
 			ID:           historico.ID,
 			IDVeiculo:    historico.IDVeiculo,
-			IDAnuncio:    historico.IDAnuncio,
+			IDCupom:      historico.IDCupom,
 			Descricao:    historico.Descricao,
 			Data:         historico.Data,
 			DataCadastro: historico.DataCadastro,
@@ -140,7 +140,7 @@ func GetHistoricosByUsuario(idUsuario uint) (*json.HistoricosVeiculoResponse, er
 		historicoResp := json.HistoricoVeiculoResponse{
 			ID:           historico.ID,
 			IDVeiculo:    historico.IDVeiculo,
-			IDAnuncio:    historico.IDAnuncio,
+			IDCupom:      historico.IDCupom,
 			Descricao:    historico.Descricao,
 			Data:         historico.Data,
 			DataCadastro: historico.DataCadastro,
@@ -323,8 +323,8 @@ func RestoreVeiculo(id uint) error {
 }
 
 // CreateHistoricoVeiculoFromResgate cria um histórico de veículo a partir de um resgate aprovado
-func CreateHistoricoVeiculoFromResgate(idVeiculo uint, idAnuncio uint, descricao string) (*json.HistoricoVeiculoResponse, error) {
-	historico, err := datasource.CreateHistoricoVeiculo(idVeiculo, idAnuncio, descricao)
+func CreateHistoricoVeiculoFromResgate(idVeiculo uint, idCupom uint, descricao string) (*json.HistoricoVeiculoResponse, error) {
+	historico, err := datasource.CreateHistoricoVeiculo(idVeiculo, idCupom, descricao)
 	if err != nil {
 		return nil, err
 	}
@@ -332,7 +332,7 @@ func CreateHistoricoVeiculoFromResgate(idVeiculo uint, idAnuncio uint, descricao
 	response := &json.HistoricoVeiculoResponse{
 		ID:           historico.ID,
 		IDVeiculo:    historico.IDVeiculo,
-		IDAnuncio:    historico.IDAnuncio,
+		IDCupom:      historico.IDCupom,
 		Descricao:    historico.Descricao,
 		Data:         historico.Data,
 		DataCadastro: historico.DataCadastro,

@@ -30,7 +30,7 @@ func GetLojasByProximidade(userLat, userLng float64) ([]LojaComDistancia, error)
 	var lojas []models.Loja
 
 	// Busca todas as lojas com anúncios destaque (apenas não excluídas)
-	err := database.DB.Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).Where("data_exclusao IS NULL").Find(&lojas).Error
+	err := database.DB.Preload("Cupons", "destaque = ? AND data_exclusao IS NULL", true).Where("data_exclusao IS NULL").Find(&lojas).Error
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 func GetLojaByID(id uint) (*models.Loja, error) {
 	var loja models.Loja
 	err := database.DB.
-		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
+		Preload("Cupons", "destaque = ? AND data_exclusao IS NULL", true).
 		Preload("UsuarioIndicador").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&loja).Error
@@ -136,7 +136,7 @@ func GetLojaByID(id uint) (*models.Loja, error) {
 func GetAllLojas() ([]models.Loja, error) {
 	var lojas []models.Loja
 	err := database.DB.
-		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
+		Preload("Cupons", "destaque = ? AND data_exclusao IS NULL", true).
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&lojas).Error
@@ -228,7 +228,7 @@ func RestoreLoja(id uint) error {
 func GetLojasByUsuarioID(idUsuario uint) ([]models.Loja, error) {
 	var lojas []models.Loja
 	err := database.DB.
-		Preload("Anuncios", "destaque = ? AND data_exclusao IS NULL", true).
+		Preload("Cupons", "destaque = ? AND data_exclusao IS NULL", true).
 		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
 		Order("data_cadastro DESC").
 		Find(&lojas).Error

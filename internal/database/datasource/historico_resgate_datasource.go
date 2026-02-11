@@ -5,87 +5,25 @@ import (
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
-	"time"
 )
 
-// CreateHistoricoResgateFromAnuncio cria um histórico de resgate a partir de um anúncio
-func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint, idVeiculoUsuario *uint) (*models.HistoricoResgate, error) {
-	// Busca o anúncio
-	anuncio, err := GetAnuncioByID(anuncioID)
+// CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom
+func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint) (*models.HistoricoResgate, error) {
+	// Busca o cupom
+	cupom, err := GetCupomByID(cupomID)
 	if err != nil {
-		return nil, errors.New("anúncio não encontrado")
+		return nil, errors.New("cupom não encontrado")
 	}
 
-	// Verifica se o anúncio não foi excluído
-	if anuncio.DataExclusao != nil {
-		return nil, errors.New("anúncio não está disponível")
-	}
-
-	// Prepara o histórico de resgate baseado no tipo do anúncio
-	var idLoja uint
-	if anuncio.IDLoja != nil {
-		idLoja = *anuncio.IDLoja
-	}
-	// Calcula o desconto se houver
-	valorOriginal := anuncio.Preco
-	porcentagemDesconto := anuncio.PorcentagemDesconto
-	var descontoAplicado float64
-	valorFinal := valorOriginal
-
-	if porcentagemDesconto > 0 {
-		descontoAplicado = valorOriginal * (porcentagemDesconto / 100)
-		valorFinal = valorOriginal - descontoAplicado
-	} else if anuncio.PrecoComDesconto > 0 && anuncio.PrecoComDesconto < valorOriginal {
-		// Se não tem porcentagem mas tem preço com desconto, calcula a porcentagem
-		descontoAplicado = valorOriginal - anuncio.PrecoComDesconto
-		porcentagemDesconto = (descontoAplicado / valorOriginal) * 100
-		valorFinal = anuncio.PrecoComDesconto
+	// Verifica se o cupom não foi excluído
+	if cupom.DataExclusao != nil {
+		return nil, errors.New("cupom não está disponível")
 	}
 
 	historico := models.HistoricoResgate{
-		IDUsuario:           usuarioID,
-		IDAnuncio:           &anuncioID,
-		IDLoja:              idLoja,
-		TipoResgate:         anuncio.TipoAnuncio,
-		Quantidade:          1,
-		ValorUnitario:       valorOriginal,
-		ValorOriginal:       valorOriginal,
-		DescontoAplicado:    descontoAplicado,
-		PorcentagemDesconto: porcentagemDesconto,
-		Valor:               valorFinal,
-		Status:              "pendente", // Sempre inicia como pendente
-	}
-
-	// Define o ID apropriado baseado no tipo do anúncio
-	switch anuncio.TipoAnuncio {
-	case "produto":
-		if anuncio.IDProduto == nil {
-			return nil, errors.New("anúncio de produto sem ID de produto associado")
-		}
-		historico.IDProduto = anuncio.IDProduto
-		// Para produto, o veículo do usuário é obrigatório
-		if idVeiculoUsuario == nil {
-			return nil, errors.New("para resgatar um produto, é necessário informar o veículo do usuário (id_veiculo_usuario)")
-		}
-		historico.IDVeiculoUsuario = idVeiculoUsuario
-	case "servico":
-		if anuncio.IDServico == nil {
-			return nil, errors.New("anúncio de serviço sem ID de serviço associado")
-		}
-		historico.IDServico = anuncio.IDServico
-		// Para serviço, o veículo do usuário é obrigatório
-		if idVeiculoUsuario == nil {
-			return nil, errors.New("para resgatar um serviço, é necessário informar o veículo do usuário (id_veiculo_usuario)")
-		}
-		historico.IDVeiculoUsuario = idVeiculoUsuario
-	case "veiculo":
-		if anuncio.IDVeiculo == nil {
-			return nil, errors.New("anúncio de veículo sem ID de veículo associado")
-		}
-		historico.IDVeiculo = anuncio.IDVeiculo
-		// Para veículo, não precisa informar veículo do usuário (é a compra de um veículo)
-	default:
-		return nil, errors.New("tipo de anúncio inválido")
+		IDCupom:   &cupomID,
+		IDUsuario: usuarioID,
+		Status:    "pendente",
 	}
 
 	err = database.DB.Create(&historico).Error
@@ -93,51 +31,17 @@ func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint, idVeiculo
 		return nil, err
 	}
 
-	// Recarrega o histórico com os relacionamentos
 	return GetHistoricoResgateByID(historico.ID)
 }
 
 // CreateHistoricoResgate cria um novo histórico de resgate
 func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*models.HistoricoResgate, error) {
-	// Validação: apenas um dos IDs deve ser preenchido
-	count := 0
-	if req.IDProduto != nil {
-		count++
-	}
-	if req.IDServico != nil {
-		count++
-	}
-	if req.IDVeiculo != nil {
-		count++
-	}
-
-	if count != 1 {
-		return nil, errors.New("deve ser informado exatamente um ID: produto, serviço ou veículo")
-	}
-
-	// Define quantidade padrão se não informada
-	quantidade := req.Quantidade
-	if quantidade == 0 {
-		quantidade = 1
-	}
-
 	historico := models.HistoricoResgate{
-		IDUsuario:           req.IDUsuario,
-		IDProduto:           req.IDProduto,
-		IDServico:           req.IDServico,
-		IDVeiculo:           req.IDVeiculo,
-		IDLoja:              req.IDLoja,
-		TipoResgate:         req.TipoResgate,
-		Quantidade:          quantidade,
-		ValorUnitario:       req.ValorUnitario,
-		ValorOriginal:       req.ValorOriginal,
-		DescontoAplicado:    req.DescontoAplicado,
-		PorcentagemDesconto: req.PorcentagemDesconto,
-		Valor:               req.Valor,
-		Status:              "pendente", // Status padrão
+		IDCupom:   req.IDCupom,
+		IDUsuario: req.IDUsuario,
+		Status:    "pendente",
 	}
 
-	// Se status foi informado, usa o informado
 	if req.Status != "" {
 		historico.Status = req.Status
 	}
@@ -147,23 +51,21 @@ func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*models.Historico
 		return nil, err
 	}
 
-	// Recarrega o histórico com os relacionamentos
 	return GetHistoricoResgateByID(historico.ID)
 }
 
-// GetHistoricoResgateByID busca histórico por ID (apenas não excluídos)
+// GetHistoricoResgateByID busca histórico por ID
 func GetHistoricoResgateByID(id uint) (*models.HistoricoResgate, error) {
 	var historico models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
-		Preload("Produto").
-		Preload("Servico").
-		Preload("Veiculo").
-		Preload("VeiculoUsuario").
-		Preload("Loja").
-		Where("id = ? AND data_exclusao IS NULL", id).
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
+		Preload("Cupom.Veiculo").
+		Preload("Cupom.OfertaAutoMais").
+		Where("id = ?", id).
 		First(&historico).Error
 	if err != nil {
 		return nil, err
@@ -171,19 +73,17 @@ func GetHistoricoResgateByID(id uint) (*models.HistoricoResgate, error) {
 	return &historico, nil
 }
 
-// GetAllHistoricosResgate retorna todos os históricos ativos (não excluídos)
+// GetAllHistoricosResgate retorna todos os históricos
 func GetAllHistoricosResgate() ([]models.HistoricoResgate, error) {
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
-		Preload("Produto").
-		Preload("Servico").
-		Preload("Veiculo").
-		Preload("VeiculoUsuario").
-		Preload("Loja").
-		Where("data_exclusao IS NULL").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
+		Preload("Cupom.Veiculo").
+		Preload("Cupom.OfertaAutoMais").
 		Order("data_resgate DESC").
 		Find(&historicos).Error
 	if err != nil {
@@ -197,14 +97,13 @@ func GetHistoricosResgateByUsuarioID(idUsuario uint) ([]models.HistoricoResgate,
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
-		Preload("Produto").
-		Preload("Servico").
-		Preload("Veiculo").
-		Preload("VeiculoUsuario").
-		Preload("Loja").
-		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
+		Preload("Cupom.Veiculo").
+		Preload("Cupom.OfertaAutoMais").
+		Where("id_usuario = ?", idUsuario).
 		Order("data_resgate DESC").
 		Find(&historicos).Error
 	if err != nil {
@@ -218,15 +117,15 @@ func GetHistoricosResgateByLojaID(idLoja uint) ([]models.HistoricoResgate, error
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
-		Preload("Produto").
-		Preload("Servico").
-		Preload("Veiculo").
-		Preload("VeiculoUsuario").
-		Preload("Loja").
-		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
-		Order("data_resgate DESC").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
+		Preload("Cupom.Veiculo").
+		Preload("Cupom.OfertaAutoMais").
+		Joins("JOIN cupons ON cupons.id = historico_resgates.id_cupom").
+		Where("cupons.id_loja = ?", idLoja).
+		Order("historico_resgates.data_resgate DESC").
 		Find(&historicos).Error
 	if err != nil {
 		return nil, err
@@ -236,20 +135,13 @@ func GetHistoricosResgateByLojaID(idLoja uint) ([]models.HistoricoResgate, error
 
 // UpdateHistoricoResgate atualiza um histórico existente
 func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*models.HistoricoResgate, error) {
-	// Verifica se o histórico existe e não foi excluído
 	historico, err := GetHistoricoResgateByID(id)
 	if err != nil {
 		return nil, errors.New("histórico não encontrado")
 	}
 
-	// Atualiza os campos
+	historico.IDCupom = req.IDCupom
 	historico.IDUsuario = req.IDUsuario
-	historico.IDProduto = req.IDProduto
-	historico.IDServico = req.IDServico
-	historico.IDVeiculo = req.IDVeiculo
-	historico.IDLoja = req.IDLoja
-	historico.TipoResgate = req.TipoResgate
-	historico.Valor = req.Valor
 	if req.Status != "" {
 		historico.Status = req.Status
 	}
@@ -259,19 +151,16 @@ func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*models.
 		return nil, err
 	}
 
-	// Recarrega o histórico com os relacionamentos
 	return GetHistoricoResgateByID(id)
 }
 
 // UpdateStatusHistoricoResgate atualiza apenas o status de um histórico
 func UpdateStatusHistoricoResgate(id uint, status string) error {
-	// Verifica se o histórico existe e não foi excluído
 	_, err := GetHistoricoResgateByID(id)
 	if err != nil {
 		return errors.New("histórico não encontrado")
 	}
 
-	// Atualiza apenas o status
 	err = database.DB.Model(&models.HistoricoResgate{}).
 		Where("id = ?", id).
 		Update("status", status).Error
@@ -282,19 +171,14 @@ func UpdateStatusHistoricoResgate(id uint, status string) error {
 	return nil
 }
 
-// SoftDeleteHistoricoResgate realiza soft delete do histórico (marca como excluído)
+// SoftDeleteHistoricoResgate realiza soft delete do histórico
 func SoftDeleteHistoricoResgate(id uint) error {
-	// Verifica se o histórico existe e não foi excluído
 	_, err := GetHistoricoResgateByID(id)
 	if err != nil {
 		return errors.New("histórico não encontrado")
 	}
 
-	// Atualiza a data de exclusão
-	now := time.Now()
-	err = database.DB.Model(&models.HistoricoResgate{}).
-		Where("id = ?", id).
-		Update("data_exclusao", now).Error
+	err = database.DB.Delete(&models.HistoricoResgate{}, id).Error
 	if err != nil {
 		return err
 	}
@@ -302,74 +186,33 @@ func SoftDeleteHistoricoResgate(id uint) error {
 	return nil
 }
 
-// RestoreHistoricoResgate restaura um histórico que foi soft deleted
+// RestoreHistoricoResgate restaura um histórico que foi deletado
 func RestoreHistoricoResgate(id uint) error {
-	var historico models.HistoricoResgate
-	err := database.DB.Where("id = ? AND data_exclusao IS NOT NULL", id).First(&historico).Error
-	if err != nil {
-		return errors.New("histórico não encontrado ou não foi excluído")
-	}
-
-	// Remove a data de exclusão
-	err = database.DB.Model(&models.HistoricoResgate{}).
-		Where("id = ?", id).
-		Update("data_exclusao", nil).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
+	// Since HistoricoResgate no longer has DataExclusao, we use hard delete/restore not applicable
+	return errors.New("operação não suportada na nova estrutura")
 }
 
-// GetHistoricosResgateByAnuncioID retorna todos os históricos de resgate de um anúncio específico
-// Busca pelos IDs do produto/serviço/veículo associados ao anúncio
-func GetHistoricosResgateByAnuncioID(anuncioID uint) ([]models.HistoricoResgate, error) {
-	// Busca o anúncio para obter os IDs relacionados
-	anuncio, err := GetAnuncioByID(anuncioID)
-	if err != nil {
-		return nil, errors.New("anúncio não encontrado")
-	}
+// GetHistoricosResgateByLojaIDViaCupom retorna históricos filtrados pela loja do cupom
+func GetHistoricosResgateByLojaIDViaCupom(idLoja uint) ([]models.HistoricoResgate, error) {
+	return GetHistoricosResgateByLojaID(idLoja)
+}
 
+// GetHistoricosResgateByCupomID retorna históricos de resgate de um cupom específico
+func GetHistoricosResgateByCupomID(cupomID uint) ([]models.HistoricoResgate, error) {
 	var historicos []models.HistoricoResgate
-	query := database.DB.
+	err := database.DB.
 		Preload("Usuario").
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
-		Preload("Produto").
-		Preload("Servico").
-		Preload("Veiculo").
-		Preload("VeiculoUsuario").
-		Preload("Loja").
-		Where("data_exclusao IS NULL")
-
-	// Busca históricos baseado no tipo do anúncio
-	switch anuncio.TipoAnuncio {
-	case "produto":
-		if anuncio.IDProduto != nil {
-			query = query.Where("id_produto = ?", *anuncio.IDProduto)
-		} else {
-			return []models.HistoricoResgate{}, nil
-		}
-	case "servico":
-		if anuncio.IDServico != nil {
-			query = query.Where("id_servico = ?", *anuncio.IDServico)
-		} else {
-			return []models.HistoricoResgate{}, nil
-		}
-	case "veiculo":
-		if anuncio.IDVeiculo != nil {
-			query = query.Where("id_veiculo = ?", *anuncio.IDVeiculo)
-		} else {
-			return []models.HistoricoResgate{}, nil
-		}
-	default:
-		return []models.HistoricoResgate{}, nil
-	}
-
-	err = query.Order("data_resgate DESC").Find(&historicos).Error
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
+		Preload("Cupom.Veiculo").
+		Preload("Cupom.OfertaAutoMais").
+		Where("id_cupom = ?", cupomID).
+		Order("data_resgate DESC").
+		Find(&historicos).Error
 	if err != nil {
 		return nil, err
 	}
-
 	return historicos, nil
 }

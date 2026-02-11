@@ -49,16 +49,17 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		return nil, errors.New("usuário rejeitado")
 	}
 
-	var anuncioResp json.AnuncioDestaqueResponse
+	var cupomResp json.CupomDestaqueResponse
 	if user.Loja.ID != 0 {
-		anuncio, err := datasource.GetAnuncioDestaqueByLojaID(user.Loja.ID)
+		cupom, err := datasource.GetCupomDestaqueByLojaID(user.Loja.ID)
 		if err == nil {
-			anuncioResp = json.AnuncioDestaqueResponse{
-				ID:        anuncio.ID,
-				Titulo:    anuncio.Titulo,
-				Descricao: anuncio.Descricao,
-				Preco:     anuncio.Preco,
-				Imagem:    anuncio.Imagem,
+			cupomResp = json.CupomDestaqueResponse{
+				ID:        cupom.ID,
+				Titulo:    cupom.Titulo,
+				Descricao: cupom.Descricao,
+				Preco:     cupom.Preco,
+				Imagem:    cupom.Imagem,
+				TipoCupom: cupom.TipoCupom,
 			}
 		}
 	}
@@ -86,10 +87,10 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
 		MotivoSolicitacaoExecutivo: user.MotivoSolicitacaoExecutivo,
 		LojaUsuarioResponse: json.LojaUsuarioResponse{
-			Id:                      user.Loja.ID,
-			Nome:                    user.Loja.Nome,
-			Logo:                    user.Loja.Imagem,
-			AnuncioDestaqueResponse: anuncioResp,
+			Id:                    user.Loja.ID,
+			Nome:                  user.Loja.Nome,
+			Logo:                  user.Loja.Imagem,
+			CupomDestaqueResponse: cupomResp,
 		},
 	}
 	return resp, nil
@@ -135,16 +136,17 @@ func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 	}
 
 	// Monta a resposta
-	var anuncioResp json.AnuncioDestaqueResponse
+	var cupomResp json.CupomDestaqueResponse
 	if user.Loja.ID != 0 {
-		anuncio, err := datasource.GetAnuncioDestaqueByLojaID(user.Loja.ID)
+		cupom, err := datasource.GetCupomDestaqueByLojaID(user.Loja.ID)
 		if err == nil {
-			anuncioResp = json.AnuncioDestaqueResponse{
-				ID:        anuncio.ID,
-				Titulo:    anuncio.Titulo,
-				Descricao: anuncio.Descricao,
-				Preco:     anuncio.Preco,
-				Imagem:    anuncio.Imagem,
+			cupomResp = json.CupomDestaqueResponse{
+				ID:        cupom.ID,
+				Titulo:    cupom.Titulo,
+				Descricao: cupom.Descricao,
+				Preco:     cupom.Preco,
+				Imagem:    cupom.Imagem,
+				TipoCupom: cupom.TipoCupom,
 			}
 		}
 	}
@@ -172,10 +174,10 @@ func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
 		MotivoSolicitacaoExecutivo: user.MotivoSolicitacaoExecutivo,
 		LojaUsuarioResponse: json.LojaUsuarioResponse{
-			Id:                      user.Loja.ID,
-			Nome:                    user.Loja.Nome,
-			Logo:                    user.Loja.Imagem,
-			AnuncioDestaqueResponse: anuncioResp,
+			Id:                    user.Loja.ID,
+			Nome:                  user.Loja.Nome,
+			Logo:                  user.Loja.Imagem,
+			CupomDestaqueResponse: cupomResp,
 		},
 	}
 	return resp, nil

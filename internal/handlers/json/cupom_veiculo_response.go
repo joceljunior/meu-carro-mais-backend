@@ -1,6 +1,6 @@
 package json
 
-type AnuncioVeiculoResponse struct {
+type CupomVeiculoResponse struct {
 	ID                  uint     `json:"id"`
 	NomeVeiculo         string   `json:"nome_veiculo"`
 	KM                  *int     `json:"km,omitempty"`
@@ -9,7 +9,7 @@ type AnuncioVeiculoResponse struct {
 	IsMeuCarroMais      bool     `json:"is_meu_carro_mais"`
 	Preco               float64  `json:"preco"`
 	Imagem              string   `json:"imagem"`
-	Fotos               []string `json:"fotos,omitempty"`                   // Fotos do veículo
+	Fotos               []string `json:"fotos,omitempty"`
 	Modelo              string   `json:"modelo"`
 	Marca               *string  `json:"marca,omitempty"`
 	Placa               string   `json:"placa"`
@@ -24,15 +24,14 @@ type AnuncioVeiculoResponse struct {
 	Observacoes         *string  `json:"observacoes,omitempty"`
 	Combustivel         *string  `json:"combustivel,omitempty"`
 	MoedasUtiliza       *int     `json:"moedas_utiliza,omitempty"`
-	Distancia           *float64 `json:"distancia,omitempty"`              // Distância em km da loja, se fornecida localização
+	Distancia           *float64 `json:"distancia,omitempty"`
 	EnderecoLoja        string   `json:"endereco_loja,omitempty"`
-	// Dados do anunciante (apenas quando não é loja)
-	EmailAnunciante    *string `json:"email_anunciante,omitempty"`
-	TelefoneAnunciante *string `json:"telefone_anunciante,omitempty"`
-	NomeAnunciante     *string `json:"nome_anunciante,omitempty"`
+	EmailAnunciante     *string  `json:"email_anunciante,omitempty"`
+	TelefoneAnunciante  *string  `json:"telefone_anunciante,omitempty"`
+	NomeAnunciante      *string  `json:"nome_anunciante,omitempty"`
 }
 
-type AnunciosVeiculoResponse struct {
-	Anuncios []AnuncioVeiculoResponse `json:"anuncios"`
-	Total    int                       `json:"total"`
+type CuponsVeiculoResponse struct {
+	Cupons []CupomVeiculoResponse `json:"cupons"`
+	Total  int                    `json:"total"`
 }

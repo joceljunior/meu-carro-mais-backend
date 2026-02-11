@@ -14,7 +14,7 @@ func convertAvaliacaoToResponse(avaliacao *models.Avaliacao) *json.AvaliacaoResp
 		IDLoja:          avaliacao.IDLoja,
 		IDServico:       avaliacao.IDServico,
 		IDProduto:       avaliacao.IDProduto,
-		IDAnuncio:       avaliacao.IDAnuncio,
+		IDCupom:         avaliacao.IDCupom,
 		Nota:            avaliacao.Nota,
 		Comentario:      avaliacao.Comentario,
 		DataAvaliacao:   avaliacao.DataAvaliacao,

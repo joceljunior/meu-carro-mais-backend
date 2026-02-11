@@ -60,8 +60,8 @@ func GetHistoricosByVeiculo(idVeiculo uint) ([]models.HistoricoVeiculo, error) {
 	var historicos []models.HistoricoVeiculo
 
 	err := database.DB.
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
 		Where("id_veiculo = ?", idVeiculo).
 		Order("data DESC").
 		Find(&historicos).Error
@@ -80,8 +80,8 @@ func GetHistoricosByUsuario(idUsuario uint) ([]models.HistoricoVeiculo, error) {
 	err := database.DB.
 		Joins("JOIN veiculos ON historico_veiculos.id_veiculo = veiculos.id").
 		Preload("Veiculo").
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
 		Where("veiculos.id_usuario = ?", idUsuario).
 		Order("historico_veiculos.data DESC").
 		Find(&historicos).Error
@@ -288,10 +288,10 @@ func RestoreVeiculo(id uint) error {
 }
 
 // CreateHistoricoVeiculo cria um novo registro no histórico do veículo
-func CreateHistoricoVeiculo(idVeiculo uint, idAnuncio uint, descricao string) (*models.HistoricoVeiculo, error) {
+func CreateHistoricoVeiculo(idVeiculo uint, idCupom uint, descricao string) (*models.HistoricoVeiculo, error) {
 	historico := models.HistoricoVeiculo{
 		IDVeiculo: idVeiculo,
-		IDAnuncio: idAnuncio,
+		IDCupom: idCupom,
 		Descricao: descricao,
 		Data:      time.Now(),
 	}
@@ -311,10 +311,10 @@ func GetHistoricoVeiculoByID(id uint) (*models.HistoricoVeiculo, error) {
 
 	err := database.DB.
 		Preload("Veiculo").
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
-		Preload("Anuncio.Produto").
-		Preload("Anuncio.Servico").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
 		Where("id = ?", id).
 		First(&historico).Error
 

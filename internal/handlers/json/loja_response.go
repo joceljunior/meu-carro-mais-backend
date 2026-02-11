@@ -22,10 +22,10 @@ type LojaResponse struct {
 	IsMeuCarroMais     bool                      `json:"is_meu_carro_mais"`
 	Categoria          string                    `json:"categoria"`
 	IDUsuario          uint                      `json:"id_usuario"`
-	IDUsuarioIndicador *uint                     `json:"id_usuario_indicador,omitempty"` // ID do usuário que indicou esta loja (opcional)
-	DataVinculoUsuario *time.Time                `json:"data_vinculo_usuario,omitempty"` // Data do vínculo com o usuário indicador
-	UsuarioIndicador   *UsuarioIndicadorResponse `json:"usuario_indicador,omitempty"`    // Dados do usuário que indicou
-	AnuncioDestaque    *AnuncioDestaqueResponse  `json:"anuncio_destaque,omitempty"`
+	IDUsuarioIndicador *uint                     `json:"id_usuario_indicador,omitempty"`
+	DataVinculoUsuario *time.Time                `json:"data_vinculo_usuario,omitempty"`
+	UsuarioIndicador   *UsuarioIndicadorResponse `json:"usuario_indicador,omitempty"`
+	CupomDestaque      *CupomDestaqueResponse    `json:"cupom_destaque,omitempty"`
 }
 
 type LojasResponse struct {

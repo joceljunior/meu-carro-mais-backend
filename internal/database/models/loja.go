@@ -16,13 +16,12 @@ type Loja struct {
 	DataCadastro    time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`
 	DataExclusao    *time.Time `gorm:"index"`
-	IDUsuario uint
-	
+	IDUsuario       uint
+
 	// Campos para vínculo de indicação (opcional)
-	// Uma loja pode ter sido indicada por um usuário (executivo ou outro usuário)
-	IDUsuarioIndicador  *uint      `gorm:"index"`        // ID do usuário que indicou esta loja (opcional)
-	DataVinculoUsuario  *time.Time `gorm:"type:datetime"` // Data do vínculo com o usuário indicador
-	
-	Anuncios         []Anuncio `gorm:"foreignKey:IDLoja"`
-	UsuarioIndicador *Usuario  `gorm:"foreignKey:IDUsuarioIndicador"` // Referência ao usuário que indicou esta loja
+	IDUsuarioIndicador *uint      `gorm:"index"`
+	DataVinculoUsuario *time.Time `gorm:"type:datetime"`
+
+	Cupons           []Cupom  `gorm:"foreignKey:IDLoja"`
+	UsuarioIndicador *Usuario `gorm:"foreignKey:IDUsuarioIndicador"`
 }

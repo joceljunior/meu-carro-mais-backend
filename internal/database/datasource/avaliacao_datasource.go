@@ -36,7 +36,7 @@ func CreateAvaliacao(req json.AvaliacaoRequest) (*models.Avaliacao, error) {
 		IDLoja:     req.IDLoja,
 		IDServico:  req.IDServico,
 		IDProduto:  req.IDProduto,
-		IDAnuncio:  req.IDAnuncio,
+		IDCupom:  req.IDCupom,
 		Nota:       req.Nota,
 		Comentario: req.Comentario,
 	}
@@ -58,7 +58,7 @@ func GetAvaliacaoByID(id uint) (*models.Avaliacao, error) {
 		Preload("Loja").
 		Preload("Servico").
 		Preload("Produto").
-		Preload("Anuncio").
+		Preload("Cupom").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&avaliacao).Error
 	if err != nil {
@@ -75,7 +75,7 @@ func GetAllAvaliacoes() ([]models.Avaliacao, error) {
 		Preload("Loja").
 		Preload("Servico").
 		Preload("Produto").
-		Preload("Anuncio").
+		Preload("Cupom").
 		Where("data_exclusao IS NULL").
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -93,7 +93,7 @@ func GetAvaliacoesByLojaID(idLoja uint) ([]models.Avaliacao, error) {
 		Preload("Loja").
 		Preload("Servico").
 		Preload("Produto").
-		Preload("Anuncio").
+		Preload("Cupom").
 		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -111,7 +111,7 @@ func GetAvaliacoesByUsuarioID(idUsuario uint) ([]models.Avaliacao, error) {
 		Preload("Loja").
 		Preload("Servico").
 		Preload("Produto").
-		Preload("Anuncio").
+		Preload("Cupom").
 		Where("id_usuario = ? AND data_exclusao IS NULL", idUsuario).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -129,7 +129,7 @@ func GetAvaliacoesByServicoID(idServico uint) ([]models.Avaliacao, error) {
 		Preload("Loja").
 		Preload("Servico").
 		Preload("Produto").
-		Preload("Anuncio").
+		Preload("Cupom").
 		Where("id_servico = ? AND data_exclusao IS NULL", idServico).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -147,7 +147,7 @@ func GetAvaliacoesByProdutoID(idProduto uint) ([]models.Avaliacao, error) {
 		Preload("Loja").
 		Preload("Servico").
 		Preload("Produto").
-		Preload("Anuncio").
+		Preload("Cupom").
 		Where("id_produto = ? AND data_exclusao IS NULL", idProduto).
 		Order("data_avaliacao DESC").
 		Find(&avaliacoes).Error
@@ -165,7 +165,7 @@ func GetAvaliacaoByUsuarioELoja(idUsuario uint, idLoja uint) (*models.Avaliacao,
 		Preload("Loja").
 		Preload("Servico").
 		Preload("Produto").
-		Preload("Anuncio").
+		Preload("Cupom").
 		Where("id_usuario = ? AND id_loja = ? AND data_exclusao IS NULL", idUsuario, idLoja).
 		First(&avaliacao).Error
 	if err != nil {
@@ -248,7 +248,7 @@ func UpdateAvaliacao(id uint, req json.AvaliacaoRequest) (*models.Avaliacao, err
 	avaliacao.IDLoja = req.IDLoja
 	avaliacao.IDServico = req.IDServico
 	avaliacao.IDProduto = req.IDProduto
-	avaliacao.IDAnuncio = req.IDAnuncio
+	avaliacao.IDCupom = req.IDCupom
 	avaliacao.Nota = req.Nota
 	avaliacao.Comentario = req.Comentario
 

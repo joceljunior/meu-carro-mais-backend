@@ -351,39 +351,39 @@ func AprovarResgateHandler(c *gin.Context) {
 	}
 
 	// Se é uma venda de veículo, transfere automaticamente o veículo para o comprador
-	if historico.TipoResgate == "veiculo" && historico.IDVeiculo != nil {
+	if historico.Cupom != nil && historico.Cupom.TipoCupom == "veiculo" && historico.Cupom.IDVeiculo != nil && historico.Cupom.Veiculo != nil {
 		idHistoricoResgate := uint(id)
 		_, errTransf := services.TransferirVeiculoVendaLoja(
-			*historico.IDVeiculo,
-			historico.Veiculo.IDUsuario,  // Dono atual do veículo
-			historico.IDUsuario,          // Comprador (usuário que fez o resgate)
-			&historico.IDLoja,            // Loja que realizou a venda
-			&idHistoricoResgate,          // Histórico de resgate que originou a transferência
+			*historico.Cupom.IDVeiculo,
+			historico.Cupom.Veiculo.IDUsuario, // Dono atual do veículo
+			historico.IDUsuario,                // Comprador (usuário que fez o resgate)
+			historico.Cupom.IDLoja,             // Loja que realizou a venda
+			&idHistoricoResgate,                // Histórico de resgate que originou a transferência
 		)
 		if errTransf != nil {
 			// Log do erro mas não falha a aprovação (o status já foi atualizado)
 			LogAction(c, "erro", "transferencia_veiculo", nil,
 				"Erro ao transferir veículo após aprovação de venda: "+errTransf.Error(), nil, nil)
 		} else {
-			LogAction(c, "transferir", "veiculo", historico.IDVeiculo,
+			LogAction(c, "transferir", "veiculo", historico.Cupom.IDVeiculo,
 				"Veículo transferido automaticamente por venda em loja", nil, nil)
 		}
 	}
 
-	// Se o resgate tem um veículo do usuário vinculado e um anúncio, cria o histórico do veículo
-	if historico.IDVeiculoUsuario != nil && historico.IDAnuncio != nil {
-		// Monta a descrição do histórico baseado no tipo de resgate
+	// Se o cupom tem um veículo vinculado, cria o histórico do veículo
+	if historico.Cupom != nil && historico.IDCupom != nil && historico.Cupom.IDVeiculo != nil {
+		// Monta a descrição do histórico baseado no tipo de cupom
 		var descricao string
-		switch historico.TipoResgate {
+		switch historico.Cupom.TipoCupom {
 		case "produto":
-			if historico.Produto != nil {
-				descricao = "Produto resgatado: " + historico.Produto.Nome
+			if historico.Cupom.Produto != nil {
+				descricao = "Produto resgatado: " + historico.Cupom.Produto.Nome
 			} else {
 				descricao = "Produto resgatado"
 			}
 		case "servico":
-			if historico.Servico != nil {
-				descricao = "Serviço resgatado: " + historico.Servico.Titulo
+			if historico.Cupom.Servico != nil {
+				descricao = "Serviço resgatado: " + historico.Cupom.Servico.Titulo
 			} else {
 				descricao = "Serviço resgatado"
 			}
@@ -393,8 +393,8 @@ func AprovarResgateHandler(c *gin.Context) {
 
 		// Cria o registro no histórico do veículo
 		_, errHist := services.CreateHistoricoVeiculoFromResgate(
-			*historico.IDVeiculoUsuario,
-			*historico.IDAnuncio,
+			*historico.Cupom.IDVeiculo,
+			*historico.IDCupom,
 			descricao,
 		)
 		if errHist != nil {
@@ -574,28 +574,28 @@ func GetHistoricosResgateClienteByUsuarioIDHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// GetHistoricosResgateByAnuncioIDHandler godoc
-// @Summary      Lista histórico de resgate de um anúncio específico
-// @Description  Retorna todos os históricos de resgate de um anúncio específico (utilização do anúncio)
+// GetHistoricosResgateByCupomIDHandler godoc
+// @Summary      Lista histórico de resgate de um cupom específico
+// @Description  Retorna todos os históricos de resgate de um cupom específico (utilização do cupom)
 // @Tags         Histórico de Resgates
 // @Accept       json
 // @Produce      json
-// @Param        id path int true "ID do anúncio"
+// @Param        id path int true "ID do cupom"
 // @Success      200  {object}  json.HistoricosResgateResponse
-// @Failure      400  {object}  map[string]interface{} "ID de anúncio inválido"
+// @Failure      400  {object}  map[string]interface{} "ID de cupom inválido"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
-// @Router       /historicos-resgate/anuncio/{id} [get]
-func GetHistoricosResgateByAnuncioIDHandler(c *gin.Context) {
-	idAnuncioStr := c.Param("id")
-	idAnuncio, err := strconv.ParseUint(idAnuncioStr, 10, 32)
+// @Router       /historicos-resgate/cupom/{id} [get]
+func GetHistoricosResgateByCupomIDHandler(c *gin.Context) {
+	idCupomStr := c.Param("id")
+	idCupom, err := strconv.ParseUint(idCupomStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "ID de anúncio inválido",
+			"error": "ID de cupom inválido",
 		})
 		return
 	}
 
-	resp, err := services.GetHistoricosResgateByAnuncioID(uint(idAnuncio))
+	resp, err := services.GetHistoricosResgateByCupomID(uint(idCupom))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

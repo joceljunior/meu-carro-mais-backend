@@ -128,7 +128,7 @@ func GetLogsByUsuarioIDHandler(c *gin.Context) {
 // @Tags         Logs
 // @Accept       json
 // @Produce      json
-// @Param        entidade path string true "Nome da entidade (anuncio, produto, servico, etc.)"
+// @Param        entidade path string true "Nome da entidade (cupom, produto, servico, etc.)"
 // @Param        id path int true "ID da entidade"
 // @Success      200  {array}  json.LogResponse
 // @Failure      400  {object}  map[string]interface{} "Parâmetros inválidos"

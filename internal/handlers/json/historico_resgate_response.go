@@ -3,32 +3,16 @@ package json
 import "time"
 
 type HistoricoResgateResponse struct {
-	ID               uint      `json:"id"`
-	IDUsuario        uint      `json:"id_usuario"`
-	IDAnuncio        *uint     `json:"id_anuncio,omitempty"` // ID do anúncio resgatado
-	IDProduto        *uint     `json:"id_produto,omitempty"`
-	IDServico        *uint     `json:"id_servico,omitempty"`
-	IDVeiculo        *uint     `json:"id_veiculo,omitempty"`
-	IDVeiculoUsuario *uint     `json:"id_veiculo_usuario,omitempty"` // Veículo do usuário vinculado ao resgate
-	IDLoja           uint      `json:"id_loja"`
-	TipoResgate      string    `json:"tipo_resgate"`
-	Quantidade       int       `json:"quantidade"`
-	ValorUnitario    float64   `json:"valor_unitario"`
-	ValorOriginal       float64   `json:"valor_original"`
-	DescontoAplicado    float64   `json:"desconto_aplicado"`
-	PorcentagemDesconto float64   `json:"porcentagem_desconto"`
-	Valor               float64   `json:"valor"`
-	Status           string    `json:"status"`
-	DataResgate      time.Time `json:"data_resgate"`
-	DataAtualizacao  time.Time `json:"data_atualizacao"`
+	ID              uint          `json:"id"`
+	IDCupom         *uint         `json:"id_cupom,omitempty"`
+	IDUsuario       uint          `json:"id_usuario"`
+	DataResgate     time.Time     `json:"data_resgate"`
+	DataAtualizacao time.Time     `json:"data_atualizacao"`
+	Status          string        `json:"status"`
 
 	// Dados relacionados
-	Usuario        UserResponse     `json:"usuario,omitempty"`
-	Produto        *ProdutoResponse `json:"produto,omitempty"`
-	Servico        *ServicoResponse `json:"servico,omitempty"`
-	Veiculo        *VeiculoResponse `json:"veiculo,omitempty"`
-	VeiculoUsuario *VeiculoResponse `json:"veiculo_usuario,omitempty"` // Veículo do usuário vinculado
-	Loja           LojaResponse     `json:"loja,omitempty"`
+	Cupom   *CupomResponse `json:"cupom,omitempty"`
+	Usuario UserResponse   `json:"usuario,omitempty"`
 }
 
 type HistoricosResgateResponse struct {

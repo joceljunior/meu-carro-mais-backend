@@ -51,8 +51,8 @@ func (s *Seeder) Run() error {
 		return fmt.Errorf("erro ao vincular usuarios às lojas: %v", err)
 	}
 
-	if err := s.seedAnuncio(); err != nil {
-		return fmt.Errorf("erro ao executar seed anuncio: %v", err)
+	if err := s.seedCupom(); err != nil {
+		return fmt.Errorf("erro ao executar seed cupom: %v", err)
 	}
 
 	if err := s.seedServico(); err != nil {
@@ -63,8 +63,8 @@ func (s *Seeder) Run() error {
 		return fmt.Errorf("erro ao executar seed carteira: %v", err)
 	}
 
-	if err := s.seedUsuarioComAnuncioDestaque(); err != nil {
-		return fmt.Errorf("erro ao executar seed usuario com anuncio destaque: %v", err)
+	if err := s.seedUsuarioComCupomDestaque(); err != nil {
+		return fmt.Errorf("erro ao executar seed usuario com cupom destaque: %v", err)
 	}
 
 	if err := s.seedProdutos(); err != nil {
@@ -421,9 +421,9 @@ func (s *Seeder) vincularUsuariosLojas() error {
 	return nil
 }
 
-// seedAnuncio popula a tabela anuncio
-func (s *Seeder) seedAnuncio() error {
-	log.Println("📝 Populando tabela anuncio...")
+// seedCupom popula a tabela cupom
+func (s *Seeder) seedCupom() error {
+	log.Println("📝 Populando tabela cupom...")
 
 	// Busca primeira loja
 	var loja models.Loja
@@ -431,69 +431,69 @@ func (s *Seeder) seedAnuncio() error {
 		return fmt.Errorf("erro ao buscar loja: %v", err)
 	}
 
-	anuncios := []models.Anuncio{
+	cupons := []models.Cupom{
 		{
-			Titulo:      "Honda Civic 2020",
-			Descricao:   "Honda Civic EXL 2.0, automático, completo, único dono",
-			Preco:       85000.00,
-			Imagem:      "https://via.placeholder.com/400x300",
-			Destaque:    true,
-			Categoria:   "Carros",
-			TipoAnuncio: "veiculo",
-			IDLoja:      &loja.ID,
+			Titulo:    "Honda Civic 2020",
+			Descricao: "Honda Civic EXL 2.0, automático, completo, único dono",
+			Preco:     85000.00,
+			Imagem:    "https://via.placeholder.com/400x300",
+			Destaque:  true,
+			Categoria: "Carros",
+			TipoCupom: "veiculo",
+			IDLoja:    &loja.ID,
 		},
 		{
-			Titulo:      "Toyota Corolla 2019",
-			Descricao:   "Toyota Corolla XEi 2.0, automático, revisões em dia",
-			Preco:       75000.00,
-			Imagem:      "https://via.placeholder.com/400x300",
-			Destaque:    false,
-			Categoria:   "Carros",
-			TipoAnuncio: "veiculo",
-			IDLoja:      &loja.ID,
+			Titulo:    "Toyota Corolla 2019",
+			Descricao: "Toyota Corolla XEi 2.0, automático, revisões em dia",
+			Preco:     75000.00,
+			Imagem:    "https://via.placeholder.com/400x300",
+			Destaque:  false,
+			Categoria: "Carros",
+			TipoCupom: "veiculo",
+			IDLoja:    &loja.ID,
 		},
 		{
-			Titulo:      "Volkswagen Golf GTI",
-			Descricao:   "Golf GTI 2.0 TSI, manual, esportivo, baixa quilometragem",
-			Preco:       95000.00,
-			Imagem:      "https://via.placeholder.com/400x300",
-			Destaque:    true,
-			Categoria:   "Carros",
-			TipoAnuncio: "veiculo",
-			IDLoja:      &loja.ID,
+			Titulo:    "Volkswagen Golf GTI",
+			Descricao: "Golf GTI 2.0 TSI, manual, esportivo, baixa quilometragem",
+			Preco:     95000.00,
+			Imagem:    "https://via.placeholder.com/400x300",
+			Destaque:  true,
+			Categoria: "Carros",
+			TipoCupom: "veiculo",
+			IDLoja:    &loja.ID,
 		},
 		{
-			Titulo:      "Honda CB 500",
-			Descricao:   "Honda CB 500F 2021, baixa quilometragem, revisões em dia",
-			Preco:       32000.00,
-			Imagem:      "https://via.placeholder.com/400x300",
-			Destaque:    false,
-			Categoria:   "Motos",
-			TipoAnuncio: "veiculo",
-			IDLoja:      &loja.ID,
+			Titulo:    "Honda CB 500",
+			Descricao: "Honda CB 500F 2021, baixa quilometragem, revisões em dia",
+			Preco:     32000.00,
+			Imagem:    "https://via.placeholder.com/400x300",
+			Destaque:  false,
+			Categoria: "Motos",
+			TipoCupom: "veiculo",
+			IDLoja:    &loja.ID,
 		},
 		{
-			Titulo:      "Kit Pastilhas de Freio Premium",
-			Descricao:   "Kit completo de pastilhas de freio cerâmicas para veículos de passeio",
-			Preco:       250.00,
-			Imagem:      "https://via.placeholder.com/400x300",
-			Destaque:    false,
-			Categoria:   "Peças",
-			TipoAnuncio: "produto",
-			IDLoja:      &loja.ID,
+			Titulo:    "Kit Pastilhas de Freio Premium",
+			Descricao: "Kit completo de pastilhas de freio cerâmicas para veículos de passeio",
+			Preco:     250.00,
+			Imagem:    "https://via.placeholder.com/400x300",
+			Destaque:  false,
+			Categoria: "Peças",
+			TipoCupom: "produto",
+			IDLoja:    &loja.ID,
 		},
 	}
 
-	for _, anuncio := range anuncios {
-		var existing models.Anuncio
-		if err := s.db.Where("titulo = ? AND id_loja = ?", anuncio.Titulo, anuncio.IDLoja).First(&existing).Error; err != nil {
+	for _, cupom := range cupons {
+		var existing models.Cupom
+		if err := s.db.Where("titulo = ? AND id_loja = ?", cupom.Titulo, cupom.IDLoja).First(&existing).Error; err != nil {
 			// Se não existe, cria
-			if err := s.db.Create(&anuncio).Error; err != nil {
-				return fmt.Errorf("erro ao criar anuncio %s: %v", anuncio.Titulo, err)
+			if err := s.db.Create(&cupom).Error; err != nil {
+				return fmt.Errorf("erro ao criar cupom %s: %v", cupom.Titulo, err)
 			}
-			log.Printf("✅ Anuncio criado: %s", anuncio.Titulo)
+			log.Printf("✅ Cupom criado: %s", cupom.Titulo)
 		} else {
-			log.Printf("⏭️ Anuncio já existe: %s", anuncio.Titulo)
+			log.Printf("⏭️ Cupom já existe: %s", cupom.Titulo)
 		}
 	}
 
@@ -614,9 +614,9 @@ func (s *Seeder) seedCarteira() error {
 	return nil
 }
 
-// seedUsuarioComAnuncioDestaque cria um usuário específico com um anúncio destaque vinculado
-func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
-	log.Println("📝 Criando usuário com anúncio destaque...")
+// seedUsuarioComCupomDestaque cria um usuário específico com um cupom destaque vinculado
+func (s *Seeder) seedUsuarioComCupomDestaque() error {
+	log.Println("📝 Criando usuário com cupom destaque...")
 
 	// Busca o plano premium (ID = 3)
 	var planoPremium models.TipoPlano
@@ -624,14 +624,14 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		return fmt.Errorf("erro ao buscar plano premium: %v", err)
 	}
 
-	// Busca uma loja para vincular o anúncio
+	// Busca uma loja para vincular o cupom
 	var loja models.Loja
 	if err := s.db.First(&loja).Error; err != nil {
 		return fmt.Errorf("erro ao buscar loja: %v", err)
 	}
 
-	// Cria o usuário com anúncio destaque
-	usuarioComAnuncio := models.Usuario{
+	// Cria o usuário com cupom destaque
+	usuarioComCupom := models.Usuario{
 		Nome:     "Ana Silva Premium",
 		Email:    "ana.premium@email.com",
 		Senha:    "senha123",
@@ -645,44 +645,44 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 
 	// Verifica se o usuário já existe
 	var existingUsuario models.Usuario
-	if err := s.db.Where("email = ?", usuarioComAnuncio.Email).First(&existingUsuario).Error; err != nil {
+	if err := s.db.Where("email = ?", usuarioComCupom.Email).First(&existingUsuario).Error; err != nil {
 		// Se não existe, cria o usuário
-		if err := s.db.Create(&usuarioComAnuncio).Error; err != nil {
-			return fmt.Errorf("erro ao criar usuario %s: %v", usuarioComAnuncio.Email, err)
+		if err := s.db.Create(&usuarioComCupom).Error; err != nil {
+			return fmt.Errorf("erro ao criar usuario %s: %v", usuarioComCupom.Email, err)
 		}
-		log.Printf("✅ Usuario criado: %s (%s)", usuarioComAnuncio.Nome, usuarioComAnuncio.Email)
+		log.Printf("✅ Usuario criado: %s (%s)", usuarioComCupom.Nome, usuarioComCupom.Email)
 	} else {
-		usuarioComAnuncio = existingUsuario
-		log.Printf("⏭️ Usuario já existe: %s (%s)", usuarioComAnuncio.Nome, usuarioComAnuncio.Email)
+		usuarioComCupom = existingUsuario
+		log.Printf("⏭️ Usuario já existe: %s (%s)", usuarioComCupom.Nome, usuarioComCupom.Email)
 	}
 
-	// Cria o anúncio destaque vinculado ao usuário
-	anuncioDestaque := models.Anuncio{
-		Titulo:      "BMW X5 2023 - Anúncio Premium",
-		Descricao:   "BMW X5 xDrive40i 3.0 Turbo, automático, teto solar, bancos de couro, sistema de som premium, único dono, revisões na concessionária",
-		Preco:       450000.00,
-		Imagem:      "https://via.placeholder.com/400x300?text=BMW+X5+2023",
-		Destaque:    true,
-		Categoria:   "Carros",
-		IDLoja:      &loja.ID,
-		TipoAnuncio: "veiculo",
+	// Cria o cupom destaque vinculado ao usuário
+	cupomDestaque := models.Cupom{
+		Titulo:    "BMW X5 2023 - Cupom Premium",
+		Descricao: "BMW X5 xDrive40i 3.0 Turbo, automático, teto solar, bancos de couro, sistema de som premium, único dono, revisões na concessionária",
+		Preco:     450000.00,
+		Imagem:    "https://via.placeholder.com/400x300?text=BMW+X5+2023",
+		Destaque:  true,
+		Categoria: "Carros",
+		IDLoja:    &loja.ID,
+		TipoCupom: "veiculo",
 	}
 
-	// Verifica se o anúncio já existe
-	var existingAnuncio models.Anuncio
-	if err := s.db.Where("titulo = ? AND id_loja = ?", anuncioDestaque.Titulo, anuncioDestaque.IDLoja).First(&existingAnuncio).Error; err != nil {
-		// Se não existe, cria o anúncio
-		if err := s.db.Create(&anuncioDestaque).Error; err != nil {
-			return fmt.Errorf("erro ao criar anuncio %s: %v", anuncioDestaque.Titulo, err)
+	// Verifica se o cupom já existe
+	var existingCupom models.Cupom
+	if err := s.db.Where("titulo = ? AND id_loja = ?", cupomDestaque.Titulo, cupomDestaque.IDLoja).First(&existingCupom).Error; err != nil {
+		// Se não existe, cria o cupom
+		if err := s.db.Create(&cupomDestaque).Error; err != nil {
+			return fmt.Errorf("erro ao criar cupom %s: %v", cupomDestaque.Titulo, err)
 		}
-		log.Printf("✅ Anuncio destaque criado: %s", anuncioDestaque.Titulo)
+		log.Printf("✅ Cupom destaque criado: %s", cupomDestaque.Titulo)
 	} else {
-		log.Printf("⏭️ Anuncio já existe: %s", anuncioDestaque.Titulo)
+		log.Printf("⏭️ Cupom já existe: %s", cupomDestaque.Titulo)
 	}
 
 	// Cria uma carteira para o usuário com saldo premium (moedas do app)
 	carteira := models.Carteira{
-		UsuarioID: usuarioComAnuncio.ID,
+		UsuarioID: usuarioComCupom.ID,
 		Saldo:     5000, // Saldo maior para usuário premium (moedas do app)
 	}
 
@@ -692,13 +692,13 @@ func (s *Seeder) seedUsuarioComAnuncioDestaque() error {
 		if err := s.db.Create(&carteira).Error; err != nil {
 			return fmt.Errorf("erro ao criar carteira para usuario %d: %v", carteira.UsuarioID, err)
 		}
-		log.Printf("✅ Carteira premium criada para usuario %s (ID: %d) com saldo %d moedas", usuarioComAnuncio.Nome, carteira.UsuarioID, carteira.Saldo)
+		log.Printf("✅ Carteira premium criada para usuario %s (ID: %d) com saldo %d moedas", usuarioComCupom.Nome, carteira.UsuarioID, carteira.Saldo)
 	} else {
-		log.Printf("⏭️ Carteira já existe para usuario %s (ID: %d)", usuarioComAnuncio.Nome, carteira.UsuarioID)
+		log.Printf("⏭️ Carteira já existe para usuario %s (ID: %d)", usuarioComCupom.Nome, carteira.UsuarioID)
 	}
 
-	log.Printf("🎯 Cenário criado: Usuário %s (ID: %d) com anúncio destaque '%s' (ID: %d)",
-		usuarioComAnuncio.Nome, usuarioComAnuncio.ID, anuncioDestaque.Titulo, anuncioDestaque.ID)
+	log.Printf("🎯 Cenário criado: Usuário %s (ID: %d) com cupom destaque '%s' (ID: %d)",
+		usuarioComCupom.Nome, usuarioComCupom.ID, cupomDestaque.Titulo, cupomDestaque.ID)
 
 	return nil
 }
@@ -1200,45 +1200,37 @@ func (s *Seeder) seedHistoricoResgates() error {
 		return nil
 	}
 
-	// Busca algumas lojas para os resgates
-	var lojas []models.Loja
-	if err := s.db.Limit(2).Find(&lojas).Error; err != nil {
-		return fmt.Errorf("erro ao buscar lojas: %v", err)
+	// Busca alguns cupons para os resgates
+	var cupons []models.Cupom
+	if err := s.db.Limit(4).Find(&cupons).Error; err != nil {
+		return fmt.Errorf("erro ao buscar cupons: %v", err)
 	}
 
-	if len(lojas) == 0 {
-		log.Println("⚠️ Nenhuma loja encontrada, pulando seed de histórico de resgates")
+	if len(cupons) == 0 {
+		log.Println("⚠️ Nenhum cupom encontrado, pulando seed de histórico de resgates")
 		return nil
 	}
 
 	resgates := []models.HistoricoResgate{
 		{
-			Valor:       100.00,
-			TipoResgate: "produto",
-			Status:      "confirmado",
-			IDUsuario:   usuarios[0].ID,
-			IDLoja:      lojas[0].ID,
+			IDCupom:   &cupons[0].ID,
+			Status:    "aprovado",
+			IDUsuario: usuarios[0].ID,
 		},
 		{
-			Valor:       250.00,
-			TipoResgate: "servico",
-			Status:      "pendente",
-			IDUsuario:   usuarios[1].ID,
-			IDLoja:      lojas[1].ID,
+			IDCupom:   &cupons[1].ID,
+			Status:    "pendente",
+			IDUsuario: usuarios[1].ID,
 		},
 		{
-			Valor:       50.00,
-			TipoResgate: "produto",
-			Status:      "confirmado",
-			IDUsuario:   usuarios[2].ID,
-			IDLoja:      lojas[0].ID,
+			IDCupom:   &cupons[2].ID,
+			Status:    "aprovado",
+			IDUsuario: usuarios[2].ID,
 		},
 		{
-			Valor:       300.00,
-			TipoResgate: "veiculo",
-			Status:      "pendente",
-			IDUsuario:   usuarios[0].ID,
-			IDLoja:      lojas[1].ID,
+			IDCupom:   &cupons[3].ID,
+			Status:    "pendente",
+			IDUsuario: usuarios[0].ID,
 		},
 	}
 
@@ -1246,7 +1238,7 @@ func (s *Seeder) seedHistoricoResgates() error {
 		if err := s.db.Create(&resgate).Error; err != nil {
 			return fmt.Errorf("erro ao criar historico de resgate: %v", err)
 		}
-		log.Printf("✅ Histórico de resgate criado: R$ %.2f - %s", resgate.Valor, resgate.Status)
+		log.Printf("✅ Histórico de resgate criado: cupom ID %d - %s", *resgate.IDCupom, resgate.Status)
 	}
 
 	return nil

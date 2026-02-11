@@ -22,565 +22,6 @@
     "host": "meu-carro-mais-backend-production.up.railway.app",
     "basePath": "/",
     "paths": {
-        "/anuncios": {
-            "get": {
-                "description": "Retorna uma lista com todos os anúncios ativos, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Lista todos os anúncios",
-                "responses": {
-                    "200": {
-                        "description": "Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/json.AnuncioResponse"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Cria um novo anúncio com todos os dados fornecidos, incluindo porcentagem de desconto e preço com desconto",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Criação do anúncio completo",
-                "parameters": [
-                    {
-                        "description": "Dados completos do anúncio (inclui porcentagem_desconto e preco_com_desconto)",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/json.AnuncioRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Anúncio criado com sucesso (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnuncioResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/loja/{loja_id}": {
-            "get": {
-                "description": "Retorna todos os anúncios ativos de uma loja específica, ordenados por destaque e data, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Lista anúncios de uma loja",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID da loja",
-                        "name": "loja_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnunciosResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de loja inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/produtos": {
-            "get": {
-                "description": "Retorna anúncios de produtos ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Lista anúncios de produtos por proximidade",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "description": "Latitude do usuário (opcional)",
-                        "name": "latitude",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "Longitude do usuário (opcional)",
-                        "name": "longitude",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnunciosProdutoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Parâmetros inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/servicos": {
-            "get": {
-                "description": "Retorna anúncios de serviços ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Lista anúncios de serviços por proximidade",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "description": "Latitude do usuário (opcional)",
-                        "name": "latitude",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "Longitude do usuário (opcional)",
-                        "name": "longitude",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnunciosServicoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Parâmetros inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/veiculos": {
-            "get": {
-                "description": "Retorna anúncios de veículos ordenados por proximidade da loja. Se latitude e longitude forem fornecidos, ordena por distância.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Lista anúncios de veículos por proximidade",
-                "parameters": [
-                    {
-                        "type": "number",
-                        "description": "Latitude do usuário (opcional)",
-                        "name": "latitude",
-                        "in": "query"
-                    },
-                    {
-                        "type": "number",
-                        "description": "Longitude do usuário (opcional)",
-                        "name": "longitude",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnunciosVeiculoResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Parâmetros inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/{id}": {
-            "get": {
-                "description": "Retorna os dados de um anúncio específico pelo ID, incluindo preço original, preço com desconto, porcentagem de desconto e avaliação da loja",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Busca anúncio por ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do anúncio",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Anúncio encontrado (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnuncioResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Anúncio não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Atualiza os dados de um anúncio existente, incluindo porcentagem de desconto e preço com desconto",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Atualiza anúncio",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do anúncio",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Dados atualizados do anúncio (inclui porcentagem_desconto e preco_com_desconto)",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/json.AnuncioRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Anúncio atualizado com sucesso (inclui preco_original, preco_com_desconto, porcentagem_desconto e avaliacao)",
-                        "schema": {
-                            "$ref": "#/definitions/json.AnuncioResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Anúncio não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Realiza soft delete do anúncio, marcando como excluído sem remover do banco",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Exclui anúncio (soft delete)",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do anúncio",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Anúncio excluído com sucesso",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "ID inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Anúncio não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/{id}/resgatar": {
-            "post": {
-                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um anúncio. Para anúncios de produto ou serviço, é obrigatório informar o id_veiculo_usuario para vincular o resgate ao veículo do usuário. Quando o resgate for aprovado pela loja, o histórico será automaticamente registrado no veículo.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Resgata um anúncio",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do anúncio",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Dados do resgate (ID do usuário e veículo do usuário para produto/serviço)",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/json.ResgatarAnuncioRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Histórico de resgate criado com sucesso",
-                        "schema": {
-                            "$ref": "#/definitions/json.HistoricoResgateResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Dados inválidos ou veículo do usuário não informado para produto/serviço",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Anúncio não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/anuncios/{id}/restore": {
-            "post": {
-                "description": "Restaura um anúncio que foi soft deleted",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Anúncios"
-                ],
-                "summary": "Restaura anúncio excluído",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do anúncio",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Anúncio restaurado com sucesso",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "ID inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Anúncio não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/avaliacoes": {
             "get": {
                 "description": "Retorna todas as avaliações ativas do sistema",
@@ -1458,6 +899,565 @@
                 }
             }
         },
+        "/cupons": {
+            "get": {
+                "description": "Retorna uma lista com todos os cupons ativos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Lista todos os cupons",
+                "responses": {
+                    "200": {
+                        "description": "Lista de cupons",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/json.CupomResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo cupom com todos os dados fornecidos, incluindo porcentagem de desconto e preço com desconto",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Criação do cupom completo",
+                "parameters": [
+                    {
+                        "description": "Dados completos do cupom",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CupomRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Cupom criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CupomResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/cupons/loja/{loja_id}": {
+            "get": {
+                "description": "Retorna todos os cupons ativos de uma loja específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Lista cupons de uma loja",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "loja_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de cupons",
+                        "schema": {
+                            "$ref": "#/definitions/json.CuponsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de loja inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/cupons/produtos": {
+            "get": {
+                "description": "Retorna cupons de produtos ordenados por proximidade da loja",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Lista cupons de produtos por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário (opcional)",
+                        "name": "latitude",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário (opcional)",
+                        "name": "longitude",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CuponsProdutoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/cupons/servicos": {
+            "get": {
+                "description": "Retorna cupons de serviços ordenados por proximidade da loja",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Lista cupons de serviços por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário (opcional)",
+                        "name": "latitude",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário (opcional)",
+                        "name": "longitude",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CuponsServicoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/cupons/veiculos": {
+            "get": {
+                "description": "Retorna cupons de veículos ordenados por proximidade da loja",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Lista cupons de veículos por proximidade",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Latitude do usuário (opcional)",
+                        "name": "latitude",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Longitude do usuário (opcional)",
+                        "name": "longitude",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.CuponsVeiculoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/cupons/{id}": {
+            "get": {
+                "description": "Retorna os dados de um cupom específico pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Busca cupom por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do cupom",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cupom encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/json.CupomResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Cupom não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Atualiza os dados de um cupom existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Atualiza cupom",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do cupom",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do cupom",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.CupomRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cupom atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.CupomResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Cupom não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Realiza soft delete do cupom, marcando como excluído sem remover do banco",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Exclui cupom (soft delete)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do cupom",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cupom excluído com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Cupom não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/cupons/{id}/resgatar": {
+            "post": {
+                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um cupom",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Resgata um cupom",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do cupom",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados do resgate",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.ResgatarCupomRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Histórico de resgate criado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Cupom não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/cupons/{id}/restore": {
+            "post": {
+                "description": "Restaura um cupom que foi soft deleted",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cupons"
+                ],
+                "summary": "Restaura cupom excluído",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do cupom",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cupom restaurado com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Cupom não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/descontos": {
             "get": {
                 "description": "Retorna todos os descontos do sistema",
@@ -1825,52 +1825,6 @@
                 }
             }
         },
-        "/historicos-resgate/anuncio/{id}": {
-            "get": {
-                "description": "Retorna todos os históricos de resgate de um anúncio específico (utilização do anúncio)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Histórico de Resgates"
-                ],
-                "summary": "Lista histórico de resgate de um anúncio específico",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do anúncio",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/json.HistoricosResgateResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "ID de anúncio inválido",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/historicos-resgate/cliente/{id}": {
             "get": {
                 "description": "Retorna histórico de resgate do cliente com campos simplificados (id, nome loja, imagem loja, data resgate, status, valor)",
@@ -1902,6 +1856,52 @@
                     },
                     "400": {
                         "description": "ID de usuário inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/cupom/{id}": {
+            "get": {
+                "description": "Retorna todos os históricos de resgate de um cupom específico (utilização do cupom)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Lista histórico de resgate de um cupom específico",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do cupom",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricosResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID de cupom inválido",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -2563,7 +2563,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Nome da entidade (anuncio, produto, servico, etc.)",
+                        "description": "Nome da entidade (cupom, produto, servico, etc.)",
                         "name": "entidade",
                         "in": "path",
                         "required": true
@@ -5000,9 +5000,9 @@
                 }
             }
         },
-        "/registro-interesse/anuncio/{anuncio_id}": {
+        "/registro-interesse/cupom/{cupom_id}": {
             "get": {
-                "description": "Retorna todos os registros de interesse de um anúncio específico",
+                "description": "Retorna todos os registros de interesse de um cupom específico",
                 "consumes": [
                     "application/json"
                 ],
@@ -5012,19 +5012,19 @@
                 "tags": [
                     "Registro de Interesse"
                 ],
-                "summary": "Lista registros de interesse por anúncio",
+                "summary": "Lista registros de interesse por cupom",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID do anúncio",
-                        "name": "anuncio_id",
+                        "description": "ID do cupom",
+                        "name": "cupom_id",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Lista de registros de interesse do anúncio",
+                        "description": "Lista de registros de interesse do cupom",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -8234,424 +8234,6 @@
                 }
             }
         },
-        "json.AnuncioDestaqueResponse": {
-            "type": "object",
-            "properties": {
-                "descricao": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "preco": {
-                    "type": "number"
-                },
-                "tipo_anuncio": {
-                    "type": "string"
-                },
-                "titulo": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.AnuncioProdutoResponse": {
-            "type": "object",
-            "properties": {
-                "categoria": {
-                    "type": "string"
-                },
-                "descricao": {
-                    "type": "string"
-                },
-                "distancia": {
-                    "description": "Distância em km da loja, se fornecida localização",
-                    "type": "number"
-                },
-                "endereco_loja": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "is_meu_carro_mais": {
-                    "type": "boolean"
-                },
-                "moedas_utiliza": {
-                    "description": "Moedas da oferta Auto Mais, se houver",
-                    "type": "integer"
-                },
-                "nome_loja": {
-                    "type": "string"
-                },
-                "nome_produto": {
-                    "type": "string"
-                },
-                "porcentagem_desconto": {
-                    "type": "number"
-                },
-                "preco_com_desconto": {
-                    "type": "number"
-                },
-                "preco_original": {
-                    "type": "number"
-                },
-                "rate": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.AnuncioRequest": {
-            "type": "object",
-            "required": [
-                "categoria",
-                "descricao",
-                "preco",
-                "tipo_anuncio",
-                "titulo"
-            ],
-            "properties": {
-                "categoria": {
-                    "type": "string"
-                },
-                "descricao": {
-                    "type": "string"
-                },
-                "destaque": {
-                    "type": "boolean"
-                },
-                "id_loja": {
-                    "description": "Obrigatório para produto/serviço, opcional para veículo do usuário",
-                    "type": "integer"
-                },
-                "id_oferta_auto_mais": {
-                    "description": "Oferta Auto Mais para pagamento com moedas do app",
-                    "type": "integer"
-                },
-                "id_produto": {
-                    "type": "integer"
-                },
-                "id_servico": {
-                    "type": "integer"
-                },
-                "id_veiculo": {
-                    "type": "integer"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "porcentagem_desconto": {
-                    "description": "Porcentagem de desconto (0-100)",
-                    "type": "number",
-                    "maximum": 100,
-                    "minimum": 0
-                },
-                "preco": {
-                    "type": "number",
-                    "minimum": 0
-                },
-                "preco_com_desconto": {
-                    "description": "Preço com desconto aplicado",
-                    "type": "number",
-                    "minimum": 0
-                },
-                "tipo_anuncio": {
-                    "type": "string",
-                    "enum": [
-                        "produto",
-                        "servico",
-                        "veiculo"
-                    ]
-                },
-                "titulo": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.AnuncioResponse": {
-            "type": "object",
-            "properties": {
-                "avaliacao": {
-                    "description": "Média de avaliações da loja",
-                    "type": "number"
-                },
-                "categoria": {
-                    "type": "string"
-                },
-                "descricao": {
-                    "type": "string"
-                },
-                "destaque": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "id_loja": {
-                    "type": "integer"
-                },
-                "id_oferta_auto_mais": {
-                    "type": "integer"
-                },
-                "id_produto": {
-                    "type": "integer"
-                },
-                "id_servico": {
-                    "type": "integer"
-                },
-                "id_veiculo": {
-                    "type": "integer"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "loja": {
-                    "$ref": "#/definitions/json.LojaResponse"
-                },
-                "oferta_auto_mais": {
-                    "description": "Oferta Auto Mais para pagamento com moedas",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/json.OfertaAutoMaisResponse"
-                        }
-                    ]
-                },
-                "porcentagem_desconto": {
-                    "description": "Porcentagem de desconto",
-                    "type": "number"
-                },
-                "preco": {
-                    "type": "number"
-                },
-                "preco_com_desconto": {
-                    "description": "Preço com desconto aplicado",
-                    "type": "number"
-                },
-                "preco_original": {
-                    "description": "Preço original do produto/serviço/veículo",
-                    "type": "number"
-                },
-                "produto": {
-                    "$ref": "#/definitions/json.ProdutoResponse"
-                },
-                "servico": {
-                    "$ref": "#/definitions/json.ServicoResponse"
-                },
-                "tipo_anuncio": {
-                    "type": "string"
-                },
-                "titulo": {
-                    "type": "string"
-                },
-                "veiculo": {
-                    "$ref": "#/definitions/json.VeiculoResponse"
-                }
-            }
-        },
-        "json.AnuncioServicoResponse": {
-            "type": "object",
-            "properties": {
-                "categoria": {
-                    "type": "string"
-                },
-                "descricao": {
-                    "type": "string"
-                },
-                "distancia": {
-                    "description": "Distância em km da loja, se fornecida localização",
-                    "type": "number"
-                },
-                "endereco_loja": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "is_meu_carro_mais": {
-                    "type": "boolean"
-                },
-                "moedas_utiliza": {
-                    "type": "integer"
-                },
-                "nome_loja": {
-                    "type": "string"
-                },
-                "nome_servico": {
-                    "type": "string"
-                },
-                "porcentagem_desconto": {
-                    "type": "number"
-                },
-                "preco_com_desconto": {
-                    "type": "number"
-                },
-                "preco_original": {
-                    "type": "number"
-                },
-                "rate": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.AnuncioVeiculoResponse": {
-            "type": "object",
-            "properties": {
-                "ano_fabricacao": {
-                    "type": "integer"
-                },
-                "ano_modelo": {
-                    "type": "integer"
-                },
-                "chassi": {
-                    "type": "string"
-                },
-                "combustivel": {
-                    "type": "string"
-                },
-                "cor": {
-                    "type": "string"
-                },
-                "distancia": {
-                    "description": "Distância em km da loja, se fornecida localização",
-                    "type": "number"
-                },
-                "email_anunciante": {
-                    "description": "Dados do anunciante (apenas quando não é loja)",
-                    "type": "string"
-                },
-                "endereco_loja": {
-                    "type": "string"
-                },
-                "fotos": {
-                    "description": "Fotos do veículo",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "ipva_pago": {
-                    "type": "boolean"
-                },
-                "is_meu_carro_mais": {
-                    "type": "boolean"
-                },
-                "km": {
-                    "type": "integer"
-                },
-                "licenciamento": {
-                    "type": "string"
-                },
-                "marca": {
-                    "type": "string"
-                },
-                "modelo": {
-                    "type": "string"
-                },
-                "moedas_utiliza": {
-                    "type": "integer"
-                },
-                "nome_anunciante": {
-                    "type": "string"
-                },
-                "nome_veiculo": {
-                    "type": "string"
-                },
-                "observacoes": {
-                    "type": "string"
-                },
-                "placa": {
-                    "type": "string"
-                },
-                "possui_financiamento": {
-                    "type": "boolean"
-                },
-                "possui_multas": {
-                    "type": "boolean"
-                },
-                "preco": {
-                    "type": "number"
-                },
-                "renavam": {
-                    "type": "string"
-                },
-                "telefone_anunciante": {
-                    "type": "string"
-                },
-                "tipo_veiculo": {
-                    "type": "string"
-                }
-            }
-        },
-        "json.AnunciosProdutoResponse": {
-            "type": "object",
-            "properties": {
-                "anuncios": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.AnuncioProdutoResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.AnunciosResponse": {
-            "type": "object",
-            "properties": {
-                "anuncios": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.AnuncioResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.AnunciosServicoResponse": {
-            "type": "object",
-            "properties": {
-                "anuncios": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.AnuncioServicoResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "json.AnunciosVeiculoResponse": {
-            "type": "object",
-            "properties": {
-                "anuncios": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.AnuncioVeiculoResponse"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "json.AprovacaoResponse": {
             "type": "object",
             "properties": {
@@ -8688,23 +8270,6 @@
                 "motivo": {
                     "description": "Motivo opcional da aprovação",
                     "type": "string"
-                }
-            }
-        },
-        "json.AvaliacaoClienteResponse": {
-            "type": "object",
-            "properties": {
-                "comentario": {
-                    "type": "string"
-                },
-                "data_avaliacao": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "nota": {
-                    "type": "integer"
                 }
             }
         },
@@ -8745,20 +8310,16 @@
                     "type": "string",
                     "maxLength": 500
                 },
-                "id_anuncio": {
-                    "description": "Opcional - referência ao anúncio",
+                "id_cupom": {
                     "type": "integer"
                 },
                 "id_loja": {
-                    "description": "Opcional - avaliar loja",
                     "type": "integer"
                 },
                 "id_produto": {
-                    "description": "Opcional - avaliar produto",
                     "type": "integer"
                 },
                 "id_servico": {
-                    "description": "Opcional - avaliar serviço",
                     "type": "integer"
                 },
                 "id_usuario": {
@@ -8786,7 +8347,7 @@
                 "id": {
                     "type": "integer"
                 },
-                "id_anuncio": {
+                "id_cupom": {
                     "type": "integer"
                 },
                 "id_loja": {
@@ -9086,6 +8647,405 @@
                 },
                 "session_url": {
                     "type": "string"
+                }
+            }
+        },
+        "json.CupomDestaqueResponse": {
+            "type": "object",
+            "properties": {
+                "descricao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "preco": {
+                    "type": "number"
+                },
+                "tipo_cupom": {
+                    "type": "string"
+                },
+                "titulo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CupomProdutoResponse": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "distancia": {
+                    "type": "number"
+                },
+                "endereco_loja": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
+                "moedas_utiliza": {
+                    "type": "integer"
+                },
+                "nome_loja": {
+                    "type": "string"
+                },
+                "nome_produto": {
+                    "type": "string"
+                },
+                "porcentagem_desconto": {
+                    "type": "number"
+                },
+                "preco_com_desconto": {
+                    "type": "number"
+                },
+                "preco_original": {
+                    "type": "number"
+                },
+                "rate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CupomRequest": {
+            "type": "object",
+            "required": [
+                "categoria",
+                "descricao",
+                "preco",
+                "tipo_cupom",
+                "titulo"
+            ],
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "destaque": {
+                    "type": "boolean"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_oferta_auto_mais": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "porcentagem_desconto": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "preco": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "preco_com_desconto": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "tipo_cupom": {
+                    "type": "string",
+                    "enum": [
+                        "produto",
+                        "servico",
+                        "veiculo"
+                    ]
+                },
+                "titulo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CupomResponse": {
+            "type": "object",
+            "properties": {
+                "avaliacao": {
+                    "type": "number"
+                },
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "destaque": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_oferta_auto_mais": {
+                    "type": "integer"
+                },
+                "id_produto": {
+                    "type": "integer"
+                },
+                "id_servico": {
+                    "type": "integer"
+                },
+                "id_veiculo": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "oferta_auto_mais": {
+                    "$ref": "#/definitions/json.OfertaAutoMaisResponse"
+                },
+                "porcentagem_desconto": {
+                    "type": "number"
+                },
+                "preco": {
+                    "type": "number"
+                },
+                "preco_com_desconto": {
+                    "type": "number"
+                },
+                "preco_original": {
+                    "type": "number"
+                },
+                "produto": {
+                    "$ref": "#/definitions/json.ProdutoResponse"
+                },
+                "servico": {
+                    "$ref": "#/definitions/json.ServicoResponse"
+                },
+                "tipo_cupom": {
+                    "type": "string"
+                },
+                "titulo": {
+                    "type": "string"
+                },
+                "veiculo": {
+                    "$ref": "#/definitions/json.VeiculoResponse"
+                }
+            }
+        },
+        "json.CupomServicoResponse": {
+            "type": "object",
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                },
+                "distancia": {
+                    "type": "number"
+                },
+                "endereco_loja": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
+                "moedas_utiliza": {
+                    "type": "integer"
+                },
+                "nome_loja": {
+                    "type": "string"
+                },
+                "nome_servico": {
+                    "type": "string"
+                },
+                "porcentagem_desconto": {
+                    "type": "number"
+                },
+                "preco_com_desconto": {
+                    "type": "number"
+                },
+                "preco_original": {
+                    "type": "number"
+                },
+                "rate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CupomVeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "ano_fabricacao": {
+                    "type": "integer"
+                },
+                "ano_modelo": {
+                    "type": "integer"
+                },
+                "chassi": {
+                    "type": "string"
+                },
+                "combustivel": {
+                    "type": "string"
+                },
+                "cor": {
+                    "type": "string"
+                },
+                "distancia": {
+                    "type": "number"
+                },
+                "email_anunciante": {
+                    "type": "string"
+                },
+                "endereco_loja": {
+                    "type": "string"
+                },
+                "fotos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
+                },
+                "ipva_pago": {
+                    "type": "boolean"
+                },
+                "is_meu_carro_mais": {
+                    "type": "boolean"
+                },
+                "km": {
+                    "type": "integer"
+                },
+                "licenciamento": {
+                    "type": "string"
+                },
+                "marca": {
+                    "type": "string"
+                },
+                "modelo": {
+                    "type": "string"
+                },
+                "moedas_utiliza": {
+                    "type": "integer"
+                },
+                "nome_anunciante": {
+                    "type": "string"
+                },
+                "nome_veiculo": {
+                    "type": "string"
+                },
+                "observacoes": {
+                    "type": "string"
+                },
+                "placa": {
+                    "type": "string"
+                },
+                "possui_financiamento": {
+                    "type": "boolean"
+                },
+                "possui_multas": {
+                    "type": "boolean"
+                },
+                "preco": {
+                    "type": "number"
+                },
+                "renavam": {
+                    "type": "string"
+                },
+                "telefone_anunciante": {
+                    "type": "string"
+                },
+                "tipo_veiculo": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.CuponsProdutoResponse": {
+            "type": "object",
+            "properties": {
+                "cupons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CupomProdutoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CuponsResponse": {
+            "type": "object",
+            "properties": {
+                "cupons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CupomResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CuponsServicoResponse": {
+            "type": "object",
+            "properties": {
+                "cupons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CupomServicoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.CuponsVeiculoResponse": {
+            "type": "object",
+            "properties": {
+                "cupons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.CupomVeiculoResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -9493,200 +9453,81 @@
         "json.HistoricoResgateClienteResponse": {
             "type": "object",
             "properties": {
-                "avaliacao": {
-                    "$ref": "#/definitions/json.AvaliacaoClienteResponse"
+                "cupom": {
+                    "$ref": "#/definitions/json.CupomResponse"
                 },
-                "data_resgate": {
-                    "type": "string"
-                },
-                "desconto_aplicado": {
-                    "type": "number"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "id_loja": {
-                    "type": "integer"
-                },
-                "imagem_loja": {
-                    "type": "string"
-                },
-                "itens": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/json.ItemCompraResponse"
-                    }
-                },
-                "nome_loja": {
-                    "type": "string"
-                },
-                "porcentagem_desconto": {
-                    "type": "number"
-                },
-                "quantidade": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "valor_original": {
-                    "type": "number"
-                },
-                "valor_total": {
-                    "type": "number"
-                },
-                "valor_unitario": {
-                    "type": "number"
-                }
-            }
-        },
-        "json.HistoricoResgateRequest": {
-            "type": "object",
-            "required": [
-                "id_loja",
-                "id_usuario",
-                "tipo_resgate",
-                "valor"
-            ],
-            "properties": {
-                "desconto_aplicado": {
-                    "type": "number"
-                },
-                "id_loja": {
-                    "type": "integer"
-                },
-                "id_produto": {
-                    "type": "integer"
-                },
-                "id_servico": {
-                    "type": "integer"
-                },
-                "id_usuario": {
-                    "type": "integer"
-                },
-                "id_veiculo": {
-                    "type": "integer"
-                },
-                "porcentagem_desconto": {
-                    "type": "number"
-                },
-                "quantidade": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "pendente",
-                        "confirmado",
-                        "cancelado"
-                    ]
-                },
-                "tipo_resgate": {
-                    "type": "string",
-                    "enum": [
-                        "produto",
-                        "servico",
-                        "veiculo"
-                    ]
-                },
-                "valor": {
-                    "type": "number",
-                    "minimum": 0
-                },
-                "valor_original": {
-                    "type": "number"
-                },
-                "valor_unitario": {
-                    "type": "number"
-                }
-            }
-        },
-        "json.HistoricoResgateResponse": {
-            "type": "object",
-            "properties": {
                 "data_atualizacao": {
                     "type": "string"
                 },
                 "data_resgate": {
                     "type": "string"
                 },
-                "desconto_aplicado": {
-                    "type": "number"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "id_anuncio": {
-                    "description": "ID do anúncio resgatado",
-                    "type": "integer"
-                },
-                "id_loja": {
-                    "type": "integer"
-                },
-                "id_produto": {
-                    "type": "integer"
-                },
-                "id_servico": {
+                "id_cupom": {
                     "type": "integer"
                 },
                 "id_usuario": {
                     "type": "integer"
                 },
-                "id_veiculo": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "json.HistoricoResgateRequest": {
+            "type": "object",
+            "required": [
+                "id_usuario"
+            ],
+            "properties": {
+                "id_cupom": {
                     "type": "integer"
                 },
-                "id_veiculo_usuario": {
-                    "description": "Veículo do usuário vinculado ao resgate",
+                "id_usuario": {
                     "type": "integer"
                 },
-                "loja": {
-                    "$ref": "#/definitions/json.LojaResponse"
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "pendente",
+                        "aprovado"
+                    ]
+                }
+            }
+        },
+        "json.HistoricoResgateResponse": {
+            "type": "object",
+            "properties": {
+                "cupom": {
+                    "description": "Dados relacionados",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/json.CupomResponse"
+                        }
+                    ]
                 },
-                "porcentagem_desconto": {
-                    "type": "number"
+                "data_atualizacao": {
+                    "type": "string"
                 },
-                "produto": {
-                    "$ref": "#/definitions/json.ProdutoResponse"
+                "data_resgate": {
+                    "type": "string"
                 },
-                "quantidade": {
+                "id": {
                     "type": "integer"
                 },
-                "servico": {
-                    "$ref": "#/definitions/json.ServicoResponse"
+                "id_cupom": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
                 },
-                "tipo_resgate": {
-                    "type": "string"
-                },
                 "usuario": {
-                    "description": "Dados relacionados",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/json.UserResponse"
-                        }
-                    ]
-                },
-                "valor": {
-                    "type": "number"
-                },
-                "valor_original": {
-                    "type": "number"
-                },
-                "valor_unitario": {
-                    "type": "number"
-                },
-                "veiculo": {
-                    "$ref": "#/definitions/json.VeiculoResponse"
-                },
-                "veiculo_usuario": {
-                    "description": "Veículo do usuário vinculado",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/json.VeiculoResponse"
-                        }
-                    ]
+                    "$ref": "#/definitions/json.UserResponse"
                 }
             }
         },
@@ -9705,7 +9546,7 @@
                 "id": {
                     "type": "integer"
                 },
-                "id_anuncio": {
+                "id_cupom": {
                     "type": "integer"
                 },
                 "id_veiculo": {
@@ -9766,33 +9607,6 @@
                 },
                 "total": {
                     "type": "integer"
-                }
-            }
-        },
-        "json.ItemCompraResponse": {
-            "type": "object",
-            "properties": {
-                "descricao": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "imagem": {
-                    "type": "string"
-                },
-                "nome": {
-                    "type": "string"
-                },
-                "quantidade": {
-                    "type": "integer"
-                },
-                "tipo_item": {
-                    "description": "\"produto\", \"servico\", \"veiculo\"",
-                    "type": "string"
-                },
-                "valor_unitario": {
-                    "type": "number"
                 }
             }
         },
@@ -9880,7 +9694,6 @@
                     "type": "string"
                 },
                 "data_solicitacao_executivo": {
-                    "description": "Data da solicitação",
                     "type": "string"
                 },
                 "email": {
@@ -9893,7 +9706,6 @@
                     "type": "integer"
                 },
                 "id_executivo": {
-                    "description": "ID do executivo vinculado (para customers)",
                     "type": "integer"
                 },
                 "id_loja": {
@@ -9915,7 +9727,6 @@
                     "type": "number"
                 },
                 "motivo_solicitacao_executivo": {
-                    "description": "Motivo/justificativa da solicitação",
                     "type": "string"
                 },
                 "nome": {
@@ -9925,7 +9736,6 @@
                     "type": "string"
                 },
                 "solicitacao_executivo": {
-                    "description": "Status da solicitação: \"\", pendente, aprovada, rejeitada",
                     "type": "string"
                 },
                 "status": {
@@ -10009,17 +9819,16 @@
         "json.LojaResponse": {
             "type": "object",
             "properties": {
-                "anuncio_destaque": {
-                    "$ref": "#/definitions/json.AnuncioDestaqueResponse"
-                },
                 "categoria": {
                     "type": "string"
                 },
                 "cnpj": {
                     "type": "string"
                 },
+                "cupom_destaque": {
+                    "$ref": "#/definitions/json.CupomDestaqueResponse"
+                },
                 "data_vinculo_usuario": {
-                    "description": "Data do vínculo com o usuário indicador",
                     "type": "string"
                 },
                 "endereco": {
@@ -10032,7 +9841,6 @@
                     "type": "integer"
                 },
                 "id_usuario_indicador": {
-                    "description": "ID do usuário que indicou esta loja (opcional)",
                     "type": "integer"
                 },
                 "imagem": {
@@ -10054,20 +9862,15 @@
                     "type": "integer"
                 },
                 "usuario_indicador": {
-                    "description": "Dados do usuário que indicou",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/json.UsuarioIndicadorResponse"
-                        }
-                    ]
+                    "$ref": "#/definitions/json.UsuarioIndicadorResponse"
                 }
             }
         },
         "json.LojaUsuarioResponse": {
             "type": "object",
             "properties": {
-                "anuncio_destaque": {
-                    "$ref": "#/definitions/json.AnuncioDestaqueResponse"
+                "cupom_destaque": {
+                    "$ref": "#/definitions/json.CupomDestaqueResponse"
                 },
                 "id": {
                     "type": "integer"
@@ -10303,7 +10106,7 @@
             "type": "object",
             "required": [
                 "email",
-                "id_anuncio",
+                "id_cupom",
                 "nome",
                 "telefone"
             ],
@@ -10311,7 +10114,7 @@
                 "email": {
                     "type": "string"
                 },
-                "id_anuncio": {
+                "id_cupom": {
                     "type": "integer"
                 },
                 "mensagem": {
@@ -10333,8 +10136,8 @@
         "json.RegistroInteresseResponse": {
             "type": "object",
             "properties": {
-                "anuncio": {
-                    "$ref": "#/definitions/json.AnuncioResponse"
+                "cupom": {
+                    "$ref": "#/definitions/json.CupomResponse"
                 },
                 "data_atualizacao": {
                     "type": "string"
@@ -10348,7 +10151,7 @@
                 "id": {
                     "type": "integer"
                 },
-                "id_anuncio": {
+                "id_cupom": {
                     "type": "integer"
                 },
                 "mensagem": {
@@ -10386,7 +10189,7 @@
                 }
             }
         },
-        "json.ResgatarAnuncioRequest": {
+        "json.ResgatarCupomRequest": {
             "type": "object",
             "required": [
                 "id_usuario"
@@ -10396,7 +10199,6 @@
                     "type": "integer"
                 },
                 "id_veiculo_usuario": {
-                    "description": "Veículo do usuário para vincular o resgate (obrigatório para produto/serviço)",
                     "type": "integer"
                 }
             }
@@ -11255,33 +11057,27 @@
             "type": "object",
             "properties": {
                 "ano_fabricacao": {
-                    "description": "Ano de fabricação",
                     "type": "integer"
                 },
                 "ano_modelo": {
-                    "description": "Ano modelo",
                     "type": "integer"
                 },
                 "ativo": {
                     "type": "boolean"
                 },
                 "chassi": {
-                    "description": "Chassi do veículo",
                     "type": "string"
                 },
                 "combustivel": {
-                    "description": "Tipo de combustível",
                     "type": "string"
                 },
                 "cor": {
-                    "description": "Cor do veículo",
                     "type": "string"
                 },
                 "data_cadastro": {
                     "type": "string"
                 },
                 "fotos": {
-                    "description": "Lista de todas as fotos do veículo",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/json.VeiculoFotoResponse"
@@ -11290,63 +11086,49 @@
                 "id": {
                     "type": "integer"
                 },
-                "id_anuncio": {
-                    "description": "ID do anúncio vinculado ao veículo (se houver)",
+                "id_cupom": {
                     "type": "integer"
                 },
                 "id_usuario": {
                     "type": "integer"
                 },
                 "imagem": {
-                    "description": "URL da imagem principal do veículo",
                     "type": "string"
                 },
                 "ipva_pago": {
-                    "description": "Se o IPVA está pago",
                     "type": "boolean"
                 },
                 "licenciamento": {
-                    "description": "Status do licenciamento",
                     "type": "string"
                 },
                 "marca": {
-                    "description": "Marca do veículo",
                     "type": "string"
                 },
                 "modelo": {
-                    "description": "Modelo do veículo",
                     "type": "string"
                 },
                 "observacoes": {
-                    "description": "Observações do veículo",
                     "type": "string"
                 },
                 "placa": {
-                    "description": "Placa do veículo",
                     "type": "string"
                 },
                 "possui_financiamento": {
-                    "description": "Se possui financiamento",
                     "type": "boolean"
                 },
                 "possui_multas": {
-                    "description": "Se possui multas",
                     "type": "boolean"
                 },
                 "preco": {
-                    "description": "Preço do veículo",
                     "type": "number"
                 },
                 "quilometragem": {
-                    "description": "KM do veículo",
                     "type": "integer"
                 },
                 "renavam": {
-                    "description": "RENAVAM do veículo",
                     "type": "string"
                 },
                 "tipo_veiculo": {
-                    "description": "Tipo do veículo",
                     "type": "string"
                 }
             }

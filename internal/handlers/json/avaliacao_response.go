@@ -8,7 +8,7 @@ type AvaliacaoResponse struct {
 	IDLoja          *uint     `json:"id_loja,omitempty"`
 	IDServico       *uint     `json:"id_servico,omitempty"`
 	IDProduto       *uint     `json:"id_produto,omitempty"`
-	IDAnuncio       *uint     `json:"id_anuncio,omitempty"`
+	IDCupom         *uint     `json:"id_cupom,omitempty"`
 	Nota            int       `json:"nota"`
 	Comentario      string    `json:"comentario"`
 	DataAvaliacao   time.Time `json:"data_avaliacao"`

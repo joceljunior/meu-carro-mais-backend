@@ -14,7 +14,7 @@ func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*json.RegistroI
 
 	response := &json.RegistroInteresseResponse{
 		ID:              registroInteresse.ID,
-		IDAnuncio:       registroInteresse.IDAnuncio,
+		IDCupom:         registroInteresse.IDCupom,
 		Nome:            registroInteresse.Nome,
 		Email:           registroInteresse.Email,
 		Telefone:        registroInteresse.Telefone,
@@ -23,31 +23,10 @@ func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*json.RegistroI
 		DataAtualizacao: registroInteresse.DataAtualizacao,
 	}
 
-	// Se o anúncio foi carregado, adiciona ao response
-	if registroInteresse.Anuncio.ID != 0 {
-		anuncioResp := &json.AnuncioResponse{
-			ID:        registroInteresse.Anuncio.ID,
-			Titulo:    registroInteresse.Anuncio.Titulo,
-			Descricao: registroInteresse.Anuncio.Descricao,
-			Preco:     registroInteresse.Anuncio.Preco,
-			Imagem:    registroInteresse.Anuncio.Imagem,
-			Destaque:  registroInteresse.Anuncio.Destaque,
-			Categoria: registroInteresse.Anuncio.Categoria,
-			IDLoja:    registroInteresse.Anuncio.IDLoja,
-		}
-		if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
-			anuncioResp.Loja = &json.LojaResponse{
-				ID:          registroInteresse.Anuncio.Loja.ID,
-				Nome:        registroInteresse.Anuncio.Loja.Nome,
-				CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,
-				Imagem:      registroInteresse.Anuncio.Loja.Imagem,
-				Latitude:    registroInteresse.Anuncio.Loja.Latitude,
-				Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-				Categoria: registroInteresse.Anuncio.Loja.Categoria,
-				IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
-			}
-		}
-		response.Anuncio = anuncioResp
+	// Se o cupom foi carregado, adiciona ao response
+	if registroInteresse.Cupom.ID != 0 {
+		cupomResp := modelToCupomResponse(&registroInteresse.Cupom)
+		response.Cupom = &cupomResp
 	}
 
 	return response, nil
@@ -62,7 +41,7 @@ func GetRegistroInteresseByID(id uint) (*json.RegistroInteresseResponse, error) 
 
 	response := &json.RegistroInteresseResponse{
 		ID:              registroInteresse.ID,
-		IDAnuncio:       registroInteresse.IDAnuncio,
+		IDCupom:         registroInteresse.IDCupom,
 		Nome:            registroInteresse.Nome,
 		Email:           registroInteresse.Email,
 		Telefone:        registroInteresse.Telefone,
@@ -71,31 +50,10 @@ func GetRegistroInteresseByID(id uint) (*json.RegistroInteresseResponse, error) 
 		DataAtualizacao: registroInteresse.DataAtualizacao,
 	}
 
-	// Se o anúncio foi carregado, adiciona ao response
-	if registroInteresse.Anuncio.ID != 0 {
-		anuncioResp := &json.AnuncioResponse{
-			ID:        registroInteresse.Anuncio.ID,
-			Titulo:    registroInteresse.Anuncio.Titulo,
-			Descricao: registroInteresse.Anuncio.Descricao,
-			Preco:     registroInteresse.Anuncio.Preco,
-			Imagem:    registroInteresse.Anuncio.Imagem,
-			Destaque:  registroInteresse.Anuncio.Destaque,
-			Categoria: registroInteresse.Anuncio.Categoria,
-			IDLoja:    registroInteresse.Anuncio.IDLoja,
-		}
-		if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
-			anuncioResp.Loja = &json.LojaResponse{
-				ID:          registroInteresse.Anuncio.Loja.ID,
-				Nome:        registroInteresse.Anuncio.Loja.Nome,
-				CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,
-				Imagem:      registroInteresse.Anuncio.Loja.Imagem,
-				Latitude:    registroInteresse.Anuncio.Loja.Latitude,
-				Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-				Categoria: registroInteresse.Anuncio.Loja.Categoria,
-				IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
-			}
-		}
-		response.Anuncio = anuncioResp
+	// Se o cupom foi carregado, adiciona ao response
+	if registroInteresse.Cupom.ID != 0 {
+		cupomResp := modelToCupomResponse(&registroInteresse.Cupom)
+		response.Cupom = &cupomResp
 	}
 
 	return response, nil
@@ -112,7 +70,7 @@ func GetAllRegistroInteresses() ([]json.RegistroInteresseResponse, error) {
 	for _, registroInteresse := range registrosInteresse {
 		response := json.RegistroInteresseResponse{
 			ID:              registroInteresse.ID,
-			IDAnuncio:       registroInteresse.IDAnuncio,
+			IDCupom:         registroInteresse.IDCupom,
 			Nome:            registroInteresse.Nome,
 			Email:           registroInteresse.Email,
 			Telefone:        registroInteresse.Telefone,
@@ -121,31 +79,10 @@ func GetAllRegistroInteresses() ([]json.RegistroInteresseResponse, error) {
 			DataAtualizacao: registroInteresse.DataAtualizacao,
 		}
 
-		// Se o anúncio foi carregado, adiciona ao response
-		if registroInteresse.Anuncio.ID != 0 {
-			anuncioResp := &json.AnuncioResponse{
-				ID:        registroInteresse.Anuncio.ID,
-				Titulo:    registroInteresse.Anuncio.Titulo,
-				Descricao: registroInteresse.Anuncio.Descricao,
-				Preco:     registroInteresse.Anuncio.Preco,
-				Imagem:    registroInteresse.Anuncio.Imagem,
-				Destaque:  registroInteresse.Anuncio.Destaque,
-				Categoria: registroInteresse.Anuncio.Categoria,
-				IDLoja:    registroInteresse.Anuncio.IDLoja,
-			}
-			if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
-				anuncioResp.Loja = &json.LojaResponse{
-					ID:          registroInteresse.Anuncio.Loja.ID,
-					Nome:        registroInteresse.Anuncio.Loja.Nome,
-					CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,
-					Imagem:      registroInteresse.Anuncio.Loja.Imagem,
-					Latitude:    registroInteresse.Anuncio.Loja.Latitude,
-					Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-					Categoria: registroInteresse.Anuncio.Loja.Categoria,
-					IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
-				}
-			}
-			response.Anuncio = anuncioResp
+		// Se o cupom foi carregado, adiciona ao response
+		if registroInteresse.Cupom.ID != 0 {
+			cupomResp := modelToCupomResponse(&registroInteresse.Cupom)
+			response.Cupom = &cupomResp
 		}
 
 		responses = append(responses, response)
@@ -154,9 +91,9 @@ func GetAllRegistroInteresses() ([]json.RegistroInteresseResponse, error) {
 	return responses, nil
 }
 
-// GetRegistroInteressesByAnuncioID retorna todos os registros de interesse de um anúncio específico
-func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]json.RegistroInteresseResponse, error) {
-	registrosInteresse, err := datasource.GetRegistroInteressesByAnuncioID(anuncioID)
+// GetRegistroInteressesByCupomID retorna todos os registros de interesse de um cupom específico
+func GetRegistroInteressesByCupomID(cupomID uint) ([]json.RegistroInteresseResponse, error) {
+	registrosInteresse, err := datasource.GetRegistroInteressesByCupomID(cupomID)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +102,7 @@ func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]json.RegistroInteresseR
 	for _, registroInteresse := range registrosInteresse {
 		response := json.RegistroInteresseResponse{
 			ID:              registroInteresse.ID,
-			IDAnuncio:       registroInteresse.IDAnuncio,
+			IDCupom:         registroInteresse.IDCupom,
 			Nome:            registroInteresse.Nome,
 			Email:           registroInteresse.Email,
 			Telefone:        registroInteresse.Telefone,
@@ -174,31 +111,10 @@ func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]json.RegistroInteresseR
 			DataAtualizacao: registroInteresse.DataAtualizacao,
 		}
 
-		// Se o anúncio foi carregado, adiciona ao response
-		if registroInteresse.Anuncio.ID != 0 {
-			anuncioResp := &json.AnuncioResponse{
-				ID:        registroInteresse.Anuncio.ID,
-				Titulo:    registroInteresse.Anuncio.Titulo,
-				Descricao: registroInteresse.Anuncio.Descricao,
-				Preco:     registroInteresse.Anuncio.Preco,
-				Imagem:    registroInteresse.Anuncio.Imagem,
-				Destaque:  registroInteresse.Anuncio.Destaque,
-				Categoria: registroInteresse.Anuncio.Categoria,
-				IDLoja:    registroInteresse.Anuncio.IDLoja,
-			}
-			if registroInteresse.Anuncio.Loja != nil && registroInteresse.Anuncio.Loja.ID != 0 {
-				anuncioResp.Loja = &json.LojaResponse{
-					ID:          registroInteresse.Anuncio.Loja.ID,
-					Nome:        registroInteresse.Anuncio.Loja.Nome,
-					CNPJ:        registroInteresse.Anuncio.Loja.CNPJ,
-					Imagem:      registroInteresse.Anuncio.Loja.Imagem,
-					Latitude:    registroInteresse.Anuncio.Loja.Latitude,
-					Longitude:   registroInteresse.Anuncio.Loja.Longitude,
-					Categoria: registroInteresse.Anuncio.Loja.Categoria,
-					IDUsuario: registroInteresse.Anuncio.Loja.IDUsuario,
-				}
-			}
-			response.Anuncio = anuncioResp
+		// Se o cupom foi carregado, adiciona ao response
+		if registroInteresse.Cupom.ID != 0 {
+			cupomResp := modelToCupomResponse(&registroInteresse.Cupom)
+			response.Cupom = &cupomResp
 		}
 
 		responses = append(responses, response)

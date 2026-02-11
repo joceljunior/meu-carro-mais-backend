@@ -10,19 +10,19 @@ import (
 
 // CreateRegistroInteresse cria um novo registro de interesse
 func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*models.RegistroInteresse, error) {
-	// Verifica se o anúncio existe e não foi excluído
-	var anuncio models.Anuncio
-	err := database.DB.Where("id = ? AND data_exclusao IS NULL", req.IDAnuncio).First(&anuncio).Error
+	// Verifica se o cupom existe e não foi excluído
+	var cupom models.Cupom
+	err := database.DB.Where("id = ? AND data_exclusao IS NULL", req.IDCupom).First(&cupom).Error
 	if err != nil {
-		return nil, errors.New("anúncio não encontrado")
+		return nil, errors.New("cupom não encontrado")
 	}
 
 	registroInteresse := models.RegistroInteresse{
-		IDAnuncio: req.IDAnuncio,
-		Nome:      req.Nome,
-		Email:     req.Email,
-		Telefone:  req.Telefone,
-		Mensagem:  req.Mensagem,
+		IDCupom:  req.IDCupom,
+		Nome:     req.Nome,
+		Email:    req.Email,
+		Telefone: req.Telefone,
+		Mensagem: req.Mensagem,
 	}
 
 	err = database.DB.Create(&registroInteresse).Error
@@ -38,8 +38,8 @@ func CreateRegistroInteresse(req json.RegistroInteresseRequest) (*models.Registr
 func GetRegistroInteresseByID(id uint) (*models.RegistroInteresse, error) {
 	var registroInteresse models.RegistroInteresse
 	err := database.DB.
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&registroInteresse).Error
 	if err != nil {
@@ -52,8 +52,8 @@ func GetRegistroInteresseByID(id uint) (*models.RegistroInteresse, error) {
 func GetAllRegistroInteresses() ([]models.RegistroInteresse, error) {
 	var registrosInteresse []models.RegistroInteresse
 	err := database.DB.
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&registrosInteresse).Error
@@ -63,13 +63,13 @@ func GetAllRegistroInteresses() ([]models.RegistroInteresse, error) {
 	return registrosInteresse, nil
 }
 
-// GetRegistroInteressesByAnuncioID retorna todos os registros de interesse de um anúncio específico
-func GetRegistroInteressesByAnuncioID(anuncioID uint) ([]models.RegistroInteresse, error) {
+// GetRegistroInteressesByCupomID retorna todos os registros de interesse de um cupom específico
+func GetRegistroInteressesByCupomID(cupomID uint) ([]models.RegistroInteresse, error) {
 	var registrosInteresse []models.RegistroInteresse
 	err := database.DB.
-		Preload("Anuncio").
-		Preload("Anuncio.Loja").
-		Where("id_anuncio = ? AND data_exclusao IS NULL", anuncioID).
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Where("id_cupom = ? AND data_exclusao IS NULL", cupomID).
 		Order("data_cadastro DESC").
 		Find(&registrosInteresse).Error
 	if err != nil {
@@ -116,4 +116,3 @@ func RestoreRegistroInteresse(id uint) error {
 
 	return nil
 }
-

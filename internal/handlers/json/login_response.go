@@ -20,24 +20,25 @@ type LoginResponse struct {
 	Tipo                       string     `json:"tipo"`
 	Status                     string     `json:"status"`
 	NomePlano                  string     `json:"nome_plano"`
-	IDExecutivo                *uint      `json:"id_executivo"`                           // ID do executivo vinculado (para customers)
-	SolicitacaoExecutivo       string     `json:"solicitacao_executivo"`                  // Status da solicitação: "", pendente, aprovada, rejeitada
-	DataSolicitacaoExecutivo   *time.Time `json:"data_solicitacao_executivo"`             // Data da solicitação
-	MotivoSolicitacaoExecutivo string     `json:"motivo_solicitacao_executivo"`           // Motivo/justificativa da solicitação
+	IDExecutivo                *uint      `json:"id_executivo"`
+	SolicitacaoExecutivo       string     `json:"solicitacao_executivo"`
+	DataSolicitacaoExecutivo   *time.Time `json:"data_solicitacao_executivo"`
+	MotivoSolicitacaoExecutivo string     `json:"motivo_solicitacao_executivo"`
 	LojaUsuarioResponse        `json:"loja,omitempty"`
 }
 
-type AnuncioDestaqueResponse struct {
-	ID          uint    `json:"id"`
-	Titulo      string  `json:"titulo"`
-	Descricao   string  `json:"descricao"`
-	Preco       float64 `json:"preco"`
-	Imagem      string  `json:"imagem"`
-	TipoAnuncio string  `json:"tipo_anuncio"`
+type CupomDestaqueResponse struct {
+	ID        uint    `json:"id"`
+	Titulo    string  `json:"titulo"`
+	Descricao string  `json:"descricao"`
+	Preco     float64 `json:"preco"`
+	Imagem    string  `json:"imagem"`
+	TipoCupom string  `json:"tipo_cupom"`
 }
+
 type LojaUsuarioResponse struct {
-	Id                      uint   `json:"id"`
-	Nome                    string `json:"nome"`
-	Logo                    string `json:"logo,omitempty"`
-	AnuncioDestaqueResponse `json:"anuncio_destaque,omitempty"`
+	Id                     uint   `json:"id"`
+	Nome                   string `json:"nome"`
+	Logo                   string `json:"logo,omitempty"`
+	CupomDestaqueResponse `json:"cupom_destaque,omitempty"`
 }

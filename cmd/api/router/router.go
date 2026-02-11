@@ -39,7 +39,7 @@ func NewRouter() *gin.Engine {
 		&LojaRouter{},
 		&ServicoRouter{},
 		&UserRouter{},
-		&AnuncioRouter{},
+		&CupomRouter{},
 		&VeiculoRouter{},
 		&VeiculoLojaRouter{},
 		&ProdutoRouter{},

@@ -1,8 +1,8 @@
 package json
 
-type AnuncioProdutoResponse struct {
+type CupomServicoResponse struct {
 	ID                  uint     `json:"id"`
-	NomeProduto         string   `json:"nome_produto"`
+	NomeServico         string   `json:"nome_servico"`
 	NomeLoja            string   `json:"nome_loja"`
 	EnderecoLoja        string   `json:"endereco_loja,omitempty"`
 	Imagem              string   `json:"imagem"`
@@ -13,11 +13,11 @@ type AnuncioProdutoResponse struct {
 	Categoria           string   `json:"categoria"`
 	Descricao           string   `json:"descricao"`
 	Rate                int      `json:"rate"`
-	MoedasUtiliza       *int     `json:"moedas_utiliza,omitempty"` // Moedas da oferta Auto Mais, se houver
-	Distancia           *float64 `json:"distancia,omitempty"`      // Distância em km da loja, se fornecida localização
+	MoedasUtiliza       *int     `json:"moedas_utiliza,omitempty"`
+	Distancia           *float64 `json:"distancia,omitempty"`
 }
 
-type AnunciosProdutoResponse struct {
-	Anuncios []AnuncioProdutoResponse `json:"anuncios"`
-	Total    int                       `json:"total"`
+type CuponsServicoResponse struct {
+	Cupons []CupomServicoResponse `json:"cupons"`
+	Total  int                    `json:"total"`
 }

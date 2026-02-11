@@ -6,38 +6,25 @@ import (
 	"meu-carro-mais/internal/handlers/json"
 )
 
-// CreateHistoricoResgateFromAnuncio cria um histórico de resgate a partir de um anúncio
-func CreateHistoricoResgateFromAnuncio(anuncioID uint, usuarioID uint, idVeiculoUsuario *uint) (*json.HistoricoResgateResponse, error) {
-	historico, err := datasource.CreateHistoricoResgateFromAnuncio(anuncioID, usuarioID, idVeiculoUsuario)
+// CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom
+func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint) (*json.HistoricoResgateResponse, error) {
+	historico, err := datasource.CreateHistoricoResgateFromCupom(cupomID, usuarioID)
 	if err != nil {
 		return nil, err
 	}
 
-	// Usa a mesma lógica de conversão do CreateHistoricoResgate
 	return convertHistoricoToResponse(historico), nil
 }
 
 // convertHistoricoToResponse converte um modelo de histórico para response
 func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.HistoricoResgateResponse {
 	response := &json.HistoricoResgateResponse{
-		ID:                  historico.ID,
-		IDUsuario:           historico.IDUsuario,
-		IDAnuncio:           historico.IDAnuncio,
-		IDProduto:           historico.IDProduto,
-		IDServico:           historico.IDServico,
-		IDVeiculo:           historico.IDVeiculo,
-		IDVeiculoUsuario:    historico.IDVeiculoUsuario,
-		IDLoja:              historico.IDLoja,
-		TipoResgate:         historico.TipoResgate,
-		Quantidade:          historico.Quantidade,
-		ValorUnitario:       historico.ValorUnitario,
-		ValorOriginal:       historico.ValorOriginal,
-		DescontoAplicado:    historico.DescontoAplicado,
-		PorcentagemDesconto: historico.PorcentagemDesconto,
-		Valor:               historico.Valor,
-		Status:              historico.Status,
-		DataResgate:         historico.DataResgate,
-		DataAtualizacao:     historico.DataAtualizacao,
+		ID:              historico.ID,
+		IDCupom:         historico.IDCupom,
+		IDUsuario:       historico.IDUsuario,
+		DataResgate:     historico.DataResgate,
+		DataAtualizacao: historico.DataAtualizacao,
+		Status:          historico.Status,
 		Usuario: json.UserResponse{
 			ID:             historico.Usuario.ID,
 			Nome:           historico.Usuario.Nome,
@@ -54,102 +41,12 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 			IDPlano:        historico.Usuario.IDPlano,
 			IDLoja:         historico.Usuario.IDLoja,
 		},
-		Loja: json.LojaResponse{
-			ID:        historico.Loja.ID,
-			Nome:      historico.Loja.Nome,
-			CNPJ:      historico.Loja.CNPJ,
-			Imagem:    historico.Loja.Imagem,
-			Latitude:  historico.Loja.Latitude,
-			Longitude: historico.Loja.Longitude,
-			Categoria: historico.Loja.Categoria,
-			IDUsuario: historico.Loja.IDUsuario,
-		},
 	}
 
-	// Adiciona dados do produto se existir
-	if historico.Produto != nil {
-		produtoResp := &json.ProdutoResponse{
-			ID:           historico.Produto.ID,
-			Nome:         historico.Produto.Nome,
-			Descricao:    historico.Produto.Descricao,
-			Preco:        historico.Produto.Preco,
-			Imagem:       historico.Produto.Imagem,
-			Estoque:      historico.Produto.Estoque,
-			Ativo:        historico.Produto.Ativo,
-			IDLoja:       historico.Produto.IDLoja,
-			DataCadastro: historico.Produto.DataCadastro,
-		}
-		response.Produto = produtoResp
-	}
-
-	// Adiciona dados do serviço se existir
-	if historico.Servico != nil {
-		servicoResp := &json.ServicoResponse{
-			ID:        historico.Servico.ID,
-			Titulo:    historico.Servico.Titulo,
-			Descricao: historico.Servico.Descricao,
-			Preco:     historico.Servico.Preco,
-			Imagem:    historico.Servico.Imagem,
-			Destaque:  historico.Servico.Destaque,
-			Categoria: historico.Servico.Categoria,
-		}
-		response.Servico = servicoResp
-	}
-
-	// Adiciona dados do veículo se existir
-	if historico.Veiculo != nil {
-		veiculoResp := &json.VeiculoResponse{
-			ID:                  historico.Veiculo.ID,
-			Marca:               historico.Veiculo.Marca,
-			Modelo:              historico.Veiculo.Modelo,
-			AnoFabricacao:       historico.Veiculo.AnoFabricacao,
-			AnoModelo:           historico.Veiculo.AnoModelo,
-			Cor:                 historico.Veiculo.Cor,
-			Placa:               historico.Veiculo.Placa,
-			Renavam:             historico.Veiculo.Renavam,
-			Chassi:              historico.Veiculo.Chassi,
-			TipoVeiculo:         historico.Veiculo.TipoVeiculo,
-			Combustivel:         historico.Veiculo.Combustivel,
-			Quilometragem:       historico.Veiculo.Quilometragem,
-			Preco:               historico.Veiculo.Preco,
-			Licenciamento:       historico.Veiculo.Licenciamento,
-			IPVAPago:            historico.Veiculo.IPVAPago,
-			PossuiFinanciamento: historico.Veiculo.PossuiFinanciamento,
-			PossuiMultas:        historico.Veiculo.PossuiMultas,
-			Observacoes:         historico.Veiculo.Observacoes,
-			IDUsuario:           historico.Veiculo.IDUsuario,
-			DataCadastro:        historico.Veiculo.DataCadastro,
-			Ativo:               historico.Veiculo.Ativo,
-		}
-		response.Veiculo = veiculoResp
-	}
-
-	// Adiciona dados do veículo do usuário se existir (para resgates de produto/serviço)
-	if historico.VeiculoUsuario != nil {
-		veiculoUsuarioResp := &json.VeiculoResponse{
-			ID:                  historico.VeiculoUsuario.ID,
-			Marca:               historico.VeiculoUsuario.Marca,
-			Modelo:              historico.VeiculoUsuario.Modelo,
-			AnoFabricacao:       historico.VeiculoUsuario.AnoFabricacao,
-			AnoModelo:           historico.VeiculoUsuario.AnoModelo,
-			Cor:                 historico.VeiculoUsuario.Cor,
-			Placa:               historico.VeiculoUsuario.Placa,
-			Renavam:             historico.VeiculoUsuario.Renavam,
-			Chassi:              historico.VeiculoUsuario.Chassi,
-			TipoVeiculo:         historico.VeiculoUsuario.TipoVeiculo,
-			Combustivel:         historico.VeiculoUsuario.Combustivel,
-			Quilometragem:       historico.VeiculoUsuario.Quilometragem,
-			Preco:               historico.VeiculoUsuario.Preco,
-			Licenciamento:       historico.VeiculoUsuario.Licenciamento,
-			IPVAPago:            historico.VeiculoUsuario.IPVAPago,
-			PossuiFinanciamento: historico.VeiculoUsuario.PossuiFinanciamento,
-			PossuiMultas:        historico.VeiculoUsuario.PossuiMultas,
-			Observacoes:         historico.VeiculoUsuario.Observacoes,
-			IDUsuario:           historico.VeiculoUsuario.IDUsuario,
-			DataCadastro:        historico.VeiculoUsuario.DataCadastro,
-			Ativo:               historico.VeiculoUsuario.Ativo,
-		}
-		response.VeiculoUsuario = veiculoUsuarioResp
+	// Adiciona dados do cupom se existir
+	if historico.Cupom != nil {
+		cupomResp := modelToCupomResponse(historico.Cupom)
+		response.Cupom = &cupomResp
 	}
 
 	return response
@@ -260,74 +157,21 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 
 	var historicosResponse []json.HistoricoResgateClienteResponse
 	for _, historico := range historicos {
-		// Monta os itens comprados
-		var itens []json.ItemCompraResponse
-
-		if historico.Produto != nil {
-			itens = append(itens, json.ItemCompraResponse{
-				ID:            historico.Produto.ID,
-				Nome:          historico.Produto.Nome,
-				Descricao:     historico.Produto.Descricao,
-				Imagem:        historico.Produto.Imagem,
-				TipoItem:      "produto",
-				Quantidade:    historico.Quantidade,
-				ValorUnitario: historico.ValorUnitario,
-			})
+		resp := json.HistoricoResgateClienteResponse{
+			ID:              historico.ID,
+			IDCupom:         historico.IDCupom,
+			IDUsuario:       historico.IDUsuario,
+			DataResgate:     historico.DataResgate,
+			DataAtualizacao: historico.DataAtualizacao,
+			Status:          historico.Status,
 		}
 
-		if historico.Servico != nil {
-			itens = append(itens, json.ItemCompraResponse{
-				ID:            historico.Servico.ID,
-				Nome:          historico.Servico.Titulo,
-				Descricao:     historico.Servico.Descricao,
-				Imagem:        historico.Servico.Imagem,
-				TipoItem:      "servico",
-				Quantidade:    historico.Quantidade,
-				ValorUnitario: historico.ValorUnitario,
-			})
+		if historico.Cupom != nil {
+			cupomResp := modelToCupomResponse(historico.Cupom)
+			resp.Cupom = &cupomResp
 		}
 
-		if historico.Veiculo != nil {
-			nomeVeiculo := historico.Veiculo.Marca + " " + historico.Veiculo.Modelo
-			itens = append(itens, json.ItemCompraResponse{
-				ID:            historico.Veiculo.ID,
-				Nome:          nomeVeiculo,
-				Descricao:     historico.Veiculo.Cor,
-				Imagem:        "", // Veículo não tem campo imagem direto, buscar do upload
-				TipoItem:      "veiculo",
-				Quantidade:    historico.Quantidade,
-				ValorUnitario: historico.ValorUnitario,
-			})
-		}
-
-		// Busca a avaliação do cliente para esta loja
-		var avaliacaoResp *json.AvaliacaoClienteResponse
-		avaliacao, err := datasource.GetAvaliacaoByUsuarioELoja(usuarioID, historico.IDLoja)
-		if err == nil && avaliacao != nil {
-			avaliacaoResp = &json.AvaliacaoClienteResponse{
-				ID:            avaliacao.ID,
-				Nota:          avaliacao.Nota,
-				Comentario:    avaliacao.Comentario,
-				DataAvaliacao: avaliacao.DataAvaliacao,
-			}
-		}
-
-		historicosResponse = append(historicosResponse, json.HistoricoResgateClienteResponse{
-			ID:                  historico.ID,
-			IDLoja:              historico.IDLoja,
-			NomeLoja:            historico.Loja.Nome,
-			ImagemLoja:          historico.Loja.Imagem,
-			DataResgate:         historico.DataResgate,
-			Status:              historico.Status,
-			Itens:               itens,
-			Quantidade:          historico.Quantidade,
-			ValorUnitario:       historico.ValorUnitario,
-			ValorOriginal:       historico.ValorOriginal,
-			DescontoAplicado:    historico.DescontoAplicado,
-			PorcentagemDesconto: historico.PorcentagemDesconto,
-			ValorTotal:          historico.Valor,
-			Avaliacao:           avaliacaoResp,
-		})
+		historicosResponse = append(historicosResponse, resp)
 	}
 
 	return &json.HistoricosResgateClienteResponse{
@@ -336,9 +180,9 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 	}, nil
 }
 
-// GetHistoricosResgateByAnuncioID retorna todos os históricos de resgate de um anúncio específico
-func GetHistoricosResgateByAnuncioID(anuncioID uint) (*json.HistoricosResgateResponse, error) {
-	historicos, err := datasource.GetHistoricosResgateByAnuncioID(anuncioID)
+// GetHistoricosResgateByCupomID retorna todos os históricos de resgate de um cupom específico
+func GetHistoricosResgateByCupomID(cupomID uint) (*json.HistoricosResgateResponse, error) {
+	historicos, err := datasource.GetHistoricosResgateByCupomID(cupomID)
 	if err != nil {
 		return nil, err
 	}

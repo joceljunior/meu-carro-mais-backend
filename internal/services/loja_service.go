@@ -6,22 +6,22 @@ import (
 	"meu-carro-mais/internal/handlers/json"
 )
 
-// getAnuncioDestaqueFromLoja extrai o anúncio destaque de uma loja
-func getAnuncioDestaqueFromLoja(loja models.Loja) *json.AnuncioDestaqueResponse {
-	if len(loja.Anuncios) == 0 {
+// getCupomDestaqueFromLoja extrai o cupom destaque de uma loja
+func getCupomDestaqueFromLoja(loja models.Loja) *json.CupomDestaqueResponse {
+	if len(loja.Cupons) == 0 {
 		return nil
 	}
 
-	// Busca o primeiro anúncio destaque (deve haver apenas um por loja)
-	for _, anuncio := range loja.Anuncios {
-		if anuncio.Destaque {
-			return &json.AnuncioDestaqueResponse{
-				ID:          anuncio.ID,
-				Titulo:      anuncio.Titulo,
-				Descricao:   anuncio.Descricao,
-				Preco:       anuncio.Preco,
-				Imagem:      anuncio.Imagem,
-				TipoAnuncio: anuncio.TipoAnuncio,
+	// Busca o primeiro cupom destaque (deve haver apenas um por loja)
+	for _, cupom := range loja.Cupons {
+		if cupom.Destaque {
+			return &json.CupomDestaqueResponse{
+				ID:        cupom.ID,
+				Titulo:    cupom.Titulo,
+				Descricao: cupom.Descricao,
+				Preco:     cupom.Preco,
+				Imagem:    cupom.Imagem,
+				TipoCupom: cupom.TipoCupom,
 			}
 		}
 	}
@@ -50,7 +50,7 @@ func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, er
 			IsMeuCarroMais:  lojaComDist.IsMeuCarroMais,
 			Categoria:       lojaComDist.Categoria,
 			IDUsuario:       lojaComDist.IDUsuario,
-			AnuncioDestaque: getAnuncioDestaqueFromLoja(lojaComDist.Loja),
+			CupomDestaque: getCupomDestaqueFromLoja(lojaComDist.Loja),
 		}
 		lojasResponse = append(lojasResponse, lojaResp)
 	}
@@ -104,7 +104,7 @@ func CreateLoja(req json.LojaRequest) (*json.LojaResponse, error) {
 		IsMeuCarroMais:  loja.IsMeuCarroMais,
 		Categoria:       loja.Categoria,
 		IDUsuario:       loja.IDUsuario,
-		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
+		CupomDestaque: getCupomDestaqueFromLoja(*loja),
 	}
 
 	return response, nil
@@ -143,7 +143,7 @@ func GetLojaByID(id uint) (*json.LojaResponse, error) {
 		IDUsuarioIndicador: loja.IDUsuarioIndicador,
 		DataVinculoUsuario: loja.DataVinculoUsuario,
 		UsuarioIndicador:   usuarioIndicadorResponse,
-		AnuncioDestaque:    getAnuncioDestaqueFromLoja(*loja),
+		CupomDestaque:    getCupomDestaqueFromLoja(*loja),
 	}
 
 	return response, nil
@@ -170,7 +170,7 @@ func GetAllLojas() ([]json.LojaResponse, error) {
 			IsMeuCarroMais:  loja.IsMeuCarroMais,
 			Categoria:       loja.Categoria,
 			IDUsuario:       loja.IDUsuario,
-			AnuncioDestaque: getAnuncioDestaqueFromLoja(loja),
+			CupomDestaque: getCupomDestaqueFromLoja(loja),
 		}
 		responses = append(responses, response)
 	}
@@ -197,7 +197,7 @@ func UpdateLoja(id uint, req json.LojaRequest) (*json.LojaResponse, error) {
 		IsMeuCarroMais:  loja.IsMeuCarroMais,
 		Categoria:       loja.Categoria,
 		IDUsuario:       loja.IDUsuario,
-		AnuncioDestaque: getAnuncioDestaqueFromLoja(*loja),
+		CupomDestaque: getCupomDestaqueFromLoja(*loja),
 	}
 
 	return response, nil
@@ -234,7 +234,7 @@ func GetLojasByUsuarioID(idUsuario uint) ([]json.LojaResponse, error) {
 			IsMeuCarroMais:  loja.IsMeuCarroMais,
 			Categoria:       loja.Categoria,
 			IDUsuario:       loja.IDUsuario,
-			AnuncioDestaque: getAnuncioDestaqueFromLoja(loja),
+			CupomDestaque: getCupomDestaqueFromLoja(loja),
 		}
 		responses = append(responses, response)
 	}

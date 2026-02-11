@@ -860,6 +860,126 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration032)
 
+	// Migration 033: Renomear anuncios para cupons e atualizar referências
+	migration033 := m.NewMigration("033", "rename_anuncios_to_cupons").
+		ExecuteSQL(`
+			-- 1. Renomear tabela anuncios para cupons
+			ALTER TABLE IF EXISTS anuncios RENAME TO cupons;
+
+			-- 2. Renomear coluna tipo_anuncio para tipo_cupom na tabela cupons
+			DO $$
+			BEGIN
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'cupons' AND column_name = 'tipo_anuncio') THEN
+					ALTER TABLE cupons RENAME COLUMN tipo_anuncio TO tipo_cupom;
+				END IF;
+			END $$;
+
+			-- 3. Renomear colunas id_anuncio para id_cupom nas tabelas referenciadas
+			DO $$
+			BEGIN
+				-- historico_veiculos
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'historico_veiculos' AND column_name = 'id_anuncio') THEN
+					ALTER TABLE historico_veiculos RENAME COLUMN id_anuncio TO id_cupom;
+				END IF;
+				-- registro_interesses
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'registro_interesses' AND column_name = 'id_anuncio') THEN
+					ALTER TABLE registro_interesses RENAME COLUMN id_anuncio TO id_cupom;
+				END IF;
+				-- avaliacaos
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'avaliacaos' AND column_name = 'id_anuncio') THEN
+					ALTER TABLE avaliacaos RENAME COLUMN id_anuncio TO id_cupom;
+				END IF;
+				-- historico_resgates
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'historico_resgates' AND column_name = 'id_anuncio') THEN
+					ALTER TABLE historico_resgates RENAME COLUMN id_anuncio TO id_cupom;
+				END IF;
+			END $$;
+
+			-- 4. Atualizar FK constraints (drop old, add new)
+			ALTER TABLE historico_veiculos DROP CONSTRAINT IF EXISTS fk_historico_anuncio;
+			ALTER TABLE registro_interesses DROP CONSTRAINT IF EXISTS fk_registro_interesse_anuncio;
+			ALTER TABLE avaliacaos DROP CONSTRAINT IF EXISTS fk_avaliacao_anuncio;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_anuncio;
+			ALTER TABLE cupons DROP CONSTRAINT IF EXISTS fk_anuncio_oferta_auto_mais;
+
+			DO $$
+			BEGIN
+				IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_historico_cupom') THEN
+					ALTER TABLE historico_veiculos ADD CONSTRAINT fk_historico_cupom 
+					FOREIGN KEY (id_cupom) REFERENCES cupons(id);
+				END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_registro_interesse_cupom') THEN
+					ALTER TABLE registro_interesses ADD CONSTRAINT fk_registro_interesse_cupom 
+					FOREIGN KEY (id_cupom) REFERENCES cupons(id);
+				END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_avaliacao_cupom') THEN
+					ALTER TABLE avaliacaos ADD CONSTRAINT fk_avaliacao_cupom 
+					FOREIGN KEY (id_cupom) REFERENCES cupons(id) ON DELETE SET NULL;
+				END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_historico_resgate_cupom') THEN
+					ALTER TABLE historico_resgates ADD CONSTRAINT fk_historico_resgate_cupom 
+					FOREIGN KEY (id_cupom) REFERENCES cupons(id) ON DELETE SET NULL;
+				END IF;
+				IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_cupom_oferta_auto_mais') THEN
+					ALTER TABLE cupons ADD CONSTRAINT fk_cupom_oferta_auto_mais 
+					FOREIGN KEY (id_oferta_auto_mais) REFERENCES oferta_auto_mais(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+
+			-- 5. Atualizar índices (drop old, create new)
+			DROP INDEX IF EXISTS idx_anuncio_data_exclusao;
+			DROP INDEX IF EXISTS idx_anuncio_tipo;
+			DROP INDEX IF EXISTS idx_anuncio_oferta_auto_mais;
+			DROP INDEX IF EXISTS idx_historico_anuncio;
+			DROP INDEX IF EXISTS idx_registro_interesse_anuncio;
+			DROP INDEX IF EXISTS idx_historico_resgate_anuncio;
+
+			CREATE INDEX IF NOT EXISTS idx_cupom_data_exclusao ON cupons(data_exclusao);
+			CREATE INDEX IF NOT EXISTS idx_cupom_tipo ON cupons(tipo_cupom);
+			CREATE INDEX IF NOT EXISTS idx_cupom_oferta_auto_mais ON cupons(id_oferta_auto_mais);
+			CREATE INDEX IF NOT EXISTS idx_historico_cupom ON historico_veiculos(id_cupom);
+			CREATE INDEX IF NOT EXISTS idx_registro_interesse_cupom ON registro_interesses(id_cupom);
+			CREATE INDEX IF NOT EXISTS idx_historico_resgate_cupom ON historico_resgates(id_cupom);
+		`, `
+			-- Rollback: renomear cupons de volta para anuncios
+			ALTER TABLE IF EXISTS cupons RENAME TO anuncios;
+			
+			DO $$
+			BEGIN
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'anuncios' AND column_name = 'tipo_cupom') THEN
+					ALTER TABLE anuncios RENAME COLUMN tipo_cupom TO tipo_anuncio;
+				END IF;
+			END $$;
+			
+			DO $$
+			BEGIN
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'historico_veiculos' AND column_name = 'id_cupom') THEN
+					ALTER TABLE historico_veiculos RENAME COLUMN id_cupom TO id_anuncio;
+				END IF;
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'registro_interesses' AND column_name = 'id_cupom') THEN
+					ALTER TABLE registro_interesses RENAME COLUMN id_cupom TO id_anuncio;
+				END IF;
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'avaliacaos' AND column_name = 'id_cupom') THEN
+					ALTER TABLE avaliacaos RENAME COLUMN id_cupom TO id_anuncio;
+				END IF;
+				IF EXISTS (SELECT 1 FROM information_schema.columns 
+					WHERE table_name = 'historico_resgates' AND column_name = 'id_cupom') THEN
+					ALTER TABLE historico_resgates RENAME COLUMN id_cupom TO id_anuncio;
+				END IF;
+			END $$;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration033)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
@@ -1001,7 +1121,7 @@ func (m *Migrator) createInitialTables(db *gorm.DB) error {
 		&models.HistoricoPlanoUsuario{},
 		&models.Carteira{},
 		&models.LogCarteira{},
-		&models.Anuncio{},
+		&models.Cupom{},
 		&models.Veiculo{},
 		&models.HistoricoVeiculo{},
 	)
@@ -1012,7 +1132,7 @@ func (m *Migrator) dropInitialTables(db *gorm.DB) error {
 	tables := []interface{}{
 		&models.HistoricoVeiculo{},
 		&models.Veiculo{},
-		&models.Anuncio{},
+		&models.Cupom{},
 		&models.LogCarteira{},
 		&models.Carteira{},
 		&models.HistoricoPlanoUsuario{},

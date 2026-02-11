@@ -41,11 +41,11 @@ func CreateRegistroInteresseHandler(c *gin.Context) {
 
 	// Registra log do registro de interesse
 	idRegistro := uint(resp.ID)
-	idAnuncio := uint(req.IDAnuncio)
+	idCupom := uint(req.IDCupom)
 	LogAction(c, "criar", "registro_interesse", &idRegistro,
-		"Registro de interesse criado para anúncio", nil, resp)
-	LogAction(c, "registrar_interesse", "anuncio", &idAnuncio,
-		"Interesse registrado no anúncio por "+resp.Nome, nil, resp)
+		"Registro de interesse criado para cupom", nil, resp)
+	LogAction(c, "registrar_interesse", "cupom", &idCupom,
+		"Interesse registrado no cupom por "+resp.Nome, nil, resp)
 
 	c.JSON(http.StatusCreated, resp)
 }
@@ -104,28 +104,28 @@ func GetAllRegistroInteressesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// GetRegistroInteressesByAnuncioHandler godoc
-// @Summary      Lista registros de interesse por anúncio
-// @Description  Retorna todos os registros de interesse de um anúncio específico
+// GetRegistroInteressesByCupomHandler godoc
+// @Summary      Lista registros de interesse por cupom
+// @Description  Retorna todos os registros de interesse de um cupom específico
 // @Tags         Registro de Interesse
 // @Accept       json
 // @Produce      json
-// @Param        anuncio_id path int true "ID do anúncio"
-// @Success      200 {array} json.RegistroInteresseResponse "Lista de registros de interesse do anúncio"
+// @Param        cupom_id path int true "ID do cupom"
+// @Success      200 {array} json.RegistroInteresseResponse "Lista de registros de interesse do cupom"
 // @Failure      400 {object} map[string]interface{} "ID inválido"
 // @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
-// @Router       /registro-interesse/anuncio/{anuncio_id} [get]
-func GetRegistroInteressesByAnuncioHandler(c *gin.Context) {
-	anuncioIDStr := c.Param("anuncio_id")
-	anuncioID, err := strconv.ParseUint(anuncioIDStr, 10, 32)
+// @Router       /registro-interesse/cupom/{cupom_id} [get]
+func GetRegistroInteressesByCupomHandler(c *gin.Context) {
+	cupomIDStr := c.Param("cupom_id")
+	cupomID, err := strconv.ParseUint(cupomIDStr, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "ID do anúncio inválido",
+			"error": "ID do cupom inválido",
 		})
 		return
 	}
 
-	resp, err := services.GetRegistroInteressesByAnuncioID(uint(anuncioID))
+	resp, err := services.GetRegistroInteressesByCupomID(uint(cupomID))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

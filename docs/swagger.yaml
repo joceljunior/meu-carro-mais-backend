@@ -29,288 +29,6 @@ definitions:
     - nome
     - senha
     type: object
-  json.AnuncioDestaqueResponse:
-    properties:
-      descricao:
-        type: string
-      id:
-        type: integer
-      imagem:
-        type: string
-      preco:
-        type: number
-      tipo_anuncio:
-        type: string
-      titulo:
-        type: string
-    type: object
-  json.AnuncioProdutoResponse:
-    properties:
-      categoria:
-        type: string
-      descricao:
-        type: string
-      distancia:
-        description: Distância em km da loja, se fornecida localização
-        type: number
-      endereco_loja:
-        type: string
-      id:
-        type: integer
-      imagem:
-        type: string
-      is_meu_carro_mais:
-        type: boolean
-      moedas_utiliza:
-        description: Moedas da oferta Auto Mais, se houver
-        type: integer
-      nome_loja:
-        type: string
-      nome_produto:
-        type: string
-      porcentagem_desconto:
-        type: number
-      preco_com_desconto:
-        type: number
-      preco_original:
-        type: number
-      rate:
-        type: integer
-    type: object
-  json.AnuncioRequest:
-    properties:
-      categoria:
-        type: string
-      descricao:
-        type: string
-      destaque:
-        type: boolean
-      id_loja:
-        description: Obrigatório para produto/serviço, opcional para veículo do usuário
-        type: integer
-      id_oferta_auto_mais:
-        description: Oferta Auto Mais para pagamento com moedas do app
-        type: integer
-      id_produto:
-        type: integer
-      id_servico:
-        type: integer
-      id_veiculo:
-        type: integer
-      imagem:
-        type: string
-      porcentagem_desconto:
-        description: Porcentagem de desconto (0-100)
-        maximum: 100
-        minimum: 0
-        type: number
-      preco:
-        minimum: 0
-        type: number
-      preco_com_desconto:
-        description: Preço com desconto aplicado
-        minimum: 0
-        type: number
-      tipo_anuncio:
-        enum:
-        - produto
-        - servico
-        - veiculo
-        type: string
-      titulo:
-        type: string
-    required:
-    - categoria
-    - descricao
-    - preco
-    - tipo_anuncio
-    - titulo
-    type: object
-  json.AnuncioResponse:
-    properties:
-      avaliacao:
-        description: Média de avaliações da loja
-        type: number
-      categoria:
-        type: string
-      descricao:
-        type: string
-      destaque:
-        type: boolean
-      id:
-        type: integer
-      id_loja:
-        type: integer
-      id_oferta_auto_mais:
-        type: integer
-      id_produto:
-        type: integer
-      id_servico:
-        type: integer
-      id_veiculo:
-        type: integer
-      imagem:
-        type: string
-      loja:
-        $ref: '#/definitions/json.LojaResponse'
-      oferta_auto_mais:
-        allOf:
-        - $ref: '#/definitions/json.OfertaAutoMaisResponse'
-        description: Oferta Auto Mais para pagamento com moedas
-      porcentagem_desconto:
-        description: Porcentagem de desconto
-        type: number
-      preco:
-        type: number
-      preco_com_desconto:
-        description: Preço com desconto aplicado
-        type: number
-      preco_original:
-        description: Preço original do produto/serviço/veículo
-        type: number
-      produto:
-        $ref: '#/definitions/json.ProdutoResponse'
-      servico:
-        $ref: '#/definitions/json.ServicoResponse'
-      tipo_anuncio:
-        type: string
-      titulo:
-        type: string
-      veiculo:
-        $ref: '#/definitions/json.VeiculoResponse'
-    type: object
-  json.AnuncioServicoResponse:
-    properties:
-      categoria:
-        type: string
-      descricao:
-        type: string
-      distancia:
-        description: Distância em km da loja, se fornecida localização
-        type: number
-      endereco_loja:
-        type: string
-      id:
-        type: integer
-      imagem:
-        type: string
-      is_meu_carro_mais:
-        type: boolean
-      moedas_utiliza:
-        type: integer
-      nome_loja:
-        type: string
-      nome_servico:
-        type: string
-      porcentagem_desconto:
-        type: number
-      preco_com_desconto:
-        type: number
-      preco_original:
-        type: number
-      rate:
-        type: integer
-    type: object
-  json.AnuncioVeiculoResponse:
-    properties:
-      ano_fabricacao:
-        type: integer
-      ano_modelo:
-        type: integer
-      chassi:
-        type: string
-      combustivel:
-        type: string
-      cor:
-        type: string
-      distancia:
-        description: Distância em km da loja, se fornecida localização
-        type: number
-      email_anunciante:
-        description: Dados do anunciante (apenas quando não é loja)
-        type: string
-      endereco_loja:
-        type: string
-      fotos:
-        description: Fotos do veículo
-        items:
-          type: string
-        type: array
-      id:
-        type: integer
-      imagem:
-        type: string
-      ipva_pago:
-        type: boolean
-      is_meu_carro_mais:
-        type: boolean
-      km:
-        type: integer
-      licenciamento:
-        type: string
-      marca:
-        type: string
-      modelo:
-        type: string
-      moedas_utiliza:
-        type: integer
-      nome_anunciante:
-        type: string
-      nome_veiculo:
-        type: string
-      observacoes:
-        type: string
-      placa:
-        type: string
-      possui_financiamento:
-        type: boolean
-      possui_multas:
-        type: boolean
-      preco:
-        type: number
-      renavam:
-        type: string
-      telefone_anunciante:
-        type: string
-      tipo_veiculo:
-        type: string
-    type: object
-  json.AnunciosProdutoResponse:
-    properties:
-      anuncios:
-        items:
-          $ref: '#/definitions/json.AnuncioProdutoResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.AnunciosResponse:
-    properties:
-      anuncios:
-        items:
-          $ref: '#/definitions/json.AnuncioResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.AnunciosServicoResponse:
-    properties:
-      anuncios:
-        items:
-          $ref: '#/definitions/json.AnuncioServicoResponse'
-        type: array
-      total:
-        type: integer
-    type: object
-  json.AnunciosVeiculoResponse:
-    properties:
-      anuncios:
-        items:
-          $ref: '#/definitions/json.AnuncioVeiculoResponse'
-        type: array
-      total:
-        type: integer
-    type: object
   json.AprovacaoResponse:
     properties:
       bonificacao_executivo:
@@ -337,17 +55,6 @@ definitions:
         description: Motivo opcional da aprovação
         type: string
     type: object
-  json.AvaliacaoClienteResponse:
-    properties:
-      comentario:
-        type: string
-      data_avaliacao:
-        type: string
-      id:
-        type: integer
-      nota:
-        type: integer
-    type: object
   json.AvaliacaoEstatisticasResponse:
     properties:
       media_nota:
@@ -370,17 +77,13 @@ definitions:
       comentario:
         maxLength: 500
         type: string
-      id_anuncio:
-        description: Opcional - referência ao anúncio
+      id_cupom:
         type: integer
       id_loja:
-        description: Opcional - avaliar loja
         type: integer
       id_produto:
-        description: Opcional - avaliar produto
         type: integer
       id_servico:
-        description: Opcional - avaliar serviço
         type: integer
       id_usuario:
         type: integer
@@ -402,7 +105,7 @@ definitions:
         type: string
       id:
         type: integer
-      id_anuncio:
+      id_cupom:
         type: integer
       id_loja:
         type: integer
@@ -612,6 +315,272 @@ definitions:
         type: string
       session_url:
         type: string
+    type: object
+  json.CupomDestaqueResponse:
+    properties:
+      descricao:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      preco:
+        type: number
+      tipo_cupom:
+        type: string
+      titulo:
+        type: string
+    type: object
+  json.CupomProdutoResponse:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+      distancia:
+        type: number
+      endereco_loja:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      is_meu_carro_mais:
+        type: boolean
+      moedas_utiliza:
+        type: integer
+      nome_loja:
+        type: string
+      nome_produto:
+        type: string
+      porcentagem_desconto:
+        type: number
+      preco_com_desconto:
+        type: number
+      preco_original:
+        type: number
+      rate:
+        type: integer
+    type: object
+  json.CupomRequest:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+      destaque:
+        type: boolean
+      id_loja:
+        type: integer
+      id_oferta_auto_mais:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_veiculo:
+        type: integer
+      imagem:
+        type: string
+      porcentagem_desconto:
+        maximum: 100
+        minimum: 0
+        type: number
+      preco:
+        minimum: 0
+        type: number
+      preco_com_desconto:
+        minimum: 0
+        type: number
+      tipo_cupom:
+        enum:
+        - produto
+        - servico
+        - veiculo
+        type: string
+      titulo:
+        type: string
+    required:
+    - categoria
+    - descricao
+    - preco
+    - tipo_cupom
+    - titulo
+    type: object
+  json.CupomResponse:
+    properties:
+      avaliacao:
+        type: number
+      categoria:
+        type: string
+      descricao:
+        type: string
+      destaque:
+        type: boolean
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_oferta_auto_mais:
+        type: integer
+      id_produto:
+        type: integer
+      id_servico:
+        type: integer
+      id_veiculo:
+        type: integer
+      imagem:
+        type: string
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      oferta_auto_mais:
+        $ref: '#/definitions/json.OfertaAutoMaisResponse'
+      porcentagem_desconto:
+        type: number
+      preco:
+        type: number
+      preco_com_desconto:
+        type: number
+      preco_original:
+        type: number
+      produto:
+        $ref: '#/definitions/json.ProdutoResponse'
+      servico:
+        $ref: '#/definitions/json.ServicoResponse'
+      tipo_cupom:
+        type: string
+      titulo:
+        type: string
+      veiculo:
+        $ref: '#/definitions/json.VeiculoResponse'
+    type: object
+  json.CupomServicoResponse:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+      distancia:
+        type: number
+      endereco_loja:
+        type: string
+      id:
+        type: integer
+      imagem:
+        type: string
+      is_meu_carro_mais:
+        type: boolean
+      moedas_utiliza:
+        type: integer
+      nome_loja:
+        type: string
+      nome_servico:
+        type: string
+      porcentagem_desconto:
+        type: number
+      preco_com_desconto:
+        type: number
+      preco_original:
+        type: number
+      rate:
+        type: integer
+    type: object
+  json.CupomVeiculoResponse:
+    properties:
+      ano_fabricacao:
+        type: integer
+      ano_modelo:
+        type: integer
+      chassi:
+        type: string
+      combustivel:
+        type: string
+      cor:
+        type: string
+      distancia:
+        type: number
+      email_anunciante:
+        type: string
+      endereco_loja:
+        type: string
+      fotos:
+        items:
+          type: string
+        type: array
+      id:
+        type: integer
+      imagem:
+        type: string
+      ipva_pago:
+        type: boolean
+      is_meu_carro_mais:
+        type: boolean
+      km:
+        type: integer
+      licenciamento:
+        type: string
+      marca:
+        type: string
+      modelo:
+        type: string
+      moedas_utiliza:
+        type: integer
+      nome_anunciante:
+        type: string
+      nome_veiculo:
+        type: string
+      observacoes:
+        type: string
+      placa:
+        type: string
+      possui_financiamento:
+        type: boolean
+      possui_multas:
+        type: boolean
+      preco:
+        type: number
+      renavam:
+        type: string
+      telefone_anunciante:
+        type: string
+      tipo_veiculo:
+        type: string
+    type: object
+  json.CuponsProdutoResponse:
+    properties:
+      cupons:
+        items:
+          $ref: '#/definitions/json.CupomProdutoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CuponsResponse:
+    properties:
+      cupons:
+        items:
+          $ref: '#/definitions/json.CupomResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CuponsServicoResponse:
+    properties:
+      cupons:
+        items:
+          $ref: '#/definitions/json.CupomServicoResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  json.CuponsVeiculoResponse:
+    properties:
+      cupons:
+        items:
+          $ref: '#/definitions/json.CupomVeiculoResponse'
+        type: array
+      total:
+        type: integer
     type: object
   json.CustomerPortalRequest:
     properties:
@@ -881,136 +850,55 @@ definitions:
     type: object
   json.HistoricoResgateClienteResponse:
     properties:
-      avaliacao:
-        $ref: '#/definitions/json.AvaliacaoClienteResponse'
-      data_resgate:
-        type: string
-      desconto_aplicado:
-        type: number
-      id:
-        type: integer
-      id_loja:
-        type: integer
-      imagem_loja:
-        type: string
-      itens:
-        items:
-          $ref: '#/definitions/json.ItemCompraResponse'
-        type: array
-      nome_loja:
-        type: string
-      porcentagem_desconto:
-        type: number
-      quantidade:
-        type: integer
-      status:
-        type: string
-      valor_original:
-        type: number
-      valor_total:
-        type: number
-      valor_unitario:
-        type: number
-    type: object
-  json.HistoricoResgateRequest:
-    properties:
-      desconto_aplicado:
-        type: number
-      id_loja:
-        type: integer
-      id_produto:
-        type: integer
-      id_servico:
-        type: integer
-      id_usuario:
-        type: integer
-      id_veiculo:
-        type: integer
-      porcentagem_desconto:
-        type: number
-      quantidade:
-        type: integer
-      status:
-        enum:
-        - pendente
-        - confirmado
-        - cancelado
-        type: string
-      tipo_resgate:
-        enum:
-        - produto
-        - servico
-        - veiculo
-        type: string
-      valor:
-        minimum: 0
-        type: number
-      valor_original:
-        type: number
-      valor_unitario:
-        type: number
-    required:
-    - id_loja
-    - id_usuario
-    - tipo_resgate
-    - valor
-    type: object
-  json.HistoricoResgateResponse:
-    properties:
+      cupom:
+        $ref: '#/definitions/json.CupomResponse'
       data_atualizacao:
         type: string
       data_resgate:
         type: string
-      desconto_aplicado:
-        type: number
       id:
         type: integer
-      id_anuncio:
-        description: ID do anúncio resgatado
-        type: integer
-      id_loja:
-        type: integer
-      id_produto:
-        type: integer
-      id_servico:
+      id_cupom:
         type: integer
       id_usuario:
         type: integer
-      id_veiculo:
-        type: integer
-      id_veiculo_usuario:
-        description: Veículo do usuário vinculado ao resgate
-        type: integer
-      loja:
-        $ref: '#/definitions/json.LojaResponse'
-      porcentagem_desconto:
-        type: number
-      produto:
-        $ref: '#/definitions/json.ProdutoResponse'
-      quantidade:
-        type: integer
-      servico:
-        $ref: '#/definitions/json.ServicoResponse'
       status:
         type: string
-      tipo_resgate:
+    type: object
+  json.HistoricoResgateRequest:
+    properties:
+      id_cupom:
+        type: integer
+      id_usuario:
+        type: integer
+      status:
+        enum:
+        - pendente
+        - aprovado
+        type: string
+    required:
+    - id_usuario
+    type: object
+  json.HistoricoResgateResponse:
+    properties:
+      cupom:
+        allOf:
+        - $ref: '#/definitions/json.CupomResponse'
+        description: Dados relacionados
+      data_atualizacao:
+        type: string
+      data_resgate:
+        type: string
+      id:
+        type: integer
+      id_cupom:
+        type: integer
+      id_usuario:
+        type: integer
+      status:
         type: string
       usuario:
-        allOf:
-        - $ref: '#/definitions/json.UserResponse'
-        description: Dados relacionados
-      valor:
-        type: number
-      valor_original:
-        type: number
-      valor_unitario:
-        type: number
-      veiculo:
-        $ref: '#/definitions/json.VeiculoResponse'
-      veiculo_usuario:
-        allOf:
-        - $ref: '#/definitions/json.VeiculoResponse'
-        description: Veículo do usuário vinculado
+        $ref: '#/definitions/json.UserResponse'
     type: object
   json.HistoricoVeiculoResponse:
     properties:
@@ -1022,7 +910,7 @@ definitions:
         type: string
       id:
         type: integer
-      id_anuncio:
+      id_cupom:
         type: integer
       id_veiculo:
         type: integer
@@ -1062,24 +950,6 @@ definitions:
         type: array
       total:
         type: integer
-    type: object
-  json.ItemCompraResponse:
-    properties:
-      descricao:
-        type: string
-      id:
-        type: integer
-      imagem:
-        type: string
-      nome:
-        type: string
-      quantidade:
-        type: integer
-      tipo_item:
-        description: '"produto", "servico", "veiculo"'
-        type: string
-      valor_unitario:
-        type: number
     type: object
   json.LogResponse:
     properties:
@@ -1136,7 +1006,6 @@ definitions:
       data_nascimento:
         type: string
       data_solicitacao_executivo:
-        description: Data da solicitação
         type: string
       email:
         type: string
@@ -1145,7 +1014,6 @@ definitions:
       id:
         type: integer
       id_executivo:
-        description: ID do executivo vinculado (para customers)
         type: integer
       id_loja:
         type: integer
@@ -1160,14 +1028,12 @@ definitions:
       longitude:
         type: number
       motivo_solicitacao_executivo:
-        description: Motivo/justificativa da solicitação
         type: string
       nome:
         type: string
       nome_plano:
         type: string
       solicitacao_executivo:
-        description: 'Status da solicitação: "", pendente, aprovada, rejeitada'
         type: string
       status:
         type: string
@@ -1224,14 +1090,13 @@ definitions:
     type: object
   json.LojaResponse:
     properties:
-      anuncio_destaque:
-        $ref: '#/definitions/json.AnuncioDestaqueResponse'
       categoria:
         type: string
       cnpj:
         type: string
+      cupom_destaque:
+        $ref: '#/definitions/json.CupomDestaqueResponse'
       data_vinculo_usuario:
-        description: Data do vínculo com o usuário indicador
         type: string
       endereco:
         type: string
@@ -1240,7 +1105,6 @@ definitions:
       id_usuario:
         type: integer
       id_usuario_indicador:
-        description: ID do usuário que indicou esta loja (opcional)
         type: integer
       imagem:
         type: string
@@ -1255,14 +1119,12 @@ definitions:
       rating:
         type: integer
       usuario_indicador:
-        allOf:
-        - $ref: '#/definitions/json.UsuarioIndicadorResponse'
-        description: Dados do usuário que indicou
+        $ref: '#/definitions/json.UsuarioIndicadorResponse'
     type: object
   json.LojaUsuarioResponse:
     properties:
-      anuncio_destaque:
-        $ref: '#/definitions/json.AnuncioDestaqueResponse'
+      cupom_destaque:
+        $ref: '#/definitions/json.CupomDestaqueResponse'
       id:
         type: integer
       logo:
@@ -1424,7 +1286,7 @@ definitions:
     properties:
       email:
         type: string
-      id_anuncio:
+      id_cupom:
         type: integer
       mensagem:
         maxLength: 1000
@@ -1439,14 +1301,14 @@ definitions:
         type: string
     required:
     - email
-    - id_anuncio
+    - id_cupom
     - nome
     - telefone
     type: object
   json.RegistroInteresseResponse:
     properties:
-      anuncio:
-        $ref: '#/definitions/json.AnuncioResponse'
+      cupom:
+        $ref: '#/definitions/json.CupomResponse'
       data_atualizacao:
         type: string
       data_cadastro:
@@ -1455,7 +1317,7 @@ definitions:
         type: string
       id:
         type: integer
-      id_anuncio:
+      id_cupom:
         type: integer
       mensagem:
         type: string
@@ -1480,13 +1342,11 @@ definitions:
     required:
     - motivo
     type: object
-  json.ResgatarAnuncioRequest:
+  json.ResgatarCupomRequest:
     properties:
       id_usuario:
         type: integer
       id_veiculo_usuario:
-        description: Veículo do usuário para vincular o resgate (obrigatório para
-          produto/serviço)
         type: integer
     required:
     - id_usuario
@@ -2076,74 +1936,54 @@ definitions:
   json.VeiculoResponse:
     properties:
       ano_fabricacao:
-        description: Ano de fabricação
         type: integer
       ano_modelo:
-        description: Ano modelo
         type: integer
       ativo:
         type: boolean
       chassi:
-        description: Chassi do veículo
         type: string
       combustivel:
-        description: Tipo de combustível
         type: string
       cor:
-        description: Cor do veículo
         type: string
       data_cadastro:
         type: string
       fotos:
-        description: Lista de todas as fotos do veículo
         items:
           $ref: '#/definitions/json.VeiculoFotoResponse'
         type: array
       id:
         type: integer
-      id_anuncio:
-        description: ID do anúncio vinculado ao veículo (se houver)
+      id_cupom:
         type: integer
       id_usuario:
         type: integer
       imagem:
-        description: URL da imagem principal do veículo
         type: string
       ipva_pago:
-        description: Se o IPVA está pago
         type: boolean
       licenciamento:
-        description: Status do licenciamento
         type: string
       marca:
-        description: Marca do veículo
         type: string
       modelo:
-        description: Modelo do veículo
         type: string
       observacoes:
-        description: Observações do veículo
         type: string
       placa:
-        description: Placa do veículo
         type: string
       possui_financiamento:
-        description: Se possui financiamento
         type: boolean
       possui_multas:
-        description: Se possui multas
         type: boolean
       preco:
-        description: Preço do veículo
         type: number
       quilometragem:
-        description: KM do veículo
         type: integer
       renavam:
-        description: RENAVAM do veículo
         type: string
       tipo_veiculo:
-        description: Tipo do veículo
         type: string
     type: object
   json.VeiculoTransferenciaResponse:
@@ -2262,403 +2102,6 @@ info:
   title: Meu Carro Mais API
   version: "1.0"
 paths:
-  /anuncios:
-    get:
-      consumes:
-      - application/json
-      description: Retorna uma lista com todos os anúncios ativos, incluindo preço
-        original, preço com desconto, porcentagem de desconto e avaliação da loja
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto,
-            porcentagem_desconto e avaliacao)
-          schema:
-            items:
-              $ref: '#/definitions/json.AnuncioResponse'
-            type: array
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista todos os anúncios
-      tags:
-      - Anúncios
-    post:
-      consumes:
-      - application/json
-      description: Cria um novo anúncio com todos os dados fornecidos, incluindo porcentagem
-        de desconto e preço com desconto
-      parameters:
-      - description: Dados completos do anúncio (inclui porcentagem_desconto e preco_com_desconto)
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/json.AnuncioRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Anúncio criado com sucesso (inclui preco_original, preco_com_desconto,
-            porcentagem_desconto e avaliacao)
-          schema:
-            $ref: '#/definitions/json.AnuncioResponse'
-        "400":
-          description: Dados inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Criação do anúncio completo
-      tags:
-      - Anúncios
-  /anuncios/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Realiza soft delete do anúncio, marcando como excluído sem remover
-        do banco
-      parameters:
-      - description: ID do anúncio
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Anúncio excluído com sucesso
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: ID inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Anúncio não encontrado
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Exclui anúncio (soft delete)
-      tags:
-      - Anúncios
-    get:
-      consumes:
-      - application/json
-      description: Retorna os dados de um anúncio específico pelo ID, incluindo preço
-        original, preço com desconto, porcentagem de desconto e avaliação da loja
-      parameters:
-      - description: ID do anúncio
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Anúncio encontrado (inclui preco_original, preco_com_desconto,
-            porcentagem_desconto e avaliacao)
-          schema:
-            $ref: '#/definitions/json.AnuncioResponse'
-        "400":
-          description: ID inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Anúncio não encontrado
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Busca anúncio por ID
-      tags:
-      - Anúncios
-    put:
-      consumes:
-      - application/json
-      description: Atualiza os dados de um anúncio existente, incluindo porcentagem
-        de desconto e preço com desconto
-      parameters:
-      - description: ID do anúncio
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Dados atualizados do anúncio (inclui porcentagem_desconto e preco_com_desconto)
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/json.AnuncioRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Anúncio atualizado com sucesso (inclui preco_original, preco_com_desconto,
-            porcentagem_desconto e avaliacao)
-          schema:
-            $ref: '#/definitions/json.AnuncioResponse'
-        "400":
-          description: Dados inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Anúncio não encontrado
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Atualiza anúncio
-      tags:
-      - Anúncios
-  /anuncios/{id}/resgatar:
-    post:
-      consumes:
-      - application/json
-      description: Cria um histórico de resgate com status pendente quando um usuário
-        resgata um anúncio. Para anúncios de produto ou serviço, é obrigatório informar
-        o id_veiculo_usuario para vincular o resgate ao veículo do usuário. Quando
-        o resgate for aprovado pela loja, o histórico será automaticamente registrado
-        no veículo.
-      parameters:
-      - description: ID do anúncio
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Dados do resgate (ID do usuário e veículo do usuário para produto/serviço)
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/json.ResgatarAnuncioRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Histórico de resgate criado com sucesso
-          schema:
-            $ref: '#/definitions/json.HistoricoResgateResponse'
-        "400":
-          description: Dados inválidos ou veículo do usuário não informado para produto/serviço
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Anúncio não encontrado
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Resgata um anúncio
-      tags:
-      - Anúncios
-  /anuncios/{id}/restore:
-    post:
-      consumes:
-      - application/json
-      description: Restaura um anúncio que foi soft deleted
-      parameters:
-      - description: ID do anúncio
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Anúncio restaurado com sucesso
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: ID inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Anúncio não encontrado
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Restaura anúncio excluído
-      tags:
-      - Anúncios
-  /anuncios/loja/{loja_id}:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todos os anúncios ativos de uma loja específica, ordenados
-        por destaque e data, incluindo preço original, preço com desconto, porcentagem
-        de desconto e avaliação da loja
-      parameters:
-      - description: ID da loja
-        in: path
-        name: loja_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Lista de anúncios (cada anúncio inclui preco_original, preco_com_desconto,
-            porcentagem_desconto e avaliacao)
-          schema:
-            $ref: '#/definitions/json.AnunciosResponse'
-        "400":
-          description: ID de loja inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista anúncios de uma loja
-      tags:
-      - Anúncios
-  /anuncios/produtos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna anúncios de produtos ordenados por proximidade da loja.
-        Se latitude e longitude forem fornecidos, ordena por distância.
-      parameters:
-      - description: Latitude do usuário (opcional)
-        in: query
-        name: latitude
-        type: number
-      - description: Longitude do usuário (opcional)
-        in: query
-        name: longitude
-        type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.AnunciosProdutoResponse'
-        "400":
-          description: Parâmetros inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista anúncios de produtos por proximidade
-      tags:
-      - Anúncios
-  /anuncios/servicos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna anúncios de serviços ordenados por proximidade da loja.
-        Se latitude e longitude forem fornecidos, ordena por distância.
-      parameters:
-      - description: Latitude do usuário (opcional)
-        in: query
-        name: latitude
-        type: number
-      - description: Longitude do usuário (opcional)
-        in: query
-        name: longitude
-        type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.AnunciosServicoResponse'
-        "400":
-          description: Parâmetros inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista anúncios de serviços por proximidade
-      tags:
-      - Anúncios
-  /anuncios/veiculos:
-    get:
-      consumes:
-      - application/json
-      description: Retorna anúncios de veículos ordenados por proximidade da loja.
-        Se latitude e longitude forem fornecidos, ordena por distância.
-      parameters:
-      - description: Latitude do usuário (opcional)
-        in: query
-        name: latitude
-        type: number
-      - description: Longitude do usuário (opcional)
-        in: query
-        name: longitude
-        type: number
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.AnunciosVeiculoResponse'
-        "400":
-          description: Parâmetros inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista anúncios de veículos por proximidade
-      tags:
-      - Anúncios
   /avaliacoes:
     get:
       consumes:
@@ -3256,6 +2699,387 @@ paths:
       summary: Busca carteira por usuário
       tags:
       - Carteiras
+  /cupons:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista com todos os cupons ativos
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de cupons
+          schema:
+            items:
+              $ref: '#/definitions/json.CupomResponse'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista todos os cupons
+      tags:
+      - Cupons
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo cupom com todos os dados fornecidos, incluindo porcentagem
+        de desconto e preço com desconto
+      parameters:
+      - description: Dados completos do cupom
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CupomRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Cupom criado com sucesso
+          schema:
+            $ref: '#/definitions/json.CupomResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Criação do cupom completo
+      tags:
+      - Cupons
+  /cupons/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Realiza soft delete do cupom, marcando como excluído sem remover
+        do banco
+      parameters:
+      - description: ID do cupom
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cupom excluído com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Cupom não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Exclui cupom (soft delete)
+      tags:
+      - Cupons
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de um cupom específico pelo ID
+      parameters:
+      - description: ID do cupom
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cupom encontrado
+          schema:
+            $ref: '#/definitions/json.CupomResponse'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Cupom não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Busca cupom por ID
+      tags:
+      - Cupons
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um cupom existente
+      parameters:
+      - description: ID do cupom
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados do cupom
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.CupomRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cupom atualizado com sucesso
+          schema:
+            $ref: '#/definitions/json.CupomResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Cupom não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza cupom
+      tags:
+      - Cupons
+  /cupons/{id}/resgatar:
+    post:
+      consumes:
+      - application/json
+      description: Cria um histórico de resgate com status pendente quando um usuário
+        resgata um cupom
+      parameters:
+      - description: ID do cupom
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados do resgate
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.ResgatarCupomRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Histórico de resgate criado com sucesso
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Cupom não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Resgata um cupom
+      tags:
+      - Cupons
+  /cupons/{id}/restore:
+    post:
+      consumes:
+      - application/json
+      description: Restaura um cupom que foi soft deleted
+      parameters:
+      - description: ID do cupom
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cupom restaurado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Cupom não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Restaura cupom excluído
+      tags:
+      - Cupons
+  /cupons/loja/{loja_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os cupons ativos de uma loja específica
+      parameters:
+      - description: ID da loja
+        in: path
+        name: loja_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de cupons
+          schema:
+            $ref: '#/definitions/json.CuponsResponse'
+        "400":
+          description: ID de loja inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista cupons de uma loja
+      tags:
+      - Cupons
+  /cupons/produtos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna cupons de produtos ordenados por proximidade da loja
+      parameters:
+      - description: Latitude do usuário (opcional)
+        in: query
+        name: latitude
+        type: number
+      - description: Longitude do usuário (opcional)
+        in: query
+        name: longitude
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CuponsProdutoResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista cupons de produtos por proximidade
+      tags:
+      - Cupons
+  /cupons/servicos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna cupons de serviços ordenados por proximidade da loja
+      parameters:
+      - description: Latitude do usuário (opcional)
+        in: query
+        name: latitude
+        type: number
+      - description: Longitude do usuário (opcional)
+        in: query
+        name: longitude
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CuponsServicoResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista cupons de serviços por proximidade
+      tags:
+      - Cupons
+  /cupons/veiculos:
+    get:
+      consumes:
+      - application/json
+      description: Retorna cupons de veículos ordenados por proximidade da loja
+      parameters:
+      - description: Latitude do usuário (opcional)
+        in: query
+        name: latitude
+        type: number
+      - description: Longitude do usuário (opcional)
+        in: query
+        name: longitude
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.CuponsVeiculoResponse'
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista cupons de veículos por proximidade
+      tags:
+      - Cupons
   /descontos:
     get:
       consumes:
@@ -3777,38 +3601,6 @@ paths:
       summary: Atualiza status do histórico de resgate
       tags:
       - Histórico de Resgates
-  /historicos-resgate/anuncio/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Retorna todos os históricos de resgate de um anúncio específico
-        (utilização do anúncio)
-      parameters:
-      - description: ID do anúncio
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/json.HistoricosResgateResponse'
-        "400":
-          description: ID de anúncio inválido
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Lista histórico de resgate de um anúncio específico
-      tags:
-      - Histórico de Resgates
   /historicos-resgate/cliente/{id}:
     get:
       consumes:
@@ -3839,6 +3631,38 @@ paths:
             additionalProperties: true
             type: object
       summary: Lista histórico de resgate simplificado do cliente
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/cupom/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todos os históricos de resgate de um cupom específico (utilização
+        do cupom)
+      parameters:
+      - description: ID do cupom
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/json.HistoricosResgateResponse'
+        "400":
+          description: ID de cupom inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista histórico de resgate de um cupom específico
       tags:
       - Histórico de Resgates
   /historicos-resgate/usuario/{id}:
@@ -4047,7 +3871,7 @@ paths:
       - application/json
       description: Retorna todos os logs de uma entidade específica
       parameters:
-      - description: Nome da entidade (anuncio, produto, servico, etc.)
+      - description: Nome da entidade (cupom, produto, servico, etc.)
         in: path
         name: entidade
         required: true
@@ -5783,22 +5607,22 @@ paths:
       summary: Restaura registro de interesse excluído
       tags:
       - Registro de Interesse
-  /registro-interesse/anuncio/{anuncio_id}:
+  /registro-interesse/cupom/{cupom_id}:
     get:
       consumes:
       - application/json
-      description: Retorna todos os registros de interesse de um anúncio específico
+      description: Retorna todos os registros de interesse de um cupom específico
       parameters:
-      - description: ID do anúncio
+      - description: ID do cupom
         in: path
-        name: anuncio_id
+        name: cupom_id
         required: true
         type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: Lista de registros de interesse do anúncio
+          description: Lista de registros de interesse do cupom
           schema:
             items:
               $ref: '#/definitions/json.RegistroInteresseResponse'
@@ -5813,7 +5637,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Lista registros de interesse por anúncio
+      summary: Lista registros de interesse por cupom
       tags:
       - Registro de Interesse
   /servicos:

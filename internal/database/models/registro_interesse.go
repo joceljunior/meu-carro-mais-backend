@@ -4,7 +4,7 @@ import "time"
 
 type RegistroInteresse struct {
 	ID              uint       `gorm:"primaryKey"`
-	IDAnuncio       uint       `gorm:"not null"`
+	IDCupom         uint       `gorm:"not null;column:id_cupom"`
 	Nome            string     `gorm:"size:255;not null"`
 	Email           string     `gorm:"size:255;not null"`
 	Telefone        string     `gorm:"size:20;not null"`
@@ -14,6 +14,5 @@ type RegistroInteresse struct {
 	DataExclusao    *time.Time `gorm:"index"`
 
 	// Relacionamentos
-	Anuncio Anuncio `gorm:"foreignKey:IDAnuncio"`
+	Cupom Cupom `gorm:"foreignKey:IDCupom"`
 }
-

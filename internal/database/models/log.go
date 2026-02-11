@@ -34,7 +34,7 @@ type Log struct {
 	ID              uint       `gorm:"primaryKey"`
 	IDUsuario       *uint      `gorm:"index"` // Pode ser null se for ação do sistema
 	TipoAcao        string     `gorm:"size:50;not null;index"` // "criar", "atualizar", "deletar", "resgatar", "aprovar", "rejeitar", "restaurar", "visualizar"
-	Entidade        string     `gorm:"size:50;not null;index"` // "anuncio", "produto", "servico", "veiculo", "historico_resgate", "registro_interesse", "usuario", "loja", etc.
+	Entidade        string     `gorm:"size:50;not null;index"` // "cupom", "produto", "servico", "veiculo", "historico_resgate", "registro_interesse", "usuario", "loja", etc.
 	IDEntidade      *uint      `gorm:"index"`                  // ID da entidade afetada
 	Descricao       string     `gorm:"size:500"`               // Descrição da ação
 	DadosAntigos    JSONB      `gorm:"type:jsonb"`             // Dados antes da alteração (para updates)
