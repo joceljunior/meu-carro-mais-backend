@@ -12,6 +12,7 @@ type CupomRequest struct {
 	IDServico           *uint   `json:"id_servico,omitempty"`
 	IDVeiculo           *uint   `json:"id_veiculo,omitempty"`
 	IDOfertaAutoMais    *uint   `json:"id_oferta_auto_mais,omitempty"`
+	IDUsuario           *uint   `json:"id_usuario,omitempty"`
 	TipoCupom           string  `json:"tipo_cupom" binding:"required,oneof=produto servico veiculo"`
 	PorcentagemDesconto float64 `json:"porcentagem_desconto" binding:"min=0,max=100"`
 	PrecoComDesconto    float64 `json:"preco_com_desconto" binding:"min=0"`

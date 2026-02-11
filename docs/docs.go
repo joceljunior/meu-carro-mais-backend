@@ -8814,6 +8814,9 @@ const docTemplate = `{
                 "id_servico": {
                     "type": "integer"
                 },
+                "id_usuario": {
+                    "type": "integer"
+                },
                 "id_veiculo": {
                     "type": "integer"
                 },
@@ -8861,6 +8864,9 @@ const docTemplate = `{
                 "destaque": {
                     "type": "boolean"
                 },
+                "email_criador": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -8874,6 +8880,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "id_servico": {
+                    "type": "integer"
+                },
+                "id_usuario": {
                     "type": "integer"
                 },
                 "id_veiculo": {
@@ -8905,6 +8914,9 @@ const docTemplate = `{
                 },
                 "servico": {
                     "$ref": "#/definitions/json.ServicoResponse"
+                },
+                "telefone_criador": {
+                    "type": "string"
                 },
                 "tipo_cupom": {
                     "type": "string"

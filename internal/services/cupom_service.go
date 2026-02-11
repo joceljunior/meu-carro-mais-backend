@@ -47,11 +47,18 @@ func modelToCupomResponse(cupom *models.Cupom) json.CupomResponse {
 		IDServico:           cupom.IDServico,
 		IDVeiculo:           cupom.IDVeiculo,
 		IDOfertaAutoMais:    cupom.IDOfertaAutoMais,
+		IDUsuario:           cupom.IDUsuario,
 		TipoCupom:           cupom.TipoCupom,
 		PrecoOriginal:       precoOriginal,
 		PrecoComDesconto:    precoComDesconto,
 		PorcentagemDesconto: cupom.PorcentagemDesconto,
 		Avaliacao:           avaliacao,
+	}
+
+	// Dados do usuário criador do cupom
+	if cupom.Usuario != nil {
+		response.EmailCriador = &cupom.Usuario.Email
+		response.TelefoneCriador = &cupom.Usuario.Telefone
 	}
 
 	if cupom.Loja != nil {

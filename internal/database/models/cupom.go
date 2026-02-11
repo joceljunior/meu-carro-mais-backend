@@ -18,6 +18,7 @@ type Cupom struct {
 	IDServico           *uint      `gorm:"null"`
 	IDVeiculo           *uint      `gorm:"null"`
 	IDOfertaAutoMais    *uint      `gorm:"null;index"`
+	IDUsuario           *uint      `gorm:"null;index"`
 	TipoCupom           string     `gorm:"size:20;not null;column:tipo_cupom"`
 	PorcentagemDesconto float64    `gorm:"type:decimal(5,2);default:0"`
 	PrecoComDesconto    float64    `gorm:"type:decimal(10,2)"`
@@ -26,6 +27,7 @@ type Cupom struct {
 	Servico             *Servico        `gorm:"foreignKey:IDServico"`
 	Veiculo             *Veiculo        `gorm:"foreignKey:IDVeiculo"`
 	OfertaAutoMais      *OfertaAutoMais `gorm:"foreignKey:IDOfertaAutoMais"`
+	Usuario             *Usuario        `gorm:"foreignKey:IDUsuario"`
 	HistoricosVeiculo   []HistoricoVeiculo `gorm:"foreignKey:IDCupom"`
 }
 

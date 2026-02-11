@@ -30,6 +30,7 @@ func GetCupons() ([]models.Cupom, error) {
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("OfertaAutoMais").
+		Preload("Usuario").
 		Where("data_exclusao IS NULL").
 		Find(&cupons).Error
 
@@ -108,6 +109,7 @@ func CreateCupom(req json.CupomRequest) (*models.Cupom, error) {
 		IDServico:           req.IDServico,
 		IDVeiculo:           req.IDVeiculo,
 		IDOfertaAutoMais:    req.IDOfertaAutoMais,
+		IDUsuario:           req.IDUsuario,
 		TipoCupom:           req.TipoCupom,
 		PorcentagemDesconto: req.PorcentagemDesconto,
 		PrecoComDesconto:    precoComDesconto,
@@ -130,6 +132,7 @@ func GetCupomByID(id uint) (*models.Cupom, error) {
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("OfertaAutoMais").
+		Preload("Usuario").
 		Where("id = ? AND data_exclusao IS NULL", id).
 		First(&cupom).Error
 	if err != nil {
@@ -147,6 +150,7 @@ func GetAllCupons() ([]models.Cupom, error) {
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("OfertaAutoMais").
+		Preload("Usuario").
 		Where("data_exclusao IS NULL").
 		Order("data_cadastro DESC").
 		Find(&cupons).Error
@@ -165,6 +169,7 @@ func GetCuponsByLojaID(lojaID uint) ([]models.Cupom, error) {
 		Preload("Servico").
 		Preload("Veiculo").
 		Preload("OfertaAutoMais").
+		Preload("Usuario").
 		Where("id_loja = ? AND data_exclusao IS NULL", lojaID).
 		Order("destaque DESC, data_cadastro DESC").
 		Find(&cupons).Error
@@ -239,6 +244,7 @@ func UpdateCupom(id uint, req json.CupomRequest) (*models.Cupom, error) {
 	cupom.IDServico = req.IDServico
 	cupom.IDVeiculo = req.IDVeiculo
 	cupom.IDOfertaAutoMais = req.IDOfertaAutoMais
+	cupom.IDUsuario = req.IDUsuario
 	cupom.TipoCupom = req.TipoCupom
 	cupom.PorcentagemDesconto = req.PorcentagemDesconto
 	cupom.PrecoComDesconto = precoComDesconto
@@ -294,6 +300,7 @@ func GetCuponsProdutos() ([]models.Cupom, error) {
 		Preload("Loja").
 		Preload("Produto").
 		Preload("OfertaAutoMais").
+		Preload("Usuario").
 		Where("tipo_cupom = ? AND data_exclusao IS NULL", "produto").
 		Order("data_cadastro DESC").
 		Find(&cupons).Error
@@ -339,6 +346,7 @@ func GetCuponsServicos() ([]models.Cupom, error) {
 		Preload("Loja").
 		Preload("Servico").
 		Preload("OfertaAutoMais").
+		Preload("Usuario").
 		Where("tipo_cupom = ? AND data_exclusao IS NULL", "servico").
 		Order("data_cadastro DESC").
 		Find(&cupons).Error
@@ -403,6 +411,7 @@ func GetCuponsVeiculos() ([]models.Cupom, error) {
 		Preload("Veiculo").
 		Preload("Veiculo.Usuario").
 		Preload("OfertaAutoMais").
+		Preload("Usuario").
 		Where("tipo_cupom = ? AND data_exclusao IS NULL", "veiculo").
 		Order("data_cadastro DESC").
 		Find(&cupons).Error

@@ -8812,6 +8812,9 @@
                 "id_servico": {
                     "type": "integer"
                 },
+                "id_usuario": {
+                    "type": "integer"
+                },
                 "id_veiculo": {
                     "type": "integer"
                 },
@@ -8859,6 +8862,9 @@
                 "destaque": {
                     "type": "boolean"
                 },
+                "email_criador": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -8872,6 +8878,9 @@
                     "type": "integer"
                 },
                 "id_servico": {
+                    "type": "integer"
+                },
+                "id_usuario": {
                     "type": "integer"
                 },
                 "id_veiculo": {
@@ -8903,6 +8912,9 @@
                 },
                 "servico": {
                     "$ref": "#/definitions/json.ServicoResponse"
+                },
+                "telefone_criador": {
+                    "type": "string"
                 },
                 "tipo_cupom": {
                     "type": "string"

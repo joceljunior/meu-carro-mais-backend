@@ -1046,6 +1046,25 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration035)
 
+	migration036 := m.NewMigration("036", "add_id_usuario_to_cupons").
+		ExecuteSQL(`
+			-- Adicionar coluna id_usuario na tabela cupons (opcional, pode ser null)
+			ALTER TABLE cupons ADD COLUMN IF NOT EXISTS id_usuario INTEGER;
+
+			-- Criar índice para a coluna id_usuario
+			CREATE INDEX IF NOT EXISTS idx_cupons_id_usuario ON cupons(id_usuario);
+
+			-- Adicionar foreign key para a tabela usuarios
+			ALTER TABLE cupons ADD CONSTRAINT fk_cupons_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE SET NULL;
+		`, `
+			-- Rollback: remover a coluna id_usuario
+			ALTER TABLE cupons DROP CONSTRAINT IF EXISTS fk_cupons_usuario;
+			DROP INDEX IF EXISTS idx_cupons_id_usuario;
+			ALTER TABLE cupons DROP COLUMN IF EXISTS id_usuario;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration036)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
