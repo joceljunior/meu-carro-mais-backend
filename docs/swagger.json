@@ -6887,6 +6887,67 @@
                 }
             }
         },
+        "/users/{id}/cancelar-executivo": {
+            "post": {
+                "description": "Cancela um executivo aprovado, revertendo o tipo do usuário para mobile. Útil para revogar o status de executivo após aprovação.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Administrativo"
+                ],
+                "summary": "Cancela um executivo aprovado",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário executivo",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados do cancelamento (motivo opcional)",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/json.RejeitarSolicitacaoExecutivoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Executivo cancelado",
+                        "schema": {
+                            "$ref": "#/definitions/json.SolicitacaoExecutivoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou usuário não é executivo",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}/historicos-resgate": {
             "get": {
                 "description": "Retorna todos os históricos de resgate de um usuário específico",
@@ -10940,11 +11001,20 @@
                 "data_cadastro": {
                     "type": "string"
                 },
+                "fotos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.VeiculoFotoResponse"
+                    }
+                },
                 "id": {
                     "type": "integer"
                 },
                 "id_loja": {
                     "type": "integer"
+                },
+                "imagem": {
+                    "type": "string"
                 },
                 "loja": {
                     "$ref": "#/definitions/json.LojaResponse"

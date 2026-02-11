@@ -5,6 +5,42 @@ import (
 	"meu-carro-mais/internal/handlers/json"
 )
 
+// getImagemVeiculoLoja busca a imagem principal de um veículo de loja
+func getImagemVeiculoLoja(idVeiculoLoja uint) string {
+	upload, err := datasource.GetUploadPrincipalByEntidade("veiculo_loja", idVeiculoLoja)
+	if err != nil {
+		return ""
+	}
+	return upload.URL
+}
+
+// getFotosVeiculoLoja busca todas as fotos de um veículo de loja
+func getFotosVeiculoLoja(idVeiculoLoja uint) []json.VeiculoFotoResponse {
+	uploads, err := datasource.GetUploadsByVeiculoLojaID(idVeiculoLoja)
+	if err != nil {
+		return nil
+	}
+
+	var fotos []json.VeiculoFotoResponse
+	for _, upload := range uploads {
+		if upload.Tipo == "Imagem" {
+			foto := json.VeiculoFotoResponse{
+				ID:          upload.ID,
+				URL:         upload.URL,
+				NomeArquivo: upload.NomeArquivo,
+				Tamanho:     upload.Tamanho,
+				TipoMime:    upload.TipoMime,
+				Principal:   upload.Principal,
+				Ordem:       upload.Ordem,
+				DataUpload:  upload.DataUpload,
+			}
+			fotos = append(fotos, foto)
+		}
+	}
+
+	return fotos
+}
+
 // CreateVeiculoLoja cria um novo veículo de loja
 func CreateVeiculoLoja(req json.VeiculoLojaRequest) (*json.VeiculoLojaResponse, error) {
 	veiculo, err := datasource.CreateVeiculoLoja(req)
@@ -19,6 +55,8 @@ func CreateVeiculoLoja(req json.VeiculoLojaRequest) (*json.VeiculoLojaResponse, 
 		Cor:          veiculo.Cor,
 		Placa:        veiculo.Placa,
 		IDLoja:       veiculo.IDLoja,
+		Imagem:       getImagemVeiculoLoja(veiculo.ID),
+		Fotos:        getFotosVeiculoLoja(veiculo.ID),
 		DataCadastro: veiculo.DataCadastro,
 		Ativo:        veiculo.Ativo,
 		Loja: json.LojaResponse{
@@ -50,6 +88,8 @@ func GetVeiculoLojaByID(id uint) (*json.VeiculoLojaResponse, error) {
 		Cor:          veiculo.Cor,
 		Placa:        veiculo.Placa,
 		IDLoja:       veiculo.IDLoja,
+		Imagem:       getImagemVeiculoLoja(veiculo.ID),
+		Fotos:        getFotosVeiculoLoja(veiculo.ID),
 		DataCadastro: veiculo.DataCadastro,
 		Ativo:        veiculo.Ativo,
 		Loja: json.LojaResponse{
@@ -83,6 +123,8 @@ func GetAllVeiculosLoja() ([]json.VeiculoLojaResponse, error) {
 			Cor:          veiculo.Cor,
 			Placa:        veiculo.Placa,
 			IDLoja:       veiculo.IDLoja,
+			Imagem:       getImagemVeiculoLoja(veiculo.ID),
+			Fotos:        getFotosVeiculoLoja(veiculo.ID),
 			DataCadastro: veiculo.DataCadastro,
 			Ativo:        veiculo.Ativo,
 			Loja: json.LojaResponse{
@@ -118,6 +160,8 @@ func GetVeiculosLojaByLojaID(idLoja uint) (*json.VeiculosLojaResponse, error) {
 			Cor:          veiculo.Cor,
 			Placa:        veiculo.Placa,
 			IDLoja:       veiculo.IDLoja,
+			Imagem:       getImagemVeiculoLoja(veiculo.ID),
+			Fotos:        getFotosVeiculoLoja(veiculo.ID),
 			DataCadastro: veiculo.DataCadastro,
 			Ativo:        veiculo.Ativo,
 			Loja: json.LojaResponse{
@@ -156,6 +200,8 @@ func UpdateVeiculoLoja(id uint, req json.VeiculoLojaRequest) (*json.VeiculoLojaR
 		Cor:          veiculo.Cor,
 		Placa:        veiculo.Placa,
 		IDLoja:       veiculo.IDLoja,
+		Imagem:       getImagemVeiculoLoja(veiculo.ID),
+		Fotos:        getFotosVeiculoLoja(veiculo.ID),
 		DataCadastro: veiculo.DataCadastro,
 		Ativo:        veiculo.Ativo,
 		Loja: json.LojaResponse{

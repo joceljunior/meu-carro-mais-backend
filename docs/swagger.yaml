@@ -1849,10 +1849,16 @@ definitions:
         type: string
       data_cadastro:
         type: string
+      fotos:
+        items:
+          $ref: '#/definitions/json.VeiculoFotoResponse'
+        type: array
       id:
         type: integer
       id_loja:
         type: integer
+      imagem:
+        type: string
       loja:
         $ref: '#/definitions/json.LojaResponse'
       modelo:
@@ -6518,6 +6524,48 @@ paths:
       summary: Lista avaliações de um usuário
       tags:
       - Avaliações
+  /users/{id}/cancelar-executivo:
+    post:
+      consumes:
+      - application/json
+      description: Cancela um executivo aprovado, revertendo o tipo do usuário para
+        mobile. Útil para revogar o status de executivo após aprovação.
+      parameters:
+      - description: ID do usuário executivo
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados do cancelamento (motivo opcional)
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/json.RejeitarSolicitacaoExecutivoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Executivo cancelado
+          schema:
+            $ref: '#/definitions/json.SolicitacaoExecutivoResponse'
+        "400":
+          description: ID inválido ou usuário não é executivo
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Usuário não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cancela um executivo aprovado
+      tags:
+      - Administrativo
   /users/{id}/historicos-resgate:
     get:
       consumes:

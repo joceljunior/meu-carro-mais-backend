@@ -667,3 +667,44 @@ func RejeitarSolicitacaoExecutivoHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+// CancelarExecutivoHandler godoc
+// @Summary      Cancela um executivo aprovado
+// @Description  Cancela um executivo aprovado, revertendo o tipo do usuário para mobile. Útil para revogar o status de executivo após aprovação.
+// @Tags         Administrativo
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do usuário executivo"
+// @Param        request body json.RejeitarSolicitacaoExecutivoRequest false "Dados do cancelamento (motivo opcional)"
+// @Success      200 {object} json.SolicitacaoExecutivoResponse "Executivo cancelado"
+// @Failure      400 {object} map[string]interface{} "ID inválido ou usuário não é executivo"
+// @Failure      404 {object} map[string]interface{} "Usuário não encontrado"
+// @Failure      500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router       /users/{id}/cancelar-executivo [post]
+func CancelarExecutivoHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	var motivo string
+	var req json.RejeitarSolicitacaoExecutivoRequest
+	// Motivo é opcional para cancelamento
+	if err := c.ShouldBindJSON(&req); err == nil {
+		motivo = req.Motivo
+	}
+
+	resp, err := services.CancelarExecutivo(uint(id), motivo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
+}

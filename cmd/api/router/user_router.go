@@ -50,6 +50,7 @@ func (ur *UserRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		users.POST("/:id/solicitar-executivo", handlers.SolicitarExecutivoHandler)            // POST /users/:id/solicitar-executivo - Usuário mobile solicita virar executivo
 		users.POST("/:id/aprovar-executivo", handlers.AprovarSolicitacaoExecutivoHandler)     // POST /users/:id/aprovar-executivo - Aprovar solicitação de executivo
 		users.POST("/:id/rejeitar-executivo", handlers.RejeitarSolicitacaoExecutivoHandler)   // POST /users/:id/rejeitar-executivo - Rejeitar solicitação de executivo
+		users.POST("/:id/cancelar-executivo", handlers.CancelarExecutivoHandler)              // POST /users/:id/cancelar-executivo - Cancelar executivo aprovado
 
 		// =====================================================
 		// ENDPOINTS CRUD COM :id (devem vir por último)

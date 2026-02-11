@@ -630,3 +630,30 @@ func RejeitarSolicitacaoExecutivo(id uint) (*models.Usuario, error) {
 
 	return GetUserByID(id)
 }
+
+// CancelarExecutivo cancela um executivo aprovado, revertendo para mobile
+func CancelarExecutivo(id uint) (*models.Usuario, error) {
+	// Busca o usuário
+	usuario, err := GetUserByID(id)
+	if err != nil {
+		return nil, errors.New("usuário não encontrado")
+	}
+
+	// Verifica se é um executivo
+	if usuario.Tipo != models.TipoUsuarioExecutivo {
+		return nil, errors.New("usuário não é um executivo")
+	}
+
+	// Reverte o tipo para mobile e limpa a solicitação
+	err = database.DB.Model(&models.Usuario{}).
+		Where("id = ?", id).
+		Updates(map[string]interface{}{
+			"tipo":                  models.TipoUsuarioMobile,
+			"solicitacao_executivo": models.StatusSolicitacaoNenhuma,
+		}).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUserByID(id)
+}

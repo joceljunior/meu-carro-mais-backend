@@ -636,3 +636,24 @@ func RejeitarSolicitacaoExecutivo(id uint, motivo string) (*json.SolicitacaoExec
 
 	return response, nil
 }
+
+// CancelarExecutivo cancela um executivo aprovado, revertendo para mobile
+func CancelarExecutivo(id uint, motivo string) (*json.SolicitacaoExecutivoResponse, error) {
+	user, err := datasource.CancelarExecutivo(id)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &json.SolicitacaoExecutivoResponse{
+		ID:                         user.ID,
+		Nome:                       user.Nome,
+		Email:                      user.Email,
+		Tipo:                       string(user.Tipo),
+		SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
+		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
+		MotivoSolicitacaoExecutivo: motivo,
+		Mensagem:                   "Executivo cancelado com sucesso. Usuário revertido para mobile.",
+	}
+
+	return response, nil
+}
