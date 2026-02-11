@@ -874,7 +874,7 @@ definitions:
       status:
         enum:
         - pendente
-        - aprovado
+        - efetivado
         type: string
     required:
     - id_usuario
@@ -3443,11 +3443,11 @@ paths:
       summary: Atualiza histórico de resgate
       tags:
       - Histórico de Resgates
-  /historicos-resgate/{id}/aprovar:
+  /historicos-resgate/{id}/efetivar:
     put:
       consumes:
       - application/json
-      description: Aprova um resgate pendente, alterando o status para confirmado.
+      description: Efetiva um resgate pendente, alterando o status para efetivado.
         Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços),
         o histórico é automaticamente registrado no veículo. Se for venda de veículo,
         o veículo é automaticamente transferido para o comprador.
@@ -3461,7 +3461,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Resgate aprovado com sucesso e histórico do veículo criado
+          description: Resgate efetivado com sucesso e histórico do veículo criado
             (se aplicável)
           schema:
             $ref: '#/definitions/json.HistoricoResgateResponse'
@@ -3480,43 +3480,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: Aprova um resgate
-      tags:
-      - Histórico de Resgates
-  /historicos-resgate/{id}/rejeitar:
-    put:
-      consumes:
-      - application/json
-      description: Rejeita um resgate pendente, alterando o status para cancelado
-      parameters:
-      - description: ID do histórico de resgate
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Resgate rejeitado com sucesso
-          schema:
-            $ref: '#/definitions/json.HistoricoResgateResponse'
-        "400":
-          description: Resgate não está pendente ou dados inválidos
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Histórico não encontrado
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Erro interno do servidor
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Rejeita um resgate
+      summary: Efetiva um resgate
       tags:
       - Histórico de Resgates
   /historicos-resgate/{id}/restore:
@@ -3554,6 +3518,43 @@ paths:
             additionalProperties: true
             type: object
       summary: Restaura histórico de resgate
+      tags:
+      - Histórico de Resgates
+  /historicos-resgate/{id}/reverter:
+    put:
+      consumes:
+      - application/json
+      description: Reverte um resgate efetivado, alterando o status de volta para
+        pendente
+      parameters:
+      - description: ID do histórico de resgate
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Resgate revertido com sucesso
+          schema:
+            $ref: '#/definitions/json.HistoricoResgateResponse'
+        "400":
+          description: Resgate não está efetivado ou dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Histórico não encontrado
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Reverte um resgate efetivado
       tags:
       - Histórico de Resgates
   /historicos-resgate/{id}/status:

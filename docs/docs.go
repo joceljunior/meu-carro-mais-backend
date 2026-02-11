@@ -2130,9 +2130,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/historicos-resgate/{id}/aprovar": {
+        "/historicos-resgate/{id}/efetivar": {
             "put": {
-                "description": "Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.",
+                "description": "Efetiva um resgate pendente, alterando o status para efetivado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2142,7 +2142,7 @@ const docTemplate = `{
                 "tags": [
                     "Histórico de Resgates"
                 ],
-                "summary": "Aprova um resgate",
+                "summary": "Efetiva um resgate",
                 "parameters": [
                     {
                         "type": "integer",
@@ -2154,60 +2154,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Resgate aprovado com sucesso e histórico do veículo criado (se aplicável)",
-                        "schema": {
-                            "$ref": "#/definitions/json.HistoricoResgateResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Resgate não está pendente ou dados inválidos",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Histórico não encontrado",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/historicos-resgate/{id}/rejeitar": {
-            "put": {
-                "description": "Rejeita um resgate pendente, alterando o status para cancelado",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Histórico de Resgates"
-                ],
-                "summary": "Rejeita um resgate",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID do histórico de resgate",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Resgate rejeitado com sucesso",
+                        "description": "Resgate efetivado com sucesso e histórico do veículo criado (se aplicável)",
                         "schema": {
                             "$ref": "#/definitions/json.HistoricoResgateResponse"
                         }
@@ -2268,6 +2215,59 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/historicos-resgate/{id}/reverter": {
+            "put": {
+                "description": "Reverte um resgate efetivado, alterando o status de volta para pendente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Reverte um resgate efetivado",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resgate revertido com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Resgate não está efetivado ou dados inválidos",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -9494,7 +9494,7 @@ const docTemplate = `{
                     "type": "string",
                     "enum": [
                         "pendente",
-                        "aprovado"
+                        "efetivado"
                     ]
                 }
             }

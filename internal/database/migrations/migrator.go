@@ -980,6 +980,72 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration033)
 
+	// Migration 034: Simplificar tabela historico_resgates e atualizar status
+	migration034 := m.NewMigration("034", "simplify_historico_resgates_and_update_status").
+		ExecuteSQL(`
+			-- 1. Atualizar status existentes: aprovado/confirmado -> efetivado
+			UPDATE historico_resgates SET status = 'efetivado' WHERE status IN ('aprovado', 'confirmado');
+
+			-- 2. Remover colunas que não são mais utilizadas
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS quantidade;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS valor_unitario;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS valor_original;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS desconto_aplicado;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS porcentagem_desconto;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS id_veiculo_usuario;
+
+			-- 3. Remover foreign keys e índices das colunas removidas
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_veiculo_usuario;
+			DROP INDEX IF EXISTS idx_historico_resgate_veiculo_usuario;
+		`, `
+			-- Rollback: recria as colunas removidas
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS quantidade INTEGER DEFAULT 1;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS valor_unitario DECIMAL(10,2) DEFAULT 0;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS valor_original DECIMAL(10,2) DEFAULT 0;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS desconto_aplicado DECIMAL(10,2) DEFAULT 0;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS porcentagem_desconto DECIMAL(5,2) DEFAULT 0;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS id_veiculo_usuario INTEGER;
+
+			-- Rollback: reverte status efetivado para aprovado
+			UPDATE historico_resgates SET status = 'aprovado' WHERE status = 'efetivado';
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration034)
+
+	// Migration 035: Remover colunas remanescentes da tabela historico_resgates
+	migration035 := m.NewMigration("035", "remove_remaining_columns_from_historico_resgates").
+		ExecuteSQL(`
+			-- Remover foreign keys das colunas que serão removidas
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_produto;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_servico;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_veiculo;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgate_loja;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgates_produto;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgates_servico;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgates_veiculo;
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgates_loja;
+
+			-- Remover colunas que não fazem mais parte do modelo
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS id_produto;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS id_servico;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS id_veiculo;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS id_loja;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS tipo_resgate;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS valor;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS data_exclusao;
+		`, `
+			-- Rollback: recria as colunas removidas
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS id_produto INTEGER;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS id_servico INTEGER;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS id_veiculo INTEGER;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS id_loja INTEGER;
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS tipo_resgate VARCHAR(20);
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS valor NUMERIC(10,2);
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS data_exclusao TIMESTAMPTZ;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration035)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

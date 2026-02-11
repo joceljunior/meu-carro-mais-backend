@@ -280,12 +280,11 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 	// Valida o status
 	validStatuses := map[string]bool{
 		"pendente":   true,
-		"confirmado": true,
-		"cancelado":  true,
+		"efetivado":  true,
 	}
 	if !validStatuses[status] {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Status inválido. Valores aceitos: pendente, confirmado, cancelado",
+			"error": "Status inválido. Valores aceitos: pendente, efetivado",
 		})
 		return
 	}
@@ -304,19 +303,19 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 	})
 }
 
-// AprovarResgateHandler godoc
-// @Summary      Aprova um resgate
-// @Description  Aprova um resgate pendente, alterando o status para confirmado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.
+// EfetivarResgateHandler godoc
+// @Summary      Efetiva um resgate
+// @Description  Efetiva um resgate pendente, alterando o status para efetivado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.
 // @Tags         Histórico de Resgates
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID do histórico de resgate"
-// @Success      200  {object}  json.HistoricoResgateResponse "Resgate aprovado com sucesso e histórico do veículo criado (se aplicável)"
+// @Success      200  {object}  json.HistoricoResgateResponse "Resgate efetivado com sucesso e histórico do veículo criado (se aplicável)"
 // @Failure      400  {object}  map[string]interface{} "Resgate não está pendente ou dados inválidos"
 // @Failure      404  {object}  map[string]interface{} "Histórico não encontrado"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
-// @Router       /historicos-resgate/{id}/aprovar [put]
-func AprovarResgateHandler(c *gin.Context) {
+// @Router       /historicos-resgate/{id}/efetivar [put]
+func EfetivarResgateHandler(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -337,12 +336,12 @@ func AprovarResgateHandler(c *gin.Context) {
 
 	if historico.Status != "pendente" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Apenas resgates com status 'pendente' podem ser aprovados",
+			"error": "Apenas resgates com status 'pendente' podem ser efetivados",
 		})
 		return
 	}
 
-	err = services.UpdateStatusHistoricoResgate(uint(id), "confirmado")
+	err = services.UpdateStatusHistoricoResgate(uint(id), "efetivado")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -388,7 +387,7 @@ func AprovarResgateHandler(c *gin.Context) {
 				descricao = "Serviço resgatado"
 			}
 		default:
-			descricao = "Resgate aprovado"
+			descricao = "Resgate efetivado"
 		}
 
 		// Cria o registro no histórico do veículo
@@ -407,27 +406,27 @@ func AprovarResgateHandler(c *gin.Context) {
 	// Retorna o histórico atualizado
 	historicoAtualizado, _ := services.GetHistoricoResgateByID(uint(id))
 	
-	// Registra log da aprovação
+	// Registra log da efetivação
 	idHistorico := uint(id)
-	LogAction(c, "aprovar", "historico_resgate", &idHistorico,
-		"Resgate aprovado pela loja", historico, historicoAtualizado)
+	LogAction(c, "efetivar", "historico_resgate", &idHistorico,
+		"Resgate efetivado pela loja", historico, historicoAtualizado)
 
 	c.JSON(http.StatusOK, historicoAtualizado)
 }
 
-// RejeitarResgateHandler godoc
-// @Summary      Rejeita um resgate
-// @Description  Rejeita um resgate pendente, alterando o status para cancelado
+// ReverterResgateHandler godoc
+// @Summary      Reverte um resgate efetivado
+// @Description  Reverte um resgate efetivado, alterando o status de volta para pendente
 // @Tags         Histórico de Resgates
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID do histórico de resgate"
-// @Success      200  {object}  json.HistoricoResgateResponse "Resgate rejeitado com sucesso"
-// @Failure      400  {object}  map[string]interface{} "Resgate não está pendente ou dados inválidos"
+// @Success      200  {object}  json.HistoricoResgateResponse "Resgate revertido com sucesso"
+// @Failure      400  {object}  map[string]interface{} "Resgate não está efetivado ou dados inválidos"
 // @Failure      404  {object}  map[string]interface{} "Histórico não encontrado"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
-// @Router       /historicos-resgate/{id}/rejeitar [put]
-func RejeitarResgateHandler(c *gin.Context) {
+// @Router       /historicos-resgate/{id}/reverter [put]
+func ReverterResgateHandler(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
@@ -437,7 +436,7 @@ func RejeitarResgateHandler(c *gin.Context) {
 		return
 	}
 
-	// Verifica se o resgate existe e está pendente
+	// Verifica se o resgate existe e está efetivado
 	historico, err := services.GetHistoricoResgateByID(uint(id))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -446,14 +445,14 @@ func RejeitarResgateHandler(c *gin.Context) {
 		return
 	}
 
-	if historico.Status != "pendente" {
+	if historico.Status != "efetivado" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Apenas resgates com status 'pendente' podem ser rejeitados",
+			"error": "Apenas resgates com status 'efetivado' podem ser revertidos",
 		})
 		return
 	}
 
-	err = services.UpdateStatusHistoricoResgate(uint(id), "cancelado")
+	err = services.UpdateStatusHistoricoResgate(uint(id), "pendente")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -464,10 +463,10 @@ func RejeitarResgateHandler(c *gin.Context) {
 	// Retorna o histórico atualizado
 	historicoAtualizado, _ := services.GetHistoricoResgateByID(uint(id))
 	
-	// Registra log da rejeição
+	// Registra log da reversão
 	idHistorico := uint(id)
-	LogAction(c, "rejeitar", "historico_resgate", &idHistorico,
-		"Resgate rejeitado pela loja", historico, historicoAtualizado)
+	LogAction(c, "reverter", "historico_resgate", &idHistorico,
+		"Resgate revertido pela loja", historico, historicoAtualizado)
 
 	c.JSON(http.StatusOK, historicoAtualizado)
 }

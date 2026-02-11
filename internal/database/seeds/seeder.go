@@ -1214,7 +1214,7 @@ func (s *Seeder) seedHistoricoResgates() error {
 	resgates := []models.HistoricoResgate{
 		{
 			IDCupom:   &cupons[0].ID,
-			Status:    "aprovado",
+			Status:    "efetivado",
 			IDUsuario: usuarios[0].ID,
 		},
 		{
@@ -1224,7 +1224,7 @@ func (s *Seeder) seedHistoricoResgates() error {
 		},
 		{
 			IDCupom:   &cupons[2].ID,
-			Status:    "aprovado",
+			Status:    "efetivado",
 			IDUsuario: usuarios[2].ID,
 		},
 		{

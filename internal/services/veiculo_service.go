@@ -322,7 +322,7 @@ func RestoreVeiculo(id uint) error {
 	return datasource.RestoreVeiculo(id)
 }
 
-// CreateHistoricoVeiculoFromResgate cria um histórico de veículo a partir de um resgate aprovado
+// CreateHistoricoVeiculoFromResgate cria um histórico de veículo a partir de um resgate efetivado
 func CreateHistoricoVeiculoFromResgate(idVeiculo uint, idCupom uint, descricao string) (*json.HistoricoVeiculoResponse, error) {
 	historico, err := datasource.CreateHistoricoVeiculo(idVeiculo, idCupom, descricao)
 	if err != nil {

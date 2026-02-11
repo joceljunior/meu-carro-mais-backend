@@ -8,7 +8,7 @@ type HistoricoResgate struct {
 	IDUsuario       uint       `gorm:"not null"`
 	DataResgate     time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`
-	Status          string     `gorm:"size:20;default:'pendente'"` // "pendente", "aprovado"
+	Status          string     `gorm:"size:20;default:'pendente'"` // "pendente", "efetivado"
 
 	// Relacionamentos
 	Cupom   *Cupom  `gorm:"foreignKey:IDCupom"`
