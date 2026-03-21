@@ -24,6 +24,8 @@ type LoginResponse struct {
 	SolicitacaoExecutivo       string     `json:"solicitacao_executivo"`
 	DataSolicitacaoExecutivo   *time.Time `json:"data_solicitacao_executivo"`
 	MotivoSolicitacaoExecutivo string     `json:"motivo_solicitacao_executivo"`
+	MoedasGerais               int        `json:"moedas_gerais"`
+	MoedasPorLoja              []MoedaLojaUsuarioItem `json:"moedas_por_loja"`
 	LojaUsuarioResponse        `json:"loja,omitempty"`
 }
 

@@ -63,8 +63,8 @@ func CreateCarteira(req json.CarteiraRequest) (*models.Carteira, error) {
 	}
 
 	carteira := models.Carteira{
-		UsuarioID: req.UsuarioID,
-		Saldo:     req.Saldo,
+		UsuarioID:  req.UsuarioID,
+		SaldoGeral: req.MoedasGerais,
 	}
 
 	err = database.DB.Create(&carteira).Error
@@ -95,7 +95,7 @@ func UpdateCarteira(id uint, req json.CarteiraRequest) (*models.Carteira, error)
 
 	// Atualiza os campos
 	carteira.UsuarioID = req.UsuarioID
-	carteira.Saldo = req.Saldo
+	carteira.SaldoGeral = req.MoedasGerais
 
 	err = database.DB.Save(&carteira).Error
 	if err != nil {
@@ -117,7 +117,7 @@ func UpdateCarteiraSaldo(id uint, novoSaldo int) (*models.Carteira, error) {
 	// Atualiza apenas o saldo
 	err = database.DB.Model(&models.Carteira{}).
 		Where("id = ?", id).
-		Update("saldo", novoSaldo).Error
+		Update("saldo_geral", novoSaldo).Error
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func AdicionarSaldo(id uint, valor int) (*models.Carteira, error) {
 	}
 
 	// Adiciona o valor ao saldo atual
-	novoSaldo := carteira.Saldo + valor
+	novoSaldo := carteira.SaldoGeral + valor
 	return UpdateCarteiraSaldo(id, novoSaldo)
 }
 
@@ -148,12 +148,12 @@ func SubtrairSaldo(id uint, valor int) (*models.Carteira, error) {
 	}
 
 	// Verifica se há saldo suficiente
-	if carteira.Saldo < valor {
+	if carteira.SaldoGeral < valor {
 		return nil, errors.New("saldo insuficiente")
 	}
 
 	// Subtrai o valor do saldo atual
-	novoSaldo := carteira.Saldo - valor
+	novoSaldo := carteira.SaldoGeral - valor
 	return UpdateCarteiraSaldo(id, novoSaldo)
 }
 
@@ -179,8 +179,8 @@ func GetCarteirasBySaldoRange(saldoMin, saldoMax int) ([]models.Carteira, error)
 	var carteiras []models.Carteira
 	err := database.DB.
 		Preload("Usuario").
-		Where("saldo >= ? AND saldo <= ?", saldoMin, saldoMax).
-		Order("saldo DESC").
+		Where("saldo_geral >= ? AND saldo_geral <= ?", saldoMin, saldoMax).
+		Order("saldo_geral DESC").
 		Find(&carteiras).Error
 	if err != nil {
 		return nil, err
@@ -193,8 +193,8 @@ func GetCarteirasComSaldoMaior(valor int) ([]models.Carteira, error) {
 	var carteiras []models.Carteira
 	err := database.DB.
 		Preload("Usuario").
-		Where("saldo > ?", valor).
-		Order("saldo DESC").
+		Where("saldo_geral > ?", valor).
+		Order("saldo_geral DESC").
 		Find(&carteiras).Error
 	if err != nil {
 		return nil, err

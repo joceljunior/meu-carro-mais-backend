@@ -1,9 +1,12 @@
 package services
 
 import (
+	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/datasource"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
+
+	"gorm.io/gorm"
 )
 
 func usuarioModelToUserResponse(u models.Usuario) json.UserResponse {
@@ -139,9 +142,17 @@ func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*json.Hi
 	return convertHistoricoToResponse(historico), nil
 }
 
-// UpdateStatusHistoricoResgate atualiza apenas o status de um histórico
+// UpdateStatusHistoricoResgate atualiza o status e, se efetivado, credita moedas por loja na mesma transação.
 func UpdateStatusHistoricoResgate(id uint, status string) error {
-	return datasource.UpdateStatusHistoricoResgate(id, status)
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := datasource.UpdateStatusHistoricoResgateWithDB(tx, id, status); err != nil {
+			return err
+		}
+		if status == "efetivado" {
+			return AplicarMoedasCreditoResgateEfetivadoTx(tx, id)
+		}
+		return nil
+	})
 }
 
 // SoftDeleteHistoricoResgate realiza soft delete do histórico

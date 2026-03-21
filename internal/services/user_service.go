@@ -37,6 +37,13 @@ func CreateUser(req json.UserRequest) (*json.UserResponse, error) {
 		Mensagem:       "Usuário criado com sucesso",
 	}
 
+	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
+	if err != nil {
+		return nil, err
+	}
+	response.MoedasGerais = gerais
+	response.MoedasPorLoja = moedasLoja
+
 	return response, nil
 }
 
@@ -93,6 +100,13 @@ func GetUserByID(id uint) (*json.UserResponse, error) {
 		Mensagem:                   "Usuário encontrado com sucesso",
 	}
 
+	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
+	if err != nil {
+		return nil, err
+	}
+	response.MoedasGerais = gerais
+	response.MoedasPorLoja = moedasLoja
+
 	return response, nil
 }
 
@@ -133,6 +147,12 @@ func GetAllUsers() ([]json.UserResponse, error) {
 			Status:         string(user.Status),
 			Loja:           lojaResponse,
 		}
+		gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
+		if err != nil {
+			return nil, err
+		}
+		response.MoedasGerais = gerais
+		response.MoedasPorLoja = moedasLoja
 		responses = append(responses, response)
 	}
 
@@ -175,6 +195,13 @@ func UpdateUser(id uint, req json.UserRequest) (*json.UserResponse, error) {
 		Loja:           lojaResponse,
 		Mensagem:       "Usuário atualizado com sucesso",
 	}
+
+	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
+	if err != nil {
+		return nil, err
+	}
+	response.MoedasGerais = gerais
+	response.MoedasPorLoja = moedasLoja
 
 	return response, nil
 }

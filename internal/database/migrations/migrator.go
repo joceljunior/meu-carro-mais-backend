@@ -1104,6 +1104,31 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration039)
 
+	migration040 := m.NewMigration("040", "moedas_gerais_por_loja_e_credito_resgate").
+		ExecuteSQL(`
+			ALTER TABLE carteiras RENAME COLUMN saldo TO saldo_geral;
+
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS moedas_loja_ja_creditadas BOOLEAN NOT NULL DEFAULT FALSE;
+
+			CREATE TABLE IF NOT EXISTS usuario_moedas_loja (
+				id SERIAL PRIMARY KEY,
+				usuario_id INTEGER NOT NULL,
+				loja_id INTEGER NOT NULL,
+				saldo INTEGER NOT NULL DEFAULT 0,
+				CONSTRAINT uq_usuario_moedas_loja UNIQUE (usuario_id, loja_id),
+				CONSTRAINT fk_umj_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+				CONSTRAINT fk_umj_loja FOREIGN KEY (loja_id) REFERENCES lojas(id) ON DELETE CASCADE
+			);
+			CREATE INDEX IF NOT EXISTS idx_usuario_moedas_loja_usuario ON usuario_moedas_loja(usuario_id);
+			CREATE INDEX IF NOT EXISTS idx_usuario_moedas_loja_loja ON usuario_moedas_loja(loja_id);
+		`, `
+			DROP TABLE IF EXISTS usuario_moedas_loja CASCADE;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS moedas_loja_ja_creditadas;
+			ALTER TABLE carteiras RENAME COLUMN saldo_geral TO saldo;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration040)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

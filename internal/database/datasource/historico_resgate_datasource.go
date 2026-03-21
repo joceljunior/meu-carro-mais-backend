@@ -2,9 +2,12 @@ package datasource
 
 import (
 	"errors"
+
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
+
+	"gorm.io/gorm"
 )
 
 // CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom
@@ -172,6 +175,32 @@ func UpdateStatusHistoricoResgate(id uint, status string) error {
 	}
 
 	return nil
+}
+
+// UpdateStatusHistoricoResgateWithDB atualiza status usando uma sessão DB/tx.
+func UpdateStatusHistoricoResgateWithDB(db *gorm.DB, id uint, status string) error {
+	return db.Model(&models.HistoricoResgate{}).
+		Where("id = ?", id).
+		Update("status", status).Error
+}
+
+// GetHistoricoResgateByIDWithDB busca histórico com os mesmos preloads que GetHistoricoResgateByID.
+func GetHistoricoResgateByIDWithDB(db *gorm.DB, id uint) (*models.HistoricoResgate, error) {
+	var historico models.HistoricoResgate
+	err := db.
+		Preload("Usuario").
+		Preload("Cupom").
+		Preload("Cupom.Loja").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
+		Preload("Cupom.Veiculo").
+		Preload("Cupom.OfertaAutoMais").
+		Where("id = ?", id).
+		First(&historico).Error
+	if err != nil {
+		return nil, err
+	}
+	return &historico, nil
 }
 
 // SoftDeleteHistoricoResgate realiza soft delete do histórico

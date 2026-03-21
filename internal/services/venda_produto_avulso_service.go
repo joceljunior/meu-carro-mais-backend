@@ -3,9 +3,12 @@ package services
 import (
 	"errors"
 
+	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/datasource"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
+
+	"gorm.io/gorm"
 )
 
 // VendaProdutoAvulsoModelToResponse converte o model para JSON.
@@ -31,19 +34,30 @@ func VendasProdutoAvulsoModelsToResponses(vendas []models.VendaProdutoAvulso) []
 	return out
 }
 
-// CreateVendaProdutoAvulso registra venda de produto não cadastrado; resolve o cliente pelo email.
+// CreateVendaProdutoAvulso registra venda de produto não cadastrado; resolve o cliente pelo email e credita moedas por loja.
 func CreateVendaProdutoAvulso(idLoja uint, req json.VendaProdutoAvulsoRequest) (*json.VendaProdutoAvulsoResponse, error) {
 	usuario, err := datasource.GetUserByEmailOnly(req.EmailCliente)
 	if err != nil {
 		return nil, errors.New("cliente não encontrado para o email informado")
 	}
-	if _, err := datasource.GetLojaByID(idLoja); err != nil {
+	loja, err := datasource.GetLojaByID(idLoja)
+	if err != nil {
 		return nil, errors.New("loja não encontrada")
 	}
-	v, err := datasource.CreateVendaProdutoAvulso(idLoja, usuario.ID, req.Valor, req.DescricaoProduto)
+
+	var v *models.VendaProdutoAvulso
+	err = database.DB.Transaction(func(tx *gorm.DB) error {
+		var e error
+		v, e = datasource.CreateVendaProdutoAvulsoTx(tx, idLoja, usuario.ID, req.Valor, req.DescricaoProduto)
+		if e != nil {
+			return e
+		}
+		return AplicarMoedasCreditoVendaAvulsaTx(tx, usuario.ID, idLoja, req.Valor, loja.DescontoGeralPorcentagem)
+	})
 	if err != nil {
 		return nil, err
 	}
+
 	r := VendaProdutoAvulsoModelToResponse(v)
 	return &r, nil
 }

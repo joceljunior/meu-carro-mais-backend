@@ -6,7 +6,7 @@ import "time"
 type CarteiraResponse struct {
 	ID              uint      `json:"id" example:"1"`
 	UsuarioID       uint      `json:"usuario_id" example:"1"`
-	Saldo           int       `json:"saldo" example:"1000"` // Moedas do app (valores inteiros)
+	MoedasGerais    int       `json:"moedas_gerais" example:"1000"` // Moedas gerais (qualquer loja)
 	DataCriacao     time.Time `json:"data_criacao" example:"2023-10-07T13:30:00Z"`
 	DataAtualizacao time.Time `json:"data_atualizacao" example:"2023-10-07T13:30:00Z"`
 	Mensagem        string    `json:"mensagem,omitempty" example:"Carteira criada com sucesso"`
@@ -16,7 +16,7 @@ type CarteiraResponse struct {
 type CarteiraComUsuarioResponse struct {
 	ID              uint      `json:"id" example:"1"`
 	UsuarioID       uint      `json:"usuario_id" example:"1"`
-	Saldo           int       `json:"saldo" example:"1000"` // Moedas do app (valores inteiros)
+	MoedasGerais    int       `json:"moedas_gerais" example:"1000"` // Moedas gerais (qualquer loja)
 	DataCriacao     time.Time `json:"data_criacao" example:"2023-10-07T13:30:00Z"`
 	DataAtualizacao time.Time `json:"data_atualizacao" example:"2023-10-07T13:30:00Z"`
 	Usuario         struct {

@@ -27,4 +27,6 @@ type UserResponse struct {
 	LojaIndicadora             *LojaUsuarioResponse `json:"loja_indicadora,omitempty"`              // Dados da loja que indicou
 	Loja                       *LojaUsuarioResponse `json:"loja,omitempty"`
 	Mensagem                   string               `json:"mensagem,omitempty"`
+	MoedasGerais               int                  `json:"moedas_gerais"`
+	MoedasPorLoja              []MoedaLojaUsuarioItem `json:"moedas_por_loja"`
 }

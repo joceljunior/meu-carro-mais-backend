@@ -596,7 +596,7 @@ func (s *Seeder) seedCarteira() error {
 
 		carteira := models.Carteira{
 			UsuarioID: usuario.ID,
-			Saldo:     saldo,
+			SaldoGeral: saldo,
 		}
 
 		var existing models.Carteira
@@ -683,7 +683,7 @@ func (s *Seeder) seedUsuarioComCupomDestaque() error {
 	// Cria uma carteira para o usuário com saldo premium (moedas do app)
 	carteira := models.Carteira{
 		UsuarioID: usuarioComCupom.ID,
-		Saldo:     5000, // Saldo maior para usuário premium (moedas do app)
+		SaldoGeral: 5000, // Moedas gerais — usuário premium (seed)
 	}
 
 	var existingCarteira models.Carteira
@@ -692,7 +692,7 @@ func (s *Seeder) seedUsuarioComCupomDestaque() error {
 		if err := s.db.Create(&carteira).Error; err != nil {
 			return fmt.Errorf("erro ao criar carteira para usuario %d: %v", carteira.UsuarioID, err)
 		}
-		log.Printf("✅ Carteira premium criada para usuario %s (ID: %d) com saldo %d moedas", usuarioComCupom.Nome, carteira.UsuarioID, carteira.Saldo)
+		log.Printf("✅ Carteira premium criada para usuario %s (ID: %d) com saldo %d moedas", usuarioComCupom.Nome, carteira.UsuarioID, carteira.SaldoGeral)
 	} else {
 		log.Printf("⏭️ Carteira já existe para usuario %s (ID: %d)", usuarioComCupom.Nome, carteira.UsuarioID)
 	}

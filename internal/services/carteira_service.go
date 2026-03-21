@@ -15,7 +15,7 @@ func CreateCarteira(req json.CarteiraRequest) (*json.CarteiraResponse, error) {
 	response := &json.CarteiraResponse{
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
-		Saldo:           carteira.Saldo,
+		MoedasGerais:    carteira.SaldoGeral,
 		DataCriacao:     carteira.DataCriacao,
 		DataAtualizacao: carteira.DataAtualizacao,
 		Mensagem:        "Carteira criada com sucesso",
@@ -34,7 +34,7 @@ func GetCarteiraByID(id uint) (*json.CarteiraComUsuarioResponse, error) {
 	response := &json.CarteiraComUsuarioResponse{
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
-		Saldo:           carteira.Saldo,
+		MoedasGerais:    carteira.SaldoGeral,
 		DataCriacao:     carteira.DataCriacao,
 		DataAtualizacao: carteira.DataAtualizacao,
 		Mensagem:        "Carteira encontrada com sucesso",
@@ -60,7 +60,7 @@ func GetCarteiraByUsuarioID(usuarioID uint) (*json.CarteiraComUsuarioResponse, e
 	response := &json.CarteiraComUsuarioResponse{
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
-		Saldo:           carteira.Saldo,
+		MoedasGerais:    carteira.SaldoGeral,
 		DataCriacao:     carteira.DataCriacao,
 		DataAtualizacao: carteira.DataAtualizacao,
 		Mensagem:        "Carteira encontrada com sucesso",
@@ -88,7 +88,7 @@ func GetAllCarteiras() (*json.CarteirasResponse, error) {
 		response := json.CarteiraComUsuarioResponse{
 			ID:              carteira.ID,
 			UsuarioID:       carteira.UsuarioID,
-			Saldo:           carteira.Saldo,
+			MoedasGerais:    carteira.SaldoGeral,
 			DataCriacao:     carteira.DataCriacao,
 			DataAtualizacao: carteira.DataAtualizacao,
 		}
@@ -120,7 +120,7 @@ func UpdateCarteira(id uint, req json.CarteiraRequest) (*json.CarteiraResponse, 
 	response := &json.CarteiraResponse{
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
-		Saldo:           carteira.Saldo,
+		MoedasGerais:    carteira.SaldoGeral,
 		DataCriacao:     carteira.DataCriacao,
 		DataAtualizacao: carteira.DataAtualizacao,
 		Mensagem:        "Carteira atualizada com sucesso",
@@ -131,7 +131,7 @@ func UpdateCarteira(id uint, req json.CarteiraRequest) (*json.CarteiraResponse, 
 
 // UpdateCarteiraSaldo atualiza apenas o saldo de uma carteira
 func UpdateCarteiraSaldo(id uint, req json.CarteiraSaldoRequest) (*json.CarteiraResponse, error) {
-	carteira, err := datasource.UpdateCarteiraSaldo(id, req.Saldo)
+	carteira, err := datasource.UpdateCarteiraSaldo(id, req.MoedasGerais)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func UpdateCarteiraSaldo(id uint, req json.CarteiraSaldoRequest) (*json.Carteira
 	response := &json.CarteiraResponse{
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
-		Saldo:           carteira.Saldo,
+		MoedasGerais:    carteira.SaldoGeral,
 		DataCriacao:     carteira.DataCriacao,
 		DataAtualizacao: carteira.DataAtualizacao,
 		Mensagem:        "Saldo atualizado com sucesso",
@@ -156,7 +156,7 @@ func AdicionarSaldo(id uint, req json.CarteiraOperacaoRequest) (*json.CarteiraOp
 		return nil, err
 	}
 
-	saldoAnterior := carteiraAtual.Saldo
+	saldoAnterior := carteiraAtual.SaldoGeral
 
 	// Adiciona o saldo
 	carteira, err := datasource.AdicionarSaldo(id, req.Valor)
@@ -168,7 +168,7 @@ func AdicionarSaldo(id uint, req json.CarteiraOperacaoRequest) (*json.CarteiraOp
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
 		SaldoAnterior:   saldoAnterior,
-		SaldoAtual:      carteira.Saldo,
+		SaldoAtual:      carteira.SaldoGeral,
 		ValorOperacao:   req.Valor,
 		TipoOperacao:    "adicao",
 		DataAtualizacao: carteira.DataAtualizacao,
@@ -186,7 +186,7 @@ func SubtrairSaldo(id uint, req json.CarteiraOperacaoRequest) (*json.CarteiraOpe
 		return nil, err
 	}
 
-	saldoAnterior := carteiraAtual.Saldo
+	saldoAnterior := carteiraAtual.SaldoGeral
 
 	// Subtrai o saldo
 	carteira, err := datasource.SubtrairSaldo(id, req.Valor)
@@ -198,7 +198,7 @@ func SubtrairSaldo(id uint, req json.CarteiraOperacaoRequest) (*json.CarteiraOpe
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
 		SaldoAnterior:   saldoAnterior,
-		SaldoAtual:      carteira.Saldo,
+		SaldoAtual:      carteira.SaldoGeral,
 		ValorOperacao:   req.Valor,
 		TipoOperacao:    "subtracao",
 		DataAtualizacao: carteira.DataAtualizacao,
@@ -225,7 +225,7 @@ func GetCarteirasBySaldoRange(saldoMin, saldoMax int) (*json.CarteirasResponse, 
 		response := json.CarteiraComUsuarioResponse{
 			ID:              carteira.ID,
 			UsuarioID:       carteira.UsuarioID,
-			Saldo:           carteira.Saldo,
+			MoedasGerais:    carteira.SaldoGeral,
 			DataCriacao:     carteira.DataCriacao,
 			DataAtualizacao: carteira.DataAtualizacao,
 		}
@@ -259,7 +259,7 @@ func GetCarteirasComSaldoMaior(valor int) (*json.CarteirasResponse, error) {
 		response := json.CarteiraComUsuarioResponse{
 			ID:              carteira.ID,
 			UsuarioID:       carteira.UsuarioID,
-			Saldo:           carteira.Saldo,
+			MoedasGerais:    carteira.SaldoGeral,
 			DataCriacao:     carteira.DataCriacao,
 			DataAtualizacao: carteira.DataAtualizacao,
 		}

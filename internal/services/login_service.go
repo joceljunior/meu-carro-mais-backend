@@ -93,6 +93,12 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 			CupomDestaqueResponse: cupomResp,
 		},
 	}
+	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
+	if err != nil {
+		return nil, err
+	}
+	resp.MoedasGerais = gerais
+	resp.MoedasPorLoja = moedasLoja
 	return resp, nil
 }
 
@@ -180,5 +186,11 @@ func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 			CupomDestaqueResponse: cupomResp,
 		},
 	}
+	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
+	if err != nil {
+		return nil, err
+	}
+	resp.MoedasGerais = gerais
+	resp.MoedasPorLoja = moedasLoja
 	return resp, nil
 }
