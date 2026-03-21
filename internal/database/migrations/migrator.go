@@ -1074,6 +1074,36 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration037)
 
+	migration038 := m.NewMigration("038", "add_moedas_utilizadas_to_historico_resgates").
+		ExecuteSQL(`
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS moedas_utilizadas INTEGER NOT NULL DEFAULT 0;
+		`, `
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS moedas_utilizadas;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration038)
+
+	migration039 := m.NewMigration("039", "create_vendas_produto_avulso_table").
+		ExecuteSQL(`
+			CREATE TABLE IF NOT EXISTS vendas_produto_avulso (
+				id SERIAL PRIMARY KEY,
+				id_usuario INTEGER NOT NULL,
+				id_loja INTEGER NOT NULL,
+				valor DECIMAL(10,2) NOT NULL,
+				descricao_produto VARCHAR(500) NOT NULL,
+				data_venda TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				CONSTRAINT fk_vendas_produto_avulso_usuario FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
+				CONSTRAINT fk_vendas_produto_avulso_loja FOREIGN KEY (id_loja) REFERENCES lojas(id) ON DELETE CASCADE
+			);
+			CREATE INDEX IF NOT EXISTS idx_vendas_produto_avulso_usuario ON vendas_produto_avulso(id_usuario);
+			CREATE INDEX IF NOT EXISTS idx_vendas_produto_avulso_loja ON vendas_produto_avulso(id_loja);
+			CREATE INDEX IF NOT EXISTS idx_vendas_produto_avulso_data ON vendas_produto_avulso(data_venda);
+		`, `
+			DROP TABLE IF EXISTS vendas_produto_avulso CASCADE;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration039)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
@@ -1255,12 +1285,14 @@ func (m *Migrator) createComplementaryTables(db *gorm.DB) error {
 		&models.Avaliacao{},
 		&models.HistoricoPagamento{},
 		&models.HistoricoResgate{},
+		&models.VendaProdutoAvulso{},
 	)
 }
 
 // dropComplementaryTables remove as tabelas complementares
 func (m *Migrator) dropComplementaryTables(db *gorm.DB) error {
 	tables := []interface{}{
+		&models.VendaProdutoAvulso{},
 		&models.HistoricoResgate{},
 		&models.HistoricoPagamento{},
 		&models.Avaliacao{},

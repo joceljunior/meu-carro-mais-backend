@@ -3,12 +3,13 @@ package json
 import "time"
 
 type HistoricoResgateResponse struct {
-	ID              uint          `json:"id"`
-	IDCupom         *uint         `json:"id_cupom,omitempty"`
-	IDUsuario       uint          `json:"id_usuario"`
-	DataResgate     time.Time     `json:"data_resgate"`
-	DataAtualizacao time.Time     `json:"data_atualizacao"`
-	Status          string        `json:"status"`
+	ID               uint          `json:"id"`
+	IDCupom          *uint         `json:"id_cupom,omitempty"`
+	IDUsuario        uint          `json:"id_usuario"`
+	MoedasUtilizadas int           `json:"moedas_utilizadas"`
+	DataResgate      time.Time     `json:"data_resgate"`
+	DataAtualizacao  time.Time     `json:"data_atualizacao"`
+	Status           string        `json:"status"`
 
 	// Dados relacionados
 	Cupom   *CupomResponse `json:"cupom,omitempty"`
@@ -16,6 +17,8 @@ type HistoricoResgateResponse struct {
 }
 
 type HistoricosResgateResponse struct {
-	Historicos []HistoricoResgateResponse `json:"historicos"`
-	Total      int                        `json:"total"`
+	Historicos               []HistoricoResgateResponse   `json:"historicos"`
+	VendasProdutoAvulso      []VendaProdutoAvulsoResponse `json:"vendas_produto_avulso"`
+	Total                    int                          `json:"total"`
+	TotalVendasProdutoAvulso int                          `json:"total_vendas_produto_avulso"`
 }

@@ -518,7 +518,7 @@ func ResgatarCupomHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := services.CreateHistoricoResgateFromCupom(uint(cupomID), req.IDUsuario)
+	resp, err := services.CreateHistoricoResgateFromCupom(uint(cupomID), req.IDUsuario, req.MoedasUtilizadas)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

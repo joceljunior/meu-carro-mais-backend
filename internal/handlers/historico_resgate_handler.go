@@ -92,12 +92,7 @@ func GetAllHistoricosResgateHandler(c *gin.Context) {
 		return
 	}
 
-	response := json.HistoricosResgateResponse{
-		Historicos: resp,
-		Total:      len(resp),
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetHistoricosResgateByUsuarioIDHandler godoc

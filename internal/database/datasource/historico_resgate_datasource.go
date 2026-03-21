@@ -8,7 +8,7 @@ import (
 )
 
 // CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom
-func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint) (*models.HistoricoResgate, error) {
+func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint, moedasUtilizadas int) (*models.HistoricoResgate, error) {
 	// Busca o cupom
 	cupom, err := GetCupomByID(cupomID)
 	if err != nil {
@@ -21,9 +21,10 @@ func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint) (*models.Hist
 	}
 
 	historico := models.HistoricoResgate{
-		IDCupom:   &cupomID,
-		IDUsuario: usuarioID,
-		Status:    "pendente",
+		IDCupom:          &cupomID,
+		IDUsuario:        usuarioID,
+		Status:           "pendente",
+		MoedasUtilizadas: moedasUtilizadas,
 	}
 
 	err = database.DB.Create(&historico).Error
@@ -37,9 +38,10 @@ func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint) (*models.Hist
 // CreateHistoricoResgate cria um novo histórico de resgate
 func CreateHistoricoResgate(req json.HistoricoResgateRequest) (*models.HistoricoResgate, error) {
 	historico := models.HistoricoResgate{
-		IDCupom:   req.IDCupom,
-		IDUsuario: req.IDUsuario,
-		Status:    "pendente",
+		IDCupom:          req.IDCupom,
+		IDUsuario:        req.IDUsuario,
+		Status:           "pendente",
+		MoedasUtilizadas: req.MoedasUtilizadas,
 	}
 
 	if req.Status != "" {
@@ -142,6 +144,7 @@ func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*models.
 
 	historico.IDCupom = req.IDCupom
 	historico.IDUsuario = req.IDUsuario
+	historico.MoedasUtilizadas = req.MoedasUtilizadas
 	if req.Status != "" {
 		historico.Status = req.Status
 	}

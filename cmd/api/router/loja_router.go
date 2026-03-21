@@ -20,6 +20,7 @@ func (lr *LojaRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		lojas.GET("/:id/produtos", handlers.GetProdutosByLojaIDHandler)                             // GET /lojas/:id/produtos - Produtos da loja
 		lojas.GET("/:id/servicos", handlers.GetServicosByLojaIDHandler)                             // GET /lojas/:id/servicos - Serviços da loja
 		lojas.GET("/:id/historicos-resgate", handlers.GetHistoricosResgateByLojaIDHandler)          // GET /lojas/:id/historicos-resgate - Históricos de resgate da loja
+		lojas.POST("/:id/vendas-produto-avulso", handlers.CreateVendaProdutoAvulsoHandler)         // POST /lojas/:id/vendas-produto-avulso - Venda de produto não cadastrado
 		lojas.GET("/:id/avaliacoes", handlers.GetAvaliacoesByLojaIDHandler)                         // GET /lojas/:id/avaliacoes - Avaliações da loja
 		lojas.GET("/:id/avaliacoes/estatisticas", handlers.GetAvaliacaoEstatisticasByLojaIDHandler) // GET /lojas/:id/avaliacoes/estatisticas - Estatísticas de avaliações da loja
 		lojas.GET("/proximidade", handlers.GetLojasByProximidadeHandler)                            // GET /lojas/proximidade - Listar por proximidade

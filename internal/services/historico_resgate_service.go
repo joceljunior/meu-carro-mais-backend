@@ -6,9 +6,28 @@ import (
 	"meu-carro-mais/internal/handlers/json"
 )
 
+func usuarioModelToUserResponse(u models.Usuario) json.UserResponse {
+	return json.UserResponse{
+		ID:             u.ID,
+		Nome:           u.Nome,
+		Email:          u.Email,
+		CPF:            u.CPF,
+		Imagem:         u.Imagem,
+		Telefone:       u.Telefone,
+		Endereco:       u.Endereco,
+		DataNascimento: u.DataNascimento,
+		DataCadastro:   u.DataCadastro,
+		Ativo:          u.Ativo,
+		Latitude:       u.Latitude,
+		Longitude:      u.Longitude,
+		IDPlano:        u.IDPlano,
+		IDLoja:         u.IDLoja,
+	}
+}
+
 // CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom
-func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint) (*json.HistoricoResgateResponse, error) {
-	historico, err := datasource.CreateHistoricoResgateFromCupom(cupomID, usuarioID)
+func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint, moedasUtilizadas int) (*json.HistoricoResgateResponse, error) {
+	historico, err := datasource.CreateHistoricoResgateFromCupom(cupomID, usuarioID, moedasUtilizadas)
 	if err != nil {
 		return nil, err
 	}
@@ -19,37 +38,36 @@ func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint) (*json.Histor
 // convertHistoricoToResponse converte um modelo de histórico para response
 func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.HistoricoResgateResponse {
 	response := &json.HistoricoResgateResponse{
-		ID:              historico.ID,
-		IDCupom:         historico.IDCupom,
-		IDUsuario:       historico.IDUsuario,
-		DataResgate:     historico.DataResgate,
-		DataAtualizacao: historico.DataAtualizacao,
-		Status:          historico.Status,
-		Usuario: json.UserResponse{
-			ID:             historico.Usuario.ID,
-			Nome:           historico.Usuario.Nome,
-			Email:          historico.Usuario.Email,
-			CPF:            historico.Usuario.CPF,
-			Imagem:         historico.Usuario.Imagem,
-			Telefone:       historico.Usuario.Telefone,
-			Endereco:       historico.Usuario.Endereco,
-			DataNascimento: historico.Usuario.DataNascimento,
-			DataCadastro:   historico.Usuario.DataCadastro,
-			Ativo:          historico.Usuario.Ativo,
-			Latitude:       historico.Usuario.Latitude,
-			Longitude:      historico.Usuario.Longitude,
-			IDPlano:        historico.Usuario.IDPlano,
-			IDLoja:         historico.Usuario.IDLoja,
-		},
+		ID:               historico.ID,
+		IDCupom:          historico.IDCupom,
+		IDUsuario:        historico.IDUsuario,
+		MoedasUtilizadas: historico.MoedasUtilizadas,
+		DataResgate:      historico.DataResgate,
+		DataAtualizacao:  historico.DataAtualizacao,
+		Status:           historico.Status,
+		Usuario:          usuarioModelToUserResponse(historico.Usuario),
 	}
 
-	// Adiciona dados do cupom se existir
 	if historico.Cupom != nil {
 		cupomResp := modelToCupomResponse(historico.Cupom)
 		response.Cupom = &cupomResp
 	}
 
 	return response
+}
+
+func buildHistoricosResgateResponse(historicos []models.HistoricoResgate, vendas []models.VendaProdutoAvulso) *json.HistoricosResgateResponse {
+	var historicosResponse []json.HistoricoResgateResponse
+	for i := range historicos {
+		historicosResponse = append(historicosResponse, *convertHistoricoToResponse(&historicos[i]))
+	}
+	vendasResp := VendasProdutoAvulsoModelsToResponses(vendas)
+	return &json.HistoricosResgateResponse{
+		Historicos:               historicosResponse,
+		VendasProdutoAvulso:      vendasResp,
+		Total:                    len(historicosResponse),
+		TotalVendasProdutoAvulso: len(vendasResp),
+	}
 }
 
 // CreateHistoricoResgate cria um novo histórico de resgate
@@ -72,55 +90,43 @@ func GetHistoricoResgateByID(id uint) (*json.HistoricoResgateResponse, error) {
 	return convertHistoricoToResponse(historico), nil
 }
 
-// GetAllHistoricosResgate retorna todos os históricos ativos
-func GetAllHistoricosResgate() ([]json.HistoricoResgateResponse, error) {
+// GetAllHistoricosResgate retorna todos os históricos e vendas avulsas
+func GetAllHistoricosResgate() (*json.HistoricosResgateResponse, error) {
 	historicos, err := datasource.GetAllHistoricosResgate()
 	if err != nil {
 		return nil, err
 	}
-
-	var responses []json.HistoricoResgateResponse
-	for _, historico := range historicos {
-		responses = append(responses, *convertHistoricoToResponse(&historico))
+	vendas, err := datasource.GetAllVendasProdutoAvulso()
+	if err != nil {
+		return nil, err
 	}
-
-	return responses, nil
+	return buildHistoricosResgateResponse(historicos, vendas), nil
 }
 
-// GetHistoricosResgateByUsuarioID retorna todos os históricos de um usuário específico
+// GetHistoricosResgateByUsuarioID retorna históricos de cupom e vendas avulsas do usuário
 func GetHistoricosResgateByUsuarioID(idUsuario uint) (*json.HistoricosResgateResponse, error) {
 	historicos, err := datasource.GetHistoricosResgateByUsuarioID(idUsuario)
 	if err != nil {
 		return nil, err
 	}
-
-	var historicosResponse []json.HistoricoResgateResponse
-	for _, historico := range historicos {
-		historicosResponse = append(historicosResponse, *convertHistoricoToResponse(&historico))
+	vendas, err := datasource.GetVendasProdutoAvulsoByUsuarioID(idUsuario)
+	if err != nil {
+		return nil, err
 	}
-
-	return &json.HistoricosResgateResponse{
-		Historicos: historicosResponse,
-		Total:      len(historicosResponse),
-	}, nil
+	return buildHistoricosResgateResponse(historicos, vendas), nil
 }
 
-// GetHistoricosResgateByLojaID retorna todos os históricos de uma loja específica
+// GetHistoricosResgateByLojaID retorna históricos de cupom e vendas avulsas da loja
 func GetHistoricosResgateByLojaID(idLoja uint) (*json.HistoricosResgateResponse, error) {
 	historicos, err := datasource.GetHistoricosResgateByLojaID(idLoja)
 	if err != nil {
 		return nil, err
 	}
-
-	var historicosResponse []json.HistoricoResgateResponse
-	for _, historico := range historicos {
-		historicosResponse = append(historicosResponse, *convertHistoricoToResponse(&historico))
+	vendas, err := datasource.GetVendasProdutoAvulsoByLojaID(idLoja)
+	if err != nil {
+		return nil, err
 	}
-
-	return &json.HistoricosResgateResponse{
-		Historicos: historicosResponse,
-		Total:      len(historicosResponse),
-	}, nil
+	return buildHistoricosResgateResponse(historicos, vendas), nil
 }
 
 // UpdateHistoricoResgate atualiza um histórico existente
@@ -148,9 +154,13 @@ func RestoreHistoricoResgate(id uint) error {
 	return datasource.RestoreHistoricoResgate(id)
 }
 
-// GetHistoricosResgateClienteByUsuarioID retorna histórico simplificado do cliente
+// GetHistoricosResgateClienteByUsuarioID retorna histórico simplificado do cliente e vendas avulsas
 func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosResgateClienteResponse, error) {
 	historicos, err := datasource.GetHistoricosResgateByUsuarioID(usuarioID)
+	if err != nil {
+		return nil, err
+	}
+	vendas, err := datasource.GetVendasProdutoAvulsoByUsuarioID(usuarioID)
 	if err != nil {
 		return nil, err
 	}
@@ -158,12 +168,13 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 	var historicosResponse []json.HistoricoResgateClienteResponse
 	for _, historico := range historicos {
 		resp := json.HistoricoResgateClienteResponse{
-			ID:              historico.ID,
-			IDCupom:         historico.IDCupom,
-			IDUsuario:       historico.IDUsuario,
-			DataResgate:     historico.DataResgate,
-			DataAtualizacao: historico.DataAtualizacao,
-			Status:          historico.Status,
+			ID:               historico.ID,
+			IDCupom:          historico.IDCupom,
+			IDUsuario:        historico.IDUsuario,
+			MoedasUtilizadas: historico.MoedasUtilizadas,
+			DataResgate:      historico.DataResgate,
+			DataAtualizacao:  historico.DataAtualizacao,
+			Status:           historico.Status,
 		}
 
 		if historico.Cupom != nil {
@@ -174,26 +185,22 @@ func GetHistoricosResgateClienteByUsuarioID(usuarioID uint) (*json.HistoricosRes
 		historicosResponse = append(historicosResponse, resp)
 	}
 
+	vendasResp := VendasProdutoAvulsoModelsToResponses(vendas)
+
 	return &json.HistoricosResgateClienteResponse{
-		Historicos: historicosResponse,
-		Total:      len(historicosResponse),
+		Historicos:               historicosResponse,
+		VendasProdutoAvulso:      vendasResp,
+		Total:                    len(historicosResponse),
+		TotalVendasProdutoAvulso: len(vendasResp),
 	}, nil
 }
 
-// GetHistoricosResgateByCupomID retorna todos os históricos de resgate de um cupom específico
+// GetHistoricosResgateByCupomID retorna todos os históricos de resgate de um cupom específico (sem vendas avulsas)
 func GetHistoricosResgateByCupomID(cupomID uint) (*json.HistoricosResgateResponse, error) {
 	historicos, err := datasource.GetHistoricosResgateByCupomID(cupomID)
 	if err != nil {
 		return nil, err
 	}
 
-	var historicosResponse []json.HistoricoResgateResponse
-	for _, historico := range historicos {
-		historicosResponse = append(historicosResponse, *convertHistoricoToResponse(&historico))
-	}
-
-	return &json.HistoricosResgateResponse{
-		Historicos: historicosResponse,
-		Total:      len(historicosResponse),
-	}, nil
+	return buildHistoricosResgateResponse(historicos, nil), nil
 }
