@@ -115,17 +115,8 @@ func convertUploadToResponse(upload *models.Upload) *json.UploadResponse {
 
 	// Adiciona dados da loja se existir
 	if upload.Loja != nil {
-		lojaResp := &json.LojaResponse{
-			ID:          upload.Loja.ID,
-			Nome:        upload.Loja.Nome,
-			CNPJ:        upload.Loja.CNPJ,
-			Imagem:      upload.Loja.Imagem,
-			Latitude:    upload.Loja.Latitude,
-			Longitude:   upload.Loja.Longitude,
-			Categoria: upload.Loja.Categoria,
-			IDUsuario: upload.Loja.IDUsuario,
-		}
-		response.Loja = lojaResp
+		lr := json.LojaFromModel(*upload.Loja)
+		response.Loja = &lr
 	}
 
 	return response

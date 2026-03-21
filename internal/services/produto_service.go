@@ -23,16 +23,7 @@ func CreateProduto(req json.ProdutoRequest) (*json.ProdutoResponse, error) {
 		Categoria:    produto.Categoria,
 		IDLoja:       produto.IDLoja,
 		DataCadastro: produto.DataCadastro,
-		Loja: json.LojaResponse{
-			ID:          produto.Loja.ID,
-			Nome:        produto.Loja.Nome,
-			CNPJ:        produto.Loja.CNPJ,
-			Imagem:      produto.Loja.Imagem,
-			Latitude:    produto.Loja.Latitude,
-			Longitude:   produto.Loja.Longitude,
-			Categoria: produto.Loja.Categoria,
-			IDUsuario: produto.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(produto.Loja),
 	}
 
 	return response, nil
@@ -56,16 +47,7 @@ func GetProdutoByID(id uint) (*json.ProdutoResponse, error) {
 		Categoria:    produto.Categoria,
 		IDLoja:       produto.IDLoja,
 		DataCadastro: produto.DataCadastro,
-		Loja: json.LojaResponse{
-			ID:          produto.Loja.ID,
-			Nome:        produto.Loja.Nome,
-			CNPJ:        produto.Loja.CNPJ,
-			Imagem:      produto.Loja.Imagem,
-			Latitude:    produto.Loja.Latitude,
-			Longitude:   produto.Loja.Longitude,
-			Categoria: produto.Loja.Categoria,
-			IDUsuario: produto.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(produto.Loja),
 	}
 
 	return response, nil
@@ -91,16 +73,7 @@ func GetAllProdutos() ([]json.ProdutoResponse, error) {
 			Categoria:    produto.Categoria,
 			IDLoja:       produto.IDLoja,
 			DataCadastro: produto.DataCadastro,
-			Loja: json.LojaResponse{
-				ID:          produto.Loja.ID,
-				Nome:        produto.Loja.Nome,
-				CNPJ:        produto.Loja.CNPJ,
-				Imagem:      produto.Loja.Imagem,
-				Latitude:    produto.Loja.Latitude,
-				Longitude:   produto.Loja.Longitude,
-				Categoria: produto.Loja.Categoria,
-				IDUsuario: produto.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(produto.Loja),
 		}
 		responses = append(responses, response)
 	}
@@ -128,16 +101,7 @@ func GetProdutosByLojaID(idLoja uint) (*json.ProdutosResponse, error) {
 			Categoria:    produto.Categoria,
 			IDLoja:       produto.IDLoja,
 			DataCadastro: produto.DataCadastro,
-			Loja: json.LojaResponse{
-				ID:          produto.Loja.ID,
-				Nome:        produto.Loja.Nome,
-				CNPJ:        produto.Loja.CNPJ,
-				Imagem:      produto.Loja.Imagem,
-				Latitude:    produto.Loja.Latitude,
-				Longitude:   produto.Loja.Longitude,
-				Categoria: produto.Loja.Categoria,
-				IDUsuario: produto.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(produto.Loja),
 		}
 		produtosResponse = append(produtosResponse, produtoResp)
 	}
@@ -168,16 +132,7 @@ func UpdateProduto(id uint, req json.ProdutoRequest) (*json.ProdutoResponse, err
 		Categoria:    produto.Categoria,
 		IDLoja:       produto.IDLoja,
 		DataCadastro: produto.DataCadastro,
-		Loja: json.LojaResponse{
-			ID:          produto.Loja.ID,
-			Nome:        produto.Loja.Nome,
-			CNPJ:        produto.Loja.CNPJ,
-			Imagem:      produto.Loja.Imagem,
-			Latitude:    produto.Loja.Latitude,
-			Longitude:   produto.Loja.Longitude,
-			Categoria: produto.Loja.Categoria,
-			IDUsuario: produto.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(produto.Loja),
 	}
 
 	return response, nil

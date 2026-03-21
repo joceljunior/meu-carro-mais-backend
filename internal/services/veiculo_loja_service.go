@@ -59,16 +59,7 @@ func CreateVeiculoLoja(req json.VeiculoLojaRequest) (*json.VeiculoLojaResponse, 
 		Fotos:        getFotosVeiculoLoja(veiculo.ID),
 		DataCadastro: veiculo.DataCadastro,
 		Ativo:        veiculo.Ativo,
-		Loja: json.LojaResponse{
-			ID:          veiculo.Loja.ID,
-			Nome:        veiculo.Loja.Nome,
-			CNPJ:        veiculo.Loja.CNPJ,
-			Imagem:      veiculo.Loja.Imagem,
-			Latitude:    veiculo.Loja.Latitude,
-			Longitude:   veiculo.Loja.Longitude,
-			Categoria: veiculo.Loja.Categoria,
-			IDUsuario: veiculo.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(veiculo.Loja),
 	}
 
 	return response, nil
@@ -92,16 +83,7 @@ func GetVeiculoLojaByID(id uint) (*json.VeiculoLojaResponse, error) {
 		Fotos:        getFotosVeiculoLoja(veiculo.ID),
 		DataCadastro: veiculo.DataCadastro,
 		Ativo:        veiculo.Ativo,
-		Loja: json.LojaResponse{
-			ID:          veiculo.Loja.ID,
-			Nome:        veiculo.Loja.Nome,
-			CNPJ:        veiculo.Loja.CNPJ,
-			Imagem:      veiculo.Loja.Imagem,
-			Latitude:    veiculo.Loja.Latitude,
-			Longitude:   veiculo.Loja.Longitude,
-			Categoria: veiculo.Loja.Categoria,
-			IDUsuario: veiculo.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(veiculo.Loja),
 	}
 
 	return response, nil
@@ -127,16 +109,7 @@ func GetAllVeiculosLoja() ([]json.VeiculoLojaResponse, error) {
 			Fotos:        getFotosVeiculoLoja(veiculo.ID),
 			DataCadastro: veiculo.DataCadastro,
 			Ativo:        veiculo.Ativo,
-			Loja: json.LojaResponse{
-				ID:          veiculo.Loja.ID,
-				Nome:        veiculo.Loja.Nome,
-				CNPJ:        veiculo.Loja.CNPJ,
-				Imagem:      veiculo.Loja.Imagem,
-				Latitude:    veiculo.Loja.Latitude,
-				Longitude:   veiculo.Loja.Longitude,
-				Categoria: veiculo.Loja.Categoria,
-				IDUsuario: veiculo.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(veiculo.Loja),
 		}
 		responses = append(responses, response)
 	}
@@ -164,16 +137,7 @@ func GetVeiculosLojaByLojaID(idLoja uint) (*json.VeiculosLojaResponse, error) {
 			Fotos:        getFotosVeiculoLoja(veiculo.ID),
 			DataCadastro: veiculo.DataCadastro,
 			Ativo:        veiculo.Ativo,
-			Loja: json.LojaResponse{
-				ID:          veiculo.Loja.ID,
-				Nome:        veiculo.Loja.Nome,
-				CNPJ:        veiculo.Loja.CNPJ,
-				Imagem:      veiculo.Loja.Imagem,
-				Latitude:    veiculo.Loja.Latitude,
-				Longitude:   veiculo.Loja.Longitude,
-				Categoria: veiculo.Loja.Categoria,
-				IDUsuario: veiculo.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(veiculo.Loja),
 		}
 		veiculosResponse = append(veiculosResponse, veiculoResp)
 	}
@@ -204,16 +168,7 @@ func UpdateVeiculoLoja(id uint, req json.VeiculoLojaRequest) (*json.VeiculoLojaR
 		Fotos:        getFotosVeiculoLoja(veiculo.ID),
 		DataCadastro: veiculo.DataCadastro,
 		Ativo:        veiculo.Ativo,
-		Loja: json.LojaResponse{
-			ID:          veiculo.Loja.ID,
-			Nome:        veiculo.Loja.Nome,
-			CNPJ:        veiculo.Loja.CNPJ,
-			Imagem:      veiculo.Loja.Imagem,
-			Latitude:    veiculo.Loja.Latitude,
-			Longitude:   veiculo.Loja.Longitude,
-			Categoria: veiculo.Loja.Categoria,
-			IDUsuario: veiculo.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(veiculo.Loja),
 	}
 
 	return response, nil

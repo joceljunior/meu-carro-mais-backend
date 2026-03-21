@@ -20,18 +20,7 @@ func CreateDesconto(req json.DescontoRequest) (*json.DescontoResponse, error) {
 		DataValidade:    desconto.DataValidade,
 		DataCadastro:    desconto.DataCadastro,
 		DataAtualizacao: desconto.DataAtualizacao,
-		Loja: json.LojaResponse{
-			ID:             desconto.Loja.ID,
-			Nome:           desconto.Loja.Nome,
-			CNPJ:           desconto.Loja.CNPJ,
-			Imagem:         desconto.Loja.Imagem,
-			Latitude:       desconto.Loja.Latitude,
-			Longitude:      desconto.Loja.Longitude,
-			Rating:         desconto.Loja.Rating,
-			IsMeuCarroMais: desconto.Loja.IsMeuCarroMais,
-			Categoria:      desconto.Loja.Categoria,
-			IDUsuario:      desconto.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(desconto.Loja),
 	}
 
 	return response, nil
@@ -52,18 +41,7 @@ func GetDescontoByID(id uint) (*json.DescontoResponse, error) {
 		DataValidade:    desconto.DataValidade,
 		DataCadastro:    desconto.DataCadastro,
 		DataAtualizacao: desconto.DataAtualizacao,
-		Loja: json.LojaResponse{
-			ID:             desconto.Loja.ID,
-			Nome:           desconto.Loja.Nome,
-			CNPJ:           desconto.Loja.CNPJ,
-			Imagem:         desconto.Loja.Imagem,
-			Latitude:       desconto.Loja.Latitude,
-			Longitude:      desconto.Loja.Longitude,
-			Rating:         desconto.Loja.Rating,
-			IsMeuCarroMais: desconto.Loja.IsMeuCarroMais,
-			Categoria:      desconto.Loja.Categoria,
-			IDUsuario:      desconto.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(desconto.Loja),
 	}
 
 	return response, nil
@@ -84,18 +62,7 @@ func GetDescontoAtivoByLojaID(idLoja uint) (*json.DescontoResponse, error) {
 		DataValidade:    desconto.DataValidade,
 		DataCadastro:    desconto.DataCadastro,
 		DataAtualizacao: desconto.DataAtualizacao,
-		Loja: json.LojaResponse{
-			ID:             desconto.Loja.ID,
-			Nome:           desconto.Loja.Nome,
-			CNPJ:           desconto.Loja.CNPJ,
-			Imagem:         desconto.Loja.Imagem,
-			Latitude:       desconto.Loja.Latitude,
-			Longitude:      desconto.Loja.Longitude,
-			Rating:         desconto.Loja.Rating,
-			IsMeuCarroMais: desconto.Loja.IsMeuCarroMais,
-			Categoria:      desconto.Loja.Categoria,
-			IDUsuario:      desconto.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(desconto.Loja),
 	}
 
 	return response, nil
@@ -118,18 +85,7 @@ func GetAllDescontos() ([]json.DescontoResponse, error) {
 			DataValidade:    desconto.DataValidade,
 			DataCadastro:    desconto.DataCadastro,
 			DataAtualizacao: desconto.DataAtualizacao,
-			Loja: json.LojaResponse{
-				ID:             desconto.Loja.ID,
-				Nome:           desconto.Loja.Nome,
-				CNPJ:           desconto.Loja.CNPJ,
-				Imagem:         desconto.Loja.Imagem,
-				Latitude:       desconto.Loja.Latitude,
-				Longitude:      desconto.Loja.Longitude,
-				Rating:         desconto.Loja.Rating,
-				IsMeuCarroMais: desconto.Loja.IsMeuCarroMais,
-				Categoria:      desconto.Loja.Categoria,
-				IDUsuario:      desconto.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(desconto.Loja),
 		}
 		responses = append(responses, response)
 	}
@@ -154,18 +110,7 @@ func GetAllDescontosAtivos() ([]json.DescontoResponse, error) {
 			DataValidade:    desconto.DataValidade,
 			DataCadastro:    desconto.DataCadastro,
 			DataAtualizacao: desconto.DataAtualizacao,
-			Loja: json.LojaResponse{
-				ID:             desconto.Loja.ID,
-				Nome:           desconto.Loja.Nome,
-				CNPJ:           desconto.Loja.CNPJ,
-				Imagem:         desconto.Loja.Imagem,
-				Latitude:       desconto.Loja.Latitude,
-				Longitude:      desconto.Loja.Longitude,
-				Rating:         desconto.Loja.Rating,
-				IsMeuCarroMais: desconto.Loja.IsMeuCarroMais,
-				Categoria:      desconto.Loja.Categoria,
-				IDUsuario:      desconto.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(desconto.Loja),
 		}
 		responses = append(responses, response)
 	}
@@ -190,18 +135,7 @@ func GetDescontosByLojaID(idLoja uint) (*json.DescontosResponse, error) {
 			DataValidade:    desconto.DataValidade,
 			DataCadastro:    desconto.DataCadastro,
 			DataAtualizacao: desconto.DataAtualizacao,
-			Loja: json.LojaResponse{
-				ID:             desconto.Loja.ID,
-				Nome:           desconto.Loja.Nome,
-				CNPJ:           desconto.Loja.CNPJ,
-				Imagem:         desconto.Loja.Imagem,
-				Latitude:       desconto.Loja.Latitude,
-				Longitude:      desconto.Loja.Longitude,
-				Rating:         desconto.Loja.Rating,
-				IsMeuCarroMais: desconto.Loja.IsMeuCarroMais,
-				Categoria:      desconto.Loja.Categoria,
-				IDUsuario:      desconto.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(desconto.Loja),
 		}
 		descontosResponse = append(descontosResponse, descontoResp)
 	}

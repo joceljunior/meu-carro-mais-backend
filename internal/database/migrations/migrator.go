@@ -1065,6 +1065,15 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration036)
 
+	migration037 := m.NewMigration("037", "add_desconto_geral_porcentagem_to_lojas").
+		ExecuteSQL(`
+			ALTER TABLE lojas ADD COLUMN IF NOT EXISTS desconto_geral_porcentagem DECIMAL(5,2) NOT NULL DEFAULT 0;
+		`, `
+			ALTER TABLE lojas DROP COLUMN IF EXISTS desconto_geral_porcentagem;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration037)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

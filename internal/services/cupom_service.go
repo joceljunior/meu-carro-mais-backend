@@ -62,19 +62,8 @@ func modelToCupomResponse(cupom *models.Cupom) json.CupomResponse {
 	}
 
 	if cupom.Loja != nil {
-		response.Loja = &json.LojaResponse{
-			ID:             cupom.Loja.ID,
-			Nome:           cupom.Loja.Nome,
-			CNPJ:           cupom.Loja.CNPJ,
-			Imagem:         cupom.Loja.Imagem,
-			Endereco:       cupom.Loja.Endereco,
-			Latitude:       cupom.Loja.Latitude,
-			Longitude:      cupom.Loja.Longitude,
-			Rating:         cupom.Loja.Rating,
-			IsMeuCarroMais: cupom.Loja.IsMeuCarroMais,
-			Categoria:      cupom.Loja.Categoria,
-			IDUsuario:      cupom.Loja.IDUsuario,
-		}
+		lr := json.LojaFromModel(*cupom.Loja)
+		response.Loja = &lr
 	}
 
 	if cupom.OfertaAutoMais != nil {
@@ -119,19 +108,7 @@ func modelToCupomResponse(cupom *models.Cupom) json.CupomResponse {
 		}
 		if cupom.Loja != nil {
 			servicoResp.Rate = cupom.Loja.Rating
-			servicoResp.Loja = json.LojaResponse{
-				ID:             cupom.Loja.ID,
-				Nome:           cupom.Loja.Nome,
-				CNPJ:           cupom.Loja.CNPJ,
-				Imagem:         cupom.Loja.Imagem,
-				Endereco:       cupom.Loja.Endereco,
-				Latitude:       cupom.Loja.Latitude,
-				Longitude:      cupom.Loja.Longitude,
-				Rating:         cupom.Loja.Rating,
-				IsMeuCarroMais: cupom.Loja.IsMeuCarroMais,
-				Categoria:      cupom.Loja.Categoria,
-				IDUsuario:      cupom.Loja.IDUsuario,
-			}
+			servicoResp.Loja = json.LojaFromModel(*cupom.Loja)
 		}
 		response.Servico = servicoResp
 	}

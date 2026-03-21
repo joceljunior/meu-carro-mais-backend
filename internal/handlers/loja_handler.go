@@ -85,7 +85,7 @@ func GetLojasByProximidadeHandler(c *gin.Context) {
 // @Tags         Lojas
 // @Accept       json
 // @Produce      json
-// @Param        request body json.LojaRequest true "Dados completos da loja (rating e is_meu_carro_mais são opcionais)"
+// @Param        request body json.LojaRequest true "Dados completos da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)"
 // @Success      201  {object}  json.LojaResponse "Loja criada com sucesso"
 // @Failure      400  {object}  map[string]interface{} "Dados inválidos"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
@@ -172,7 +172,7 @@ func GetAllLojasHandler(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID da loja"
-// @Param        request body json.LojaRequest true "Dados atualizados da loja (rating e is_meu_carro_mais são opcionais)"
+// @Param        request body json.LojaRequest true "Dados atualizados da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)"
 // @Success      200 {object} json.LojaResponse "Loja atualizada com sucesso"
 // @Failure      400 {object} map[string]interface{} "Dados inválidos"
 // @Failure      404 {object} map[string]interface{} "Loja não encontrada"

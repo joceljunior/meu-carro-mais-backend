@@ -39,16 +39,8 @@ func convertAvaliacaoToResponse(avaliacao *models.Avaliacao) *json.AvaliacaoResp
 
 	// Adiciona dados da loja se existir
 	if avaliacao.Loja != nil {
-		response.Loja = &json.LojaResponse{
-			ID:        avaliacao.Loja.ID,
-			Nome:      avaliacao.Loja.Nome,
-			CNPJ:      avaliacao.Loja.CNPJ,
-			Imagem:    avaliacao.Loja.Imagem,
-			Latitude:  avaliacao.Loja.Latitude,
-			Longitude: avaliacao.Loja.Longitude,
-			Categoria: avaliacao.Loja.Categoria,
-			IDUsuario: avaliacao.Loja.IDUsuario,
-		}
+		lr := json.LojaFromModel(*avaliacao.Loja)
+		response.Loja = &lr
 	}
 
 	// Adiciona dados do serviço se existir

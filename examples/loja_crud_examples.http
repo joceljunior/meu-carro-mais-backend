@@ -11,6 +11,7 @@ Content-Type: application/json
   "latitude": -23.5505,
   "longitude": -46.6333,
   "categoria": "Concessionária",
+  "desconto_geral_porcentagem": 0,
   "id_usuario": 1
 }
 
@@ -27,6 +28,7 @@ Content-Type: application/json
   "rating": 5,
   "is_meu_carro_mais": true,
   "categoria": "Concessionária",
+  "desconto_geral_porcentagem": 10,
   "id_usuario": 1
 }
 
@@ -49,6 +51,7 @@ Content-Type: application/json
   "rating": 4,
   "is_meu_carro_mais": true,
   "categoria": "Concessionária",
+  "desconto_geral_porcentagem": 5,
   "id_usuario": 1
 }
 

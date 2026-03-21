@@ -90,16 +90,17 @@ func calcularDistancia(lat1, lng1, lat2, lng2 float64) float64 {
 // CreateLoja cria uma nova loja
 func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 	loja := models.Loja{
-		Nome:           req.Nome,
-		CNPJ:           req.CNPJ,
-		Imagem:         req.Imagem,
-		Endereco:       req.Endereco,
-		Latitude:       req.Latitude,
-		Longitude:      req.Longitude,
-		Rating:         req.Rating,
-		IsMeuCarroMais: req.IsMeuCarroMais,
-		Categoria:      req.Categoria,
-		IDUsuario:      req.IDUsuario,
+		Nome:                     req.Nome,
+		CNPJ:                     req.CNPJ,
+		Imagem:                   req.Imagem,
+		Endereco:                 req.Endereco,
+		Latitude:                 req.Latitude,
+		Longitude:                req.Longitude,
+		Rating:                   req.Rating,
+		IsMeuCarroMais:           req.IsMeuCarroMais,
+		Categoria:                req.Categoria,
+		DescontoGeralPorcentagem: req.DescontoGeralPorcentagem,
+		IDUsuario:                req.IDUsuario,
 	}
 
 	// Se foi informado um usuário indicador, salva o vínculo com a data atual
@@ -164,6 +165,7 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.Rating = req.Rating
 	loja.IsMeuCarroMais = req.IsMeuCarroMais
 	loja.Categoria = req.Categoria
+	loja.DescontoGeralPorcentagem = req.DescontoGeralPorcentagem
 	loja.IDUsuario = req.IDUsuario
 
 	// Atualiza o vínculo com usuário indicador (opcional)

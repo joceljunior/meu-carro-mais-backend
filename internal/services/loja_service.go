@@ -38,20 +38,8 @@ func GetLojasByProximidade(latitude, longitude float64) (*json.LojasResponse, er
 
 	var lojasResponse []json.LojaResponse
 	for _, lojaComDist := range lojasComDistancia {
-		lojaResp := json.LojaResponse{
-			ID:              lojaComDist.ID,
-			Nome:            lojaComDist.Nome,
-			CNPJ:            lojaComDist.CNPJ,
-			Imagem:          lojaComDist.Imagem,
-			Endereco:        lojaComDist.Endereco,
-			Latitude:        lojaComDist.Latitude,
-			Longitude:       lojaComDist.Longitude,
-			Rating:          lojaComDist.Rating,
-			IsMeuCarroMais:  lojaComDist.IsMeuCarroMais,
-			Categoria:       lojaComDist.Categoria,
-			IDUsuario:       lojaComDist.IDUsuario,
-			CupomDestaque: getCupomDestaqueFromLoja(lojaComDist.Loja),
-		}
+		lojaResp := json.LojaFromModel(lojaComDist.Loja)
+		lojaResp.CupomDestaque = getCupomDestaqueFromLoja(lojaComDist.Loja)
 		lojasResponse = append(lojasResponse, lojaResp)
 	}
 
@@ -92,22 +80,9 @@ func CreateLoja(req json.LojaRequest) (*json.LojaResponse, error) {
 		return nil, err
 	}
 
-	response := &json.LojaResponse{
-		ID:              loja.ID,
-		Nome:            loja.Nome,
-		CNPJ:            loja.CNPJ,
-		Imagem:          loja.Imagem,
-		Endereco:        loja.Endereco,
-		Latitude:        loja.Latitude,
-		Longitude:       loja.Longitude,
-		Rating:          loja.Rating,
-		IsMeuCarroMais:  loja.IsMeuCarroMais,
-		Categoria:       loja.Categoria,
-		IDUsuario:       loja.IDUsuario,
-		CupomDestaque: getCupomDestaqueFromLoja(*loja),
-	}
-
-	return response, nil
+	lojaResp := json.LojaFromModel(*loja)
+	lojaResp.CupomDestaque = getCupomDestaqueFromLoja(*loja)
+	return &lojaResp, nil
 }
 
 // GetLojaByID busca uma loja por ID
@@ -128,25 +103,11 @@ func GetLojaByID(id uint) (*json.LojaResponse, error) {
 		}
 	}
 
-	response := &json.LojaResponse{
-		ID:                 loja.ID,
-		Nome:               loja.Nome,
-		CNPJ:               loja.CNPJ,
-		Imagem:             loja.Imagem,
-		Endereco:           loja.Endereco,
-		Latitude:           loja.Latitude,
-		Longitude:          loja.Longitude,
-		Rating:             loja.Rating,
-		IsMeuCarroMais:     loja.IsMeuCarroMais,
-		Categoria:          loja.Categoria,
-		IDUsuario:          loja.IDUsuario,
-		IDUsuarioIndicador: loja.IDUsuarioIndicador,
-		DataVinculoUsuario: loja.DataVinculoUsuario,
-		UsuarioIndicador:   usuarioIndicadorResponse,
-		CupomDestaque:    getCupomDestaqueFromLoja(*loja),
-	}
+	response := json.LojaFromModel(*loja)
+	response.UsuarioIndicador = usuarioIndicadorResponse
+	response.CupomDestaque = getCupomDestaqueFromLoja(*loja)
 
-	return response, nil
+	return &response, nil
 }
 
 // GetAllLojas retorna todas as lojas ativas
@@ -158,20 +119,8 @@ func GetAllLojas() ([]json.LojaResponse, error) {
 
 	var responses []json.LojaResponse
 	for _, loja := range lojas {
-		response := json.LojaResponse{
-			ID:              loja.ID,
-			Nome:            loja.Nome,
-			CNPJ:            loja.CNPJ,
-			Imagem:          loja.Imagem,
-			Endereco:        loja.Endereco,
-			Latitude:        loja.Latitude,
-			Longitude:       loja.Longitude,
-			Rating:          loja.Rating,
-			IsMeuCarroMais:  loja.IsMeuCarroMais,
-			Categoria:       loja.Categoria,
-			IDUsuario:       loja.IDUsuario,
-			CupomDestaque: getCupomDestaqueFromLoja(loja),
-		}
+		response := json.LojaFromModel(loja)
+		response.CupomDestaque = getCupomDestaqueFromLoja(loja)
 		responses = append(responses, response)
 	}
 
@@ -185,22 +134,9 @@ func UpdateLoja(id uint, req json.LojaRequest) (*json.LojaResponse, error) {
 		return nil, err
 	}
 
-	response := &json.LojaResponse{
-		ID:              loja.ID,
-		Nome:            loja.Nome,
-		CNPJ:            loja.CNPJ,
-		Imagem:          loja.Imagem,
-		Endereco:        loja.Endereco,
-		Latitude:        loja.Latitude,
-		Longitude:       loja.Longitude,
-		Rating:          loja.Rating,
-		IsMeuCarroMais:  loja.IsMeuCarroMais,
-		Categoria:       loja.Categoria,
-		IDUsuario:       loja.IDUsuario,
-		CupomDestaque: getCupomDestaqueFromLoja(*loja),
-	}
-
-	return response, nil
+	lojaResp := json.LojaFromModel(*loja)
+	lojaResp.CupomDestaque = getCupomDestaqueFromLoja(*loja)
+	return &lojaResp, nil
 }
 
 // SoftDeleteLoja realiza soft delete da loja
@@ -222,20 +158,8 @@ func GetLojasByUsuarioID(idUsuario uint) ([]json.LojaResponse, error) {
 
 	var responses []json.LojaResponse
 	for _, loja := range lojas {
-		response := json.LojaResponse{
-			ID:              loja.ID,
-			Nome:            loja.Nome,
-			CNPJ:            loja.CNPJ,
-			Imagem:          loja.Imagem,
-			Endereco:        loja.Endereco,
-			Latitude:        loja.Latitude,
-			Longitude:       loja.Longitude,
-			Rating:          loja.Rating,
-			IsMeuCarroMais:  loja.IsMeuCarroMais,
-			Categoria:       loja.Categoria,
-			IDUsuario:       loja.IDUsuario,
-			CupomDestaque: getCupomDestaqueFromLoja(loja),
-		}
+		response := json.LojaFromModel(loja)
+		response.CupomDestaque = getCupomDestaqueFromLoja(loja)
 		responses = append(responses, response)
 	}
 

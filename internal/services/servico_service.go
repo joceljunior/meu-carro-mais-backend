@@ -35,18 +35,7 @@ func CreateServico(req json.ServicoRequest) (*json.ServicoResponse, error) {
 		Destaque:  servico.Destaque,
 		Categoria: servico.Categoria,
 		Rate:      servico.Loja.Rating,
-		Loja: json.LojaResponse{
-			ID:            servico.Loja.ID,
-			Nome:          servico.Loja.Nome,
-			CNPJ:          servico.Loja.CNPJ,
-			Imagem:        servico.Loja.Imagem,
-			Latitude:      servico.Loja.Latitude,
-			Longitude:     servico.Loja.Longitude,
-			Rating:        servico.Loja.Rating,
-			IsMeuCarroMais: servico.Loja.IsMeuCarroMais,
-			Categoria:     servico.Loja.Categoria,
-			IDUsuario:     servico.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(servico.Loja),
 	}
 
 	return response, nil
@@ -68,18 +57,7 @@ func GetServicoByID(id uint) (*json.ServicoResponse, error) {
 		Destaque:  servico.Destaque,
 		Categoria: servico.Categoria,
 		Rate:      servico.Loja.Rating,
-		Loja: json.LojaResponse{
-			ID:            servico.Loja.ID,
-			Nome:          servico.Loja.Nome,
-			CNPJ:          servico.Loja.CNPJ,
-			Imagem:        servico.Loja.Imagem,
-			Latitude:      servico.Loja.Latitude,
-			Longitude:     servico.Loja.Longitude,
-			Rating:        servico.Loja.Rating,
-			IsMeuCarroMais: servico.Loja.IsMeuCarroMais,
-			Categoria:     servico.Loja.Categoria,
-			IDUsuario:     servico.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(servico.Loja),
 	}
 
 	return response, nil
@@ -103,16 +81,7 @@ func GetAllServicos() ([]json.ServicoResponse, error) {
 			Destaque:  servico.Destaque,
 			Categoria: servico.Categoria,
 			Rate:      servico.Loja.Rating,
-			Loja: json.LojaResponse{
-				ID:          servico.Loja.ID,
-				Nome:        servico.Loja.Nome,
-				CNPJ:        servico.Loja.CNPJ,
-				Imagem:      servico.Loja.Imagem,
-				Latitude:    servico.Loja.Latitude,
-				Longitude:   servico.Loja.Longitude,
-				Categoria: servico.Loja.Categoria,
-				IDUsuario: servico.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(servico.Loja),
 		}
 		responses = append(responses, response)
 	}
@@ -138,18 +107,7 @@ func GetServicosByLojaID(idLoja uint) (*json.ServicosResponse, error) {
 			Destaque:  servico.Destaque,
 			Categoria: servico.Categoria,
 			Rate:      servico.Loja.Rating,
-			Loja: json.LojaResponse{
-				ID:            servico.Loja.ID,
-				Nome:          servico.Loja.Nome,
-				CNPJ:          servico.Loja.CNPJ,
-				Imagem:        servico.Loja.Imagem,
-				Latitude:      servico.Loja.Latitude,
-				Longitude:     servico.Loja.Longitude,
-				Rating:        servico.Loja.Rating,
-				IsMeuCarroMais: servico.Loja.IsMeuCarroMais,
-				Categoria:     servico.Loja.Categoria,
-				IDUsuario:     servico.Loja.IDUsuario,
-			},
+			Loja: json.LojaFromModel(servico.Loja),
 		}
 		servicosResponse = append(servicosResponse, servicoResp)
 	}
@@ -178,18 +136,7 @@ func UpdateServico(id uint, req json.ServicoRequest) (*json.ServicoResponse, err
 		Destaque:  servico.Destaque,
 		Categoria: servico.Categoria,
 		Rate:      servico.Loja.Rating,
-		Loja: json.LojaResponse{
-			ID:            servico.Loja.ID,
-			Nome:          servico.Loja.Nome,
-			CNPJ:          servico.Loja.CNPJ,
-			Imagem:        servico.Loja.Imagem,
-			Latitude:      servico.Loja.Latitude,
-			Longitude:     servico.Loja.Longitude,
-			Rating:        servico.Loja.Rating,
-			IsMeuCarroMais: servico.Loja.IsMeuCarroMais,
-			Categoria:     servico.Loja.Categoria,
-			IDUsuario:     servico.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(servico.Loja),
 	}
 
 	return response, nil

@@ -9,7 +9,8 @@ type LojaRequest struct {
 	Longitude          float64 `json:"longitude" binding:"required"`
 	Rating             int     `json:"rating,omitempty"`
 	IsMeuCarroMais     bool    `json:"is_meu_carro_mais,omitempty"`
-	Categoria          string  `json:"categoria" binding:"required"`
-	IDUsuario          uint    `json:"id_usuario" binding:"required"`
+	Categoria                  string  `json:"categoria" binding:"required"`
+	DescontoGeralPorcentagem   float64 `json:"desconto_geral_porcentagem" binding:"required,gte=0,lte=100"`
+	IDUsuario                  uint    `json:"id_usuario" binding:"required"`
 	IDUsuarioIndicador *uint   `json:"id_usuario_indicador,omitempty"` // ID do usuário que indicou esta loja (opcional)
 }

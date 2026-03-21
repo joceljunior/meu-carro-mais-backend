@@ -13,6 +13,8 @@ type Loja struct {
 	Rating          int        `gorm:"default:5"`
 	IsMeuCarroMais  bool       `gorm:"default:false"`
 	Categoria       string     `gorm:"size:255"`
+	// DescontoGeralPorcentagem aplica-se a produtos, serviços e veículos da loja (0–100).
+	DescontoGeralPorcentagem float64 `gorm:"type:decimal(5,2);not null;default:0"`
 	DataCadastro    time.Time  `gorm:"autoCreateTime"`
 	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`
 	DataExclusao    *time.Time `gorm:"index"`

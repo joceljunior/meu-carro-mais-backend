@@ -19,18 +19,7 @@ func modelToOfertaAutoMaisResponse(oferta *models.OfertaAutoMais) *json.OfertaAu
 		DataValidade:    oferta.DataValidade,
 		DataCadastro:    oferta.DataCadastro,
 		DataAtualizacao: oferta.DataAtualizacao,
-		Loja: json.LojaResponse{
-			ID:             oferta.Loja.ID,
-			Nome:           oferta.Loja.Nome,
-			CNPJ:           oferta.Loja.CNPJ,
-			Imagem:         oferta.Loja.Imagem,
-			Latitude:       oferta.Loja.Latitude,
-			Longitude:      oferta.Loja.Longitude,
-			Rating:         oferta.Loja.Rating,
-			IsMeuCarroMais: oferta.Loja.IsMeuCarroMais,
-			Categoria:      oferta.Loja.Categoria,
-			IDUsuario:      oferta.Loja.IDUsuario,
-		},
+		Loja: json.LojaFromModel(oferta.Loja),
 	}
 }
 
