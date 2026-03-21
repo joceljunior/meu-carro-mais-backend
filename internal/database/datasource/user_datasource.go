@@ -58,10 +58,10 @@ func CreateNewUser(json json.UserRequest) (*models.Usuario, error) {
 		return nil, err
 	}
 
-	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	// Cria a carteira do usuário com saldo inicial de 0 moedas
 	carteira := models.Carteira{
 		UsuarioID: user.ID,
-		Saldo:     1000, // Saldo inicial padrão
+		Saldo:     0,
 	}
 	if err := database.DB.Create(&carteira).Error; err != nil {
 		// Log do erro mas não falha a criação do usuário
@@ -96,10 +96,10 @@ func CreateAdministrativo(req json.AdministrativoRequest) (*models.Usuario, erro
 		return nil, err
 	}
 
-	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	// Cria a carteira do usuário com saldo inicial de 0 moedas
 	carteira := models.Carteira{
 		UsuarioID: user.ID,
-		Saldo:     1000,
+		Saldo:     0,
 	}
 	database.DB.Create(&carteira)
 
@@ -130,10 +130,10 @@ func CreateExecutivo(req json.ExecutivoRequest) (*models.Usuario, error) {
 		return nil, err
 	}
 
-	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	// Cria a carteira do usuário com saldo inicial de 0 moedas
 	carteira := models.Carteira{
 		UsuarioID: user.ID,
-		Saldo:     1000,
+		Saldo:     0,
 	}
 	database.DB.Create(&carteira)
 
@@ -165,10 +165,10 @@ func CreateCustomer(req json.CustomerRequest) (*models.Usuario, error) {
 		return nil, err
 	}
 
-	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	// Cria a carteira do usuário com saldo inicial de 0 moedas
 	carteira := models.Carteira{
 		UsuarioID: user.ID,
-		Saldo:     1000,
+		Saldo:     0,
 	}
 	database.DB.Create(&carteira)
 
@@ -334,10 +334,10 @@ func CreateUserFromLogin(loginReq json.LoginRequest) (*models.Usuario, error) {
 		return nil, err
 	}
 
-	// Cria a carteira do usuário com saldo inicial de 1000 moedas
+	// Cria a carteira do usuário com saldo inicial de 0 moedas
 	carteira := models.Carteira{
 		UsuarioID: user.ID,
-		Saldo:     1000,
+		Saldo:     0,
 	}
 	database.DB.Create(&carteira)
 
