@@ -28,6 +28,9 @@ Content-Type: application/json
   "rating": 5,
   "is_meu_carro_mais": true,
   "categoria": "Concessionária",
+  "link_instagram": "https://instagram.com/carrospremium",
+  "link_facebook": "https://facebook.com/carrospremium",
+  "horario_funcionamento": "Seg–Sex: 8h–18h | Sáb: 8h–13h",
   "desconto_geral_porcentagem": 10,
   "id_usuario": 1
 }
@@ -64,7 +67,7 @@ POST http://localhost:8080/lojas/1/restore
 ### 7. Verificar se loja foi restaurada
 GET http://localhost:8080/lojas/1
 
-### 8. Listar lojas por proximidade (endpoint existente)
+### 8. Listar lojas por proximidade (ordenado por avaliação média, depois distância)
 GET http://localhost:8080/lojas/proximidade?latitude=-23.5505&longitude=-46.6333
 
 ### 9. Listar lojas por usuário

@@ -19,13 +19,37 @@ func GetLojasByLocations(latitude string, longitude string) ([]models.Loja, erro
 	return lojas, nil
 }
 
-// LojaComDistancia representa uma loja com sua distância calculada
+// LojaComDistancia representa uma loja com sua distância calculada e chave de ordenação por nota.
 type LojaComDistancia struct {
 	models.Loja
 	Distancia float64
+	// notaOrdenacao: média das avaliações da loja (tabela avaliacaos); se não houver avaliações, usa Loja.Rating.
+	notaOrdenacao float64
 }
 
-// GetLojasByProximidade busca lojas ordenadas por proximidade do usuário
+// mediasAvaliacaoPorLoja retorna a média de nota (1–5) por loja, só para lojas com pelo menos uma avaliação ativa.
+func mediasAvaliacaoPorLoja() (map[uint]float64, error) {
+	var rows []struct {
+		IDLoja uint    `gorm:"column:id_loja"`
+		Media  float64 `gorm:"column:media"`
+	}
+	err := database.DB.Model(&models.Avaliacao{}).
+		Select("id_loja, AVG(nota) as media").
+		Where("id_loja IS NOT NULL AND data_exclusao IS NULL").
+		Group("id_loja").
+		Scan(&rows).Error
+	if err != nil {
+		return nil, err
+	}
+	out := make(map[uint]float64, len(rows))
+	for _, r := range rows {
+		out[r.IDLoja] = r.Media
+	}
+	return out, nil
+}
+
+// GetLojasByProximidade busca lojas ordenadas por avaliação (nota mais alta primeiro) e, em empate, por proximidade (mais próxima primeiro).
+// A nota usada é a média das avaliações reais; quando não há avaliações, usa o campo rating da loja.
 func GetLojasByProximidade(userLat, userLng float64) ([]LojaComDistancia, error) {
 	var lojas []models.Loja
 
@@ -35,20 +59,33 @@ func GetLojasByProximidade(userLat, userLng float64) ([]LojaComDistancia, error)
 		return nil, err
 	}
 
-	// Calcula a distância para cada loja e ordena
+	medias, err := mediasAvaliacaoPorLoja()
+	if err != nil {
+		return nil, err
+	}
+
 	var lojasComDistancia []LojaComDistancia
 
 	for _, loja := range lojas {
 		distancia := calcularDistancia(userLat, userLng, loja.Latitude, loja.Longitude)
+		nota := float64(loja.Rating)
+		if m, ok := medias[loja.ID]; ok {
+			nota = m
+		}
 		lojasComDistancia = append(lojasComDistancia, LojaComDistancia{
-			Loja:      loja,
-			Distancia: distancia,
+			Loja:          loja,
+			Distancia:     distancia,
+			notaOrdenacao: nota,
 		})
 	}
 
-	// Ordena por distância (mais próxima primeiro)
+	// Ordena por nota (maior primeiro), depois por distância (mais próxima primeiro)
 	sort.Slice(lojasComDistancia, func(i, j int) bool {
-		return lojasComDistancia[i].Distancia < lojasComDistancia[j].Distancia
+		a, b := lojasComDistancia[i], lojasComDistancia[j]
+		if a.notaOrdenacao != b.notaOrdenacao {
+			return a.notaOrdenacao > b.notaOrdenacao
+		}
+		return a.Distancia < b.Distancia
 	})
 
 	return lojasComDistancia, nil
@@ -99,6 +136,9 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 		Rating:                   req.Rating,
 		IsMeuCarroMais:           req.IsMeuCarroMais,
 		Categoria:                req.Categoria,
+		LinkInstagram:            req.LinkInstagram,
+		LinkFacebook:             req.LinkFacebook,
+		HorarioFuncionamento:     req.HorarioFuncionamento,
 		DescontoGeralPorcentagem: req.DescontoGeralPorcentagem,
 		IDUsuario:                req.IDUsuario,
 	}
@@ -165,6 +205,9 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.Rating = req.Rating
 	loja.IsMeuCarroMais = req.IsMeuCarroMais
 	loja.Categoria = req.Categoria
+	loja.LinkInstagram = req.LinkInstagram
+	loja.LinkFacebook = req.LinkFacebook
+	loja.HorarioFuncionamento = req.HorarioFuncionamento
 	loja.DescontoGeralPorcentagem = req.DescontoGeralPorcentagem
 	loja.IDUsuario = req.IDUsuario
 

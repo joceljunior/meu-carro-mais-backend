@@ -10,6 +10,9 @@ type LojaRequest struct {
 	Rating             int     `json:"rating,omitempty"`
 	IsMeuCarroMais     bool    `json:"is_meu_carro_mais,omitempty"`
 	Categoria                  string  `json:"categoria" binding:"required"`
+	LinkInstagram              string  `json:"link_instagram,omitempty"`
+	LinkFacebook               string  `json:"link_facebook,omitempty"`
+	HorarioFuncionamento       string  `json:"horario_funcionamento,omitempty"`
 	DescontoGeralPorcentagem   float64 `json:"desconto_geral_porcentagem" binding:"required,gte=0,lte=100"`
 	IDUsuario                  uint    `json:"id_usuario" binding:"required"`
 	IDUsuarioIndicador *uint   `json:"id_usuario_indicador,omitempty"` // ID do usuário que indicou esta loja (opcional)

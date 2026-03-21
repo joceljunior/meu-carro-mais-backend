@@ -13,7 +13,7 @@ import (
 
 // GetLojasByProximidadeHandler godoc
 // @Summary      Lista lojas por proximidade
-// @Description  Retorna lista de lojas ordenadas por proximidade do usuário
+// @Description  Retorna lista de lojas ordenadas por avaliação (média das notas; sem avaliações usa o rating da loja) e, em empate, por distância ao ponto informado
 // @Tags         Lojas
 // @Accept       json
 // @Produce      json

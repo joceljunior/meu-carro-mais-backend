@@ -25,6 +25,9 @@ type LojaResponse struct {
 	Rating             int                       `json:"rating"`
 	IsMeuCarroMais           bool                      `json:"is_meu_carro_mais"`
 	Categoria                string                    `json:"categoria"`
+	LinkInstagram            string                    `json:"link_instagram,omitempty"`
+	LinkFacebook             string                    `json:"link_facebook,omitempty"`
+	HorarioFuncionamento     string                    `json:"horario_funcionamento,omitempty"`
 	DescontoGeralPorcentagem float64                   `json:"desconto_geral_porcentagem"`
 	IDUsuario                uint                      `json:"id_usuario"`
 	IDUsuarioIndicador *uint                     `json:"id_usuario_indicador,omitempty"`
@@ -61,6 +64,9 @@ func LojaFromModel(loja models.Loja) LojaResponse {
 		Rating:                    loja.Rating,
 		IsMeuCarroMais:            loja.IsMeuCarroMais,
 		Categoria:                 loja.Categoria,
+		LinkInstagram:             loja.LinkInstagram,
+		LinkFacebook:              loja.LinkFacebook,
+		HorarioFuncionamento:      loja.HorarioFuncionamento,
 		DescontoGeralPorcentagem:  loja.DescontoGeralPorcentagem,
 		IDUsuario:                 loja.IDUsuario,
 		IDUsuarioIndicador:        loja.IDUsuarioIndicador,

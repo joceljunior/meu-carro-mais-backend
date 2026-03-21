@@ -1129,6 +1129,19 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration040)
 
+	migration041 := m.NewMigration("041", "add_loja_redes_sociais_e_horario").
+		ExecuteSQL(`
+			ALTER TABLE lojas ADD COLUMN IF NOT EXISTS link_instagram VARCHAR(500) NOT NULL DEFAULT '';
+			ALTER TABLE lojas ADD COLUMN IF NOT EXISTS link_facebook VARCHAR(500) NOT NULL DEFAULT '';
+			ALTER TABLE lojas ADD COLUMN IF NOT EXISTS horario_funcionamento TEXT NOT NULL DEFAULT '';
+		`, `
+			ALTER TABLE lojas DROP COLUMN IF EXISTS horario_funcionamento;
+			ALTER TABLE lojas DROP COLUMN IF EXISTS link_facebook;
+			ALTER TABLE lojas DROP COLUMN IF EXISTS link_instagram;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration041)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
