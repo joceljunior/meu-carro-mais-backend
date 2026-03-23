@@ -2753,7 +2753,7 @@ const docTemplate = `{
                 "summary": "Criação da loja completa",
                 "parameters": [
                     {
-                        "description": "Dados completos da loja (rating e is_meu_carro_mais são opcionais)",
+                        "description": "Dados completos da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2818,7 +2818,7 @@ const docTemplate = `{
         },
         "/lojas/proximidade": {
             "get": {
-                "description": "Retorna lista de lojas ordenadas por proximidade do usuário",
+                "description": "Retorna lista de lojas ordenadas por avaliação (média das notas; sem avaliações usa o rating da loja) e, em empate, por distância ao ponto informado",
                 "consumes": [
                     "application/json"
                 ],
@@ -2991,7 +2991,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Dados atualizados da loja (rating e is_meu_carro_mais são opcionais)",
+                        "description": "Dados atualizados da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -3682,6 +3682,68 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/lojas/{id}/vendas-produto-avulso": {
+            "post": {
+                "description": "A loja informa email do cliente, valor e descrição; o cliente é resolvido pelo email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lojas"
+                ],
+                "summary": "Registra venda de produto não cadastrado",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da loja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados da venda",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json.VendaProdutoAvulsoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/json.VendaProdutoAvulsoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -8483,8 +8545,8 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Carteira encontrada com sucesso"
                 },
-                "saldo": {
-                    "description": "Moedas do app (valores inteiros)",
+                "moedas_gerais": {
+                    "description": "Moedas gerais (qualquer loja)",
                     "type": "integer",
                     "example": 1000
                 },
@@ -8568,12 +8630,12 @@ const docTemplate = `{
         "json.CarteiraRequest": {
             "type": "object",
             "required": [
-                "saldo",
+                "moedas_gerais",
                 "usuario_id"
             ],
             "properties": {
-                "saldo": {
-                    "description": "Moedas do app (valores inteiros)",
+                "moedas_gerais": {
+                    "description": "Moedas gerais (qualquer loja)",
                     "type": "integer",
                     "minimum": 0,
                     "example": 1000
@@ -8603,8 +8665,8 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Carteira criada com sucesso"
                 },
-                "saldo": {
-                    "description": "Moedas do app (valores inteiros)",
+                "moedas_gerais": {
+                    "description": "Moedas gerais (qualquer loja)",
                     "type": "integer",
                     "example": 1000
                 },
@@ -8617,11 +8679,10 @@ const docTemplate = `{
         "json.CarteiraSaldoRequest": {
             "type": "object",
             "required": [
-                "saldo"
+                "moedas_gerais"
             ],
             "properties": {
-                "saldo": {
-                    "description": "Moedas do app (valores inteiros)",
+                "moedas_gerais": {
                     "type": "integer",
                     "minimum": 0,
                     "example": 1500
@@ -9546,6 +9607,9 @@ const docTemplate = `{
                 "id_usuario": {
                     "type": "integer"
                 },
+                "moedas_utilizadas": {
+                    "type": "integer"
+                },
                 "status": {
                     "type": "string"
                 }
@@ -9562,6 +9626,10 @@ const docTemplate = `{
                 },
                 "id_usuario": {
                     "type": "integer"
+                },
+                "moedas_utilizadas": {
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "status": {
                     "type": "string",
@@ -9596,6 +9664,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "id_usuario": {
+                    "type": "integer"
+                },
+                "moedas_utilizadas": {
                     "type": "integer"
                 },
                 "status": {
@@ -9654,6 +9725,15 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                },
+                "total_vendas_produto_avulso": {
+                    "type": "integer"
+                },
+                "vendas_produto_avulso": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.VendaProdutoAvulsoResponse"
+                    }
                 }
             }
         },
@@ -9668,6 +9748,15 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                },
+                "total_vendas_produto_avulso": {
+                    "type": "integer"
+                },
+                "vendas_produto_avulso": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.VendaProdutoAvulsoResponse"
+                    }
                 }
             }
         },
@@ -9748,6 +9837,10 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "id_loja_indicadora": {
+                    "description": "ao criar conta pelo app: vincula loja + cupom destaque",
+                    "type": "integer"
+                },
                 "senha": {
                     "type": "string"
                 }
@@ -9786,6 +9879,9 @@ const docTemplate = `{
                 "id_loja": {
                     "type": "integer"
                 },
+                "id_loja_indicadora": {
+                    "type": "integer"
+                },
                 "id_plano": {
                     "type": "integer"
                 },
@@ -9800,6 +9896,15 @@ const docTemplate = `{
                 },
                 "longitude": {
                     "type": "number"
+                },
+                "moedas_gerais": {
+                    "type": "integer"
+                },
+                "moedas_por_loja": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.MoedaLojaUsuarioItem"
+                    }
                 },
                 "motivo_solicitacao_executivo": {
                     "type": "string"
@@ -9849,6 +9954,7 @@ const docTemplate = `{
             "required": [
                 "categoria",
                 "cnpj",
+                "desconto_geral_porcentagem",
                 "id_usuario",
                 "latitude",
                 "longitude",
@@ -9861,7 +9967,15 @@ const docTemplate = `{
                 "cnpj": {
                     "type": "string"
                 },
+                "desconto_geral_porcentagem": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0
+                },
                 "endereco": {
+                    "type": "string"
+                },
+                "horario_funcionamento": {
                     "type": "string"
                 },
                 "id_usuario": {
@@ -9879,6 +9993,15 @@ const docTemplate = `{
                 },
                 "latitude": {
                     "type": "number"
+                },
+                "link_facebook": {
+                    "type": "string"
+                },
+                "link_instagram": {
+                    "type": "string"
+                },
+                "link_site": {
+                    "type": "string"
                 },
                 "longitude": {
                     "type": "number"
@@ -9906,7 +10029,13 @@ const docTemplate = `{
                 "data_vinculo_usuario": {
                     "type": "string"
                 },
+                "desconto_geral_porcentagem": {
+                    "type": "number"
+                },
                 "endereco": {
+                    "type": "string"
+                },
+                "horario_funcionamento": {
                     "type": "string"
                 },
                 "id": {
@@ -9926,6 +10055,15 @@ const docTemplate = `{
                 },
                 "latitude": {
                     "type": "number"
+                },
+                "link_facebook": {
+                    "type": "string"
+                },
+                "link_instagram": {
+                    "type": "string"
+                },
+                "link_site": {
+                    "type": "string"
                 },
                 "longitude": {
                     "type": "number"
@@ -9947,8 +10085,23 @@ const docTemplate = `{
                 "cupom_destaque": {
                     "$ref": "#/definitions/json.CupomDestaqueResponse"
                 },
+                "desconto_geral_porcentagem": {
+                    "type": "number"
+                },
+                "horario_funcionamento": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "link_facebook": {
+                    "type": "string"
+                },
+                "link_instagram": {
+                    "type": "string"
+                },
+                "link_site": {
+                    "type": "string"
                 },
                 "logo": {
                     "type": "string"
@@ -9968,6 +10121,20 @@ const docTemplate = `{
                     }
                 },
                 "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "json.MoedaLojaUsuarioItem": {
+            "type": "object",
+            "properties": {
+                "id_loja": {
+                    "type": "integer"
+                },
+                "nome_loja": {
+                    "type": "string"
+                },
+                "saldo": {
                     "type": "integer"
                 }
             }
@@ -10275,6 +10442,10 @@ const docTemplate = `{
                 },
                 "id_veiculo_usuario": {
                     "type": "integer"
+                },
+                "moedas_utilizadas": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         },
@@ -10830,6 +11001,15 @@ const docTemplate = `{
                 "mensagem": {
                     "type": "string"
                 },
+                "moedas_gerais": {
+                    "type": "integer"
+                },
+                "moedas_por_loja": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.MoedaLojaUsuarioItem"
+                    }
+                },
                 "motivo_solicitacao_executivo": {
                     "description": "Motivo/justificativa da solicitação",
                     "type": "string"
@@ -11271,6 +11451,56 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/json.VeiculoResponse"
                     }
+                }
+            }
+        },
+        "json.VendaProdutoAvulsoRequest": {
+            "type": "object",
+            "required": [
+                "descricao_produto",
+                "email_cliente",
+                "valor"
+            ],
+            "properties": {
+                "descricao_produto": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "minLength": 1
+                },
+                "email_cliente": {
+                    "type": "string"
+                },
+                "valor": {
+                    "type": "number"
+                }
+            }
+        },
+        "json.VendaProdutoAvulsoResponse": {
+            "type": "object",
+            "properties": {
+                "data_venda": {
+                    "type": "string"
+                },
+                "descricao_produto": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer"
+                },
+                "id_usuario": {
+                    "type": "integer"
+                },
+                "loja": {
+                    "$ref": "#/definitions/json.LojaResponse"
+                },
+                "usuario": {
+                    "$ref": "#/definitions/json.UserResponse"
+                },
+                "valor": {
+                    "type": "number"
                 }
             }
         },

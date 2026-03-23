@@ -1142,6 +1142,15 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration041)
 
+	migration042 := m.NewMigration("042", "add_link_site_to_lojas").
+		ExecuteSQL(`
+			ALTER TABLE lojas ADD COLUMN IF NOT EXISTS link_site VARCHAR(500) NOT NULL DEFAULT '';
+		`, `
+			ALTER TABLE lojas DROP COLUMN IF EXISTS link_site;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration042)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

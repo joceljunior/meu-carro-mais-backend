@@ -26,6 +26,7 @@ func GetUserByEmailOnly(email string) (*models.Usuario, error) {
 	var usuario models.Usuario
 	err := database.DB.
 		Preload("Loja").
+		Preload("LojaIndicadora").
 		Preload("Plano").
 		Where("email = ? AND data_exclusao IS NULL", email).
 		First(&usuario).Error
@@ -33,6 +34,22 @@ func GetUserByEmailOnly(email string) (*models.Usuario, error) {
 		return nil, err
 	}
 	return &usuario, nil
+}
+
+func aplicarUsuarioIndicadoPorLoja(u *models.Usuario, idLojaIndicadora *uint) error {
+	if idLojaIndicadora == nil {
+		return nil
+	}
+	var loja models.Loja
+	if err := database.DB.Where("id = ? AND data_exclusao IS NULL", *idLojaIndicadora).First(&loja).Error; err != nil {
+		return errors.New("loja indicadora não encontrada")
+	}
+	now := time.Now()
+	lid := *idLojaIndicadora
+	u.IDLojaIndicadora = &lid
+	u.IDLoja = &lid
+	u.DataVinculoLoja = &now
+	return nil
 }
 
 func CreateNewUser(json json.UserRequest) (*models.Usuario, error) {
@@ -52,6 +69,9 @@ func CreateNewUser(json json.UserRequest) (*models.Usuario, error) {
 		Ativo:          true,
 		Tipo:           models.TipoUsuarioMobile, // Tipo padrão é mobile
 		Status:         models.StatusUsuarioAprovado,
+	}
+	if err := aplicarUsuarioIndicadoPorLoja(&user, json.IDLojaIndicadora); err != nil {
+		return nil, err
 	}
 	err := database.DB.Create(&user).Error
 	if err != nil {
@@ -329,6 +349,9 @@ func CreateUserFromLogin(loginReq json.LoginRequest) (*models.Usuario, error) {
 		Tipo:    models.TipoUsuarioMobile,    // Tipo padrão é mobile
 		Status:  models.StatusUsuarioAprovado,
 	}
+	if err := aplicarUsuarioIndicadoPorLoja(&user, loginReq.IDLojaIndicadora); err != nil {
+		return nil, err
+	}
 	err := database.DB.Create(&user).Error
 	if err != nil {
 		return nil, err
@@ -412,14 +435,19 @@ func UpdateUser(id uint, req json.UserRequest) (*models.Usuario, error) {
 	usuario.Latitude = req.Latitude
 	usuario.Longitude = req.Longitude
 
-	// Atualiza o vínculo com loja indicadora (opcional)
-	// Se está sendo definido pela primeira vez, salva a data do vínculo
-	if req.IDLojaIndicadora != nil && usuario.IDLojaIndicadora == nil {
-		now := time.Now()
-		usuario.IDLojaIndicadora = req.IDLojaIndicadora
-		usuario.DataVinculoLoja = &now
-	} else if req.IDLojaIndicadora != nil {
-		usuario.IDLojaIndicadora = req.IDLojaIndicadora
+	// Vínculo com loja indicadora: usuário fica ligado à loja (id_loja) para cupom/anúncio e histórico de indicação
+	if req.IDLojaIndicadora != nil {
+		var loja models.Loja
+		if err := database.DB.Where("id = ? AND data_exclusao IS NULL", *req.IDLojaIndicadora).First(&loja).Error; err != nil {
+			return nil, errors.New("loja indicadora não encontrada")
+		}
+		lid := *req.IDLojaIndicadora
+		usuario.IDLojaIndicadora = &lid
+		usuario.IDLoja = &lid
+		if usuario.DataVinculoLoja == nil {
+			now := time.Now()
+			usuario.DataVinculoLoja = &now
+		}
 	}
 
 	// Só atualiza a senha se ela foi fornecida

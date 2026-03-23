@@ -27,6 +27,7 @@ type LojaResponse struct {
 	Categoria                string                    `json:"categoria"`
 	LinkInstagram            string                    `json:"link_instagram,omitempty"`
 	LinkFacebook             string                    `json:"link_facebook,omitempty"`
+	LinkSite                 string                    `json:"link_site,omitempty"`
 	HorarioFuncionamento     string                    `json:"horario_funcionamento,omitempty"`
 	DescontoGeralPorcentagem float64                   `json:"desconto_geral_porcentagem"`
 	IDUsuario                uint                      `json:"id_usuario"`
@@ -66,10 +67,29 @@ func LojaFromModel(loja models.Loja) LojaResponse {
 		Categoria:                 loja.Categoria,
 		LinkInstagram:             loja.LinkInstagram,
 		LinkFacebook:              loja.LinkFacebook,
+		LinkSite:                  loja.LinkSite,
 		HorarioFuncionamento:      loja.HorarioFuncionamento,
 		DescontoGeralPorcentagem:  loja.DescontoGeralPorcentagem,
 		IDUsuario:                 loja.IDUsuario,
 		IDUsuarioIndicador:        loja.IDUsuarioIndicador,
 		DataVinculoUsuario:        loja.DataVinculoUsuario,
 	}
+}
+
+// LojaUsuarioResponseFromModel monta LojaUsuarioResponse (login, perfil) com cupom em destaque opcional.
+func LojaUsuarioResponseFromModel(loja models.Loja, cupom *CupomDestaqueResponse) LojaUsuarioResponse {
+	r := LojaUsuarioResponse{
+		Id:                       loja.ID,
+		Nome:                     loja.Nome,
+		Logo:                     loja.Imagem,
+		LinkInstagram:            loja.LinkInstagram,
+		LinkFacebook:             loja.LinkFacebook,
+		LinkSite:                 loja.LinkSite,
+		HorarioFuncionamento:     loja.HorarioFuncionamento,
+		DescontoGeralPorcentagem: loja.DescontoGeralPorcentagem,
+	}
+	if cupom != nil {
+		r.CupomDestaqueResponse = *cupom
+	}
+	return r
 }

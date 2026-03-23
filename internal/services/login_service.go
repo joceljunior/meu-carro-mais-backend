@@ -49,19 +49,9 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		return nil, errors.New("usuário rejeitado")
 	}
 
-	var cupomResp json.CupomDestaqueResponse
+	lojaResp := json.LojaUsuarioResponse{}
 	if user.Loja.ID != 0 {
-		cupom, err := datasource.GetCupomDestaqueByLojaID(user.Loja.ID)
-		if err == nil {
-			cupomResp = json.CupomDestaqueResponse{
-				ID:        cupom.ID,
-				Titulo:    cupom.Titulo,
-				Descricao: cupom.Descricao,
-				Preco:     cupom.Preco,
-				Imagem:    cupom.Imagem,
-				TipoCupom: cupom.TipoCupom,
-			}
-		}
+		lojaResp = LojaUsuarioResponseComCupom(user.Loja)
 	}
 
 	resp := &json.LoginResponse{
@@ -79,6 +69,7 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		Longitude:                  user.Longitude,
 		IDPlano:                    user.IDPlano,
 		IDLoja:                     user.IDLoja,
+		IDLojaIndicadora:           user.IDLojaIndicadora,
 		Tipo:                       string(user.Tipo),
 		Status:                     string(user.Status),
 		NomePlano:                  user.Plano.Nome,
@@ -86,12 +77,7 @@ func Login(req json.LoginRequest) (*json.LoginResponse, error) {
 		SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
 		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
 		MotivoSolicitacaoExecutivo: user.MotivoSolicitacaoExecutivo,
-		LojaUsuarioResponse: json.LojaUsuarioResponse{
-			Id:                    user.Loja.ID,
-			Nome:                  user.Loja.Nome,
-			Logo:                  user.Loja.Imagem,
-			CupomDestaqueResponse: cupomResp,
-		},
+		LojaUsuarioResponse:        lojaResp,
 	}
 	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
 	if err != nil {
@@ -141,20 +127,9 @@ func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 		}
 	}
 
-	// Monta a resposta
-	var cupomResp json.CupomDestaqueResponse
+	lojaResp := json.LojaUsuarioResponse{}
 	if user.Loja.ID != 0 {
-		cupom, err := datasource.GetCupomDestaqueByLojaID(user.Loja.ID)
-		if err == nil {
-			cupomResp = json.CupomDestaqueResponse{
-				ID:        cupom.ID,
-				Titulo:    cupom.Titulo,
-				Descricao: cupom.Descricao,
-				Preco:     cupom.Preco,
-				Imagem:    cupom.Imagem,
-				TipoCupom: cupom.TipoCupom,
-			}
-		}
+		lojaResp = LojaUsuarioResponseComCupom(user.Loja)
 	}
 
 	resp := &json.LoginResponse{
@@ -172,6 +147,7 @@ func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 		Longitude:                  user.Longitude,
 		IDPlano:                    user.IDPlano,
 		IDLoja:                     user.IDLoja,
+		IDLojaIndicadora:           user.IDLojaIndicadora,
 		Tipo:                       string(user.Tipo),
 		Status:                     string(user.Status),
 		NomePlano:                  user.Plano.Nome,
@@ -179,12 +155,7 @@ func LoginWeb(req json.LoginRequest) (*json.LoginResponse, error) {
 		SolicitacaoExecutivo:       string(user.SolicitacaoExecutivo),
 		DataSolicitacaoExecutivo:   user.DataSolicitacaoExecutivo,
 		MotivoSolicitacaoExecutivo: user.MotivoSolicitacaoExecutivo,
-		LojaUsuarioResponse: json.LojaUsuarioResponse{
-			Id:                    user.Loja.ID,
-			Nome:                  user.Loja.Nome,
-			Logo:                  user.Loja.Imagem,
-			CupomDestaqueResponse: cupomResp,
-		},
+		LojaUsuarioResponse:        lojaResp,
 	}
 	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
 	if err != nil {

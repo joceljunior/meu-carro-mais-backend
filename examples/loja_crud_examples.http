@@ -30,6 +30,7 @@ Content-Type: application/json
   "categoria": "Concessionária",
   "link_instagram": "https://instagram.com/carrospremium",
   "link_facebook": "https://facebook.com/carrospremium",
+  "link_site": "https://carrospremium.com.br",
   "horario_funcionamento": "Seg–Sex: 8h–18h | Sáb: 8h–13h",
   "desconto_geral_porcentagem": 10,
   "id_usuario": 1

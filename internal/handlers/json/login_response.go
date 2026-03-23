@@ -17,6 +17,7 @@ type LoginResponse struct {
 	Longitude                  *float64   `json:"longitude"`
 	IDPlano                    uint       `json:"id_plano"`
 	IDLoja                     *uint      `json:"id_loja"`
+	IDLojaIndicadora           *uint      `json:"id_loja_indicadora,omitempty"`
 	Tipo                       string     `json:"tipo"`
 	Status                     string     `json:"status"`
 	NomePlano                  string     `json:"nome_plano"`
@@ -39,8 +40,13 @@ type CupomDestaqueResponse struct {
 }
 
 type LojaUsuarioResponse struct {
-	Id                     uint   `json:"id"`
-	Nome                   string `json:"nome"`
-	Logo                   string `json:"logo,omitempty"`
-	CupomDestaqueResponse `json:"cupom_destaque,omitempty"`
+	Id                       uint    `json:"id"`
+	Nome                     string  `json:"nome"`
+	Logo                     string  `json:"logo,omitempty"`
+	LinkInstagram            string  `json:"link_instagram,omitempty"`
+	LinkFacebook             string  `json:"link_facebook,omitempty"`
+	LinkSite                 string  `json:"link_site,omitempty"`
+	HorarioFuncionamento     string  `json:"horario_funcionamento,omitempty"`
+	DescontoGeralPorcentagem float64 `json:"desconto_geral_porcentagem"`
+	CupomDestaqueResponse    `json:"cupom_destaque,omitempty"`
 }

@@ -57,11 +57,8 @@ func buildLojaTransferenciaResponse(loja *models.Loja) *json.LojaUsuarioResponse
 		return nil
 	}
 
-	return &json.LojaUsuarioResponse{
-		Id:   loja.ID,
-		Nome: loja.Nome,
-		Logo: loja.Imagem,
-	}
+	r := LojaUsuarioResponseComCupom(*loja)
+	return &r
 }
 
 // buildTransferenciaResponse constrói a resposta de transferência

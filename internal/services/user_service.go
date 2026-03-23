@@ -16,35 +16,12 @@ func CreateUser(req json.UserRequest) (*json.UserResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	response := &json.UserResponse{
-		ID:             user.ID,
-		Nome:           user.Nome,
-		Email:          user.Email,
-		CPF:            user.CPF,
-		Imagem:         user.Imagem,
-		Telefone:       user.Telefone,
-		Endereco:       user.Endereco,
-		DataNascimento: user.DataNascimento,
-		DataCadastro:   user.DataCadastro,
-		Ativo:          user.Ativo,
-		Latitude:       user.Latitude,
-		Longitude:      user.Longitude,
-		IDPlano:        user.IDPlano,
-		IDLoja:         user.IDLoja,
-		Tipo:           string(user.Tipo),
-		Status:         string(user.Status),
-		Mensagem:       "Usuário criado com sucesso",
-	}
-
-	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
+	resp, err := GetUserByID(user.ID)
 	if err != nil {
 		return nil, err
 	}
-	response.MoedasGerais = gerais
-	response.MoedasPorLoja = moedasLoja
-
-	return response, nil
+	resp.Mensagem = "Usuário criado com sucesso"
+	return resp, nil
 }
 
 // GetUserByID busca um usuário por ID
@@ -56,21 +33,14 @@ func GetUserByID(id uint) (*json.UserResponse, error) {
 
 	var lojaResponse *json.LojaUsuarioResponse
 	if user.Loja.ID != 0 {
-		lojaResponse = &json.LojaUsuarioResponse{
-			Id:   user.Loja.ID,
-			Nome: user.Loja.Nome,
-			Logo: user.Loja.Imagem,
-		}
+		r := LojaUsuarioResponseComCupom(user.Loja)
+		lojaResponse = &r
 	}
 
-	// Monta a resposta da loja indicadora (se existir)
 	var lojaIndicadoraResponse *json.LojaUsuarioResponse
 	if user.LojaIndicadora != nil && user.LojaIndicadora.ID != 0 {
-		lojaIndicadoraResponse = &json.LojaUsuarioResponse{
-			Id:   user.LojaIndicadora.ID,
-			Nome: user.LojaIndicadora.Nome,
-			Logo: user.LojaIndicadora.Imagem,
-		}
+		r := LojaUsuarioResponseComCupom(*user.LojaIndicadora)
+		lojaIndicadoraResponse = &r
 	}
 
 	response := &json.UserResponse{
@@ -121,11 +91,8 @@ func GetAllUsers() ([]json.UserResponse, error) {
 	for _, user := range users {
 		var lojaResponse *json.LojaUsuarioResponse
 		if user.Loja.ID != 0 {
-			lojaResponse = &json.LojaUsuarioResponse{
-				Id:   user.Loja.ID,
-				Nome: user.Loja.Nome,
-				Logo: user.Loja.Imagem,
-			}
+			r := LojaUsuarioResponseComCupom(user.Loja)
+			lojaResponse = &r
 		}
 
 		response := json.UserResponse{
@@ -168,32 +135,38 @@ func UpdateUser(id uint, req json.UserRequest) (*json.UserResponse, error) {
 
 	var lojaResponse *json.LojaUsuarioResponse
 	if user.Loja.ID != 0 {
-		lojaResponse = &json.LojaUsuarioResponse{
-			Id:   user.Loja.ID,
-			Nome: user.Loja.Nome,
-			Logo: user.Loja.Imagem,
-		}
+		r := LojaUsuarioResponseComCupom(user.Loja)
+		lojaResponse = &r
+	}
+
+	var lojaIndicadoraResponse *json.LojaUsuarioResponse
+	if user.LojaIndicadora != nil && user.LojaIndicadora.ID != 0 {
+		r := LojaUsuarioResponseComCupom(*user.LojaIndicadora)
+		lojaIndicadoraResponse = &r
 	}
 
 	response := &json.UserResponse{
-		ID:             user.ID,
-		Nome:           user.Nome,
-		Email:          user.Email,
-		CPF:            user.CPF,
-		Imagem:         user.Imagem,
-		Telefone:       user.Telefone,
-		Endereco:       user.Endereco,
-		DataNascimento: user.DataNascimento,
-		DataCadastro:   user.DataCadastro,
-		Ativo:          user.Ativo,
-		Latitude:       user.Latitude,
-		Longitude:      user.Longitude,
-		IDPlano:        user.IDPlano,
-		IDLoja:         user.IDLoja,
-		Tipo:           string(user.Tipo),
-		Status:         string(user.Status),
-		Loja:           lojaResponse,
-		Mensagem:       "Usuário atualizado com sucesso",
+		ID:                         user.ID,
+		Nome:                       user.Nome,
+		Email:                      user.Email,
+		CPF:                        user.CPF,
+		Imagem:                     user.Imagem,
+		Telefone:                   user.Telefone,
+		Endereco:                   user.Endereco,
+		DataNascimento:             user.DataNascimento,
+		DataCadastro:               user.DataCadastro,
+		Ativo:                      user.Ativo,
+		Latitude:                   user.Latitude,
+		Longitude:                  user.Longitude,
+		IDPlano:                    user.IDPlano,
+		IDLoja:                     user.IDLoja,
+		Tipo:                       string(user.Tipo),
+		Status:                     string(user.Status),
+		IDLojaIndicadora:           user.IDLojaIndicadora,
+		DataVinculoLoja:            user.DataVinculoLoja,
+		LojaIndicadora:             lojaIndicadoraResponse,
+		Loja:                       lojaResponse,
+		Mensagem:                   "Usuário atualizado com sucesso",
 	}
 
 	gerais, moedasLoja, err := MoedasUsuarioParaJSON(user.ID)
@@ -393,11 +366,8 @@ func GetAllExecutivos() (*json.ExecutivosListResponse, error) {
 	for _, executivo := range executivos {
 		var lojaResponse *json.LojaUsuarioResponse
 		if executivo.Loja.ID != 0 {
-			lojaResponse = &json.LojaUsuarioResponse{
-				Id:   executivo.Loja.ID,
-				Nome: executivo.Loja.Nome,
-				Logo: executivo.Loja.Imagem,
-			}
+			r := LojaUsuarioResponseComCupom(executivo.Loja)
+			lojaResponse = &r
 		}
 
 		// Busca a foto de perfil do executivo
@@ -522,11 +492,8 @@ func buildCustomersListResponse(customers []models.Usuario, mensagem string) (*j
 	for _, customer := range customers {
 		var lojaResponse *json.LojaUsuarioResponse
 		if customer.Loja.ID != 0 {
-			lojaResponse = &json.LojaUsuarioResponse{
-				Id:   customer.Loja.ID,
-				Nome: customer.Loja.Nome,
-				Logo: customer.Loja.Imagem,
-			}
+			r := LojaUsuarioResponseComCupom(customer.Loja)
+			lojaResponse = &r
 		}
 
 		var executivoInfo *json.ExecutivoInfo

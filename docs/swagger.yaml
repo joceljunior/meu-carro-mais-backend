@@ -153,8 +153,8 @@ definitions:
       mensagem:
         example: Carteira encontrada com sucesso
         type: string
-      saldo:
-        description: Moedas do app (valores inteiros)
+      moedas_gerais:
+        description: Moedas gerais (qualquer loja)
         example: 1000
         type: integer
       usuario:
@@ -215,8 +215,8 @@ definitions:
     type: object
   json.CarteiraRequest:
     properties:
-      saldo:
-        description: Moedas do app (valores inteiros)
+      moedas_gerais:
+        description: Moedas gerais (qualquer loja)
         example: 1000
         minimum: 0
         type: integer
@@ -224,7 +224,7 @@ definitions:
         example: 1
         type: integer
     required:
-    - saldo
+    - moedas_gerais
     - usuario_id
     type: object
   json.CarteiraResponse:
@@ -241,8 +241,8 @@ definitions:
       mensagem:
         example: Carteira criada com sucesso
         type: string
-      saldo:
-        description: Moedas do app (valores inteiros)
+      moedas_gerais:
+        description: Moedas gerais (qualquer loja)
         example: 1000
         type: integer
       usuario_id:
@@ -251,13 +251,12 @@ definitions:
     type: object
   json.CarteiraSaldoRequest:
     properties:
-      saldo:
-        description: Moedas do app (valores inteiros)
+      moedas_gerais:
         example: 1500
         minimum: 0
         type: integer
     required:
-    - saldo
+    - moedas_gerais
     type: object
   json.CarteirasResponse:
     properties:
@@ -870,6 +869,8 @@ definitions:
         type: integer
       id_usuario:
         type: integer
+      moedas_utilizadas:
+        type: integer
       status:
         type: string
     type: object
@@ -878,6 +879,9 @@ definitions:
       id_cupom:
         type: integer
       id_usuario:
+        type: integer
+      moedas_utilizadas:
+        minimum: 0
         type: integer
       status:
         enum:
@@ -902,6 +906,8 @@ definitions:
       id_cupom:
         type: integer
       id_usuario:
+        type: integer
+      moedas_utilizadas:
         type: integer
       status:
         type: string
@@ -940,6 +946,12 @@ definitions:
         type: array
       total:
         type: integer
+      total_vendas_produto_avulso:
+        type: integer
+      vendas_produto_avulso:
+        items:
+          $ref: '#/definitions/json.VendaProdutoAvulsoResponse'
+        type: array
     type: object
   json.HistoricosResgateResponse:
     properties:
@@ -949,6 +961,12 @@ definitions:
         type: array
       total:
         type: integer
+      total_vendas_produto_avulso:
+        type: integer
+      vendas_produto_avulso:
+        items:
+          $ref: '#/definitions/json.VendaProdutoAvulsoResponse'
+        type: array
     type: object
   json.HistoricosVeiculoResponse:
     properties:
@@ -1000,6 +1018,9 @@ definitions:
     properties:
       email:
         type: string
+      id_loja_indicadora:
+        description: 'ao criar conta pelo app: vincula loja + cupom destaque'
+        type: integer
       senha:
         type: string
     type: object
@@ -1025,6 +1046,8 @@ definitions:
         type: integer
       id_loja:
         type: integer
+      id_loja_indicadora:
+        type: integer
       id_plano:
         type: integer
       imagem:
@@ -1035,6 +1058,12 @@ definitions:
         $ref: '#/definitions/json.LojaUsuarioResponse'
       longitude:
         type: number
+      moedas_gerais:
+        type: integer
+      moedas_por_loja:
+        items:
+          $ref: '#/definitions/json.MoedaLojaUsuarioItem'
+        type: array
       motivo_solicitacao_executivo:
         type: string
       nome:
@@ -1069,7 +1098,13 @@ definitions:
         type: string
       cnpj:
         type: string
+      desconto_geral_porcentagem:
+        maximum: 100
+        minimum: 0
+        type: number
       endereco:
+        type: string
+      horario_funcionamento:
         type: string
       id_usuario:
         type: integer
@@ -1082,6 +1117,12 @@ definitions:
         type: boolean
       latitude:
         type: number
+      link_facebook:
+        type: string
+      link_instagram:
+        type: string
+      link_site:
+        type: string
       longitude:
         type: number
       nome:
@@ -1091,6 +1132,7 @@ definitions:
     required:
     - categoria
     - cnpj
+    - desconto_geral_porcentagem
     - id_usuario
     - latitude
     - longitude
@@ -1106,7 +1148,11 @@ definitions:
         $ref: '#/definitions/json.CupomDestaqueResponse'
       data_vinculo_usuario:
         type: string
+      desconto_geral_porcentagem:
+        type: number
       endereco:
+        type: string
+      horario_funcionamento:
         type: string
       id:
         type: integer
@@ -1120,6 +1166,12 @@ definitions:
         type: boolean
       latitude:
         type: number
+      link_facebook:
+        type: string
+      link_instagram:
+        type: string
+      link_site:
+        type: string
       longitude:
         type: number
       nome:
@@ -1133,8 +1185,18 @@ definitions:
     properties:
       cupom_destaque:
         $ref: '#/definitions/json.CupomDestaqueResponse'
+      desconto_geral_porcentagem:
+        type: number
+      horario_funcionamento:
+        type: string
       id:
         type: integer
+      link_facebook:
+        type: string
+      link_instagram:
+        type: string
+      link_site:
+        type: string
       logo:
         type: string
       nome:
@@ -1147,6 +1209,15 @@ definitions:
           $ref: '#/definitions/json.LojaResponse'
         type: array
       total:
+        type: integer
+    type: object
+  json.MoedaLojaUsuarioItem:
+    properties:
+      id_loja:
+        type: integer
+      nome_loja:
+        type: string
+      saldo:
         type: integer
     type: object
   json.OfertaAutoMaisRequest:
@@ -1355,6 +1426,9 @@ definitions:
       id_usuario:
         type: integer
       id_veiculo_usuario:
+        type: integer
+      moedas_utilizadas:
+        minimum: 0
         type: integer
     required:
     - id_usuario
@@ -1730,6 +1804,12 @@ definitions:
         type: number
       mensagem:
         type: string
+      moedas_gerais:
+        type: integer
+      moedas_por_loja:
+        items:
+          $ref: '#/definitions/json.MoedaLojaUsuarioItem'
+        type: array
       motivo_solicitacao_executivo:
         description: Motivo/justificativa da solicitação
         type: string
@@ -2036,6 +2116,40 @@ definitions:
         items:
           $ref: '#/definitions/json.VeiculoResponse'
         type: array
+    type: object
+  json.VendaProdutoAvulsoRequest:
+    properties:
+      descricao_produto:
+        maxLength: 500
+        minLength: 1
+        type: string
+      email_cliente:
+        type: string
+      valor:
+        type: number
+    required:
+    - descricao_produto
+    - email_cliente
+    - valor
+    type: object
+  json.VendaProdutoAvulsoResponse:
+    properties:
+      data_venda:
+        type: string
+      descricao_produto:
+        type: string
+      id:
+        type: integer
+      id_loja:
+        type: integer
+      id_usuario:
+        type: integer
+      loja:
+        $ref: '#/definitions/json.LojaResponse'
+      usuario:
+        $ref: '#/definitions/json.UserResponse'
+      valor:
+        type: number
     type: object
   json.WebhookData:
     properties:
@@ -3979,7 +4093,8 @@ paths:
       description: Cria uma nova loja com todos os dados fornecidos, incluindo rating
         e status premium
       parameters:
-      - description: Dados completos da loja (rating e is_meu_carro_mais são opcionais)
+      - description: Dados completos da loja (rating e is_meu_carro_mais são opcionais);
+          desconto_geral_porcentagem é obrigatório (0–100)
         in: body
         name: request
         required: true
@@ -4089,7 +4204,8 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Dados atualizados da loja (rating e is_meu_carro_mais são opcionais)
+      - description: Dados atualizados da loja (rating e is_meu_carro_mais são opcionais);
+          desconto_geral_porcentagem é obrigatório (0–100)
         in: body
         name: request
         required: true
@@ -4530,6 +4646,49 @@ paths:
       summary: Lista veículos de uma loja
       tags:
       - Veículos de Loja
+  /lojas/{id}/vendas-produto-avulso:
+    post:
+      consumes:
+      - application/json
+      description: A loja informa email do cliente, valor e descrição; o cliente é
+        resolvido pelo email
+      parameters:
+      - description: ID da loja
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados da venda
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/json.VendaProdutoAvulsoRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/json.VendaProdutoAvulsoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Registra venda de produto não cadastrado
+      tags:
+      - Lojas
   /lojas/categorias:
     get:
       consumes:
@@ -4554,7 +4713,9 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna lista de lojas ordenadas por proximidade do usuário
+      description: Retorna lista de lojas ordenadas por avaliação (média das notas;
+        sem avaliações usa o rating da loja) e, em empate, por distância ao ponto
+        informado
       parameters:
       - description: Latitude do usuário
         in: query

@@ -138,6 +138,7 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 		Categoria:                req.Categoria,
 		LinkInstagram:            req.LinkInstagram,
 		LinkFacebook:             req.LinkFacebook,
+		LinkSite:                 req.LinkSite,
 		HorarioFuncionamento:     req.HorarioFuncionamento,
 		DescontoGeralPorcentagem: req.DescontoGeralPorcentagem,
 		IDUsuario:                req.IDUsuario,
@@ -207,6 +208,7 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.Categoria = req.Categoria
 	loja.LinkInstagram = req.LinkInstagram
 	loja.LinkFacebook = req.LinkFacebook
+	loja.LinkSite = req.LinkSite
 	loja.HorarioFuncionamento = req.HorarioFuncionamento
 	loja.DescontoGeralPorcentagem = req.DescontoGeralPorcentagem
 	loja.IDUsuario = req.IDUsuario

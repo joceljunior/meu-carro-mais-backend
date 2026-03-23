@@ -16,6 +16,18 @@ Content-Type: application/json
   "longitude": -46.6333
 }
 
+### 1.1. Criar usuário indicado por loja (vincula id_loja + cupom destaque da loja)
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "nome": "Maria Indicada",
+  "email": "maria.indicada@email.com",
+  "senha": "123456",
+  "cpf": "98765432100",
+  "id_loja_indicadora": 1
+}
+
 ### 2. Listar todos os usuários
 GET http://localhost:8080/users
 

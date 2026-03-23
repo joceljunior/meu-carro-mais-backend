@@ -12,6 +12,7 @@ type LojaRequest struct {
 	Categoria                  string  `json:"categoria" binding:"required"`
 	LinkInstagram              string  `json:"link_instagram,omitempty"`
 	LinkFacebook               string  `json:"link_facebook,omitempty"`
+	LinkSite                   string  `json:"link_site,omitempty"`
 	HorarioFuncionamento       string  `json:"horario_funcionamento,omitempty"`
 	DescontoGeralPorcentagem   float64 `json:"desconto_geral_porcentagem" binding:"required,gte=0,lte=100"`
 	IDUsuario                  uint    `json:"id_usuario" binding:"required"`

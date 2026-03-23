@@ -15,6 +15,7 @@ type Loja struct {
 	Categoria       string     `gorm:"size:255"`
 	LinkInstagram   string     `gorm:"size:500"`
 	LinkFacebook    string     `gorm:"size:500"`
+	LinkSite        string     `gorm:"size:500"`
 	HorarioFuncionamento string `gorm:"type:text"`
 	// DescontoGeralPorcentagem aplica-se a produtos, serviços e veículos da loja (0–100).
 	DescontoGeralPorcentagem float64 `gorm:"type:decimal(5,2);not null;default:0"`
