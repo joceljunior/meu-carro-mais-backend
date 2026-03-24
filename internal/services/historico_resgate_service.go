@@ -142,7 +142,7 @@ func UpdateHistoricoResgate(id uint, req json.HistoricoResgateRequest) (*json.Hi
 	return convertHistoricoToResponse(historico), nil
 }
 
-// UpdateStatusHistoricoResgate atualiza o status e, se efetivado, credita moedas por loja na mesma transação.
+// UpdateStatusHistoricoResgate atualiza o status e, se efetivado, credita moedas por loja na mesma transação (50% do % de desconto geral da loja sobre o valor do cupom).
 func UpdateStatusHistoricoResgate(id uint, status string) error {
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 		if err := datasource.UpdateStatusHistoricoResgateWithDB(tx, id, status); err != nil {

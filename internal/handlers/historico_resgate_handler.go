@@ -300,7 +300,7 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 
 // EfetivarResgateHandler godoc
 // @Summary      Efetiva um resgate
-// @Description  Efetiva um resgate pendente, alterando o status para efetivado. Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.
+// @Description  Efetiva um resgate pendente, alterando o status para efetivado. Credita moedas da loja ao usuário: metade do percentual de desconto geral da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real = 1 moeda). Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.
 // @Tags         Histórico de Resgates
 // @Accept       json
 // @Produce      json

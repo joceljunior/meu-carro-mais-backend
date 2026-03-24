@@ -3579,10 +3579,12 @@ paths:
     put:
       consumes:
       - application/json
-      description: Efetiva um resgate pendente, alterando o status para efetivado.
-        Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços),
+      description: 'Efetiva um resgate pendente, alterando o status para efetivado.
+        Credita moedas da loja ao usuário: metade do percentual de desconto geral
+        da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real
+        = 1 moeda). Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços),
         o histórico é automaticamente registrado no veículo. Se for venda de veículo,
-        o veículo é automaticamente transferido para o comprador.
+        o veículo é automaticamente transferido para o comprador.'
       parameters:
       - description: ID do histórico de resgate
         in: path
@@ -3836,7 +3838,8 @@ paths:
       - application/json
       description: Login para o aplicativo mobile. Valida se o email existe. Se existir,
         retorna os dados do usuário. Se não existir, cria um novo usuário mobile.
-        Usuários do tipo 'customer' não podem fazer login no mobile.
+        Usuários do tipo 'customer' não podem fazer login no mobile. A resposta inclui
+        moedas_gerais (carteira) e moedas_por_loja (saldos por loja).
       parameters:
       - description: Dados de login (email e senha)
         in: body
@@ -3872,7 +3875,8 @@ paths:
       - application/json
       description: Login para a plataforma web. Apenas usuários do tipo 'executivo',
         'administrativo' e 'customer' podem fazer login. Customers precisam estar
-        aprovados.
+        aprovados. A resposta inclui moedas_gerais (carteira) e moedas_por_loja (saldos
+        por loja).
       parameters:
       - description: Dados de login (email e senha)
         in: body
@@ -4654,8 +4658,10 @@ paths:
     post:
       consumes:
       - application/json
-      description: A loja informa email do cliente, valor e descrição; o cliente é
-        resolvido pelo email
+      description: 'A loja informa email do cliente, valor e descrição; o cliente
+        é resolvido pelo email. Credita moedas da loja ao cliente: metade do percentual
+        de desconto geral da loja aplicada sobre o valor informado da venda (1 real
+        = 1 moeda).'
       parameters:
       - description: ID da loja
         in: path

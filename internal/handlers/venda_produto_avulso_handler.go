@@ -12,7 +12,7 @@ import (
 
 // CreateVendaProdutoAvulsoHandler godoc
 // @Summary      Registra venda de produto não cadastrado
-// @Description  A loja informa email do cliente, valor e descrição; o cliente é resolvido pelo email
+// @Description  A loja informa email do cliente, valor e descrição; o cliente é resolvido pelo email. Credita moedas da loja ao cliente: metade do percentual de desconto geral da loja aplicada sobre o valor informado da venda (1 real = 1 moeda).
 // @Tags         Lojas
 // @Accept       json
 // @Produce      json

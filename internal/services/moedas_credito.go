@@ -9,14 +9,15 @@ import (
 	"gorm.io/gorm"
 )
 
-// CalcularMoedasGanhasPorDescontoGeralLoja aplica 5% sobre o valor em R$ do desconto geral da loja; 1 real = 1 moeda.
-func CalcularMoedasGanhasPorDescontoGeralLoja(valorBaseReais float64, descontoGeralPct float64) int {
-	if valorBaseReais <= 0 || descontoGeralPct <= 0 {
+// CalcularMoedasGanhasPorDescontoGeralLoja aplica metade do percentual de desconto geral da loja sobre o valor total da venda e converte o resultado em moedas (1 real = 1 moeda).
+// Ex.: desconto geral 10%, venda R$ 100 → 50% de 10% = 5% sobre R$ 100 → R$ 5 → 5 moedas.
+func CalcularMoedasGanhasPorDescontoGeralLoja(valorTotalVendaReais float64, descontoGeralPct float64) int {
+	if valorTotalVendaReais <= 0 || descontoGeralPct <= 0 {
 		return 0
 	}
-	valorDescontoGeral := valorBaseReais * (descontoGeralPct / 100.0)
-	bonusReais := 0.05 * valorDescontoGeral
-	return int(math.Floor(bonusReais))
+	pctEfetivo := descontoGeralPct * 0.5
+	reaisEmMoedas := valorTotalVendaReais * (pctEfetivo / 100.0)
+	return int(math.Floor(reaisEmMoedas))
 }
 
 func valorBaseCupomParaDescontoGeral(c *models.Cupom) float64 {
@@ -58,7 +59,7 @@ func resolverLojaCupom(tx *gorm.DB, c *models.Cupom) (*models.Loja, error) {
 	return &l, nil
 }
 
-// AplicarMoedasCreditoResgateEfetivadoTx credita moedas por loja ao efetivar resgate (transação).
+// AplicarMoedasCreditoResgateEfetivadoTx credita moedas por loja ao efetivar resgate (transação), com base no preço do cupom (valor da transação) e no desconto geral da loja.
 func AplicarMoedasCreditoResgateEfetivadoTx(tx *gorm.DB, historicoID uint) error {
 	h, err := datasource.GetHistoricoResgateByIDWithDB(tx, historicoID)
 	if err != nil {

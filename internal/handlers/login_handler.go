@@ -11,7 +11,7 @@ import (
 
 // LoginHandler godoc
 // @Summary      Login Mobile
-// @Description  Login para o aplicativo mobile. Valida se o email existe. Se existir, retorna os dados do usuário. Se não existir, cria um novo usuário mobile. Usuários do tipo 'customer' não podem fazer login no mobile.
+// @Description  Login para o aplicativo mobile. Valida se o email existe. Se existir, retorna os dados do usuário. Se não existir, cria um novo usuário mobile. Usuários do tipo 'customer' não podem fazer login no mobile. A resposta inclui moedas_gerais (carteira) e moedas_por_loja (saldos por loja).
 // @Tags         Autenticação
 // @Accept       json
 // @Produce      json
@@ -40,7 +40,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 // LoginWebHandler godoc
 // @Summary      Login Web
-// @Description  Login para a plataforma web. Apenas usuários do tipo 'executivo', 'administrativo' e 'customer' podem fazer login. Customers precisam estar aprovados.
+// @Description  Login para a plataforma web. Apenas usuários do tipo 'executivo', 'administrativo' e 'customer' podem fazer login. Customers precisam estar aprovados. A resposta inclui moedas_gerais (carteira) e moedas_por_loja (saldos por loja).
 // @Tags         Autenticação
 // @Accept       json
 // @Produce      json
