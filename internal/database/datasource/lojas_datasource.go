@@ -131,6 +131,7 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 		CNPJ:                     req.CNPJ,
 		Imagem:                   req.Imagem,
 		Endereco:                 req.Endereco,
+		Telefone:                 req.Telefone,
 		Latitude:                 req.Latitude,
 		Longitude:                req.Longitude,
 		Rating:                   req.Rating,
@@ -201,6 +202,7 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.CNPJ = req.CNPJ
 	loja.Imagem = req.Imagem
 	loja.Endereco = req.Endereco
+	loja.Telefone = req.Telefone
 	loja.Latitude = req.Latitude
 	loja.Longitude = req.Longitude
 	loja.Rating = req.Rating

@@ -20,6 +20,7 @@ type LojaResponse struct {
 	CNPJ               string                    `json:"cnpj"`
 	Imagem             string                    `json:"imagem"`
 	Endereco           string                    `json:"endereco,omitempty"`
+	Telefone           string                    `json:"telefone,omitempty"`
 	Latitude           float64                   `json:"latitude"`
 	Longitude          float64                   `json:"longitude"`
 	Rating             int                       `json:"rating"`
@@ -60,6 +61,7 @@ func LojaFromModel(loja models.Loja) LojaResponse {
 		CNPJ:                      loja.CNPJ,
 		Imagem:                    loja.Imagem,
 		Endereco:                  loja.Endereco,
+		Telefone:                  loja.Telefone,
 		Latitude:                  loja.Latitude,
 		Longitude:                 loja.Longitude,
 		Rating:                    loja.Rating,

@@ -5,6 +5,7 @@ type LojaRequest struct {
 	CNPJ               string  `json:"cnpj" binding:"required"`
 	Imagem             string  `json:"imagem,omitempty"`
 	Endereco           string  `json:"endereco,omitempty"`
+	Telefone           string  `json:"telefone,omitempty"`
 	Latitude           float64 `json:"latitude" binding:"required"`
 	Longitude          float64 `json:"longitude" binding:"required"`
 	Rating             int     `json:"rating,omitempty"`

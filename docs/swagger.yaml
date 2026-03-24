@@ -1129,6 +1129,8 @@ definitions:
         type: string
       rating:
         type: integer
+      telefone:
+        type: string
     required:
     - categoria
     - cnpj
@@ -1178,6 +1180,8 @@ definitions:
         type: string
       rating:
         type: integer
+      telefone:
+        type: string
       usuario_indicador:
         $ref: '#/definitions/json.UsuarioIndicadorResponse'
     type: object

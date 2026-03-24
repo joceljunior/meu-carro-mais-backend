@@ -10011,6 +10011,9 @@ const docTemplate = `{
                 },
                 "rating": {
                     "type": "integer"
+                },
+                "telefone": {
+                    "type": "string"
                 }
             }
         },
@@ -10073,6 +10076,9 @@ const docTemplate = `{
                 },
                 "rating": {
                     "type": "integer"
+                },
+                "telefone": {
+                    "type": "string"
                 },
                 "usuario_indicador": {
                     "$ref": "#/definitions/json.UsuarioIndicadorResponse"

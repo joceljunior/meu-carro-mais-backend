@@ -8,6 +8,7 @@ type Loja struct {
 	CNPJ            string     `gorm:"size:255;unique"`
 	Imagem          string     `gorm:"size:255"`
 	Endereco        string     `gorm:"size:500"`
+	Telefone        string     `gorm:"size:30"`
 	Latitude        float64    `gorm:"type:decimal(10,8)"`
 	Longitude       float64    `gorm:"type:decimal(11,8)"`
 	Rating          int        `gorm:"default:5"`
