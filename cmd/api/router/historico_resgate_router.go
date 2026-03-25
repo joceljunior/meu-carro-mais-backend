@@ -21,6 +21,7 @@ func (hrr *HistoricoResgateRouter) RegisterRoutes(rg *gin.RouterGroup) {
 		historicosResgate.GET("/cupom/:id", handlers.GetHistoricosResgateByCupomIDHandler)         // GET /historicos-resgate/cupom/:id - Histórico de um cupom específico
 		historicosResgate.PUT("/:id/status", handlers.UpdateStatusHistoricoResgateHandler) // PUT /historicos-resgate/:id/status - Atualizar status
 		historicosResgate.PUT("/:id/efetivar", handlers.EfetivarResgateHandler)            // PUT /historicos-resgate/:id/efetivar - Efetivar resgate
+		historicosResgate.PUT("/:id/cancelar", handlers.CancelarResgateHandler)            // PUT /historicos-resgate/:id/cancelar - Cancelar resgate pendente
 		historicosResgate.PUT("/:id/reverter", handlers.ReverterResgateHandler)            // PUT /historicos-resgate/:id/reverter - Reverter resgate
 		historicosResgate.POST("/:id/restore", handlers.RestoreHistoricoResgateHandler)     // POST /historicos-resgate/:id/restore - Restaurar histórico
 

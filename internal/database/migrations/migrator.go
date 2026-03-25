@@ -1160,6 +1160,15 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration043)
 
+	migration044 := m.NewMigration("044", "loja_rating_default_zero").
+		ExecuteSQL(`
+			ALTER TABLE lojas ALTER COLUMN rating SET DEFAULT 0;
+		`, `
+			ALTER TABLE lojas ALTER COLUMN rating SET DEFAULT 5;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration044)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version

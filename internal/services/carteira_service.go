@@ -31,10 +31,16 @@ func GetCarteiraByID(id uint) (*json.CarteiraComUsuarioResponse, error) {
 		return nil, err
 	}
 
+	gerais, porLoja, err := MoedasUsuarioParaJSON(carteira.UsuarioID)
+	if err != nil {
+		return nil, err
+	}
+
 	response := &json.CarteiraComUsuarioResponse{
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
-		MoedasGerais:    carteira.SaldoGeral,
+		MoedasGerais:    gerais,
+		MoedasPorLoja:   porLoja,
 		DataCriacao:     carteira.DataCriacao,
 		DataAtualizacao: carteira.DataAtualizacao,
 		Mensagem:        "Carteira encontrada com sucesso",
@@ -57,10 +63,16 @@ func GetCarteiraByUsuarioID(usuarioID uint) (*json.CarteiraComUsuarioResponse, e
 		return nil, err
 	}
 
+	gerais, porLoja, err := MoedasUsuarioParaJSON(carteira.UsuarioID)
+	if err != nil {
+		return nil, err
+	}
+
 	response := &json.CarteiraComUsuarioResponse{
 		ID:              carteira.ID,
 		UsuarioID:       carteira.UsuarioID,
-		MoedasGerais:    carteira.SaldoGeral,
+		MoedasGerais:    gerais,
+		MoedasPorLoja:   porLoja,
 		DataCriacao:     carteira.DataCriacao,
 		DataAtualizacao: carteira.DataAtualizacao,
 		Mensagem:        "Carteira encontrada com sucesso",
@@ -85,10 +97,15 @@ func GetAllCarteiras() (*json.CarteirasResponse, error) {
 
 	var responses []json.CarteiraComUsuarioResponse
 	for _, carteira := range carteiras {
+		gerais, porLoja, err := MoedasUsuarioParaJSON(carteira.UsuarioID)
+		if err != nil {
+			return nil, err
+		}
 		response := json.CarteiraComUsuarioResponse{
 			ID:              carteira.ID,
 			UsuarioID:       carteira.UsuarioID,
-			MoedasGerais:    carteira.SaldoGeral,
+			MoedasGerais:    gerais,
+			MoedasPorLoja:   porLoja,
 			DataCriacao:     carteira.DataCriacao,
 			DataAtualizacao: carteira.DataAtualizacao,
 		}
@@ -222,10 +239,15 @@ func GetCarteirasBySaldoRange(saldoMin, saldoMax int) (*json.CarteirasResponse, 
 
 	var responses []json.CarteiraComUsuarioResponse
 	for _, carteira := range carteiras {
+		gerais, porLoja, err := MoedasUsuarioParaJSON(carteira.UsuarioID)
+		if err != nil {
+			return nil, err
+		}
 		response := json.CarteiraComUsuarioResponse{
 			ID:              carteira.ID,
 			UsuarioID:       carteira.UsuarioID,
-			MoedasGerais:    carteira.SaldoGeral,
+			MoedasGerais:    gerais,
+			MoedasPorLoja:   porLoja,
 			DataCriacao:     carteira.DataCriacao,
 			DataAtualizacao: carteira.DataAtualizacao,
 		}
@@ -256,10 +278,15 @@ func GetCarteirasComSaldoMaior(valor int) (*json.CarteirasResponse, error) {
 
 	var responses []json.CarteiraComUsuarioResponse
 	for _, carteira := range carteiras {
+		gerais, porLoja, err := MoedasUsuarioParaJSON(carteira.UsuarioID)
+		if err != nil {
+			return nil, err
+		}
 		response := json.CarteiraComUsuarioResponse{
 			ID:              carteira.ID,
 			UsuarioID:       carteira.UsuarioID,
-			MoedasGerais:    carteira.SaldoGeral,
+			MoedasGerais:    gerais,
+			MoedasPorLoja:   porLoja,
 			DataCriacao:     carteira.DataCriacao,
 			DataAtualizacao: carteira.DataAtualizacao,
 		}

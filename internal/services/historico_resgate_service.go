@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/datasource"
 	"meu-carro-mais/internal/database/models"
@@ -153,6 +154,18 @@ func UpdateStatusHistoricoResgate(id uint, status string) error {
 		}
 		return nil
 	})
+}
+
+// CancelarHistoricoResgate define o status como cancelado (apenas resgates pendentes).
+func CancelarHistoricoResgate(id uint) error {
+	h, err := datasource.GetHistoricoResgateByID(id)
+	if err != nil {
+		return err
+	}
+	if h.Status != "pendente" {
+		return errors.New("apenas resgates com status 'pendente' podem ser cancelados")
+	}
+	return UpdateStatusHistoricoResgate(id, "cancelado")
 }
 
 // SoftDeleteHistoricoResgate realiza soft delete do histórico

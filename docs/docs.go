@@ -54,7 +54,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Cria uma nova avaliação de loja no sistema",
+                "description": "Cria uma nova avaliação (loja, serviço ou produto). Para avaliação de loja (id_loja), após salvar atualiza o rating da loja (média das notas, 1–5) e o selo is_meu_carro_mais (true com pelo menos 20 avaliações com nota 5).",
                 "consumes": [
                     "application/json"
                 ],
@@ -153,7 +153,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Atualiza os dados de uma avaliação existente",
+                "description": "Atualiza os dados de uma avaliação existente. Se for avaliação de loja, recalcula rating (média) e is_meu_carro_mais da(s) loja(s) afetada(s).",
                 "consumes": [
                     "application/json"
                 ],
@@ -213,7 +213,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Realiza soft delete de uma avaliação, marcando-a como excluída",
+                "description": "Realiza soft delete de uma avaliação, marcando-a como excluída. Se for avaliação de loja, recalcula rating e is_meu_carro_mais da loja.",
                 "consumes": [
                     "application/json"
                 ],
@@ -267,7 +267,7 @@ const docTemplate = `{
         },
         "/avaliacoes/{id}/restore": {
             "post": {
-                "description": "Restaura uma avaliação que foi soft deleted",
+                "description": "Restaura uma avaliação que foi soft deleted. Se for avaliação de loja, recalcula rating e is_meu_carro_mais da loja.",
                 "consumes": [
                     "application/json"
                 ],
@@ -321,7 +321,7 @@ const docTemplate = `{
         },
         "/carteiras": {
             "get": {
-                "description": "Retorna uma lista com todas as carteiras",
+                "description": "Retorna uma lista com todas as carteiras (moedas_gerais e moedas_por_loja por usuário)",
                 "consumes": [
                     "application/json"
                 ],
@@ -499,7 +499,7 @@ const docTemplate = `{
         },
         "/carteiras/usuario/{usuario_id}": {
             "get": {
-                "description": "Retorna a carteira de um usuário específico",
+                "description": "Retorna a carteira de um usuário específico com moedas_gerais e moedas_por_loja (saldos por loja).",
                 "consumes": [
                     "application/json"
                 ],
@@ -552,7 +552,7 @@ const docTemplate = `{
         },
         "/carteiras/{id}": {
             "get": {
-                "description": "Retorna os dados de uma carteira específica pelo ID",
+                "description": "Retorna os dados de uma carteira específica pelo ID com moedas_gerais e moedas_por_loja.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2130,6 +2130,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/historicos-resgate/{id}/cancelar": {
+            "put": {
+                "description": "Cancela um resgate pendente (status cancelado). Não credita moedas. Apenas resgates com status pendente podem ser cancelados.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Histórico de Resgates"
+                ],
+                "summary": "Cancela um resgate de cupom",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do histórico de resgate",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resgate cancelado",
+                        "schema": {
+                            "$ref": "#/definitions/json.HistoricoResgateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Resgate não está pendente",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Histórico não encontrado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/historicos-resgate/{id}/efetivar": {
             "put": {
                 "description": "Efetiva um resgate pendente, alterando o status para efetivado. Credita moedas da loja ao usuário: metade do percentual de desconto geral da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real = 1 moeda). Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.",
@@ -2740,7 +2793,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Cria uma nova loja com todos os dados fornecidos, incluindo rating e status premium",
+                "description": "Cria uma nova loja. Rating inicia sempre em 0 e is_meu_carro_mais em false (valores enviados no body são ignorados). O selo \"Meu Carro Mais\" passa a ser definido automaticamente quando a loja tiver 20 avaliações com nota 5.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2753,7 +2806,7 @@ const docTemplate = `{
                 "summary": "Criação da loja completa",
                 "parameters": [
                     {
-                        "description": "Dados completos da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)",
+                        "description": "Dados completos da loja; desconto_geral_porcentagem é obrigatório (0–100). rating e is_meu_carro_mais no body são ignorados na criação.",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2971,7 +3024,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Atualiza os dados de uma loja existente, incluindo rating e status premium",
+                "description": "Atualiza os dados de uma loja existente. Se rating ou is_meu_carro_mais forem omitidos no JSON, os valores atuais no banco são preservados (evita zerar o rating ao editar). is_meu_carro_mais também é atualizado automaticamente pelas avaliações (20 notas 5).",
                 "consumes": [
                     "application/json"
                 ],
@@ -2991,7 +3044,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Dados atualizados da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)",
+                        "description": "Dados atualizados; desconto_geral_porcentagem é obrigatório (0–100). rating e is_meu_carro_mais são opcionais (omitir = manter).",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -8550,6 +8603,12 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1000
                 },
+                "moedas_por_loja": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/json.MoedaLojaUsuarioItem"
+                    }
+                },
                 "usuario": {
                     "type": "object",
                     "properties": {
@@ -9635,7 +9694,8 @@ const docTemplate = `{
                     "type": "string",
                     "enum": [
                         "pendente",
-                        "efetivado"
+                        "efetivado",
+                        "cancelado"
                     ]
                 }
             }

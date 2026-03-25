@@ -11,7 +11,7 @@ type Loja struct {
 	Telefone        string     `gorm:"size:30"`
 	Latitude        float64    `gorm:"type:decimal(10,8)"`
 	Longitude       float64    `gorm:"type:decimal(11,8)"`
-	Rating          int        `gorm:"default:5"`
+	Rating          int        `gorm:"default:0"`
 	IsMeuCarroMais  bool       `gorm:"default:false"`
 	Categoria       string     `gorm:"size:255"`
 	LinkInstagram   string     `gorm:"size:500"`

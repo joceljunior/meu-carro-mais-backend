@@ -8,8 +8,8 @@ type LojaRequest struct {
 	Telefone           string  `json:"telefone,omitempty"`
 	Latitude           float64 `json:"latitude" binding:"required"`
 	Longitude          float64 `json:"longitude" binding:"required"`
-	Rating             int     `json:"rating,omitempty"`
-	IsMeuCarroMais     bool    `json:"is_meu_carro_mais,omitempty"`
+	Rating             *int    `json:"rating,omitempty"`
+	IsMeuCarroMais     *bool   `json:"is_meu_carro_mais,omitempty"`
 	Categoria                  string  `json:"categoria" binding:"required"`
 	LinkInstagram              string  `json:"link_instagram,omitempty"`
 	LinkFacebook               string  `json:"link_facebook,omitempty"`

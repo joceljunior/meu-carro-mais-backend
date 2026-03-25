@@ -12,7 +12,7 @@ import (
 
 // CreateAvaliacaoHandler godoc
 // @Summary      Cria uma nova avaliação
-// @Description  Cria uma nova avaliação de loja no sistema
+// @Description  Cria uma nova avaliação (loja, serviço ou produto). Para avaliação de loja (id_loja), após salvar atualiza o rating da loja (média das notas, 1–5) e o selo is_meu_carro_mais (true com pelo menos 20 avaliações com nota 5).
 // @Tags         Avaliações
 // @Accept       json
 // @Produce      json
@@ -198,7 +198,7 @@ func GetAvaliacaoEstatisticasByLojaIDHandler(c *gin.Context) {
 
 // UpdateAvaliacaoHandler godoc
 // @Summary      Atualiza avaliação
-// @Description  Atualiza os dados de uma avaliação existente
+// @Description  Atualiza os dados de uma avaliação existente. Se for avaliação de loja, recalcula rating (média) e is_meu_carro_mais da(s) loja(s) afetada(s).
 // @Tags         Avaliações
 // @Accept       json
 // @Produce      json
@@ -240,7 +240,7 @@ func UpdateAvaliacaoHandler(c *gin.Context) {
 
 // SoftDeleteAvaliacaoHandler godoc
 // @Summary      Remove avaliação (soft delete)
-// @Description  Realiza soft delete de uma avaliação, marcando-a como excluída
+// @Description  Realiza soft delete de uma avaliação, marcando-a como excluída. Se for avaliação de loja, recalcula rating e is_meu_carro_mais da loja.
 // @Tags         Avaliações
 // @Accept       json
 // @Produce      json
@@ -275,7 +275,7 @@ func SoftDeleteAvaliacaoHandler(c *gin.Context) {
 
 // RestoreAvaliacaoHandler godoc
 // @Summary      Restaura avaliação
-// @Description  Restaura uma avaliação que foi soft deleted
+// @Description  Restaura uma avaliação que foi soft deleted. Se for avaliação de loja, recalcula rating e is_meu_carro_mais da loja.
 // @Tags         Avaliações
 // @Accept       json
 // @Produce      json

@@ -2,10 +2,13 @@ package datasource
 
 import (
 	"errors"
+	"math"
 	"meu-carro-mais/internal/database"
 	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // CreateAvaliacao cria uma nova avaliação
@@ -31,23 +34,75 @@ func CreateAvaliacao(req json.AvaliacaoRequest) (*models.Avaliacao, error) {
 		}
 	}
 
-	avaliacao := models.Avaliacao{
-		IDUsuario:  req.IDUsuario,
-		IDLoja:     req.IDLoja,
-		IDServico:  req.IDServico,
-		IDProduto:  req.IDProduto,
-		IDCupom:  req.IDCupom,
-		Nota:       req.Nota,
-		Comentario: req.Comentario,
-	}
-
-	err := database.DB.Create(&avaliacao).Error
+	var avaliacao models.Avaliacao
+	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		avaliacao = models.Avaliacao{
+			IDUsuario:  req.IDUsuario,
+			IDLoja:     req.IDLoja,
+			IDServico:  req.IDServico,
+			IDProduto:  req.IDProduto,
+			IDCupom:    req.IDCupom,
+			Nota:       req.Nota,
+			Comentario: req.Comentario,
+		}
+		if err := tx.Create(&avaliacao).Error; err != nil {
+			return err
+		}
+		if req.IDLoja != nil {
+			return sincronizarLojaAposMudancaAvaliacoesTx(tx, *req.IDLoja)
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	// Recarrega a avaliação com os relacionamentos
 	return GetAvaliacaoByID(avaliacao.ID)
+}
+
+// sincronizarLojaAposMudancaAvaliacoesTx atualiza rating da loja (média das notas, 1–5, ou 0 se não houver avaliações) e is_meu_carro_mais (≥ 20 avaliações com nota 5).
+func sincronizarLojaAposMudancaAvaliacoesTx(tx *gorm.DB, idLoja uint) error {
+	var nCinco int64
+	if err := tx.Model(&models.Avaliacao{}).
+		Where("id_loja = ? AND nota = 5 AND data_exclusao IS NULL", idLoja).
+		Count(&nCinco).Error; err != nil {
+		return err
+	}
+	isPremium := nCinco >= 20
+
+	var total int64
+	if err := tx.Model(&models.Avaliacao{}).
+		Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
+		Count(&total).Error; err != nil {
+		return err
+	}
+
+	rating := 0
+	if total > 0 {
+		var media float64
+		if err := tx.Model(&models.Avaliacao{}).
+			Where("id_loja = ? AND data_exclusao IS NULL", idLoja).
+			Select("COALESCE(AVG(nota),0)").
+			Scan(&media).Error; err != nil {
+			return err
+		}
+		r := int(math.Round(media))
+		if r < 1 {
+			r = 1
+		}
+		if r > 5 {
+			r = 5
+		}
+		rating = r
+	}
+
+	return tx.Model(&models.Loja{}).
+		Where("id = ? AND data_exclusao IS NULL", idLoja).
+		Updates(map[string]interface{}{
+			"rating":            rating,
+			"is_meu_carro_mais": isPremium,
+		}).Error
 }
 
 // GetAvaliacaoByID busca avaliação por ID (apenas não excluídas)
@@ -244,6 +299,8 @@ func UpdateAvaliacao(id uint, req json.AvaliacaoRequest) (*models.Avaliacao, err
 		return nil, errors.New("avaliação não encontrada")
 	}
 
+	oldLojaID := avaliacao.IDLoja
+
 	// Atualiza os campos
 	avaliacao.IDLoja = req.IDLoja
 	avaliacao.IDServico = req.IDServico
@@ -252,7 +309,25 @@ func UpdateAvaliacao(id uint, req json.AvaliacaoRequest) (*models.Avaliacao, err
 	avaliacao.Nota = req.Nota
 	avaliacao.Comentario = req.Comentario
 
-	err = database.DB.Save(&avaliacao).Error
+	lojasParaSync := map[uint]struct{}{}
+	if oldLojaID != nil {
+		lojasParaSync[*oldLojaID] = struct{}{}
+	}
+	if avaliacao.IDLoja != nil {
+		lojasParaSync[*avaliacao.IDLoja] = struct{}{}
+	}
+
+	err = database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Save(&avaliacao).Error; err != nil {
+			return err
+		}
+		for idLoja := range lojasParaSync {
+			if err := sincronizarLojaAposMudancaAvaliacoesTx(tx, idLoja); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -264,21 +339,29 @@ func UpdateAvaliacao(id uint, req json.AvaliacaoRequest) (*models.Avaliacao, err
 // SoftDeleteAvaliacao realiza soft delete da avaliação (marca como excluída)
 func SoftDeleteAvaliacao(id uint) error {
 	// Verifica se a avaliação existe e não foi excluída
-	_, err := GetAvaliacaoByID(id)
+	avaliacao, err := GetAvaliacaoByID(id)
 	if err != nil {
 		return errors.New("avaliação não encontrada")
 	}
 
-	// Atualiza a data de exclusão
-	now := time.Now()
-	err = database.DB.Model(&models.Avaliacao{}).
-		Where("id = ?", id).
-		Update("data_exclusao", now).Error
-	if err != nil {
-		return err
+	var idLojaSync *uint
+	if avaliacao.IDLoja != nil {
+		v := *avaliacao.IDLoja
+		idLojaSync = &v
 	}
 
-	return nil
+	now := time.Now()
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&models.Avaliacao{}).
+			Where("id = ?", id).
+			Update("data_exclusao", now).Error; err != nil {
+			return err
+		}
+		if idLojaSync != nil {
+			return sincronizarLojaAposMudancaAvaliacoesTx(tx, *idLojaSync)
+		}
+		return nil
+	})
 }
 
 // RestoreAvaliacao restaura uma avaliação que foi soft deleted
@@ -289,13 +372,15 @@ func RestoreAvaliacao(id uint) error {
 		return errors.New("avaliação não encontrada ou não foi excluída")
 	}
 
-	// Remove a data de exclusão
-	err = database.DB.Model(&models.Avaliacao{}).
-		Where("id = ?", id).
-		Update("data_exclusao", nil).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&models.Avaliacao{}).
+			Where("id = ?", id).
+			Update("data_exclusao", nil).Error; err != nil {
+			return err
+		}
+		if avaliacao.IDLoja != nil {
+			return sincronizarLojaAposMudancaAvaliacoesTx(tx, *avaliacao.IDLoja)
+		}
+		return nil
+	})
 }

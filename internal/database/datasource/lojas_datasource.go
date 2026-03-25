@@ -134,8 +134,8 @@ func CreateLoja(req json.LojaRequest) (*models.Loja, error) {
 		Telefone:                 req.Telefone,
 		Latitude:                 req.Latitude,
 		Longitude:                req.Longitude,
-		Rating:                   req.Rating,
-		IsMeuCarroMais:           req.IsMeuCarroMais,
+		Rating:                   0,
+		IsMeuCarroMais:           false,
 		Categoria:                req.Categoria,
 		LinkInstagram:            req.LinkInstagram,
 		LinkFacebook:             req.LinkFacebook,
@@ -205,8 +205,12 @@ func UpdateLoja(id uint, req json.LojaRequest) (*models.Loja, error) {
 	loja.Telefone = req.Telefone
 	loja.Latitude = req.Latitude
 	loja.Longitude = req.Longitude
-	loja.Rating = req.Rating
-	loja.IsMeuCarroMais = req.IsMeuCarroMais
+	if req.Rating != nil {
+		loja.Rating = *req.Rating
+	}
+	if req.IsMeuCarroMais != nil {
+		loja.IsMeuCarroMais = *req.IsMeuCarroMais
+	}
 	loja.Categoria = req.Categoria
 	loja.LinkInstagram = req.LinkInstagram
 	loja.LinkFacebook = req.LinkFacebook

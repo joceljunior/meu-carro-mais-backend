@@ -43,7 +43,7 @@ func CreateCarteiraHandler(c *gin.Context) {
 
 // GetCarteiraHandler godoc
 // @Summary      Busca carteira por ID
-// @Description  Retorna os dados de uma carteira específica pelo ID
+// @Description  Retorna os dados de uma carteira específica pelo ID com moedas_gerais e moedas_por_loja.
 // @Tags         Carteiras
 // @Accept       json
 // @Produce      json
@@ -76,7 +76,7 @@ func GetCarteiraHandler(c *gin.Context) {
 
 // GetCarteiraByUsuarioHandler godoc
 // @Summary      Busca carteira por usuário
-// @Description  Retorna a carteira de um usuário específico
+// @Description  Retorna a carteira de um usuário específico com moedas_gerais e moedas_por_loja (saldos por loja).
 // @Tags         Carteiras
 // @Accept       json
 // @Produce      json
@@ -109,7 +109,7 @@ func GetCarteiraByUsuarioHandler(c *gin.Context) {
 
 // GetAllCarteirasHandler godoc
 // @Summary      Lista todas as carteiras
-// @Description  Retorna uma lista com todas as carteiras
+// @Description  Retorna uma lista com todas as carteiras (moedas_gerais e moedas_por_loja por usuário)
 // @Tags         Carteiras
 // @Accept       json
 // @Produce      json

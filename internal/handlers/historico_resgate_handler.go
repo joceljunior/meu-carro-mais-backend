@@ -276,10 +276,11 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 	validStatuses := map[string]bool{
 		"pendente":   true,
 		"efetivado":  true,
+		"cancelado":  true,
 	}
 	if !validStatuses[status] {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Status inválido. Valores aceitos: pendente, efetivado",
+			"error": "Status inválido. Valores aceitos: pendente, efetivado, cancelado",
 		})
 		return
 	}
@@ -405,6 +406,52 @@ func EfetivarResgateHandler(c *gin.Context) {
 	idHistorico := uint(id)
 	LogAction(c, "efetivar", "historico_resgate", &idHistorico,
 		"Resgate efetivado pela loja", historico, historicoAtualizado)
+
+	c.JSON(http.StatusOK, historicoAtualizado)
+}
+
+// CancelarResgateHandler godoc
+// @Summary      Cancela um resgate de cupom
+// @Description  Cancela um resgate pendente (status cancelado). Não credita moedas. Apenas resgates com status pendente podem ser cancelados.
+// @Tags         Histórico de Resgates
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "ID do histórico de resgate"
+// @Success      200  {object}  json.HistoricoResgateResponse "Resgate cancelado"
+// @Failure      400  {object}  map[string]interface{} "Resgate não está pendente"
+// @Failure      404  {object}  map[string]interface{} "Histórico não encontrado"
+// @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
+// @Router       /historicos-resgate/{id}/cancelar [put]
+func CancelarResgateHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID inválido",
+		})
+		return
+	}
+
+	historico, err := services.GetHistoricoResgateByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Histórico não encontrado",
+		})
+		return
+	}
+
+	err = services.CancelarHistoricoResgate(uint(id))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	historicoAtualizado, _ := services.GetHistoricoResgateByID(uint(id))
+	idHistorico := uint(id)
+	LogAction(c, "cancelar", "historico_resgate", &idHistorico,
+		"Resgate cancelado", historico, historicoAtualizado)
 
 	c.JSON(http.StatusOK, historicoAtualizado)
 }

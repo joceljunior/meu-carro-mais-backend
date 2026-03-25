@@ -81,11 +81,11 @@ func GetLojasByProximidadeHandler(c *gin.Context) {
 
 // CreateLojaHandler godoc
 // @Summary      Criação da loja completa
-// @Description  Cria uma nova loja com todos os dados fornecidos, incluindo rating e status premium
+// @Description  Cria uma nova loja. Rating inicia sempre em 0 e is_meu_carro_mais em false (valores enviados no body são ignorados). O selo "Meu Carro Mais" passa a ser definido automaticamente quando a loja tiver 20 avaliações com nota 5.
 // @Tags         Lojas
 // @Accept       json
 // @Produce      json
-// @Param        request body json.LojaRequest true "Dados completos da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)"
+// @Param        request body json.LojaRequest true "Dados completos da loja; desconto_geral_porcentagem é obrigatório (0–100). rating e is_meu_carro_mais no body são ignorados na criação."
 // @Success      201  {object}  json.LojaResponse "Loja criada com sucesso"
 // @Failure      400  {object}  map[string]interface{} "Dados inválidos"
 // @Failure      500  {object}  map[string]interface{} "Erro interno do servidor"
@@ -167,12 +167,12 @@ func GetAllLojasHandler(c *gin.Context) {
 
 // UpdateLojaHandler godoc
 // @Summary      Atualiza loja
-// @Description  Atualiza os dados de uma loja existente, incluindo rating e status premium
+// @Description  Atualiza os dados de uma loja existente. Se rating ou is_meu_carro_mais forem omitidos no JSON, os valores atuais no banco são preservados (evita zerar o rating ao editar). is_meu_carro_mais também é atualizado automaticamente pelas avaliações (20 notas 5).
 // @Tags         Lojas
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "ID da loja"
-// @Param        request body json.LojaRequest true "Dados atualizados da loja (rating e is_meu_carro_mais são opcionais); desconto_geral_porcentagem é obrigatório (0–100)"
+// @Param        request body json.LojaRequest true "Dados atualizados; desconto_geral_porcentagem é obrigatório (0–100). rating e is_meu_carro_mais são opcionais (omitir = manter)."
 // @Success      200 {object} json.LojaResponse "Loja atualizada com sucesso"
 // @Failure      400 {object} map[string]interface{} "Dados inválidos"
 // @Failure      404 {object} map[string]interface{} "Loja não encontrada"
