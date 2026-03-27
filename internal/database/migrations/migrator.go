@@ -1169,6 +1169,30 @@ func (m *Migrator) registerMigrations() {
 		Build()
 	m.migrations = append(m.migrations, migration044)
 
+	// Migration 045: id_veiculo em historico_resgates (veículo do cliente no resgate).
+	// A 035 havia removido id_veiculo; o modelo/API voltou a usar a coluna.
+	migration045 := m.NewMigration("045", "add_id_veiculo_to_historico_resgates").
+		ExecuteSQL(`
+			ALTER TABLE historico_resgates ADD COLUMN IF NOT EXISTS id_veiculo INTEGER;
+			CREATE INDEX IF NOT EXISTS idx_historico_resgates_id_veiculo ON historico_resgates(id_veiculo);
+			DO $$
+			BEGIN
+				IF NOT EXISTS (
+					SELECT 1 FROM pg_constraint WHERE conname = 'fk_historico_resgates_veiculo_cliente'
+				) THEN
+					ALTER TABLE historico_resgates
+						ADD CONSTRAINT fk_historico_resgates_veiculo_cliente
+						FOREIGN KEY (id_veiculo) REFERENCES veiculos(id) ON DELETE SET NULL;
+				END IF;
+			END $$;
+		`, `
+			ALTER TABLE historico_resgates DROP CONSTRAINT IF EXISTS fk_historico_resgates_veiculo_cliente;
+			DROP INDEX IF EXISTS idx_historico_resgates_id_veiculo;
+			ALTER TABLE historico_resgates DROP COLUMN IF EXISTS id_veiculo;
+		`).
+		Build()
+	m.migrations = append(m.migrations, migration045)
+
 	// Ordena as migrations por versão
 	sort.Slice(m.migrations, func(i, j int) bool {
 		return m.migrations[i].Version < m.migrations[j].Version
