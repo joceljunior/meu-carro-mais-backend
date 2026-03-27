@@ -46,10 +46,11 @@ type VeiculosResponse struct {
 	Total    int               `json:"total"`
 }
 
+// HistoricoVeiculoResponse item do histórico do veículo (tabela historico_veiculos e/ou resgate efetivado sem linha duplicada).
 type HistoricoVeiculoResponse struct {
-	ID           uint      `json:"id"`
-	IDVeiculo    uint      `json:"id_veiculo"`
-	IDCupom      uint      `json:"id_cupom"`
+	ID           uint      `json:"id" example:"1" description:"ID em historico_veiculos ou, se só houver resgate, id do historico_resgates"`
+	IDVeiculo    uint      `json:"id_veiculo" example:"19"`
+	IDCupom      uint      `json:"id_cupom" example:"5"`
 	Descricao    string    `json:"descricao"`
 	Data         time.Time `json:"data"`
 	DataCadastro time.Time `json:"data_cadastro"`

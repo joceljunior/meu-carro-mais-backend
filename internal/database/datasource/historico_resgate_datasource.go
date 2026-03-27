@@ -10,8 +10,9 @@ import (
 	"gorm.io/gorm"
 )
 
-// CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom
-func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint, moedasUtilizadas int) (*models.HistoricoResgate, error) {
+// CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom.
+// idVeiculoUsuario é o veículo do cliente (ex.: produto/serviço); nil ou 0 ignora.
+func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint, moedasUtilizadas int, idVeiculoUsuario *uint) (*models.HistoricoResgate, error) {
 	// Busca o cupom
 	cupom, err := GetCupomByID(cupomID)
 	if err != nil {
@@ -28,6 +29,10 @@ func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint, moedasUtiliza
 		IDUsuario:        usuarioID,
 		Status:           "pendente",
 		MoedasUtilizadas: moedasUtilizadas,
+	}
+	if idVeiculoUsuario != nil && *idVeiculoUsuario != 0 {
+		v := *idVeiculoUsuario
+		historico.IDVeiculo = &v
 	}
 
 	err = database.DB.Create(&historico).Error
@@ -64,6 +69,7 @@ func GetHistoricoResgateByID(id uint) (*models.HistoricoResgate, error) {
 	var historico models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Veiculo").
 		Preload("Cupom").
 		Preload("Cupom.Loja").
 		Preload("Cupom.Produto").
@@ -78,11 +84,28 @@ func GetHistoricoResgateByID(id uint) (*models.HistoricoResgate, error) {
 	return &historico, nil
 }
 
+// GetHistoricosResgateEfetivadosByVeiculoID retorna resgates efetivados vinculados ao veículo do usuário.
+func GetHistoricosResgateEfetivadosByVeiculoID(idVeiculo uint) ([]models.HistoricoResgate, error) {
+	var historicos []models.HistoricoResgate
+	err := database.DB.
+		Preload("Cupom").
+		Preload("Cupom.Produto").
+		Preload("Cupom.Servico").
+		Where("id_veiculo = ? AND status = ? AND id_cupom IS NOT NULL", idVeiculo, "efetivado").
+		Order("data_resgate DESC").
+		Find(&historicos).Error
+	if err != nil {
+		return nil, err
+	}
+	return historicos, nil
+}
+
 // GetAllHistoricosResgate retorna todos os históricos
 func GetAllHistoricosResgate() ([]models.HistoricoResgate, error) {
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Veiculo").
 		Preload("Cupom").
 		Preload("Cupom.Loja").
 		Preload("Cupom.Produto").
@@ -102,6 +125,7 @@ func GetHistoricosResgateByUsuarioID(idUsuario uint) ([]models.HistoricoResgate,
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Veiculo").
 		Preload("Cupom").
 		Preload("Cupom.Loja").
 		Preload("Cupom.Produto").
@@ -122,6 +146,7 @@ func GetHistoricosResgateByLojaID(idLoja uint) ([]models.HistoricoResgate, error
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Veiculo").
 		Preload("Cupom").
 		Preload("Cupom.Loja").
 		Preload("Cupom.Produto").
@@ -189,6 +214,7 @@ func GetHistoricoResgateByIDWithDB(db *gorm.DB, id uint) (*models.HistoricoResga
 	var historico models.HistoricoResgate
 	err := db.
 		Preload("Usuario").
+		Preload("Veiculo").
 		Preload("Cupom").
 		Preload("Cupom.Loja").
 		Preload("Cupom.Produto").
@@ -234,6 +260,7 @@ func GetHistoricosResgateByCupomID(cupomID uint) ([]models.HistoricoResgate, err
 	var historicos []models.HistoricoResgate
 	err := database.DB.
 		Preload("Usuario").
+		Preload("Veiculo").
 		Preload("Cupom").
 		Preload("Cupom.Loja").
 		Preload("Cupom.Produto").

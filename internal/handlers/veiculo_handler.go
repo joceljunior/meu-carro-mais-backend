@@ -251,7 +251,7 @@ func RestoreVeiculoHandler(c *gin.Context) {
 
 // GetHistoricosByVeiculoHandler godoc
 // @Summary      Lista histórico de um veículo
-// @Description  Retorna o histórico completo de um veículo específico
+// @Description  Retorna o histórico do veículo: registros em `historico_veiculos` mais resgates já efetivados com `id_veiculo` igual ao informado na URL (sem duplicar quando já existe linha para o mesmo cupom). Ordenado por data (mais recente primeiro). O campo `id` de cada item pode ser o id da tabela de histórico do veículo ou, em registros derivados só do resgate, o id do histórico de resgate.
 // @Tags         Veículos
 // @Accept       json
 // @Produce      json

@@ -2,6 +2,7 @@ package json
 
 type CupomProdutoResponse struct {
 	ID                  uint     `json:"id"`
+	IDLoja              *uint    `json:"id_loja,omitempty" example:"1" description:"ID da loja dona do cupom"`
 	NomeProduto         string   `json:"nome_produto"`
 	NomeLoja            string   `json:"nome_loja"`
 	EnderecoLoja        string   `json:"endereco_loja,omitempty"`

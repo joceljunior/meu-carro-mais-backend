@@ -2,7 +2,9 @@ package services
 
 import (
 	"meu-carro-mais/internal/database/datasource"
+	"meu-carro-mais/internal/database/models"
 	"meu-carro-mais/internal/handlers/json"
+	"sort"
 )
 
 // getImagemVeiculo busca a imagem principal de um veículo
@@ -100,32 +102,78 @@ func GetVeiculosByUsuario(idUsuario uint) (*json.VeiculosResponse, error) {
 	return response, nil
 }
 
-// GetHistoricosByVeiculo retorna o histórico de um veículo específico
+func descricaoHistoricoCupom(cupom *models.Cupom) string {
+	if cupom == nil {
+		return "Resgate efetivado"
+	}
+	switch cupom.TipoCupom {
+	case "produto":
+		if cupom.Produto != nil {
+			return "Produto resgatado: " + cupom.Produto.Nome
+		}
+		return "Produto resgatado"
+	case "servico":
+		if cupom.Servico != nil {
+			return "Serviço resgatado: " + cupom.Servico.Titulo
+		}
+		return "Serviço resgatado"
+	default:
+		return "Resgate efetivado"
+	}
+}
+
+// GetHistoricosByVeiculo retorna o histórico de um veículo específico (tabela historico_veiculos
+// mais resgates efetivados com id_veiculo preenchido que ainda não geraram linha duplicada).
 func GetHistoricosByVeiculo(idVeiculo uint) (*json.HistoricosVeiculoResponse, error) {
 	historicos, err := datasource.GetHistoricosByVeiculo(idVeiculo)
 	if err != nil {
 		return nil, err
 	}
 
+	cupomJaEmHistorico := make(map[uint]struct{})
 	var historicosResponse []json.HistoricoVeiculoResponse
 	for _, historico := range historicos {
-		historicoResp := json.HistoricoVeiculoResponse{
+		cupomJaEmHistorico[historico.IDCupom] = struct{}{}
+		historicosResponse = append(historicosResponse, json.HistoricoVeiculoResponse{
 			ID:           historico.ID,
 			IDVeiculo:    historico.IDVeiculo,
 			IDCupom:      historico.IDCupom,
 			Descricao:    historico.Descricao,
 			Data:         historico.Data,
 			DataCadastro: historico.DataCadastro,
-		}
-		historicosResponse = append(historicosResponse, historicoResp)
+		})
 	}
 
-	response := &json.HistoricosVeiculoResponse{
+	resgates, err := datasource.GetHistoricosResgateEfetivadosByVeiculoID(idVeiculo)
+	if err != nil {
+		return nil, err
+	}
+	for _, r := range resgates {
+		if r.IDCupom == nil {
+			continue
+		}
+		cid := *r.IDCupom
+		if _, dup := cupomJaEmHistorico[cid]; dup {
+			continue
+		}
+		historicosResponse = append(historicosResponse, json.HistoricoVeiculoResponse{
+			ID:           r.ID,
+			IDVeiculo:    idVeiculo,
+			IDCupom:      cid,
+			Descricao:    descricaoHistoricoCupom(r.Cupom),
+			Data:         r.DataResgate,
+			DataCadastro: r.DataResgate,
+		})
+	}
+
+	sort.Slice(historicosResponse, func(i, j int) bool {
+		return historicosResponse[i].Data.After(historicosResponse[j].Data)
+	})
+
+	return &json.HistoricosVeiculoResponse{
 		Historicos: historicosResponse,
 		Total:      len(historicosResponse),
-	}
-
-	return response, nil
+	}, nil
 }
 
 // GetHistoricosByUsuario retorna o histórico de todos os veículos de um usuário

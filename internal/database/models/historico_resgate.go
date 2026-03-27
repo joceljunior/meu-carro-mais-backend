@@ -3,16 +3,18 @@ package models
 import "time"
 
 type HistoricoResgate struct {
-	ID              uint       `gorm:"primaryKey"`
-	IDCupom         *uint      `gorm:"column:id_cupom"`
-	IDUsuario         uint `gorm:"not null"`
-	MoedasUtilizadas  int  `gorm:"not null;default:0"` // Moedas do app usadas no resgate (0 se não aplicável)
-	DataResgate     time.Time  `gorm:"autoCreateTime"`
-	DataAtualizacao time.Time  `gorm:"autoUpdateTime"`
-	Status                   string `gorm:"size:20;default:'pendente'"` // "pendente", "efetivado", "cancelado"
-	MoedasLojaJaCreditadas   bool   `gorm:"default:false"`              // evita crédito duplicado ao re-efetivar
+	ID                     uint      `gorm:"primaryKey"`
+	IDCupom                *uint     `gorm:"column:id_cupom"`
+	IDUsuario              uint      `gorm:"not null"`
+	IDVeiculo              *uint     `gorm:"column:id_veiculo"`  // veículo do usuário no resgate (produto/serviço)
+	MoedasUtilizadas       int       `gorm:"not null;default:0"` // Moedas do app usadas no resgate (0 se não aplicável)
+	DataResgate            time.Time `gorm:"autoCreateTime"`
+	DataAtualizacao        time.Time `gorm:"autoUpdateTime"`
+	Status                 string    `gorm:"size:20;default:'pendente'"` // "pendente", "efetivado", "cancelado"
+	MoedasLojaJaCreditadas bool      `gorm:"default:false"`              // evita crédito duplicado ao re-efetivar
 
 	// Relacionamentos
-	Cupom   *Cupom  `gorm:"foreignKey:IDCupom"`
-	Usuario Usuario `gorm:"foreignKey:IDUsuario"`
+	Cupom   *Cupom   `gorm:"foreignKey:IDCupom"`
+	Usuario Usuario  `gorm:"foreignKey:IDUsuario"`
+	Veiculo *Veiculo `gorm:"foreignKey:IDVeiculo"`
 }

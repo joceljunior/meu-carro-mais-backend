@@ -346,6 +346,9 @@ definitions:
         type: string
       id:
         type: integer
+      id_loja:
+        example: 1
+        type: integer
       imagem:
         type: string
       is_meu_carro_mais:
@@ -476,6 +479,9 @@ definitions:
       endereco_loja:
         type: string
       id:
+        type: integer
+      id_loja:
+        example: 1
         type: integer
       imagem:
         type: string
@@ -912,6 +918,9 @@ definitions:
         type: integer
       id_usuario:
         type: integer
+      id_veiculo:
+        example: 19
+        type: integer
       moedas_utilizadas:
         type: integer
       status:
@@ -928,10 +937,13 @@ definitions:
       descricao:
         type: string
       id:
+        example: 1
         type: integer
       id_cupom:
+        example: 5
         type: integer
       id_veiculo:
+        example: 19
         type: integer
     type: object
   json.HistoricosPagamentoResponse:
@@ -1433,10 +1445,13 @@ definitions:
   json.ResgatarCupomRequest:
     properties:
       id_usuario:
+        example: 1
         type: integer
       id_veiculo_usuario:
+        example: 19
         type: integer
       moedas_utilizadas:
+        example: 0
         minimum: 0
         type: integer
     required:
@@ -3017,8 +3032,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Cria um histórico de resgate com status pendente quando um usuário
-        resgata um cupom
+      description: Cria um histórico de resgate com status pendente. Envie `id_veiculo_usuario`
+        (veículo do cliente) em cupons de produto/serviço para gravar em `id_veiculo`
+        no resgate e permitir histórico no veículo ao efetivar.
       parameters:
       - description: ID do cupom
         in: path
@@ -3128,7 +3144,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna cupons de produtos ordenados por proximidade da loja
+      description: Retorna cupons de produtos ordenados por proximidade da loja. Cada
+        item inclui `id_loja` (loja do cupom).
       parameters:
       - description: Latitude do usuário (opcional)
         in: query
@@ -3162,7 +3179,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna cupons de serviços ordenados por proximidade da loja
+      description: Retorna cupons de serviços ordenados por proximidade da loja. Cada
+        item inclui `id_loja` (loja do cupom).
       parameters:
       - description: Latitude do usuário (opcional)
         in: query
@@ -3633,9 +3651,9 @@ paths:
       description: 'Efetiva um resgate pendente, alterando o status para efetivado.
         Credita moedas da loja ao usuário: metade do percentual de desconto geral
         da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real
-        = 1 moeda). Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços),
-        o histórico é automaticamente registrado no veículo. Se for venda de veículo,
-        o veículo é automaticamente transferido para o comprador.'
+        = 1 moeda). O histórico do veículo usa o `id_veiculo` gravado no resgate (`id_veiculo_usuario`
+        ao resgatar) ou, em cupom de veículo, o `id_veiculo` do cupom. Se for venda
+        de veículo, o veículo é automaticamente transferido para o comprador.'
       parameters:
       - description: ID do histórico de resgate
         in: path
@@ -7841,7 +7859,12 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retorna o histórico completo de um veículo específico
+      description: 'Retorna o histórico do veículo: registros em `historico_veiculos`
+        mais resgates já efetivados com `id_veiculo` igual ao informado na URL (sem
+        duplicar quando já existe linha para o mesmo cupom). Ordenado por data (mais
+        recente primeiro). O campo `id` de cada item pode ser o id da tabela de histórico
+        do veículo ou, em registros derivados só do resgate, o id do histórico de
+        resgate.'
       parameters:
       - description: ID do veículo
         in: path

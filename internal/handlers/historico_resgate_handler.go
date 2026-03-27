@@ -301,7 +301,7 @@ func UpdateStatusHistoricoResgateHandler(c *gin.Context) {
 
 // EfetivarResgateHandler godoc
 // @Summary      Efetiva um resgate
-// @Description  Efetiva um resgate pendente, alterando o status para efetivado. Credita moedas da loja ao usuário: metade do percentual de desconto geral da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real = 1 moeda). Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.
+// @Description  Efetiva um resgate pendente, alterando o status para efetivado. Credita moedas da loja ao usuário: metade do percentual de desconto geral da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real = 1 moeda). O histórico do veículo usa o `id_veiculo` gravado no resgate (`id_veiculo_usuario` ao resgatar) ou, em cupom de veículo, o `id_veiculo` do cupom. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.
 // @Tags         Histórico de Resgates
 // @Accept       json
 // @Produce      json
@@ -365,9 +365,15 @@ func EfetivarResgateHandler(c *gin.Context) {
 		}
 	}
 
-	// Se o cupom tem um veículo vinculado, cria o histórico do veículo
-	if historico.Cupom != nil && historico.IDCupom != nil && historico.Cupom.IDVeiculo != nil {
-		// Monta a descrição do histórico baseado no tipo de cupom
+	// Veículo alvo: o informado no resgate (produto/serviço) ou o veículo do cupom (ex.: anúncio de veículo)
+	var idVeiculoHistorico *uint
+	if historico.IDVeiculo != nil && *historico.IDVeiculo != 0 {
+		idVeiculoHistorico = historico.IDVeiculo
+	} else if historico.Cupom != nil && historico.Cupom.IDVeiculo != nil {
+		idVeiculoHistorico = historico.Cupom.IDVeiculo
+	}
+
+	if historico.Cupom != nil && historico.IDCupom != nil && idVeiculoHistorico != nil {
 		var descricao string
 		switch historico.Cupom.TipoCupom {
 		case "produto":
@@ -386,9 +392,8 @@ func EfetivarResgateHandler(c *gin.Context) {
 			descricao = "Resgate efetivado"
 		}
 
-		// Cria o registro no histórico do veículo
 		_, errHist := services.CreateHistoricoVeiculoFromResgate(
-			*historico.Cupom.IDVeiculo,
+			*idVeiculoHistorico,
 			*historico.IDCupom,
 			descricao,
 		)

@@ -1028,7 +1028,7 @@ const docTemplate = `{
         },
         "/cupons/produtos": {
             "get": {
-                "description": "Retorna cupons de produtos ordenados por proximidade da loja",
+                "description": "Retorna cupons de produtos ordenados por proximidade da loja. Cada item inclui ` + "`" + `id_loja` + "`" + ` (loja do cupom).",
                 "consumes": [
                     "application/json"
                 ],
@@ -1079,7 +1079,7 @@ const docTemplate = `{
         },
         "/cupons/servicos": {
             "get": {
-                "description": "Retorna cupons de serviços ordenados por proximidade da loja",
+                "description": "Retorna cupons de serviços ordenados por proximidade da loja. Cada item inclui ` + "`" + `id_loja` + "`" + ` (loja do cupom).",
                 "consumes": [
                     "application/json"
                 ],
@@ -1346,7 +1346,7 @@ const docTemplate = `{
         },
         "/cupons/{id}/resgatar": {
             "post": {
-                "description": "Cria um histórico de resgate com status pendente quando um usuário resgata um cupom",
+                "description": "Cria um histórico de resgate com status pendente. Envie ` + "`" + `id_veiculo_usuario` + "`" + ` (veículo do cliente) em cupons de produto/serviço para gravar em ` + "`" + `id_veiculo` + "`" + ` no resgate e permitir histórico no veículo ao efetivar.",
                 "consumes": [
                     "application/json"
                 ],
@@ -2185,7 +2185,7 @@ const docTemplate = `{
         },
         "/historicos-resgate/{id}/efetivar": {
             "put": {
-                "description": "Efetiva um resgate pendente, alterando o status para efetivado. Credita moedas da loja ao usuário: metade do percentual de desconto geral da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real = 1 moeda). Se o resgate tiver um veículo do usuário vinculado (para produtos/serviços), o histórico é automaticamente registrado no veículo. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.",
+                "description": "Efetiva um resgate pendente, alterando o status para efetivado. Credita moedas da loja ao usuário: metade do percentual de desconto geral da loja aplicada sobre o valor do cupom (valor da venda), em moedas (1 real = 1 moeda). O histórico do veículo usa o ` + "`" + `id_veiculo` + "`" + ` gravado no resgate (` + "`" + `id_veiculo_usuario` + "`" + ` ao resgatar) ou, em cupom de veículo, o ` + "`" + `id_veiculo` + "`" + ` do cupom. Se for venda de veículo, o veículo é automaticamente transferido para o comprador.",
                 "consumes": [
                     "application/json"
                 ],
@@ -8178,7 +8178,7 @@ const docTemplate = `{
         },
         "/veiculos/{id}/historico": {
             "get": {
-                "description": "Retorna o histórico completo de um veículo específico",
+                "description": "Retorna o histórico do veículo: registros em ` + "`" + `historico_veiculos` + "`" + ` mais resgates já efetivados com ` + "`" + `id_veiculo` + "`" + ` igual ao informado na URL (sem duplicar quando já existe linha para o mesmo cupom). Ordenado por data (mais recente primeiro). O campo ` + "`" + `id` + "`" + ` de cada item pode ser o id da tabela de histórico do veículo ou, em registros derivados só do resgate, o id do histórico de resgate.",
                 "consumes": [
                     "application/json"
                 ],
@@ -8874,6 +8874,10 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "id_loja": {
+                    "type": "integer",
+                    "example": 1
+                },
                 "imagem": {
                     "type": "string"
                 },
@@ -9066,6 +9070,10 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "id_loja": {
+                    "type": "integer",
+                    "example": 1
                 },
                 "imagem": {
                     "type": "string"
@@ -9726,6 +9734,10 @@ const docTemplate = `{
                 "id_usuario": {
                     "type": "integer"
                 },
+                "id_veiculo": {
+                    "type": "integer",
+                    "example": 19
+                },
                 "moedas_utilizadas": {
                     "type": "integer"
                 },
@@ -9750,13 +9762,16 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "id_cupom": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 5
                 },
                 "id_veiculo": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 19
                 }
             }
         },
@@ -10504,14 +10519,17 @@ const docTemplate = `{
             ],
             "properties": {
                 "id_usuario": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "id_veiculo_usuario": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 19
                 },
                 "moedas_utilizadas": {
                     "type": "integer",
-                    "minimum": 0
+                    "minimum": 0,
+                    "example": 0
                 }
             }
         },

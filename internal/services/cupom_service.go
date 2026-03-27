@@ -289,6 +289,7 @@ func GetCuponsProdutos(latitude, longitude *float64) (*json.CuponsProdutoRespons
 			distancia := cupomComDist.Distancia
 			response := json.CupomProdutoResponse{
 				ID:                  cupom.ID,
+				IDLoja:              cupom.IDLoja,
 				NomeProduto:         cupom.Produto.Nome,
 				NomeLoja:            cupom.Loja.Nome,
 				EnderecoLoja:        cupom.Loja.Endereco,
@@ -349,6 +350,7 @@ func GetCuponsProdutos(latitude, longitude *float64) (*json.CuponsProdutoRespons
 
 			response := json.CupomProdutoResponse{
 				ID:                  cupom.ID,
+				IDLoja:              cupom.IDLoja,
 				NomeProduto:         cupom.Produto.Nome,
 				NomeLoja:            cupom.Loja.Nome,
 				EnderecoLoja:        cupom.Loja.Endereco,
@@ -527,6 +529,7 @@ func GetCuponsServicos(latitude, longitude *float64) (*json.CuponsServicoRespons
 
 		return json.CupomServicoResponse{
 			ID:                  cupom.ID,
+			IDLoja:              cupom.IDLoja,
 			NomeServico:         nomeServico,
 			NomeLoja:            cupom.Loja.Nome,
 			EnderecoLoja:        cupom.Loja.Endereco,

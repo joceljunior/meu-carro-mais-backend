@@ -30,8 +30,18 @@ func usuarioModelToUserResponse(u models.Usuario) json.UserResponse {
 }
 
 // CreateHistoricoResgateFromCupom cria um histórico de resgate a partir de um cupom
-func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint, moedasUtilizadas int) (*json.HistoricoResgateResponse, error) {
-	historico, err := datasource.CreateHistoricoResgateFromCupom(cupomID, usuarioID, moedasUtilizadas)
+func CreateHistoricoResgateFromCupom(cupomID uint, usuarioID uint, moedasUtilizadas int, idVeiculoUsuario *uint) (*json.HistoricoResgateResponse, error) {
+	if idVeiculoUsuario != nil && *idVeiculoUsuario != 0 {
+		v, err := datasource.GetVeiculoByIDForUpdate(*idVeiculoUsuario)
+		if err != nil {
+			return nil, errors.New("veículo não encontrado")
+		}
+		if v.IDUsuario != usuarioID {
+			return nil, errors.New("veículo não pertence ao usuário")
+		}
+	}
+
+	historico, err := datasource.CreateHistoricoResgateFromCupom(cupomID, usuarioID, moedasUtilizadas, idVeiculoUsuario)
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +55,7 @@ func convertHistoricoToResponse(historico *models.HistoricoResgate) *json.Histor
 		ID:               historico.ID,
 		IDCupom:          historico.IDCupom,
 		IDUsuario:        historico.IDUsuario,
+		IDVeiculo:        historico.IDVeiculo,
 		MoedasUtilizadas: historico.MoedasUtilizadas,
 		DataResgate:      historico.DataResgate,
 		DataAtualizacao:  historico.DataAtualizacao,

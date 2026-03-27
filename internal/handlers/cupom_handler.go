@@ -282,7 +282,7 @@ func RestoreCupomHandler(c *gin.Context) {
 
 // GetCuponsProdutosHandler godoc
 // @Summary      Lista cupons de produtos por proximidade
-// @Description  Retorna cupons de produtos ordenados por proximidade da loja
+// @Description  Retorna cupons de produtos ordenados por proximidade da loja. Cada item inclui `id_loja` (loja do cupom).
 // @Tags         Cupons
 // @Accept       json
 // @Produce      json
@@ -398,7 +398,7 @@ func GetCuponsVeiculosHandler(c *gin.Context) {
 
 // GetCuponsServicosHandler godoc
 // @Summary      Lista cupons de serviços por proximidade
-// @Description  Retorna cupons de serviços ordenados por proximidade da loja
+// @Description  Retorna cupons de serviços ordenados por proximidade da loja. Cada item inclui `id_loja` (loja do cupom).
 // @Tags         Cupons
 // @Accept       json
 // @Produce      json
@@ -488,7 +488,7 @@ func GetCuponsByLojaIDHandler(c *gin.Context) {
 
 // ResgatarCupomHandler godoc
 // @Summary      Resgata um cupom
-// @Description  Cria um histórico de resgate com status pendente quando um usuário resgata um cupom
+// @Description  Cria um histórico de resgate com status pendente. Envie `id_veiculo_usuario` (veículo do cliente) em cupons de produto/serviço para gravar em `id_veiculo` no resgate e permitir histórico no veículo ao efetivar.
 // @Tags         Cupons
 // @Accept       json
 // @Produce      json
@@ -518,7 +518,7 @@ func ResgatarCupomHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := services.CreateHistoricoResgateFromCupom(uint(cupomID), req.IDUsuario, req.MoedasUtilizadas)
+	resp, err := services.CreateHistoricoResgateFromCupom(uint(cupomID), req.IDUsuario, req.MoedasUtilizadas, req.IDVeiculoUsuario)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
